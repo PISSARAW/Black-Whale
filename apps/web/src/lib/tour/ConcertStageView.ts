@@ -103,6 +103,7 @@ export class ConcertStageView {
   render(frame: Parameters<ConcertDreamView['apply']>[0], performance: ConcertPerformance): void {
     if (this.active && this.walk)
       this.dream.apply({ ...frame, blend: this.blend }, this.walk, performance)
+    else this.dream.film.hall(frame, performance, this.spec)
   }
 
   dispose(): void {

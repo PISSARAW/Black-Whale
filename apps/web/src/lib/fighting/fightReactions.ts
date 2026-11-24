@@ -9,7 +9,7 @@ import {
   type FightPose,
 } from './fightPose'
 import { AIR_POSE } from './fightStance'
-import { PHYSICAL_LOCOMOTION } from './physicalLocomotion'
+import { physicalLocomotionOf } from './physicalLocomotion'
 import { combatLocomotion } from './firstFiveCombatMotion'
 import type { KeyPose, MoveTimeline } from './keyPoseTimeline'
 import { sampleTimeline } from './keyPoseTimeline'
@@ -260,7 +260,7 @@ function jumpPlan(progress: number, standing: FightPose, fighter: ArcadeFighter)
   // Legs stretch on take-off and landing, tuck at the apex.
   const tuck = Math.sin(Math.min(1, Math.max(0, progress)) * Math.PI)
   const air = addPoses(
-    PHYSICAL_LOCOMOTION[fighter.id]?.air ?? AIR_POSE,
+    physicalLocomotionOf(fighter)?.air ?? AIR_POSE,
     combatLocomotion(fighter)?.jump ?? {},
   )
   const pose = addPoses(pickJoints(standing, UPPER_JOINTS), scalePose(air, 0.35 + 0.65 * tuck))

@@ -7,6 +7,11 @@ import {
 } from '../../src/lib/fighting/engine'
 import { canStartFighterAttack } from '../../src/lib/fighting/fighterAttacks'
 import { moveForSlot } from '../../src/lib/fighting/movesets'
+import { signatureCombo, signatureHits } from '../../src/lib/fighting/signatureCombos'
+import {
+  createSignatureFight,
+  playSignatureCombo,
+} from '../../src/lib/fighting/signatureComboRunner'
 import {
   EMPTY_INPUT,
   type FightInput,
@@ -202,6 +207,31 @@ export function createHisokaMachiDemo() {
 export function createHisokaMachiAudioStates(frames = 1440): FightState[] {
   const demo = createHisokaMachiDemo()
   return Array.from({ length: frames }, () => demo.advance().state)
+}
+
+export function recordElasticCombo() {
+  const combo = { ...signatureCombo('hisoka:elastic-murder'), opponent: 'machi' as const }
+  const states: FightState[] = []
+  const result = playSignatureCombo(
+    combo,
+    createSignatureFight(combo, { mirrored: false, gap: 5 }),
+    {
+      onFrame: (state) => states.push(state),
+    },
+  )
+  if (
+    result.reached !== combo.steps.length ||
+    result.contacts.length !== signatureHits(combo).length
+  )
+    throw Error(
+      `Elastic combo: ${result.reached}/${combo.steps.length} steps, ${JSON.stringify(result.contacts)}`,
+    )
+  let state = result.state
+  for (let i = 0; i < 52; i++) {
+    state = tickFight(state, EMPTY_INPUT, { dt: 1 / 60, opponentInput: EMPTY_INPUT })
+    states.push(state)
+  }
+  return states
 }
 
 function inputFor(state: FightState, frame: number): FightInput {

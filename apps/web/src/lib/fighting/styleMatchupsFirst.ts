@@ -4,8 +4,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   kurapika: entry(
     'control',
     [
-      'Tenir la moyenne distance et confirmer avant les chaînes.',
-      'Hold mid-range and confirm before committing chains.',
+      'Mesurer de la main droite puis ramener le crochet au corps. Confirmer avant les chaînes.',
+      'Measure with the right hand and bring the hook back to the body. Confirm before committing chains.',
     ],
     [
       'Punir une chaîne manquée ; Chain Jail exige une cible autorisée.',
@@ -15,8 +15,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   hisoka: entry(
     'mobile',
     [
-      'Attirer, attacher la gomme puis choisir la traction.',
-      'Bait, attach gum, then choose when to pull.',
+      'Feinter du poignet et repartir sur le talon. Attirer, attacher la gomme puis choisir la traction.',
+      'Feint with the wrist and spring back with the heel. Bait, attach gum, then choose when to pull.',
     ],
     [
       'Frapper interrompt la traction ; Gyo repère In sans dissiper la gomme.',
@@ -37,8 +37,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   benjamin: entry(
     'pressure',
     [
-      'Avancer avec les coups physiques et choisir un héritage disponible.',
-      'Advance with physical strikes and choose an available inheritance.',
+      'Fermer l’axe de la paume puis avancer l’épaule. Choisir un héritage disponible.',
+      'Block the line with the palm, then drive with the shoulder. Choose an available inheritance.',
     ],
     [
       'Prendre de la distance sur les lourds ; les héritages gardent leurs conditions.',
@@ -92,8 +92,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   biscuit: entry(
     'pressure',
     [
-      'Choisir le moment de révéler le corps naturel puis gagner le contact.',
-      'Choose when to reveal the natural body, then close in.',
+      'Dévier de la paume en forme compacte. En forme naturelle, poser des appuis plus larges avant le crochet.',
+      'Deflect with an open palm in compact form. Set a wider base before the hook in natural form.',
     ],
     [
       'Faire manquer les coups lourds et punir leur récupération ; la forme est corporelle.',
@@ -114,8 +114,8 @@ export const FIRST_STYLE_MATCHUPS: Partial<Record<FighterId, StyleMatchup>> = {
   franklin: entry(
     'ranged',
     [
-      'Créer de la distance et engager une rafale avec les deux mains.',
-      'Create distance and commit to a two-handed barrage.',
+      'Couvrir de la paume et frapper des deux bras à courte portée. Créer de la distance avant une rafale.',
+      'Cover with the palm and strike with both arms at close range. Create space before a barrage.',
     ],
     [
       'Varier garde et saut pour approcher ; un coup interrompt les tirs encore à émettre.',

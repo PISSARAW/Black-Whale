@@ -1,7 +1,22 @@
-import { beginFight, createFight, performAuraAttack, performMove, tickFight } from '../../src/lib/fighting/engine'
+import {
+  beginFight,
+  createFight,
+  performAuraAttack,
+  performMove,
+  tickFight,
+} from '../../src/lib/fighting/engine'
 import { moveForSlot } from '../../src/lib/fighting/movesets'
 import { performArsenalCommand } from '../../src/lib/fighting/retrospectiveArsenal'
-import { EMPTY_INPUT, type FightInput, type FightSide, type FightState, type MoveSlot } from '../../src/lib/fighting/types'
+import { combatRoute } from '../../src/lib/fighting/combatRoutes'
+import { combatRouteAction, combatRouteInput } from '../../src/lib/fighting/combatRouteFight'
+import { canStartFighterAttack } from '../../src/lib/fighting/fighterAttacks'
+import {
+  EMPTY_INPUT,
+  type FightInput,
+  type FightSide,
+  type FightState,
+  type MoveSlot,
+} from '../../src/lib/fighting/types'
 
 const SPEED_START = 90
 const BLADE_START = 240
@@ -11,11 +26,13 @@ const ARMOUR_START = 630
 const SUN_START = 735
 
 function fresh(): FightState {
-  const state = beginFight(createFight('feitan', 'saiyu', {
-    mode: 'versus-local',
-    formatId: 'knockout',
-    environment: { stageId: 'princes-burial-chamber' },
-  }))
+  const state = beginFight(
+    createFight('feitan', 'saiyu', {
+      mode: 'versus-local',
+      formatId: 'knockout',
+      environment: { stageId: 'princes-burial-chamber' },
+    }),
+  )
   return {
     ...state,
     player: { ...state.player, x: 37, health: 100, maxHealth: 100 },
@@ -40,7 +57,7 @@ function wounded(): FightState {
   }
 }
 
-export function createFeitanSaiyuDemo() {
+export function createFeitanSaiyuDemo(portrait = false) {
   let state = fresh()
   let frame = 0
   let umbrellaStarted = false
@@ -48,22 +65,45 @@ export function createFeitanSaiyuDemo() {
   let armourCommanded = false
   let sunCommanded = false
   const moves = new Set<string>()
+  const routes = [combatRoute('feitan:speed'), combatRoute('feitan:speed-economy')]
+  const routeStarts = [BLADE_START, BLADE_START + 75]
+  const comboRecords = [0, 0]
+  const impacts: { frame: number; opponent: boolean }[] = []
+  let routeIndex = -1
+  let routeStep = 0
   const counters = { dash: 0, hidden: 0, umbrella: 0, wounded: 0, armour: 0, sun: 0, heat: 0 }
 
   function strike(side: FightSide, slot: MoveSlot) {
     const move = moveForSlot(state[side].id, slot)
     if (!move) return
-    state = performAuraAttack({ state, side, kind: move.kind, variant: move.variant, moveId: move.id, auraCharged: false })
+    state = performAuraAttack({
+      state,
+      side,
+      kind: move.kind,
+      variant: move.variant,
+      moveId: move.id,
+      auraCharged: false,
+    })
   }
 
   function commands() {
     if (frame === WOUND_START) state = wounded()
     if (frame === UMBRELLA_START) {
       state = fresh()
-      state = { ...state, player: { ...state.player, x: 44 }, opponent: { ...state.opponent, x: 62 } }
+      state = {
+        ...state,
+        player: { ...state.player, x: 44 },
+        opponent: { ...state.opponent, x: 62 },
+      }
     }
-    if (frame >= BLADE_START && frame < UMBRELLA_START && frame % 46 === 0)
-      strike('player', (['standingLight', 'standingHeavy', 'lowHeavy'] as const)[Math.floor((frame - BLADE_START) / 46) % 3])
+    if (portrait && frame >= BLADE_START && frame < UMBRELLA_START) playCombo()
+    if (!portrait && frame >= BLADE_START && frame < UMBRELLA_START && frame % 46 === 0)
+      strike(
+        'player',
+        (['standingLight', 'standingHeavy', 'lowHeavy'] as const)[
+          Math.floor((frame - BLADE_START) / 46) % 3
+        ],
+      )
     if (frame === UMBRELLA_START && !umbrellaStarted) {
       state = performArsenalCommand(state, 'player', { action: 'umbrella-feint' })
       umbrellaStarted = Boolean(state.player.umbrellaFeintFrames)
@@ -83,6 +123,47 @@ export function createFeitanSaiyuDemo() {
       sunCommanded = next !== state
       state = next
     }
+  }
+
+  function playCombo() {
+    const index = routeStarts.indexOf(frame)
+    if (index !== -1) {
+      routeIndex = index
+      routeStep = 0
+      state = fresh()
+      state = {
+        ...state,
+        player: { ...state.player, x: 44 },
+        opponent: { ...state.opponent, x: 50 },
+      }
+    }
+    const slot = routes[routeIndex]?.moves[routeStep]
+    if (!slot || state.opponent.comboHits < routeStep) return
+    const move = moveForSlot('feitan', slot)
+    if (!move || !canStartFighterAttack(state.player, move.kind, move.id)) return
+    const next =
+      routeIndex === 0
+        ? performMove({
+            state,
+            side: 'player',
+            action: combatRouteAction(slot),
+            input: combatRouteInput(slot, state.player.facing),
+          })
+        : performAuraAttack({
+            state,
+            side: 'player',
+            kind: move.kind,
+            variant: move.variant,
+            moveId: move.id,
+            auraCharged: false,
+          })
+    const started = next.player.attack?.moveId
+    if (
+      next.player.attack !== state.player.attack &&
+      (started === move.id || (slot === 'backHeavy' && started === 'feitan:shadowless-blade'))
+    )
+      routeStep++
+    state = next
   }
 
   function record() {
@@ -105,7 +186,17 @@ export function createFeitanSaiyuDemo() {
   function advance() {
     commands()
     const before = state
-    state = tickFight(state, inputFor(frame), { dt: 1 / 60, opponentInput: saiyuInput(before, frame) })
+    const combo = portrait && frame >= BLADE_START && frame < UMBRELLA_START
+    state = tickFight(state, combo ? EMPTY_INPUT : inputFor(frame), {
+      dt: 1 / 60,
+      opponentInput: combo
+        ? { ...EMPTY_INPUT, guard: Boolean(before.impact) }
+        : saiyuInput(before, frame),
+    })
+    if (combo)
+      comboRecords[routeIndex] = Math.max(comboRecords[routeIndex], state.opponent.comboHits)
+    if (state.impact && state.impact.sequence !== before.impact?.sequence && !state.impact.blocked)
+      impacts.push({ frame, opponent: state.impact.attacker === 'opponent' })
     record()
     frame++
     return { state, frame, title: titleFor(frame) }
@@ -114,7 +205,17 @@ export function createFeitanSaiyuDemo() {
   return {
     initial: state,
     advance,
-    diagnostics: () => ({ frame, moves: [...moves], ...counters, umbrellaStarted, spikeFired, armourCommanded, sunCommanded }),
+    diagnostics: () => ({
+      frame,
+      moves: [...moves],
+      ...counters,
+      comboRecords,
+      impacts,
+      umbrellaStarted,
+      spikeFired,
+      armourCommanded,
+      sunCommanded,
+    }),
   }
 }
 
@@ -124,7 +225,8 @@ function inputFor(frame: number): FightInput {
   if (frame === 126 || (frame >= 130 && frame < 146)) return { ...EMPTY_INPUT, left: true }
   if (frame === 158 || (frame >= 162 && frame < 178)) return { ...EMPTY_INPUT, right: true }
   if (frame === 182) return { ...EMPTY_INPUT, jump: true }
-  if (frame >= BLADE_START && frame < WOUND_START && frame % 46 > 25) return { ...EMPTY_INPUT, right: true }
+  if (frame >= BLADE_START && frame < WOUND_START && frame % 46 > 25)
+    return { ...EMPTY_INPUT, right: true }
   return EMPTY_INPUT
 }
 
@@ -138,7 +240,7 @@ function saiyuInput(state: FightState, frame: number): FightInput {
 function titleFor(frame: number): string {
   if (frame < SPEED_START) return '1 / Le calme avant la mise à mort'
   if (frame < BLADE_START) return '2 / Le regard ne peut plus le suivre'
-  if (frame < UMBRELLA_START) return "3 / Un trait d’acier dans l’ombre"
+  if (frame < UMBRELLA_START) return '3 / Un trait d’acier dans l’ombre'
   if (frame < WOUND_START) return '4 / Sous le parapluie, la pointe cachée'
   if (frame < ARMOUR_START) return '5 / La douleur devient menace'
   if (frame < SUN_START) return '6 / Pain Packer · armure du supplice'

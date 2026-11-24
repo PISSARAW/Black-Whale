@@ -37,7 +37,6 @@ import {
   physicalStrikeShape,
   authoredStrikeDirection,
 } from './physicalStrikeDirections'
-import { standingFootwork } from './standingFootwork'
 import type { FighterId, MoveSlot } from './types'
 
 const STRIKES: StrikeLibrary = {
@@ -82,7 +81,6 @@ const SPECIALS: readonly MoveSlot[] = [
 export function rosterStrikeShape(id: FighterId, slot: MoveSlot): StrikeShape | undefined {
   return (
     physicalStrikeShape(authoredStrikeDirection(id, slot) ?? physicalStrikeDirection(id, slot)) ??
-    standingFootwork(id, slot)?.[0] ??
     rosterBaseStrikeShape(id, slot)
   )
 }
@@ -185,8 +183,7 @@ export function rosterKeyPoses(fighterId: FighterId): Partial<Record<MoveSlot, M
   const direction = ROSTER_CHOREOGRAPHY[id]
   const entries: Array<[MoveSlot, MoveTimeline]> = NORMALS.map((slot, index) => {
     const personal = physicalStrikeDirection(id, slot)
-    const shape =
-      physicalStrikeShape(personal) ?? standingFootwork(id, slot)?.[0] ?? direction.strikes[index]
+    const shape = physicalStrikeShape(personal) ?? direction.strikes[index]
     const gesture =
       typeof personal === 'object' ? (personal.gesture ?? STRIKES[shape]) : STRIKES[shape]
     return [slot, directedTimeline({ id, gesture, physical: true })]

@@ -121,7 +121,7 @@ export class TourCastView {
     const posts = concert
       ? concertCast(all, { ship: this.options.ship, performance: concert, cap: cast.spoilerLimit })
       : all
-    if (!mangaView?.staging) {
+    if (concert?.ensemble === 'clash' || !mangaView?.staging) {
       return posts.filter((post) => post.tierId === tierId)
     }
     const viewTierId = this.options.ship.spaces.get(mangaView.spaceId)?.tierId
@@ -200,7 +200,8 @@ export class TourCastView {
    * separate passes.
    */
   apparitions = $derived.by<Apparition[]>(() => {
-    const { cast, world, tierId, mangaView } = this.options.read()
+    const { cast, world, tierId, mangaView, concert } = this.options.read()
+    if (concert?.ensemble === 'clash') return castApparitions(this.options.ship, this.posts)
     return [
       ...castApparitions(this.options.ship, this.posts, auraReader(this.situation)),
       // Aura left where a technique forced a seam: hidden, so only Gyo draws it.

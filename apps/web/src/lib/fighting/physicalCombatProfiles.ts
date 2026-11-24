@@ -1,10 +1,16 @@
+import {
+  BISCUIT_NATURAL_MOBILITY,
+  WAVE_SEVEN_MOBILITY,
+  WAVE_SEVEN_MOVES,
+} from './physicalCombatWaveSeven'
+import { isBiscuitTrueForm } from './biscuitForm'
 import { WAVE_SIX_MOBILITY, WAVE_SIX_MOVES } from './physicalCombatWaveSix'
 import { WAVE_FIVE_MOBILITY, WAVE_FIVE_MOVES } from './physicalCombatWaveFive'
 import { WAVE_FOUR_MOBILITY, WAVE_FOUR_MOVES } from './physicalCombatWaveFour'
 import { WAVE_THREE_MOBILITY, WAVE_THREE_MOVES } from './physicalCombatWaveThree'
 import { WAVE_TWO_MOBILITY, WAVE_TWO_MOVES } from './physicalCombatWaveTwo'
 import type { FighterMoveset, MoveTuning } from './movesetTypes'
-import type { FighterId, MoveSlot } from './types'
+import type { ArcadeFighter, FighterId, MoveSlot } from './types'
 
 export type CombatProfile = {
   walk: number
@@ -107,6 +113,7 @@ const MOBILITY: Partial<Record<FighterId, CombatProfile>> = {
   ...WAVE_FOUR_MOBILITY,
   ...WAVE_FIVE_MOBILITY,
   ...WAVE_SIX_MOBILITY,
+  ...WAVE_SEVEN_MOBILITY,
 }
 
 export function physicalCombatProfile(id: FighterId): CombatProfile | undefined {
@@ -460,6 +467,7 @@ const PHYSICAL_MOVES: Partial<Record<FighterId, Partial<Record<MoveSlot, Physica
   ...WAVE_FOUR_MOVES,
   ...WAVE_FIVE_MOVES,
   ...WAVE_SIX_MOVES,
+  ...WAVE_SEVEN_MOVES,
 }
 
 export function tunePhysicalCombat(moveset: FighterMoveset): FighterMoveset {
@@ -474,4 +482,8 @@ export function tunePhysicalCombat(moveset: FighterMoveset): FighterMoveset {
       return { ...move, nameFr, nameEn, tuning: { ...move.tuning, ...strike.tuning } }
     }),
   }
+}
+
+export function physicalCombatProfileFor(fighter: ArcadeFighter): CombatProfile | undefined {
+  return isBiscuitTrueForm(fighter) ? BISCUIT_NATURAL_MOBILITY : physicalCombatProfile(fighter.id)
 }

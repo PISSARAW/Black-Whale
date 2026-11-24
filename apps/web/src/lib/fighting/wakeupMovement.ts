@@ -1,4 +1,4 @@
-import { physicalCombatProfile } from './physicalCombatProfiles'
+import { physicalCombatProfileFor } from './physicalCombatProfiles'
 import type { ArcadeFighter, FightInput } from './types'
 
 declare module './types' {
@@ -72,7 +72,7 @@ function advanceUkemiRoll(fighter: ArcadeFighter): Partial<ArcadeFighter> {
   if (fighter.hitStun > 0 || fighter.knockdownFrames > 0 || fighter.attack) {
     return { ukemiRoll: undefined }
   }
-  const speed = UKEMI_ROLL_SPEED * (physicalCombatProfile(fighter.id)?.roll ?? 1)
+  const speed = UKEMI_ROLL_SPEED * (physicalCombatProfileFor(fighter)?.roll ?? 1)
   const x = Math.min(MAX_X, Math.max(MIN_X, fighter.x + roll.direction * speed))
   const nextFrames = roll.frames - 1
   return {

@@ -34,5 +34,8 @@ export default defineConfig(({ isSsrBuild }) => ({
     },
   },
   resolve: { alias: [{ find: /^three$/, replacement: threeSource }] },
+  // html-to-image publishes extensionless ESM imports. Bundle it for SSR so
+  // Node never has to resolve those browser-oriented specifiers itself.
+  ssr: { noExternal: ['html-to-image'] },
   plugins: [...dataChunks(), sveltekit(), clientChunks(), bundleBudget(), clashSocket()],
 }))

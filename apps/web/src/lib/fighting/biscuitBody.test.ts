@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { beginFight, createFight, performMove } from './engine'
+import { beginFight, createFight, performMove, tickFight } from './engine'
+import { fighterKeyedMove } from './fighterKeyedMove'
+import { motionOf } from './fighterMovement'
 import {
   BISCUIT_NATURAL_CHOREOGRAPHY,
   BISCUIT_NATURAL_STANCE,
@@ -11,7 +13,7 @@ import { fightPhysicalProfile } from './fightPhysicalProfile'
 import { ROSTER_CHOREOGRAPHY } from './rosterChoreography'
 import { strikeSilhouette } from './fightStrikeSilhouette'
 import { performCookie } from './cookie'
-import type { FightState } from './types'
+import { EMPTY_INPUT, type FightState } from './types'
 
 const ready = (): FightState =>
   beginFight(createFight('biscuit', 'hisoka', { mode: 'versus-local' }))
@@ -27,6 +29,24 @@ describe('Biscuit’s two bodies fight with two plans', () => {
     expect(fighterStance(natural.player)).toBe(BISCUIT_NATURAL_STANCE)
     expect(fighterMotionStyle(natural.player)).toBe(BISCUIT_NATURAL_CHOREOGRAPHY)
     expect(natural.player.aura).toBe(state.player.aura)
+  })
+
+  it('uses a longer dash and different J and K contacts after revealing her natural body', () => {
+    const compact = ready()
+    const natural = revealed(ready())
+    const step = (state: FightState, right: boolean) =>
+      tickFight(state, { ...EMPTY_INPUT, right }, { dt: 1 / 60, opponentInput: EMPTY_INPUT })
+    const dash = (state: FightState) =>
+      motionOf(step(step(step(state, true), false), true).player).dash
+    expect(dash(natural)?.frames).toBeGreaterThan(dash(compact)?.frames ?? Infinity)
+    for (const slot of ['standingLight', 'standingHeavy'] as const) {
+      const contact = (state: FightState) =>
+        fighterKeyedMove(state.player, slot).timeline.find(
+          ({ phase, at }) => phase === 'active' && at === 0,
+        )?.pose
+      expect(contact(natural)).toBeDefined()
+      expect(contact(natural)).not.toEqual(contact(compact))
+    }
   })
 
   it('never lends the natural body’s plan to another fighter', () => {

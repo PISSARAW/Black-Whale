@@ -170,6 +170,30 @@ describe('Melody’s requested concert and the visitor’s performance', () => {
     expect(release[0].pose).toBe('idle')
   })
 
+  it('gathers the complete Clash cast for the filmed manga concert', () => {
+    const posts = concertCast([], {
+      ship,
+      cap: null,
+      performance: { mode: 'melody', playing: true, presentation: 'manga', ensemble: 'clash' },
+    })
+    expect(posts).toHaveLength(40)
+    expect(new Set(posts.map(({ member }) => member.characterId)).size).toBe(40)
+    expect(posts.filter(({ spaceId }) => spaceId === 'tier-1-banquet-hall')).toHaveLength(39)
+    const outsider = { ...posts[0], member: { ...posts[0].member, characterId: 'keeney' } }
+    const after = concertCast([outsider, ...posts], {
+      ship,
+      cap: null,
+      performance: { mode: 'melody', playing: false, ensemble: 'clash' },
+    })
+    expect(after.map(({ member }) => member.characterId)).toEqual(
+      posts.map(({ member }) => member.characterId),
+    )
+    expect(posts.find(({ member }) => member.characterId === 'melody')).toMatchObject({
+      spaceId: BANQUET_SERVICE,
+      pose: 'flute',
+    })
+  })
+
   it('opens the alpine vision only during the concert and releases its geometry', () => {
     const scene = new THREE.Scene()
     const view = new ConcertStageView(THREE, scene, ship)

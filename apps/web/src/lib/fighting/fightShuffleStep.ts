@@ -2,13 +2,13 @@ import type { ArcadeFighter } from './types'
 import type { FightPose } from './fightPose'
 import { fightPhysicalProfile } from './fightPhysicalProfile'
 import { FIGHT_WORLD_X } from './fightCoordinates'
-import { PHYSICAL_LOCOMOTION } from './physicalLocomotion'
+import { physicalLocomotionOf } from './physicalLocomotion'
 import { motionOf } from './fighterMovement'
 import { combatLocomotion } from './firstFiveCombatMotion'
 
 /** Shorter legs take shorter steps; cadence follows travelled ground. */
 export function shuffleStride(fighter: ArcadeFighter): number {
-  const scale = PHYSICAL_LOCOMOTION[fighter.id]?.stride ?? combatLocomotion(fighter)?.stride ?? 1
+  const scale = physicalLocomotionOf(fighter)?.stride ?? combatLocomotion(fighter)?.stride ?? 1
   return 1.04 * scale * Math.min(1.4, Math.max(0.55, fightPhysicalProfile(fighter).height / 1.8))
 }
 export function shufflePhase(fighter: ArcadeFighter): number {

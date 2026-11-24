@@ -1,6 +1,6 @@
 import { phinksLowDodge } from './phinksLowDodge'
 import { styleMobility } from './styleMobility'
-import { physicalCombatProfile } from './physicalCombatProfiles'
+import { physicalCombatProfileFor } from './physicalCombatProfiles'
 import { crossingDash } from './signatureCrossing'
 import {
   advanceSway,
@@ -254,7 +254,7 @@ function advancePrejump(fighter: ArcadeFighter, holdingJump: boolean): ArcadeFig
   const prejumpFrames = motion.prejumpFrames - 1
   if (prejumpFrames > 0) return withMotion({ ...fighter, blocking: false }, { prejumpFrames })
   const arc = jumpArcMultipliers(fighter, motion, holdingJump)
-  const profile = physicalCombatProfile(fighter.id)
+  const profile = physicalCombatProfileFor(fighter)
   const velocityX =
     motion.jumpDirection * walkSpeed(fighter) * JUMP_DRIFT_RATIO * arc.vx * (profile?.drift ?? 1)
   return withMotion(
@@ -286,12 +286,12 @@ export function walkSpeed(fighter: ArcadeFighter): number {
 }
 
 export function landingDuration(fighter: ArcadeFighter): number {
-  return physicalCombatProfile(fighter.id)?.landing ?? LANDING_FRAMES
+  return physicalCombatProfileFor(fighter)?.landing ?? LANDING_FRAMES
 }
 
 /** 0 at take-off, 0.5 at the apex, 1 on landing — drives the jump pose. */
 export function jumpProgress(fighter: ArcadeFighter): number {
-  const jump = physicalCombatProfile(fighter.id)?.jump ?? 1
+  const jump = physicalCombatProfileFor(fighter)?.jump ?? 1
   if (fighter.velocityY >= 0)
     return clamp((1 - fighter.velocityY / (JUMP_SPEED * jump)) / 2, 0, 0.5)
   return clamp(0.5 + -fighter.velocityY / (LANDING_SPEED * jump) / 2, 0.5, 1)

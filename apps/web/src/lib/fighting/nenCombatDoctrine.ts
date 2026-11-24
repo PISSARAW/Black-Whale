@@ -1,6 +1,6 @@
 import { nenMasteryProfile } from './nenMastery'
 import { fightingStyle } from './fightStyles'
-import { physicalCombatProfile } from './physicalCombatProfiles'
+import { physicalCombatProfileFor } from './physicalCombatProfiles'
 import { voluntaryNenAvailable } from './nenAccess'
 import type { ArcadeFighter, FighterId } from './types'
 
@@ -38,7 +38,7 @@ export function nenCombatDoctrine(fighter: ArcadeFighter) {
   const profile = nenMasteryProfile(fighter.nenOwner ?? fighter.id)
   const style = fightingStyle(fighter.id)
   const preferred =
-    physicalCombatProfile(fighter.id)?.range ??
+    physicalCombatProfileFor(fighter)?.range ??
     PERSONAL_RANGES[fighter.id] ??
     TYPE_RANGES[profile.affinity] ??
     style.preferredRange

@@ -1,3 +1,5 @@
+import { WAVE_SEVEN_DEXTERITY_STRIKES } from './physicalStrikeWaveSevenDexterity'
+import { WAVE_SEVEN_POWER_STRIKES } from './physicalStrikeWaveSevenPower'
 import { WAVE_SIX_WEAPON_STRIKES } from './physicalStrikeWaveSixWeapons'
 import { WAVE_SIX_MARTIAL_STRIKES } from './physicalStrikeWaveSixMartial'
 import { HANZO_PHYSICAL_STRIKES } from './physicalStrikeWaveSixHanzo'
@@ -357,6 +359,8 @@ const AUTHORED_STRIKES: Partial<Record<FighterId, PhysicalStrikeDirections>> = {
   ...WAVE_SIX_WEAPON_STRIKES,
   ...WAVE_SIX_MARTIAL_STRIKES,
   hanzo: HANZO_PHYSICAL_STRIKES,
+  ...WAVE_SEVEN_DEXTERITY_STRIKES,
+  ...WAVE_SEVEN_POWER_STRIKES,
 }
 
 const FULL_PHYSICAL_POSES = new Set<string>([
@@ -365,6 +369,8 @@ const FULL_PHYSICAL_POSES = new Set<string>([
   ...Object.keys(WAVE_SIX_WEAPON_STRIKES),
   ...Object.keys(WAVE_SIX_MARTIAL_STRIKES),
   'hanzo',
+  ...Object.keys(WAVE_SEVEN_DEXTERITY_STRIKES),
+  ...Object.keys(WAVE_SEVEN_POWER_STRIKES),
 ])
 
 export function usesFullPhysicalPoses(id: FighterId): boolean {

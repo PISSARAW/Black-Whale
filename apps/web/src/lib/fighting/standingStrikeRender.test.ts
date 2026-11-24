@@ -12,7 +12,7 @@ import { motionOf } from './fighterMovement'
 import { styleMobility } from './styleMobility'
 import { moveForSlot } from './movesets'
 import { keyPoseTimeline } from './keyPoseMoves'
-import { standingFootwork } from './standingFootwork'
+import { STANDING_STRIKES } from './standingStrikeDirections'
 import { FIGHTING_ROSTER } from './roster'
 import { EMPTY_INPUT, type ArcadeFighter, type FightState, type FighterId } from './types'
 
@@ -129,6 +129,9 @@ it.each([6, 21])(
         ['luini', 'theta'],
         ['tserriednich', 'leorio'],
         ['hanzo', 'luini'],
+        ['kurapika', 'hisoka'],
+        ['benjamin', 'franklin'],
+        ['biscuit', 'hisoka'],
       ] as const) {
         expect(distance(paths.get(a)!, paths.get(b)!), `${a}/${b}`).toBeGreaterThan(9)
       }
@@ -173,10 +176,10 @@ it('keeps the figure vertical in both directions of every grounded dash', () => 
 it('plays the authored preparation beat for each grounded footwork direction', () => {
   for (const { id } of FIGHTING_ROSTER) {
     for (const slot of ['standingLight', 'standingHeavy'] as const) {
-      const footwork = standingFootwork(id, slot)
-      if (!footwork) continue
+      const strike = STANDING_STRIKES[id]?.[slot]
+      if (!strike) continue
       const preparation = keyPoseTimeline(id, slot)?.filter((key) => key.phase === 'startup')
-      expect(preparation?.at(-1)?.at, `${id} ${slot}`).toBe(footwork[2])
+      expect(preparation?.at(-1)?.at, `${id} ${slot}`).toBe(strike.chamberAt)
       expect(preparation?.map(({ at }) => at)).toEqual(
         preparation?.map(({ at }) => at).sort((a, b) => a - b),
       )

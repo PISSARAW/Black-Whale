@@ -266,6 +266,29 @@ describe('the three-minute flowered listening landscape', () => {
     dream.restore()
   })
 
+  it('keeps the Clash audience inside the completed concert vision', () => {
+    const scene = new THREE.Scene()
+    const dream = new ConcertDreamView(THREE, scene)
+    const camera = new THREE.PerspectiveCamera()
+    const melody = new THREE.Group()
+    const listener = new THREE.Group()
+    const walk = new ConcertLandscapeWalk(spec, spec.origin)
+    dream.apply(
+      {
+        camera,
+        actors: { 'cast:melody': { root: melody }, 'cast:kurapika': { root: listener } },
+        seconds: 2,
+        yaw: 0,
+        blend: 1,
+      },
+      walk,
+      { ...playing, ensemble: 'clash' },
+    )
+    expect(camera.layers.test(listener.layers)).toBe(true)
+    expect(listener.rotation.x).toBe(0)
+    dream.restore()
+  })
+
   it('replaces Melody’s broad Ten shell with the chapter’s small heart light', () => {
     const scene = new THREE.Scene()
     const dream = new ConcertDreamView(THREE, scene)
@@ -284,5 +307,24 @@ describe('the three-minute flowered listening landscape', () => {
     expect(aura.visible).toBe(false)
     dream.restore()
     expect(aura.visible).toBe(true)
+  })
+
+  it('anchors Melody in the filmed Clash manga composition', () => {
+    const scene = new THREE.Scene()
+    const dream = new ConcertDreamView(THREE, scene)
+    const camera = new THREE.PerspectiveCamera(68, 1.6, 0.1, 220)
+    const melody = new THREE.Group()
+    melody.position.set(8, 4, -3)
+    const original = melody.position.clone()
+    const walk = new ConcertLandscapeWalk(spec, concertReferencePosition(spec))
+    dream.apply({ camera, actors: { 'cast:melody': { root: melody } }, seconds: 1, yaw: 0 }, walk, {
+      ...playing,
+      presentation: 'manga',
+      ensemble: 'clash',
+    })
+    expect(melody.position.x).toBe(camera.position.x)
+    expect(melody.position.z - camera.position.z).toBeCloseTo(CONCERT_REFERENCE.distance)
+    dream.restore()
+    expect(melody.position).toEqual(original)
   })
 })

@@ -4,6 +4,7 @@ import { castInTour, type TourWorld } from './hatsu'
 import type { Post } from './cast/types'
 import type { Vec2 } from './types'
 import { BANQUET_SERVICE, BANQUET_SPACE } from './banquetView'
+import { requestedConcertAudience } from './clashConcertAudience'
 
 export const MELODY_CONCERT = fixture
 export const CONCERT_ROOMS = [BANQUET_SPACE, BANQUET_SERVICE] as const
@@ -12,6 +13,7 @@ export interface ConcertPerformance {
   playing: boolean
   phase?: 'bow' | 'playing' | 'release'
   presentation?: 'free' | 'manga'
+  ensemble?: 'clash'
   /** Incremented by the UI to restore the authored chapter composition. */
   referenceRequest?: number
 }
@@ -27,12 +29,13 @@ export function concertCast(
   const { performance, cap, ship } = options
   if (performance.mode === null) return [...posts]
   const existing = posts.find(({ member }) => member.characterId === fixture.performer.characterId)
-  const rest = posts.filter(
+  let rest = posts.filter(
     ({ member, spaceId }) =>
       member.characterId !== fixture.performer.characterId ||
       (performance.mode === 'self' && !CONCERT_ROOMS.some((id) => id === spaceId)),
   )
   if (performance.mode === 'self' || (cap !== null && cap < fixture.chapter)) return rest
+  rest = requestedConcertAudience(rest, ship, performance.ensemble)
   const performer = fixture.performer
   const room = ship.spaces.get(performer.spaceId)!
   // Explicitly requested, source-backed reconstruction; also works when the timeline is offline.

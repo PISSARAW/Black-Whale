@@ -5,17 +5,25 @@ import { positionHeldFlute } from './heldFlute'
 import { applyGrade, LENS_OFF } from './postGrade'
 import type { SceneRuntime } from './TourRenderer'
 import { CONCERT_REFERENCE } from './concertReference'
+import { isClashConcertActor } from './clashConcertAudience'
+import { ConcertFilm, type FilmFrame } from './ConcertFilm'
 
 export const CONCERT_DREAM_LAYER = 27
 
-interface DreamFrame {
+interface DreamFrame extends FilmFrame {
   camera: Three.PerspectiveCamera
-  actors: Readonly<Record<string, { root: Three.Object3D } | undefined>>
   seconds: number
   yaw: number
   runtime?: SceneRuntime
   exposure?: number
   blend?: number
+}
+
+interface AudienceFrame {
+  frame: DreamFrame
+  performerId: string
+  blend: number
+  ensemble: ConcertPerformance['ensemble']
 }
 
 /** Isolates the imagined world without changing furniture, rooms or Hatsu visibility. */
@@ -26,12 +34,17 @@ export class ConcertDreamView {
   private cameraFov = 50
   private readonly masks = new Map<Three.Object3D, number>()
   private readonly hiddenAura = new Map<Three.Object3D, boolean>()
+  private readonly performerPose = new Map<
+    Three.Object3D,
+    { position: Three.Vector3; rotation: Three.Euler }
+  >()
   private readonly audiencePose = new Map<Three.Object3D, Three.Euler>()
   private previousFog: Three.Scene['fog'] = null
   private previousBackground: Three.Scene['background'] = null
   private readonly fog: Three.FogExp2
   private readonly background: Three.Color
   private readonly passes = new Map<{ enabled: boolean }, boolean>()
+  readonly film: ConcertFilm
 
   constructor(
     THREE: typeof Three,
@@ -39,6 +52,7 @@ export class ConcertDreamView {
   ) {
     this.fog = new THREE.FogExp2(0xd9e6df, 0.0035)
     this.background = new THREE.Color(0xe7eedf)
+    this.film = new ConcertFilm(THREE)
   }
 
   apply(frame: DreamFrame, walk: ConcertLandscapeWalk, performance: ConcertPerformance): void {
@@ -52,8 +66,9 @@ export class ConcertDreamView {
       this.include(actor)
       if (performance.presentation === 'manga') this.suppressAura(actor)
     }
-    if (blend < 0.82) this.reactAudience(frame, id, blend)
+    this.stageAudience({ frame, performerId: id, blend, ensemble: performance.ensemble })
     this.positionCamera(frame, walk, performance)
+    this.stageFilm(frame, walk, performance)
     if (frame.runtime) this.optics(frame, performance)
     if (actor && performance.mode === 'self') {
       positionHeldFlute(actor, frame.camera.position, {
@@ -62,6 +77,24 @@ export class ConcertDreamView {
         playing: true,
       })
     }
+  }
+
+  private stageFilm(
+    frame: DreamFrame,
+    walk: ConcertLandscapeWalk,
+    performance: ConcertPerformance,
+  ): void {
+    const shot = this.film.shot(frame, performance)
+    const performer = frame.actors['cast:melody']?.root
+    if (shot?.name === 'cover') {
+      const glow = this.scene.getObjectByName('concert-melody-heart-glow')
+      if (glow) {
+        this.hiddenAura.set(glow, glow.visible)
+        glow.visible = false
+      }
+    }
+    if (shot) this.film.dream(frame, walk.landscape, shot)
+    else if (performer) this.stagePerformer(performer, frame, performance)
   }
 
   private positionCamera(
@@ -94,6 +127,7 @@ export class ConcertDreamView {
     if (!this.camera) return
     this.restoreActors()
     this.restoreAudience()
+    this.film.restore()
     this.camera.layers.mask = this.cameraMask
     this.camera.far = this.cameraFar
     this.camera.fov = this.cameraFov
@@ -125,8 +159,33 @@ export class ConcertDreamView {
   private restoreActors(): void {
     for (const [object, mask] of this.masks) object.layers.mask = mask
     this.masks.clear()
+    for (const [root, pose] of this.performerPose) {
+      root.position.copy(pose.position)
+      root.rotation.copy(pose.rotation)
+    }
+    this.performerPose.clear()
     for (const [object, visible] of this.hiddenAura) object.visible = visible
     this.hiddenAura.clear()
+  }
+
+  /** Locks the filmed Clash performance to the chapter's central Melody silhouette. */
+  private stagePerformer(
+    actor: Three.Object3D,
+    frame: DreamFrame,
+    performance: ConcertPerformance,
+  ): void {
+    if (performance.ensemble !== 'clash' || performance.presentation !== 'manga') return
+    this.performerPose.set(actor, {
+      position: actor.position.clone(),
+      rotation: actor.rotation.clone(),
+    })
+    actor.visible = true
+    actor.position.set(
+      frame.camera.position.x,
+      frame.camera.position.y - 0.3,
+      frame.camera.position.z + CONCERT_REFERENCE.distance,
+    )
+    actor.rotation.set(0, Math.PI, 0)
   }
 
   /** The chapter shows one small light at Melody's heart, not her full Ten shell. */
@@ -139,6 +198,14 @@ export class ConcertDreamView {
   }
 
   /** The room holds its breath before the listeners disappear into the vision. */
+  private stageAudience(options: AudienceFrame): void {
+    const { frame, performerId, blend, ensemble } = options
+    if (ensemble === 'clash') {
+      for (const [id, actor] of Object.entries(frame.actors))
+        if (actor && id !== performerId && isClashConcertActor(id)) this.include(actor.root)
+    } else if (blend < 0.82) this.reactAudience(frame, performerId, blend)
+  }
+
   private reactAudience(frame: DreamFrame, performerId: string, blend: number): void {
     const { actors, seconds } = frame
     const attention = Math.sin(Math.min(1, blend / 0.82) * Math.PI)

@@ -14,7 +14,7 @@ const CHROLLO_GAPS = {
   feitan: 10,
   saiyu: 10.5,
   theta: 11,
-  biscuit: 10.5,
+  biscuit: 9.75,
   phinks: 11,
   machi: 10,
   illumi: 10.5,
@@ -49,6 +49,7 @@ const CHROLLO_GAPS = {
 
 // These profiles need an extra step to get back into strike range.
 const WHIFF_ADVANCE: Partial<Record<Fighter, number>> = {
+  biscuit: 2,
   camilla: 2,
   cluck: 2,
   furykov: 2,
@@ -111,6 +112,7 @@ function variantLesson(route: CombatRoute): CombatRoute[] {
       moves: variant.via
         ? [route.moves[0], variant.via, variant.slot]
         : [route.moves[0], variant.slot],
+      whiff: variant.whiff ?? route.whiff,
       setup: variant.setup,
       requirement: variant.requirement,
     },

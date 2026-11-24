@@ -53,9 +53,9 @@ const KEYS: Record<DirectionalEnding, string> = {
   carry: '→ J',
 }
 
-function opening(id: FighterId): FightState {
+function opening(id: FighterId, versus?: FighterId): FightState {
   const pair = WAKEUP_LESSONS.find((l) => l.fighter === id && l.id.endsWith(':wakeup-sweep'))
-  const opponent = pair?.wakeup ?? (id === 'chrollo' ? 'hisoka' : 'chrollo')
+  const opponent = versus ?? pair?.wakeup ?? (id === 'chrollo' ? 'hisoka' : 'chrollo')
   let state = beginFight(createFight(id, opponent, { mode: 'versus-local', formatId: 'knockout' }))
   state = {
     ...state,
@@ -171,8 +171,8 @@ const FINISH_SLOT = {
 } as const
 
 /** J (Ko) → J (Ryu) → direction + J (Ryu), entered through performMove like a player. */
-export function jCombo(id: FighterId, ending: DirectionalEnding): ComboClip {
-  const take = new Take(opening(id))
+export function jCombo(id: FighterId, ending: DirectionalEnding, opponent?: FighterId): ComboClip {
+  const take = new Take(opening(id, opponent))
   take.tick(14)
   take.hold('standingLight')
   take.press({}, { key: 'J', technique: 'ryu' })

@@ -1,3 +1,4 @@
+import type { MotionBeats } from './physicalLocomotion'
 import type { FightPose } from './fightPose'
 import type { WalkStyle } from './fightLocomotion'
 
@@ -60,7 +61,7 @@ export const KURAPIKA_BIG_BANG_GUARD: FightPose = {
  * the old anime's horizontal corkscrew resolves into its one-knee ground skim.
  * These are ordinary vulnerable dash poses, never teleportation or i-frames.
  */
-export function kurapikaDashPoses(forward: boolean): FightPose[] {
+export function kurapikaDashPoses(forward: boolean): MotionBeats {
   if (forward)
     return [
       {

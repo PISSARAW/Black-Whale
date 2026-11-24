@@ -11,7 +11,7 @@ export const WHIFF_PUNISH_LESSONS: readonly CombatRoute[] = [
       'Recule pendant le coup lourd, puis avance et frappe léger. Le fouet divinatoire requiert le Ten et 24 points d’aura.',
       'Back away from the heavy, then press forward and light. Dowsing Whip requires Ten and 24 aura.',
     ],
-    whiff: { opponent: 'chrollo', gap: 10.5 },
+    whiff: { opponent: 'chrollo', gap: 10.25, advanceFrames: 2 },
   },
   {
     id: 'hisoka:whiff-gum',
@@ -23,7 +23,7 @@ export const WHIFF_PUNISH_LESSONS: readonly CombatRoute[] = [
       'Recule pendant le coup lourd, puis avance et frappe léger. La pose de Bungee Gum requiert le Ten et 40 points d’aura.',
       'Back away from the heavy, then press forward and light. Attaching Bungee Gum requires Ten and 40 aura.',
     ],
-    whiff: { opponent: 'benjamin', gap: 10, retreatFrames: 12 },
+    whiff: { opponent: 'benjamin', gap: 10, retreatFrames: 12, advanceFrames: 5 },
   },
   {
     id: 'hisoka:whiff-tether',
@@ -36,7 +36,7 @@ export const WHIFF_PUNISH_LESSONS: readonly CombatRoute[] = [
       'Bungee Gum is already attached for this drill. The finisher requires an active tether and 55 aura.',
     ],
     setup: 'bungee',
-    whiff: { opponent: 'benjamin', gap: 10, retreatFrames: 12 },
+    whiff: { opponent: 'benjamin', gap: 10, retreatFrames: 12, advanceFrames: 5 },
   },
   {
     id: 'franklin:whiff-low',

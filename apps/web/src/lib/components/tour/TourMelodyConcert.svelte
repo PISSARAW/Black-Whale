@@ -64,6 +64,13 @@
     performance.presentation === 'manga' && performance.playing && remaining > 170,
   )
   const clock = $derived(`${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, '0')}`)
+  const filming = $derived(
+    $page.url.searchParams.get('clip') === 'clash' &&
+      $page.url.searchParams.get('clipFraming') === 'film',
+  )
+  const concertEnsemble = $derived(
+    $page.url.searchParams.get('clip') === 'clash' ? ('clash' as const) : undefined,
+  )
 
   function stop(clearMode = false): void {
     playRequest += 1
@@ -75,7 +82,11 @@
     silence = null
     if (restore) world = endPlayerConcert(world, restore)
     restore = null
-    performance = { mode: clearMode ? null : performance.mode, playing: false }
+    performance = {
+      mode: clearMode ? null : performance.mode,
+      playing: false,
+      ensemble: performance.ensemble,
+    }
   }
 
   function play(mode: 'melody' | 'self', presentation: 'free' | 'manga' = 'free'): void {
@@ -88,9 +99,14 @@
       restore = started.restore
       world = started.world
     }
-    performance = { mode, playing: false, phase: 'bow', presentation }
+    const ensemble = concertEnsemble
+    performance = { mode, playing: false, phase: 'bow', presentation, ensemble }
     remaining = MELODY_CONCERT.durationSeconds
     message = french ? 'Melody salue le roi…' : 'Melody bows to the King…'
+    if (filming) {
+      queueFilm(performance)
+      return
+    }
     transition = setTimeout(() => {
       if (request !== playRequest) return
       transition = null
@@ -98,7 +114,7 @@
       silence = startMelodyConcert({
         onStarted: () => {
           if (request !== playRequest) return
-          performance = { mode, playing: true, phase: 'playing', presentation }
+          performance = { mode, playing: true, phase: 'playing', presentation, ensemble }
           message = ''
           const startedAt = Date.now()
           timer = setInterval(() => {
@@ -116,7 +132,7 @@
           if (request !== playRequest) return
           if (timer) clearInterval(timer)
           timer = null
-          performance = { mode, playing: false, phase: 'release', presentation }
+          performance = { mode, playing: false, phase: 'release', presentation, ensemble }
           message = french ? 'Melody abaisse sa flûte.' : 'Melody lowers her flute.'
           transition = setTimeout(() => {
             transition = null
@@ -132,14 +148,26 @@
     }, 700)
   }
 
+  function queueFilm(bow: ConcertPerformance): void {
+    transition = setTimeout(() => {
+      transition = null
+      performance = { ...bow, playing: true, phase: 'playing' }
+    }, 6_500)
+  }
+
   function playFree(): void {
     if (locked) return
-    if ($page.url.searchParams.has('mangaView')) {
+    const clipPresentation =
+      $page.url.searchParams.get('clip') === 'clash' &&
+      $page.url.searchParams.get('clipFraming') === 'manga'
+        ? 'manga'
+        : 'free'
+    if ($page.url.searchParams.has('mangaView') && $page.url.searchParams.get('clip') !== 'clash') {
       const url = new URL($page.url)
       url.searchParams.delete('mangaView')
       void goto(url, { noScroll: true, keepFocus: true })
     }
-    play('melody')
+    play('melody', clipPresentation)
   }
 
   function recenterMangaView(): void {

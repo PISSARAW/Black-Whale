@@ -101,6 +101,11 @@ const COHORTS = [
   },
   { wave: 5, fighters: ['saiyu', 'zakuro', 'gel', 'illumi', 'machi'], retreat: 'gel' },
   { wave: 6, fighters: ['luini', 'theta', 'tserriednich', 'leorio', 'hanzo'], retreat: 'luini' },
+  {
+    wave: 7,
+    fighters: ['kurapika', 'hisoka', 'benjamin', 'biscuit', 'franklin'],
+    retreat: 'hisoka',
+  },
 ] as const
 const GROUND_COMMANDS = [
   ['standingLight', 'light', {}],

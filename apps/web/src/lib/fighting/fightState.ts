@@ -146,9 +146,7 @@ export function nextFightRound(state: FightState): FightState {
             preserveLifespan(
               createFighter({
                 id:
-                  state.halkSoulOrigins?.player ??
-                  state.player.halkenburgOrigin ??
-                  state.player.id,
+                  state.halkSoulOrigins?.player ?? state.player.halkenburgOrigin ?? state.player.id,
                 x: 22,
                 facing: 1,
                 health: format.health,

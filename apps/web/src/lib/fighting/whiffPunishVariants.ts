@@ -1,3 +1,4 @@
+import type { CombatWhiffPractice } from './combatWhiffPractice'
 import type { CombatRouteSetup } from './combatRouteSetup'
 import type { FighterId, MoveSlot } from './types'
 
@@ -5,6 +6,7 @@ interface WhiffPunishVariant {
   slot: Extract<MoveSlot, 'neutralSpecial' | 'forwardSpecial' | 'downSpecial' | 'finisher'>
   via?: MoveSlot
   setup?: CombatRouteSetup
+  whiff?: CombatWhiffPractice
   requirement: readonly [string, string]
 }
 
@@ -50,6 +52,7 @@ export const WHIFF_PUNISH_VARIANTS: Partial<Record<FighterId, WhiffPunishVariant
     slot: 'finisher',
     via: 'standingHeavy',
     setup: 'true-form',
+    whiff: { opponent: 'chrollo', gap: 10.75 },
     requirement: [
       'Biscuit révèle son corps naturel avant l’exercice. Le coup final exige cette forme et 55 points d’aura.',
       'Biscuit reveals her natural body before the drill. The finisher requires that form and 55 aura.',

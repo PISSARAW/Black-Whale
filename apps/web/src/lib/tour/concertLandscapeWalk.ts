@@ -42,4 +42,8 @@ export class ConcertLandscapeWalk {
   get floor(): number {
     return concertLandscapeHeight(this.spec, this.at)
   }
+
+  get landscape(): ConcertLandscapeSpec {
+    return this.spec
+  }
 }

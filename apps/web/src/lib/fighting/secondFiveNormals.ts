@@ -1,3 +1,4 @@
+import { biscuitNaturalStandingTimeline } from './standingStrikeMotion'
 import { addPoses, scalePose, type FightPose } from './fightPose'
 import { isBiscuitTrueForm } from './biscuitForm'
 import { THIRD_FIVE_NORMAL_STYLES } from './thirdFiveNormals'
@@ -335,6 +336,8 @@ export function biscuitNaturalNormal(
   timeline: MoveTimeline,
 ): MoveTimeline {
   if (!isBiscuitTrueForm(fighter) || !hasPersonalNormal(fighter.id, slot)) return timeline
+  const standing = biscuitNaturalStandingTimeline(slot)
+  if (standing) return standing
   const cached = NATURAL_CACHE.get(timeline)
   if (cached) return cached
   const heavier = timeline.map((key) => accentKey(key, NATURAL))

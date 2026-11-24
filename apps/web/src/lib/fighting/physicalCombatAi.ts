@@ -30,6 +30,11 @@ const AERIAL_PLANS: ReadonlySet<FighterId> = new Set([
   'tserriednich',
   'leorio',
   'hanzo',
+  'kurapika',
+  'hisoka',
+  'benjamin',
+  'biscuit',
+  'franklin',
 ])
 
 const PLANS: Partial<Record<FighterId, ArsenalAiPlan>> = {
@@ -199,6 +204,27 @@ const PLANS: Partial<Record<FighterId, ArsenalAiPlan>> = {
     return gap < 7 && roll < 0.5
       ? ['standingLight', 'standingHeavy']
       : ['forwardLight', 'backHeavy']
+  },
+  kurapika: ({ gap, state }) => {
+    if (state.opponent.y > 0) return ['airLight', 'airHeavy']
+    return gap < 8 ? ['standingLight', 'standingHeavy'] : ['forwardLight', 'backHeavy']
+  },
+  hisoka: ({ gap, state }) => {
+    if (state.opponent.y > 0) return ['airHeavy', 'airLight']
+    return gap < 8 ? ['standingLight', 'lowHeavy'] : ['backHeavy', 'forwardHeavy']
+  },
+  benjamin: ({ gap, state }) => {
+    if (state.opponent.y > 0) return ['airLight', 'airHeavy']
+    return gap < 8 ? ['standingHeavy', 'standingLight'] : ['forwardHeavy', 'forwardLight']
+  },
+  biscuit: ({ gap, state }) => {
+    if (state.opponent.y > 0) return ['airLight', 'airHeavy']
+    if (state.opponent.biscuitTrueForm) return ['standingHeavy', 'forwardHeavy']
+    return gap < 7 ? ['standingLight', 'lowLight'] : ['backHeavy', 'forwardLight']
+  },
+  franklin: ({ gap, state }) => {
+    if (state.opponent.y > 0) return ['airHeavy', 'airLight']
+    return gap < 9 ? ['standingLight', 'lowHeavy'] : ['forwardLight', 'standingHeavy']
   },
 }
 

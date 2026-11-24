@@ -24,7 +24,7 @@ export function buildConcertMeadow(THREE: typeof Three, spec: ConcertLandscapeSp
   const far = new THREE.InstancedMesh(distantDaisy(THREE), distantMaterial(THREE), 10000)
   far.name = 'concert-distant-daisies'
   distribute(THREE, far, { spec, radius: 78, minimum: 17 })
-  const wild = new THREE.InstancedMesh(wildflower(THREE), wildflowerMaterial(THREE), 1400)
+  const wild = new THREE.InstancedMesh(wildBloom(THREE), flowerMaterial(THREE), 1400)
   wild.name = 'concert-mixed-wildflowers'
   distribute(THREE, wild, { spec, radius: 58, minimum: 1.4 })
   bindWind(wild)
@@ -99,39 +99,24 @@ function bindWind(mesh: Three.InstancedMesh): void {
   }
 }
 
-function wildflower(THREE: typeof Three): Three.BufferGeometry {
-  const geometry = new THREE.BufferGeometry()
-  geometry.setAttribute(
-    'position',
-    new THREE.Float32BufferAttribute(
-      [
-        [-0.08, 0, 0],
-        [0.08, 0, 0],
-        [0.08, 0.42, 0],
-        [-0.08, 0, 0],
-        [0.08, 0.42, 0],
-        [-0.08, 0.42, 0],
-        [0, 0, -0.08],
-        [0, 0, 0.08],
-        [0, 0.42, 0.08],
-        [0, 0, -0.08],
-        [0, 0.42, 0.08],
-        [0, 0.42, -0.08],
-      ].flat(),
-      3,
-    ),
-  )
-  return geometry
-}
-
-function wildflowerMaterial(THREE: typeof Three): Three.MeshBasicMaterial {
-  const material = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide })
-  material.name = 'concert-wildflower-colours'
-  return material
+function wildBloom(THREE: typeof Three): Three.BufferGeometry {
+  const into = new BanquetDetailBuilder(THREE)
+  into.add(new THREE.PlaneGeometry(0.014, 0.33), {
+    at: [0, 0.165, 0],
+    colour: 0x86a064,
+  })
+  const bloom = new THREE.CircleGeometry(0.075, 5).rotateX(-Math.PI / 2)
+  into.add(bloom, { at: [0, 0.33, 0], colour: 0xfff8ed })
+  const mesh = into.finish().children[0] as Three.Mesh
+  ;(mesh.material as Three.Material).dispose()
+  return mesh.geometry
 }
 
 function grassBlade(THREE: typeof Three): Three.BufferGeometry {
-  const geometry = new THREE.PlaneGeometry(0.07, 0.48, 1, 2)
+  const geometry = new THREE.PlaneGeometry(0.07, 0.48)
+  const vertices = geometry.getAttribute('position')
+  for (let i = 0; i < vertices.count; i++)
+    vertices.setX(i, (vertices.getX(i) * (0.25 - vertices.getY(i))) / 0.49)
   geometry.translate(0, 0.24, 0)
   return geometry
 }

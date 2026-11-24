@@ -1,3 +1,4 @@
+import { WAVE_SEVEN_STANDING_STRIKES } from './standingStrikesWaveSeven'
 import { WAVE_SIX_STANDING_STRIKES } from './standingStrikesWaveSix'
 import { WAVE_FIVE_STANDING_STRIKES } from './standingStrikesWaveFive'
 import { WAVE_FOUR_STANDING_STRIKES } from './standingStrikesWaveFour'
@@ -18,7 +19,9 @@ export interface StandingStrike {
 }
 
 /** Offsets from each fighter's own guard; the supporting leg is authored with the strike. */
-export const STANDING_STRIKES: Partial<Record<FighterId, Record<StandingSlot, StandingStrike>>> = {
+export const STANDING_STRIKES: Partial<
+  Record<FighterId, Partial<Record<StandingSlot, StandingStrike>>>
+> = {
   mizaistom: {
     standingLight: {
       support: 'rear',
@@ -343,4 +346,5 @@ export const STANDING_STRIKES: Partial<Record<FighterId, Record<StandingSlot, St
   ...WAVE_FOUR_STANDING_STRIKES,
   ...WAVE_FIVE_STANDING_STRIKES,
   ...WAVE_SIX_STANDING_STRIKES,
+  ...WAVE_SEVEN_STANDING_STRIKES,
 }

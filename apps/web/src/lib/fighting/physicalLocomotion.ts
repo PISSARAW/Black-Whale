@@ -1,3 +1,9 @@
+import { WAVE_SEVEN_DEXTERITY_MOVEMENT } from './physicalLocomotionWaveSevenDexterity'
+import {
+  BISCUIT_NATURAL_MOVEMENT,
+  WAVE_SEVEN_POWER_MOVEMENT,
+} from './physicalLocomotionWaveSevenPower'
+import { isBiscuitTrueForm } from './biscuitForm'
 import { WAVE_SIX_WEAPON_MOVEMENT } from './physicalLocomotionWaveSixWeapons'
 import { WAVE_SIX_MARTIAL_MOVEMENT } from './physicalLocomotionWaveSixMartial'
 import { WAVE_FIVE_HANDS_MOVEMENT } from './physicalLocomotionWaveFiveHands'
@@ -11,9 +17,9 @@ import { COVERING_MOVEMENT } from './physicalLocomotionCounters'
 import { WAVE_TWO_OBSERVATION_MOVEMENT } from './physicalLocomotionWaveTwo'
 import { WAVE_TWO_COUNTER_MOVEMENT } from './physicalLocomotionWaveTwoCounters'
 import type { FightPose } from './fightPose'
-import type { FighterId } from './types'
+import type { ArcadeFighter, FighterId } from './types'
 
-type MotionBeats = [push: FightPose, travel: FightPose, brake: FightPose]
+export type MotionBeats = [push: FightPose, travel: FightPose, brake: FightPose]
 
 export interface PhysicalLocomotion {
   walk: WalkStyle
@@ -339,4 +345,10 @@ export const PHYSICAL_LOCOMOTION: Partial<Record<FighterId, PhysicalLocomotion>>
   ...WAVE_FIVE_HANDS_MOVEMENT,
   ...WAVE_SIX_WEAPON_MOVEMENT,
   ...WAVE_SIX_MARTIAL_MOVEMENT,
+  ...WAVE_SEVEN_DEXTERITY_MOVEMENT,
+  ...WAVE_SEVEN_POWER_MOVEMENT,
+}
+
+export function physicalLocomotionOf(fighter: ArcadeFighter): PhysicalLocomotion | undefined {
+  return isBiscuitTrueForm(fighter) ? BISCUIT_NATURAL_MOVEMENT : PHYSICAL_LOCOMOTION[fighter.id]
 }

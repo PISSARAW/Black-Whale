@@ -146,6 +146,16 @@ const DIRECTIONS: Record<string, Partial<MangaLikeness>> = {
     hair: 'melody-long',
   },
   theta: { eyes: 'almond', cheek: 0.157, jaw: 0.078, brow: 0.8 },
+  borksen: {
+    eyes: 'doll',
+    cheek: 0.158,
+    jaw: 0.073,
+    chin: 0.19,
+    brow: 0.55,
+    nose: 0.85,
+    mouth: 0.052,
+    hair: 'flick-bob',
+  },
   'hinrigh-biganduffno': {
     eyes: 'round',
     jaw: 0.085,

@@ -15,6 +15,7 @@ import {
   addHalkenburgPinstripeSuit,
   addBeyondRobe,
   addFurykovPuffer,
+  addBorksenKakinUniform,
 } from './mangaRoyalMilitaryClothes'
 import {
   addHinrighStripedJacket,
@@ -212,6 +213,7 @@ const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
   'beyond-netero': addBeyondRobe,
   furykov: addFurykovPuffer,
   'prince-benjamin': addFurykovPuffer,
+  borksen: addBorksenKakinUniform,
   'franklin-bordeau': addFranklinOveralls,
   'bonolenov-ndongo': addMangaBodyBandages,
 }

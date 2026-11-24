@@ -1011,6 +1011,30 @@
       "note": "Mince, cheveux plaqués à raie nette. À confirmer."
     },
     {
+      "id": "borksen",
+      "body": { "build": "average", "height": 0.98, "frame": "adult" },
+      "head": { "face": "round", "hairStyle": "bob", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Référence manga fournie par le mainteneur le 2026-11-24 ; palette claire choisie pour la planche en noir et blanc.",
+        "skin": "0xe8cdb1",
+        "hair": "0xd7c7a6",
+        "attire": {
+          "jacket": "0x3f4856",
+          "shirt": "0xe9e5da",
+          "trousers": "0x303844",
+          "accent": "0xa9a58f"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-394", "ch-407", "ch-408", "ch-409", "ch-410"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : grands yeux sombres, cheveux clairs sous les épaules avec les pointes recourbées vers l’extérieur, frange souple et uniforme standard de soldat kakin à col montant zippé."
+    },
+    {
       "id": "babimyna",
       "body": { "build": "broad", "height": 1.02, "frame": "adult" },
       "head": { "face": "square", "hairStyle": "short", "expression": "severe" },

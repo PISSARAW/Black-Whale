@@ -12,6 +12,7 @@ import { createFightState } from '../fighting/fightState'
 import { addBonolenovBattleArmor } from './bonolenovBattleArmor'
 import { emptyBattleCantabile } from '../fighting/battleCantabileTypes'
 import { fightBodyMotion } from '../fighting/fightBodyMotion'
+import { mangaLikeness } from './mangaLikeness'
 const glow = (color: number, opacity: number) =>
   new THREE.MeshBasicMaterial({ color, opacity, transparent: opacity < 1 })
 function seen(id: string): HumanLook {
@@ -35,6 +36,24 @@ function mesh(root: THREE.Object3D, name: string) {
   return node as THREE.Mesh
 }
 describe('manga cast shared by the visit and Fighting', () => {
+  it('draws Borksen from the supplied manga reference', () => {
+    const appearance = seen('borksen')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'borksen',
+      hairStyle: 'bob',
+      clothing: 'uniform',
+    })
+    expect(look).toMatchObject({ eyes: 'doll', hair: 'flick-bob' })
+    expect(mesh(model.root, 'borksen-uniform-zipper')).toBeTruthy()
+    expect(mesh(model.root, 'borksen-standing-collar')).toBeTruthy()
+    const hair = model.root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh
+    hair.geometry.computeBoundingBox()
+    expect(hair.geometry.boundingBox!.min.y).toBeLessThan(-0.1)
+    expect(hair.geometry.boundingBox!.max.x).toBeGreaterThan(0.19)
+  })
   it('shares Salé-salé’s round face, smile, right-ear rings and light robe with Clash', () => {
     const common = buildHumanFigure({ THREE, glow, seen: seen('prince-salesale') })
     const fighter = createFightState('salesale', 'hisoka').player

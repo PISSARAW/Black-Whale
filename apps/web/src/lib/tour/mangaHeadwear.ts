@@ -5,6 +5,7 @@ import { addMizaistomHead } from './mangaMizaistomHead'
 import { addHunterHeadDetails } from './mangaHunterDetails'
 import type { Group } from 'three'
 import type { HumanHeadBuild } from './humanHead'
+import { addDogmanMask } from './mangaDogman'
 
 export function addMangaHeadwear(build: HumanHeadBuild, head: Group): void {
   const id = build.profile.likeness
@@ -12,6 +13,7 @@ export function addMangaHeadwear(build: HumanHeadBuild, head: Group): void {
   addMizaistomHead(build, head)
   addCluckHeaddress(build, head)
   addSaiyuHead(build, head)
+  addDogmanMask(build, head)
   if (id === 'feitan-portor') addFeitanScarf(build, head)
   if (id === 'chrollo-lucilfer') {
     const { THREE, geometry, glow } = build

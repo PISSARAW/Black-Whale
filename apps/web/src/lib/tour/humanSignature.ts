@@ -18,12 +18,12 @@ type Geometry = (THREE: Three, key: string, make: () => BufferGeometry) => Buffe
  * — the whole value of "Camilla is the one with the tiara" is that nobody else
  * aboard may wear one.
  *
- * Twenty-one pieces and two garments, all procedural, all through the shared
+ * Twenty-three pieces and two garments, all procedural, all through the shared
  * geometry cache, none of them a texture: Chrollo's cross and Hisoka's star are
  * flat meshes exactly as the eyes have always been (§3).
  *
  * Kept out of `humanCostume.ts` — ADR-005 §4-P3 — because that file is at four
- * hundred and sixty-eight lines and holds two complete costumes; twenty-one
+ * hundred and sixty-eight lines and holds two complete costumes; twenty-three
  * more pieces would put it past the five hundred ADR-002 allows, and would mix
  * "what this person wears" with "what this person is".
  */
@@ -70,6 +70,45 @@ const PIECES: Record<Signature, Piece> = {
         at: [side * 0.14, 0.02, 0.12],
       })
     }
+  },
+
+  'glasses-rectangular': ({ THREE, head, paint }) => {
+    for (const side of [-1, 1]) {
+      head({
+        key: 'sig:lens-rectangular',
+        make: () => {
+          const rim = new THREE.Shape()
+          rim.moveTo(-0.043, 0.029)
+          rim.lineTo(0.043, 0.029)
+          rim.lineTo(0.039, -0.027)
+          rim.lineTo(-0.039, -0.027)
+          rim.closePath()
+          const opening = new THREE.Path()
+          opening.moveTo(-0.035, 0.021)
+          opening.lineTo(-0.032, -0.019)
+          opening.lineTo(0.032, -0.019)
+          opening.lineTo(0.035, 0.021)
+          opening.closePath()
+          rim.holes.push(opening)
+          return new THREE.ShapeGeometry(rim)
+        },
+        material: paint.ink,
+        at: [side * 0.066, 0.018, 0.191],
+        name: 'signature-glasses-rectangular',
+      })
+      head({
+        key: 'sig:rectangular-temple',
+        make: () => new THREE.BoxGeometry(0.008, 0.008, 0.13),
+        material: paint.ink,
+        at: [side * 0.142, 0.021, 0.125],
+      })
+    }
+    head({
+      key: 'sig:rectangular-bridge',
+      make: () => new THREE.BoxGeometry(0.045, 0.008, 0.008),
+      material: paint.ink,
+      at: [0, 0.022, 0.193],
+    })
   },
 
   tiara: ({ THREE, head, paint }) => {

@@ -20,6 +20,7 @@ import { addZoldyckLimbClothes } from './mangaZoldyckLimbs'
 import { addMangaReferenceLimbs } from './mangaReferenceLimbs'
 import { addCamillaSleeves } from './mangaCamillaSleeves'
 import { kurapikaShoeGeometry } from './kurapikaGeometry'
+import { shapeDogmanLimbs } from './mangaDogman'
 
 function machi(build: HumanLimbsBuild, limbs: HumanLimbs) {
   const { THREE, geometry, profile, glow } = build
@@ -137,6 +138,7 @@ export function shapeMangaLimbs(build: HumanLimbsBuild, limbs: HumanLimbs): void
   addCluckLimbCostume(build, limbs)
   addSaiyuLimbs(build, limbs)
   addFeitanBoots(build, limbs)
+  if (profile.likeness === 'dogman') shapeDogmanLimbs(build, limbs)
   REFERENCE_LIMBS[profile.likeness]?.(build, limbs)
 }
 

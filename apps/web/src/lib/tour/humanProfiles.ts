@@ -71,6 +71,7 @@ export const ATTIRE = [
 export const SIGNATURES = [
   'glasses-round',
   'glasses-thin',
+  'glasses-rectangular',
   'tiara',
   'crown',
   'beard-full',

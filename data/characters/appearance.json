@@ -1035,6 +1035,102 @@
       "note": "Référence fournie : grands yeux sombres, cheveux clairs sous les épaules avec les pointes recourbées vers l’extérieur, frange souple et uniforme standard de soldat kakin à col montant zippé."
     },
     {
+      "id": "kaiser",
+      "body": { "build": "average", "height": 1.05, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; costume sombre et palette neutre choisis pour les planches en noir et blanc.",
+        "skin": "0xd8b49a",
+        "hair": "0x17191d",
+        "attire": {
+          "jacket": "0x242830",
+          "shirt": "0xeeeae1",
+          "trousers": "0x20242b",
+          "accent": "0x17191d"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["glasses-rectangular"],
+      "verified": {
+        "chapterIds": ["ch-372", "ch-381", "ch-400"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : homme légèrement plus grand que la moyenne, gabarit moyen, cheveux sombres plaqués en arrière avec raie latérale, sourcils arqués, lunettes rectangulaires à monture complète, costume-cravate du Bureau de la Justice et expression volontairement impassible."
+    },
+    {
+      "id": "sarahell",
+      "body": { "build": "broad", "height": 1.08, "frame": "adult", "shoulders": 1.15 },
+      "head": { "face": "square", "hairStyle": "spiked", "expression": "hostile" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux clairs et uniforme sombre interprétés depuis les planches en noir et blanc.",
+        "skin": "0xd8b095",
+        "hair": "0xcdbd98",
+        "attire": {
+          "jacket": "0x343942",
+          "shirt": "0xe5e1d8",
+          "trousers": "0x292e36",
+          "accent": "0x9d895d"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-389", "ch-411"],
+        "status": "confirmed"
+      },
+      "note": "Apparence principale : persona de garde imposante, cheveux clairs courts hérissés vers sa gauche, eyeliner aux coins supérieurs des yeux et plis nasogéniens accentués par la tension volontaire du visage, avec l’uniforme des gardes personnels de Camilla. Le visage véritable, jeune, doux et androgyne, ainsi que la perruque claire ondulée, les lentilles sombres, le maquillage et l’uniforme de domestique noir à tablier blanc sont des variantes de scène de l’infiltration de la chambre 1014."
+    },
+    {
+      "id": "maor",
+      "body": { "build": "slim", "height": 1.12, "frame": "adult", "shoulders": 0.95 },
+      "head": { "face": "square", "hairStyle": "bowl", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; peau claire, cheveux grisonnants clairs et costume noir interprétés depuis les planches monochromes.",
+        "skin": "0xe1c4a8",
+        "hair": "0xb8ae9c",
+        "attire": {
+          "jacket": "0x202229",
+          "shirt": "0xeee9df",
+          "trousers": "0x1c1e24",
+          "accent": "0x17191e"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-363"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : garde royal âgé, grand et mince, peau claire, menton carré, coupe au bol courte séparée au centre, front et contour des yeux fortement ridés, joues creusées, costume noir, chemise claire et cravate sombre."
+    },
+    {
+      "id": "dogman",
+      "body": { "build": "broad", "height": 1.15, "frame": "adult", "shoulders": 1.28 },
+      "head": { "face": "square", "hairStyle": "long", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; masque et chemise blancs, cheveux, bracelets, pantalon et chaussures noirs établis par les planches monochromes.",
+        "skin": "0xc98f69",
+        "hair": "0x17191d",
+        "attire": {
+          "jacket": "0xeeeae1",
+          "shirt": "0xeeeae1",
+          "trousers": "0x202229",
+          "accent": "0x17191d"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-378", "ch-394"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : homme très grand et extrêmement musclé, longs cheveux noirs, masque blanc de chien à oreilles pointues, grands yeux ronds, museau ponctué, truffe noire, dents triangulaires et kanji 犬 sur le front. Il porte un tee-shirt blanc à manches courtes, des bracelets noirs, un pantalon noir et des chaussures de sport."
+    },
+    {
       "id": "babimyna",
       "body": { "build": "broad", "height": 1.02, "frame": "adult" },
       "head": { "face": "square", "hairStyle": "short", "expression": "severe" },

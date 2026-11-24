@@ -104,6 +104,7 @@ export const APPEARANCE_ATTIRE = [
 export const APPEARANCE_SIGNATURES = [
   'glasses-round',
   'glasses-thin',
+  'glasses-rectangular',
   'tiara',
   'crown',
   'beard-full',

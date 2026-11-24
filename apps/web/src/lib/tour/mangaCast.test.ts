@@ -54,6 +54,109 @@ describe('manga cast shared by the visit and Fighting', () => {
     expect(hair.geometry.boundingBox!.min.y).toBeLessThan(-0.1)
     expect(hair.geometry.boundingBox!.max.x).toBeGreaterThan(0.19)
   })
+  it('draws Kaiser from the supplied Justice Bureau references', () => {
+    const appearance = seen('kaiser')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'kaiser',
+      build: 'average',
+      height: 1.05,
+      hairStyle: 'slicked-back',
+      clothing: 'suit',
+      expression: 'neutral',
+      signatures: ['glasses-rectangular'],
+    })
+    expect(look).toMatchObject({ eyes: 'narrow', hair: 'luini-slick' })
+    expect(model.root.getObjectByName('manga-tie')).toBeTruthy()
+    const glasses: THREE.Object3D[] = []
+    const brows: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'signature-glasses-rectangular') glasses.push(node)
+      if (node.name.startsWith('kaiser-arched-brow-')) brows.push(node)
+    })
+    expect(glasses).toHaveLength(2)
+    expect(brows).toHaveLength(4)
+    expect(model.root.getObjectByName('kaiser-combed-hair-lines')).toBeTruthy()
+  })
+  it('draws Sarahell’s imposing guardian persona from the supplied references', () => {
+    const appearance = seen('sarahell')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'sarahell',
+      build: 'broad',
+      height: 1.08,
+      shoulders: 1.15,
+      face: 'square',
+      hairStyle: 'spiked',
+      clothing: 'uniform',
+      expression: 'hostile',
+    })
+    expect(look).toMatchObject({ eyes: 'round', hair: 'sarahell-spikes' })
+    const eyeliner: THREE.Object3D[] = []
+    const folds: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'sarahell-outer-eyeliner') eyeliner.push(node)
+      if (node.name === 'sarahell-nasolabial-fold') folds.push(node)
+    })
+    expect(eyeliner).toHaveLength(2)
+    expect(folds).toHaveLength(2)
+    const hair = model.root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh
+    hair.geometry.computeBoundingBox()
+    expect(hair.geometry.boundingBox!.max.x).toBeGreaterThan(0.23)
+  })
+  it('draws Maor as the tall elderly Royal Bodyguard in the supplied references', () => {
+    const appearance = seen('maor')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'maor',
+      build: 'slim',
+      height: 1.12,
+      shoulders: 0.95,
+      face: 'square',
+      hairStyle: 'bowl',
+      clothing: 'suit',
+      expression: 'severe',
+    })
+    expect(look).toMatchObject({ eyes: 'heavy', hair: 'maor-parted-bowl' })
+    expect(model.root.getObjectByName('manga-tie')).toBeTruthy()
+    expect(model.root.getObjectByName('maor-age-lines')).toBeTruthy()
+    const hair = model.root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh
+    hair.geometry.computeBoundingBox()
+    expect(hair.geometry.boundingBox!.min.y).toBeLessThan(-0.03)
+  })
+  it('draws Dogman’s muscular build, dog mask and street clothes from the references', () => {
+    const appearance = seen('dogman')
+    const profile = humanProfile(appearance)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'dogman',
+      build: 'broad',
+      height: 1.15,
+      shoulders: 1.28,
+      hairStyle: 'long',
+      clothing: 'civilian',
+    })
+    expect(model.root.getObjectByName('dogman-dog-mask')).toBeTruthy()
+    expect(model.root.getObjectByName('dogman-kanji-dog')).toBeTruthy()
+    expect(model.root.getObjectByName('dogman-shirt-neckline')).toBeTruthy()
+    const ears: THREE.Object3D[] = []
+    const wristbands: THREE.Object3D[] = []
+    const laces: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'dogman-mask-ear') ears.push(node)
+      if (node.name === 'dogman-black-wristband') wristbands.push(node)
+      if (node.name === 'dogman-sneaker-laces') laces.push(node)
+    })
+    expect(ears).toHaveLength(2)
+    expect(wristbands).toHaveLength(2)
+    expect(laces).toHaveLength(2)
+  })
   it('shares Salé-salé’s round face, smile, right-ear rings and light robe with Clash', () => {
     const common = buildHumanFigure({ THREE, glow, seen: seen('prince-salesale') })
     const fighter = createFightState('salesale', 'hisoka').player

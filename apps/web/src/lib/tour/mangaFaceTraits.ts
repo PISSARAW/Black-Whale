@@ -89,11 +89,144 @@ function franklin(build: HumanHeadBuild, head: Group) {
   }
 }
 
+function kaiserBrows(build: HumanHeadBuild, head: Group) {
+  const { THREE, geometry, materials, glow } = build
+  for (const side of [-1, 1]) {
+    const old = head.getObjectByName(side < 0 ? 'face-brow-left' : 'face-brow-right')
+    if (old) old.visible = false
+    for (const inner of [false, true]) {
+      const brow = new THREE.Mesh(
+        geometry(THREE, 'manga:kaiser-arched-brow', () => new THREE.PlaneGeometry(0.041, 0.006)),
+        materials.ink,
+      )
+      brow.name = `kaiser-arched-brow-${side}-${inner ? 'inner' : 'outer'}`
+      brow.position.set(side * (inner ? 0.05 : 0.084), 0.069, 0.176)
+      brow.rotation.z = side * (inner ? 0.42 : -0.42)
+      head.add(brow)
+    }
+  }
+  const comb = new THREE.Mesh(
+    geometry(THREE, 'manga:kaiser-combed-hair-lines', () => {
+      const lines = []
+      for (let i = 0; i < 6; i++)
+        lines.push(
+          new THREE.TubeGeometry(
+            new THREE.CatmullRomCurve3([
+              new THREE.Vector3(-0.105 + i * 0.028, 0.102, 0.17),
+              new THREE.Vector3(-0.065 + i * 0.033, 0.164, 0.16),
+              new THREE.Vector3(-0.01 + i * 0.035, 0.218, 0.09),
+            ]),
+            10,
+            0.0015,
+            4,
+            false,
+          ),
+        )
+      return mergeHumanDetails(lines)
+    }),
+    glow(0x55565c, 1),
+  )
+  comb.name = 'kaiser-combed-hair-lines'
+  head.add(comb)
+}
+
+function sarahellGuardianFace(build: HumanHeadBuild, head: Group) {
+  const { THREE, geometry, materials, glow } = build
+  for (const side of [-1, 1]) {
+    const liner = new THREE.Mesh(
+      geometry(THREE, 'manga:sarahell-outer-eyeliner', () => {
+        const shape = new THREE.Shape()
+        shape.moveTo(0, 0)
+        shape.lineTo(0.037, 0.006)
+        shape.lineTo(0.046, 0.016)
+        shape.lineTo(0.033, 0.011)
+        shape.closePath()
+        return new THREE.ShapeGeometry(shape)
+      }),
+      materials.ink,
+    )
+    liner.name = 'sarahell-outer-eyeliner'
+    liner.position.set(side * 0.047, 0.018, 0.181)
+    liner.scale.x = side
+    head.add(liner)
+
+    const fold = new THREE.Mesh(
+      geometry(
+        THREE,
+        'manga:sarahell-nasolabial-fold',
+        () =>
+          new THREE.TubeGeometry(
+            new THREE.CatmullRomCurve3([
+              new THREE.Vector3(0, 0.012, 0),
+              new THREE.Vector3(0.012, -0.006, 0.002),
+              new THREE.Vector3(0.017, -0.036, 0),
+              new THREE.Vector3(0.026, -0.06, -0.004),
+            ]),
+            10,
+            0.0018,
+            4,
+            false,
+          ),
+      ),
+      glow(0x765b50, 0.78),
+    )
+    fold.name = 'sarahell-nasolabial-fold'
+    fold.position.set(side * 0.026, -0.025, 0.177)
+    fold.scale.x = side
+    head.add(fold)
+  }
+}
+
+function maorAgeLines(build: HumanHeadBuild, head: Group) {
+  const { THREE, geometry, glow } = build
+  const lines = new THREE.Mesh(
+    geometry(THREE, 'manga:maor-age-lines', () => {
+      const parts = []
+      for (let i = 0; i < 3; i++)
+        parts.push(
+          new THREE.PlaneGeometry(0.087 - i * 0.01, 0.0022).translate(
+            0.012,
+            0.143 + i * 0.018,
+            0.176 - i * 0.004,
+          ),
+        )
+      for (const side of [-1, 1]) {
+        parts.push(
+          new THREE.PlaneGeometry(0.052, 0.0024)
+            .rotateZ(side * -0.15)
+            .translate(side * 0.076, 0.016, 0.18),
+        )
+        parts.push(
+          new THREE.PlaneGeometry(0.003, 0.072)
+            .rotateZ(side * -0.18)
+            .translate(side * 0.112, -0.06, 0.174),
+        )
+        parts.push(
+          new THREE.PlaneGeometry(0.003, 0.061)
+            .rotateZ(side * 0.22)
+            .translate(side * 0.052, -0.078, 0.18),
+        )
+      }
+      return mergeHumanDetails(parts)
+    }),
+    glow(0x775f54, 0.76),
+  )
+  lines.name = 'maor-age-lines'
+  head.add(lines)
+}
+
+const REFERENCE_FACES: Record<string, (build: HumanHeadBuild, head: Group) => void> = {
+  kaiser: kaiserBrows,
+  sarahell: sarahellGuardianFace,
+  maor: maorAgeLines,
+}
+
 export function addMangaFaceTraits(build: HumanHeadBuild, head: Group): void {
   const id = build.profile.likeness ?? ''
   if (id === 'hisoka' && build.profile.hairStyle !== 'bob') facePaint(build, head)
   if (id === 'melody') addMelodySoftFeatures(build, head)
   if (id === 'franklin-bordeau') franklin(build, head)
+  REFERENCE_FACES[id]?.(build, head)
   addMangaFacialHair(build, head)
   addBenjaminDetails(build, head)
   addUnderworldFaceDetails(build, head)

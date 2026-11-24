@@ -44,6 +44,8 @@ export interface MangaLikeness {
     | 'morena-long'
     | 'luzurus-puffs'
     | 'salesale-wave'
+    | 'sarahell-spikes'
+    | 'maor-parted-bowl'
 }
 
 // Geometry directions refine the catalogue's faces; no random face is assigned to an id.
@@ -155,6 +157,48 @@ const DIRECTIONS: Record<string, Partial<MangaLikeness>> = {
     nose: 0.85,
     mouth: 0.052,
     hair: 'flick-bob',
+  },
+  kaiser: {
+    eyes: 'narrow',
+    cheek: 0.157,
+    jaw: 0.104,
+    chin: 0.235,
+    brow: 0.8,
+    nose: 1.2,
+    mouth: 0.052,
+    hair: 'luini-slick',
+  },
+  sarahell: {
+    eyes: 'round',
+    cheek: 0.17,
+    jaw: 0.135,
+    chin: 0.21,
+    brow: 1.6,
+    nose: 1.2,
+    mouth: 0.07,
+    neck: 0.075,
+    hair: 'sarahell-spikes',
+  },
+  maor: {
+    eyes: 'heavy',
+    cheek: 0.153,
+    jaw: 0.128,
+    chin: 0.235,
+    brow: 1.35,
+    nose: 1.45,
+    mouth: 0.074,
+    neck: 0.054,
+    hair: 'maor-parted-bowl',
+  },
+  dogman: {
+    eyes: 'round',
+    cheek: 0.176,
+    jaw: 0.145,
+    chin: 0.225,
+    brow: 0.9,
+    nose: 1.1,
+    mouth: 0.07,
+    neck: 0.105,
   },
   'hinrigh-biganduffno': {
     eyes: 'round',

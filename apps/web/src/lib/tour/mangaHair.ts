@@ -128,6 +128,81 @@ function short(kit: MangaHairKit, height: number) {
   }
 }
 
+function sarahellSpikes(kit: MangaHairKit) {
+  cap(kit)
+  for (let i = 0; i < 18; i++) {
+    const angle = (i / 18) * Math.PI * 2
+    const x = Math.cos(angle) * 0.13
+    const z = Math.sin(angle) * 0.12
+    const front = z > 0.02
+    kit.lock({
+      width: front ? 0.031 : 0.038,
+      depth: front ? 0.012 : 0.021,
+      points: [
+        [x * 0.72, 0.16, z * 0.75],
+        [x, 0.205 - Math.abs(x) * 0.16, z],
+        [x + 0.055, 0.19 - Math.abs(x) * 0.22, z * 0.95],
+        [x + 0.105 + (i % 3) * 0.012, 0.165 - Math.abs(x) * 0.3, z * 0.9],
+      ],
+    })
+  }
+  for (let i = 0; i < 7; i++) {
+    const x = -0.105 + i * 0.026
+    kit.lock({
+      width: 0.026,
+      depth: 0.01,
+      points: [
+        [x, 0.225, 0.04],
+        [x + 0.035, 0.185, 0.135],
+        [x + 0.085, 0.14 - i * 0.004, 0.165],
+        [x + 0.135, 0.105 - i * 0.006, 0.172],
+      ],
+    })
+  }
+}
+
+function maorPartedBowl(kit: MangaHairKit) {
+  cap(kit)
+  kit.parts.push(
+    new kit.THREE.LatheGeometry(
+      [
+        new kit.THREE.Vector2(0.165, -0.015),
+        new kit.THREE.Vector2(0.184, 0.085),
+        new kit.THREE.Vector2(0.168, 0.17),
+      ],
+      28,
+      0.92,
+      Math.PI * 2 - 1.84,
+    ).scale(1, 1, 0.88),
+  )
+  for (const side of [-1, 1])
+    for (let i = 0; i < 6; i++) {
+      const x = 0.018 + i * 0.024
+      kit.lock({
+        width: 0.026,
+        depth: 0.011,
+        points: [
+          [side * 0.012, 0.22, 0.025 - i * 0.012],
+          [side * (x * 0.55), 0.18, 0.13],
+          [side * x, 0.12 - i * 0.005, 0.17],
+          [side * (x + 0.018), 0.035 - i * 0.009, 0.17 - i * 0.006],
+        ],
+      })
+    }
+  for (const side of [-1, 1])
+    for (let i = 0; i < 3; i++)
+      kit.lock({
+        width: 0.03,
+        depth: 0.014,
+        points: [
+          [side * 0.11, 0.19, -0.015 - i * 0.035],
+          [side * 0.17, 0.12, 0.02 - i * 0.04],
+          [side * 0.18, 0.045, 0.03 - i * 0.045],
+          [side * 0.175, -0.035 - i * 0.01, 0.025 - i * 0.045],
+        ],
+      })
+}
+
 function long(kit: MangaHairKit, length: number) {
   swept(kit, false)
   kit.parts.push(
@@ -172,6 +247,8 @@ function hairParts(build: HumanHeadBuild, face: BufferGeometry) {
   const style = look.hair === 'curtain' ? 'curtain' : profile.hairStyle
   const variants: Record<string, () => void> = {
     'salesale-wave': () => mangaSalesaleHair(kit),
+    'sarahell-spikes': () => sarahellSpikes(kit),
+    'maor-parted-bowl': () => maorPartedBowl(kit),
     'luzurus-puffs': () => mangaLuzurusHair(kit),
     'morena-long': () => mangaMorenaHair(kit),
     'marayam-crop': () => mangaMarayamCrop(kit),

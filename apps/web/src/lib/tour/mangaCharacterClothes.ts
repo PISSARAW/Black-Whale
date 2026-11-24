@@ -35,6 +35,7 @@ import { addMangaBodyBandages } from './mangaBandages'
 import { addMangaHoodie } from './mangaHood'
 import { addMangaWaistcoat } from './mangaWaistcoat'
 import { mergeHumanDetails } from './humanDetailGeometry'
+import { addDogmanShirt } from './mangaDogman'
 
 function machi(build: HumanClothesBuild) {
   const { THREE, geometry, figure, materials } = build
@@ -216,6 +217,7 @@ const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
   borksen: addBorksenKakinUniform,
   'franklin-bordeau': addFranklinOveralls,
   'bonolenov-ndongo': addMangaBodyBandages,
+  dogman: addDogmanShirt,
 }
 
 export function addMangaCharacterClothes(build: HumanClothesBuild): boolean {

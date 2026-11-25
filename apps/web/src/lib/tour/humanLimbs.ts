@@ -149,6 +149,7 @@ function buildLeg(build: HumanLimbsBuild, side: number): { leg: Group; knee: Gro
     material: prisonFootMaterial(seen, materials.skin, materials.dark),
     ink: materials.ink,
   })
+  shoe.name = side < 0 ? 'foot-left' : 'foot-right'
   shoe.position.set(0, -CANON.shin + SHOE_HEIGHT / 2, 0.05)
   knee.add(shoe)
   addShoeDetails(build, shoe)

@@ -18,6 +18,7 @@ import { buildHumanAura, nenState, type Glass } from './humanAura'
 import { animateHumanAura } from './humanAuraAnimation'
 import { auraLayersFor, type AuraSight } from './auraSight'
 import { firstPersonArms } from './humanFirstPerson'
+import { ensureHumanExtremityAnchors } from './humanExtremityAnchors'
 type Three = typeof import('three')
 export type HumanLook = Apparition & { kind: 'avatar' | 'combatant' }
 export interface HumanFigureBuild {
@@ -374,5 +375,6 @@ export function buildHumanFigure({
     animateAura(seconds)
   }
   finishHumanModel({ THREE, glow, model: { root }, profile })
+  ensureHumanExtremityAnchors(root)
   return { root, turns: figure, lod: { near: figure, far }, animate }
 }

@@ -30,6 +30,14 @@ import { addBalsamilcoScarAndAge } from './mangaBalsamilco'
 import { addBabimynaFadeAndEarpiece } from './mangaBabimyna'
 import { addVergeiAngularFaceAndHair } from './mangaVergei'
 import { addVincentShavenFaceAndEarpiece } from './mangaVincent'
+import { addSaquelleFace } from './mangaSaquelle'
+import { addOrauFaceAndEarpiece } from './mangaOrau'
+import { addKanjidolRoundFace } from './mangaKanjidol'
+import { addKakinAnnouncerCatFace } from './mangaKakinAnnouncer'
+import { addCleapatroEgyptianHeaddress } from './mangaCleapatro'
+import { addPeuckertFaceAndHair } from './mangaPeuckert'
+import { addSteinerHazelEyesAndHair } from './mangaSteiner'
+import { addWorioBaySquareFace } from './mangaWorioBay'
 
 export const MANGA_FACE_SIGNATURES = new Set([
   'lips-full',
@@ -257,6 +265,14 @@ const REFERENCE_FACES: Record<string, (build: HumanHeadBuild, head: Group) => vo
   babimyna: addBabimynaFadeAndEarpiece,
   vergei: addVergeiAngularFaceAndHair,
   vincent: addVincentShavenFaceAndEarpiece,
+  saquelle: addSaquelleFace,
+  orau: addOrauFaceAndEarpiece,
+  kanjidol: addKanjidolRoundFace,
+  'kakin-announcer': addKakinAnnouncerCatFace,
+  cleapatro: addCleapatroEgyptianHeaddress,
+  peuckert: addPeuckertFaceAndHair,
+  steiner: addSteinerHazelEyesAndHair,
+  'worio-bay': addWorioBaySquareFace,
 }
 
 export function addMangaFaceTraits(build: HumanHeadBuild, head: Group): void {

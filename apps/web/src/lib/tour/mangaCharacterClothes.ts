@@ -52,6 +52,8 @@ import { addBalsamilcoPrivateSoldierUniform } from './mangaBalsamilco'
 import { addBabimynaKakinUniform } from './mangaBabimyna'
 import { addVergeiBodyguardSuit } from './mangaVergei'
 import { addVincentKakinUniform } from './mangaVincent'
+import { addKakinAnnouncerPatternedDress } from './mangaKakinAnnouncer'
+import { addCleapatroStripedUniform } from './mangaCleapatro'
 
 function machi(build: HumanClothesBuild) {
   const { THREE, geometry, figure, materials } = build
@@ -215,6 +217,11 @@ const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
   babimyna: addBabimynaKakinUniform,
   vergei: addVergeiBodyguardSuit,
   vincent: addVincentKakinUniform,
+  saquelle: addFurykovPuffer,
+  orau: addFurykovPuffer,
+  kanjidol: addFurykovPuffer,
+  'kakin-announcer': addKakinAnnouncerPatternedDress,
+  cleapatro: addCleapatroStripedUniform,
   saiyu: addSaiyuCostume,
   cluck: addCluckFeatherCostume,
   gel: addGelScallopedTop,

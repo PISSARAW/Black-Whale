@@ -36,6 +36,294 @@ function mesh(root: THREE.Object3D, name: string) {
   return node as THREE.Mesh
 }
 describe('manga cast shared by the visit and Fighting', () => {
+  it('draws Saquelle tall and long-faced with small eyes, thick lips, stubble and temple veins', () => {
+    const appearance = seen('saquelle')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'saquelle',
+      build: 'average',
+      height: 1.08,
+      shoulders: 1.08,
+      face: 'narrow',
+      hairStyle: 'short',
+      clothing: 'uniform',
+      hair: 0xc7b586,
+    })
+    expect(look).toMatchObject({
+      eyes: 'round',
+      cheek: 0.135,
+      jaw: 0.09,
+      chin: 0.245,
+      mouth: 0.095,
+      neck: 0.085,
+    })
+    const eyes: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'saquelle-small-round-eye') eyes.push(node)
+    })
+    expect(eyes).toHaveLength(2)
+    expect(model.root.getObjectByName('saquelle-prominent-cheekbone-lines')).toBeTruthy()
+    expect(model.root.getObjectByName('saquelle-thick-lips')).toBeTruthy()
+    expect(model.root.getObjectByName('saquelle-chin-stubble')).toBeTruthy()
+    expect(model.root.getObjectByName('saquelle-visible-temple-veins')).toBeTruthy()
+    expect(model.root.getObjectByName('saquelle-puffer-zipper')).toBeTruthy()
+    expect(model.root.getObjectByName('saquelle-puffer-seams')).toBeTruthy()
+    expect(model.root.getObjectByName('saquelle-puffer-collar')).toBeTruthy()
+  })
+  it('draws Orau balding and broad with a left earpiece and full Kakin field uniform', () => {
+    const appearance = seen('orau')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'orau',
+      build: 'broad',
+      height: 1.04,
+      shoulders: 1.12,
+      face: 'square',
+      hairStyle: 'bald-crown',
+      clothing: 'uniform',
+      hair: 0x252429,
+    })
+    expect(look).toMatchObject({
+      eyes: 'heavy',
+      cheek: 0.17,
+      jaw: 0.15,
+      chin: 0.235,
+      nose: 1.65,
+      neck: 0.09,
+    })
+    expect(model.root.getObjectByName('orau-left-earpiece')).toBeTruthy()
+    expect(model.root.getObjectByName('orau-heavy-profile-folds')).toBeTruthy()
+    expect(model.root.getObjectByName('orau-bald-crown-shine')).toBeTruthy()
+    expect(model.root.getObjectByName('orau-puffer-zipper')).toBeTruthy()
+    expect(model.root.getObjectByName('orau-puffer-seams')).toBeTruthy()
+    expect(model.root.getObjectByName('orau-puffer-collar')).toBeTruthy()
+    const boots: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'orau-combat-boot-shaft') boots.push(node)
+    })
+    expect(boots).toHaveLength(2)
+  })
+  it('draws Kanjidol round-faced with small eyes, circular brows, moustache and chin beard', () => {
+    const appearance = seen('kanjidol')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'kanjidol',
+      build: 'broad',
+      height: 1.01,
+      shoulders: 1.14,
+      face: 'round',
+      hairStyle: 'short',
+      clothing: 'uniform',
+      hair: 0x202126,
+    })
+    expect(look).toMatchObject({
+      eyes: 'round',
+      cheek: 0.198,
+      jaw: 0.15,
+      chin: 0.18,
+      mouth: 0.072,
+      neck: 0.095,
+    })
+    const eyes: THREE.Object3D[] = []
+    const brows: THREE.Object3D[] = []
+    const boots: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'kanjidol-small-eye') eyes.push(node)
+      if (node.name === 'kanjidol-round-dark-brow') brows.push(node)
+      if (node.name === 'kanjidol-combat-boot-shaft') boots.push(node)
+    })
+    expect(eyes).toHaveLength(2)
+    expect(brows).toHaveLength(2)
+    expect(boots).toHaveLength(2)
+    expect(model.root.getObjectByName('kanjidol-dark-moustache-and-chin-beard')).toBeTruthy()
+    expect(model.root.getObjectByName('kanjidol-round-cheek-contours')).toBeTruthy()
+    expect(model.root.getObjectByName('kanjidol-puffer-zipper')).toBeTruthy()
+    expect(model.root.getObjectByName('kanjidol-puffer-seams')).toBeTruthy()
+    expect(model.root.getObjectByName('kanjidol-puffer-collar')).toBeTruthy()
+  })
+  it('draws the Kakin announcer with cat features and matching patterned dress and shoes', () => {
+    const appearance = seen('kakin-announcer')
+    const profile = humanProfile(appearance)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'kakin-announcer',
+      build: 'slim',
+      height: 1.02,
+      shoulders: 0.92,
+      face: 'narrow',
+      hairStyle: 'long',
+      clothing: 'civilian',
+      hair: 0x24242b,
+    })
+    const eyes: THREE.Object3D[] = []
+    const ears: THREE.Object3D[] = []
+    const bracelets: THREE.Object3D[] = []
+    const shoes: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'kakin-announcer-cat-eye') eyes.push(node)
+      if (node.name === 'kakin-announcer-cat-ear') ears.push(node)
+      if (node.name === 'kakin-announcer-wrist-bracelet') bracelets.push(node)
+      if (node.name === 'kakin-announcer-patterned-shoe') shoes.push(node)
+    })
+    expect(eyes).toHaveLength(2)
+    expect(ears).toHaveLength(2)
+    expect(bracelets).toHaveLength(2)
+    expect(shoes).toHaveLength(2)
+    expect(model.root.getObjectByName('kakin-announcer-long-patterned-dress')).toBeTruthy()
+    expect(model.root.getObjectByName('kakin-announcer-fitted-bodice')).toBeTruthy()
+    expect(model.root.getObjectByName('kakin-announcer-dress-swirl-pattern')).toBeTruthy()
+  })
+  it('draws Cleapatro lean with an Egyptian headdress and a light high-collared striped uniform', () => {
+    const appearance = seen('cleapatro')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'cleapatro',
+      build: 'slim',
+      height: 1.05,
+      shoulders: 0.94,
+      face: 'narrow',
+      hairStyle: 'hime',
+      clothing: 'uniform',
+      jacket: 0xe4dfd4,
+    })
+    expect(look).toMatchObject({
+      eyes: 'narrow',
+      cheek: 0.145,
+      jaw: 0.062,
+      chin: 0.225,
+      brow: 0.45,
+      nose: 1.25,
+    })
+    const brows: THREE.Object3D[] = []
+    const sidePanels: THREE.Object3D[] = []
+    const sleeveStripes: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'cleapatro-thin-long-brow') brows.push(node)
+      if (node.name === 'cleapatro-egyptian-side-panel') sidePanels.push(node)
+      if (node.name === 'cleapatro-black-sleeve-stripe') sleeveStripes.push(node)
+    })
+    expect(brows).toHaveLength(2)
+    expect(sidePanels).toHaveLength(2)
+    expect(sleeveStripes).toHaveLength(2)
+    expect(model.root.getObjectByName('cleapatro-straight-headdress-band')).toBeTruthy()
+    expect(model.root.getObjectByName('cleapatro-headdress-striations')).toBeTruthy()
+    expect(model.root.getObjectByName('cleapatro-light-high-collar')).toBeTruthy()
+    expect(model.root.getObjectByName('cleapatro-black-chest-stripe--1')).toBeTruthy()
+    expect(model.root.getObjectByName('cleapatro-black-chest-stripe-1')).toBeTruthy()
+  })
+  it('draws Peuckert stout and freckled with beady eyes, thick lips and a left-parted duty suit', () => {
+    const appearance = seen('peuckert')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'peuckert',
+      build: 'broad',
+      height: 0.98,
+      shoulders: 1.1,
+      face: 'round',
+      hairStyle: 'swept',
+      clothing: 'suit',
+      expression: 'tired',
+    })
+    expect(look).toMatchObject({
+      eyes: 'heavy',
+      cheek: 0.192,
+      jaw: 0.142,
+      nose: 1.35,
+      mouth: 0.09,
+      neck: 0.078,
+    })
+    const eyes: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'peuckert-beady-eye') eyes.push(node)
+    })
+    expect(eyes).toHaveLength(2)
+    expect(model.root.getObjectByName('peuckert-rumpole-nose')).toBeTruthy()
+    expect(model.root.getObjectByName('peuckert-thick-lips')).toBeTruthy()
+    expect(model.root.getObjectByName('peuckert-nose-and-cheek-freckles')).toBeTruthy()
+    expect(model.root.getObjectByName('peuckert-neatly-combed-left-part')).toBeTruthy()
+    expect(model.root.getObjectByName('manga-tie')).toBeTruthy()
+  })
+  it('draws Steiner tall and bespectacled with light-brown side-parted hair and hazel eyes', () => {
+    const appearance = seen('steiner')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'steiner',
+      build: 'slim',
+      height: 1.12,
+      shoulders: 0.98,
+      face: 'narrow',
+      hairStyle: 'swept',
+      clothing: 'suit',
+      hair: 0xa9825e,
+      signatures: ['glasses-rectangular'],
+    })
+    expect(look).toMatchObject({
+      eyes: 'round',
+      cheek: 0.148,
+      jaw: 0.074,
+      chin: 0.23,
+      nose: 1.55,
+    })
+    const glasses: THREE.Object3D[] = []
+    const hazelPupils: THREE.Mesh[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'signature-glasses-rectangular') glasses.push(node)
+      if (node.name === 'eye-pupil') hazelPupils.push(node as THREE.Mesh)
+    })
+    expect(glasses).toHaveLength(2)
+    expect(hazelPupils).toHaveLength(2)
+    for (const pupil of hazelPupils)
+      expect((pupil.material as THREE.MeshBasicMaterial).color.getHex()).toBe(0x8a6a3d)
+    expect(model.root.getObjectByName('steiner-clean-side-part')).toBeTruthy()
+    expect(model.root.getObjectByName('steiner-light-brown-combed-hair-lines')).toBeTruthy()
+    expect(model.root.getObjectByName('manga-tie')).toBeTruthy()
+  })
+  it('draws Worio Bay broad and square-jawed with prominent brows, a large nose and right-parted hair', () => {
+    const appearance = seen('worio-bay')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'worio-bay',
+      build: 'broad',
+      height: 1.04,
+      shoulders: 1.14,
+      face: 'square',
+      hairStyle: 'swept',
+      clothing: 'suit',
+      expression: 'severe',
+    })
+    expect(look).toMatchObject({
+      eyes: 'almond',
+      cheek: 0.178,
+      jaw: 0.17,
+      chin: 0.245,
+      brow: 1.8,
+      nose: 1.75,
+    })
+    const brows: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'worio-prominent-eyebrow') brows.push(node)
+    })
+    expect(brows).toHaveLength(2)
+    expect(model.root.getObjectByName('worio-large-angular-nose')).toBeTruthy()
+    expect(model.root.getObjectByName('worio-large-square-jaw-lines')).toBeTruthy()
+    expect(model.root.getObjectByName('worio-thick-side-parted-hair')).toBeTruthy()
+    expect(model.root.getObjectByName('worio-neatly-combed-right-part')).toBeTruthy()
+    expect(model.root.getObjectByName('manga-tie')).toBeTruthy()
+  })
   it('draws Vincent broad and shaven with a left earpiece and Kakin combat uniform', () => {
     const appearance = seen('vincent')
     const profile = humanProfile(appearance)

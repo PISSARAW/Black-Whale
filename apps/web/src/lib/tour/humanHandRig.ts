@@ -3,6 +3,11 @@ import type { Bone, BufferGeometry, Material, Mesh, Object3D, SkinnedMesh } from
 import type { HumanFigureBuild } from './humanFigure'
 import type { HumanProfile } from './humanProfiles'
 import type { HumanSide } from './humanExtremityAnchors'
+import {
+  handFamilyScale,
+  humanExtremityFamily,
+  usesSkinnedHands,
+} from './humanExtremityFamily'
 
 type Three = HumanFigureBuild['THREE']
 export type HumanHandPose = 'relaxed' | 'guard' | 'fist' | 'book' | 'pistol' | 'point'
@@ -28,13 +33,13 @@ const HIDDEN_MATERIALS = new WeakMap<Material, Material>()
 const FINGER_X = [-0.0285, -0.0095, 0.0095, 0.0285] as const
 const FINGER_LENGTHS = [0.044, 0.054, 0.05, 0.039] as const
 
-/** Install the close hand rig only on the two controlled hero pilots. */
+/** Install the close hand rig on declared likenesses that do not own bespoke hand geometry. */
 export function addHumanHandRigs(options: {
   THREE: Three
   root: Object3D
   profile: HumanProfile
 }): readonly HumanHandRig[] {
-  if (!['kurapika', 'hisoka'].includes(options.profile.likeness ?? '')) return []
+  if (!usesSkinnedHands(options.profile)) return []
   return (['left', 'right'] as const).map((side) => addHumanHandRig({ ...options, side }))
 }
 
@@ -62,6 +67,7 @@ function addHumanHandRig(options: {
   const mesh = new THREE.SkinnedMesh(handGeometry(THREE, side), material)
   mesh.name = `hand-skin-${side}`
   mesh.frustumCulled = false
+  mesh.scale.set(...handFamilyScale(humanExtremityFamily(options.profile)))
   hand.add(mesh)
   hand.updateMatrixWorld(true)
   const skeleton = new THREE.Skeleton(bones.all)
@@ -76,7 +82,8 @@ function addHumanHandRig(options: {
     pose: (pose, amount = 1) => poseHand(bones, pose, amount),
   }
   rig.pose('relaxed')
-  mesh.userData.humanHandRig = 'hero-pilot-v1'
+  mesh.userData.humanHandRig = 'roster-v1'
+  mesh.userData.extremityFamily = humanExtremityFamily(options.profile)
   mesh.userData.likeness = options.profile.likeness
   RIGS.set(hand, rig)
   return rig

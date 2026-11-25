@@ -2,6 +2,11 @@ import type { Bone, BufferGeometry, Group, Material, Mesh, Object3D, SkinnedMesh
 import type { HumanFigureBuild } from './humanFigure'
 import type { HumanProfile } from './humanProfiles'
 import type { HumanSide } from './humanExtremityAnchors'
+import {
+  footFamilyScale,
+  humanExtremityFamily,
+  usesSkinnedFeet,
+} from './humanExtremityFamily'
 
 type Three = HumanFigureBuild['THREE']
 export type HumanFootPose = 'flat' | 'pivot' | 'kick' | 'crouch' | 'land'
@@ -27,7 +32,7 @@ export function addHumanFootRigs(options: {
   root: Object3D
   profile: HumanProfile
 }): readonly HumanFootRig[] {
-  if (!['kurapika', 'hisoka'].includes(options.profile.likeness ?? '')) return []
+  if (!usesSkinnedFeet(options.profile)) return []
   return (['left', 'right'] as const).map((side) => addHumanFootRig({ ...options, side }))
 }
 
@@ -55,9 +60,11 @@ function addHumanFootRig(options: {
   foot.add(bones.ankle)
   const edge = new THREE.SkinnedMesh(geometry, edgeMaterial)
   edge.name = `foot-skin-edge-${side}`
-  edge.scale.set(1.025, 1.02, 1.025)
+  const scale = footFamilyScale(humanExtremityFamily(profile))
+  edge.scale.set(scale[0] * 1.025, scale[1] * 1.02, scale[2] * 1.025)
   const surface = new THREE.SkinnedMesh(geometry, surfaceMaterial)
   surface.name = `foot-skin-${side}`
+  surface.scale.set(...scale)
   foot.add(edge, surface)
   foot.updateMatrixWorld(true)
   const skeleton = new THREE.Skeleton(bones.all)
@@ -72,8 +79,9 @@ function addHumanFootRig(options: {
     pose: (pose, amount = 1) => poseFoot(bones, pose, amount),
   }
   rig.pose('flat')
-  foot.userData.skinnedFootRig = 'hero-pilot-v1'
+  foot.userData.skinnedFootRig = 'roster-v1'
   surface.userData.footwear = footwear
+  surface.userData.extremityFamily = humanExtremityFamily(profile)
   RIGS.set(foot, rig)
   return rig
 }

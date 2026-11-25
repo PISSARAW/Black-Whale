@@ -23,7 +23,7 @@ function appearance(identity: string): HumanLook {
   }
 }
 
-describe('hero skinned foot pilot', () => {
+describe('roster skinned feet', () => {
   it.each(['kurapika', 'hisoka'])('uses four bones and two bounded surfaces: %s', (identity) => {
     const model = buildHumanFigure({ THREE, glow, seen: appearance(identity) })
     for (const side of ['left', 'right'] as const) {
@@ -50,8 +50,8 @@ describe('hero skinned foot pilot', () => {
     expect(toe.position).toEqual(before)
   })
 
-  it('keeps non-pilot footwear procedural', () => {
+  it('rolls out to another declared likeness', () => {
     const model = buildHumanFigure({ THREE, glow, seen: appearance('chrollo-lucilfer') })
-    expect(humanFootRig(model.root.getObjectByName('foot-left')!)).toBeUndefined()
+    expect(humanFootRig(model.root.getObjectByName('foot-left')!)).toBeDefined()
   })
 })

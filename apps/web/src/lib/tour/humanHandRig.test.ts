@@ -23,7 +23,7 @@ function appearance(identity: string): HumanLook {
   }
 }
 
-describe('hero skinned hand pilot', () => {
+describe('roster skinned hands', () => {
   it.each(['kurapika', 'hisoka'])(
     'mounts sixteen bones and shared bounded skin: %s',
     (identity) => {
@@ -55,9 +55,10 @@ describe('hero skinned hand pilot', () => {
     expect(grip.position).toEqual(before)
   })
 
-  it('leaves non-pilot characters on the procedural hand', () => {
+  it('rolls out to another declared likeness and preserves Franklin finger cannons', () => {
     const model = buildHumanFigure({ THREE, glow, seen: appearance('chrollo-lucilfer') })
-    expect(humanHandRig(model.root.getObjectByName('hand-left')!)).toBeUndefined()
-    expect(model.root.getObjectByName('hand-skin-left')).toBeUndefined()
+    expect(humanHandRig(model.root.getObjectByName('hand-left')!)).toBeDefined()
+    const franklin = buildHumanFigure({ THREE, glow, seen: appearance('franklin-bordeau') })
+    expect(humanHandRig(franklin.root.getObjectByName('hand-left')!)).toBeUndefined()
   })
 })

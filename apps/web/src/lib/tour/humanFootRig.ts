@@ -22,6 +22,7 @@ export interface HumanFootRig {
   ball: Bone
   toe: Bone
   pose: (pose: HumanFootPose, amount?: number) => void
+  setDetailed: (detailed: boolean) => void
 }
 
 const RIGS = new WeakMap<Object3D, HumanFootRig>()
@@ -77,6 +78,11 @@ function addHumanFootRig(options: {
     edge,
     ...bones,
     pose: (pose, amount = 1) => poseFoot(bones, pose, amount),
+    setDetailed: (detailed) => {
+      edge.visible = detailed
+      surface.visible = detailed
+      meshes.forEach((mesh) => (mesh.visible = !detailed))
+    },
   }
   rig.pose('flat')
   foot.userData.skinnedFootRig = 'roster-v1'

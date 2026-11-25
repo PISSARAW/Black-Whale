@@ -25,6 +25,7 @@ export interface HumanHandRig {
   fingers: readonly FingerBones[]
   thumb: FingerBones
   pose: (pose: HumanHandPose, amount?: number) => void
+  setDetailed: (detailed: boolean) => void
 }
 
 const RIGS = new WeakMap<Object3D, HumanHandRig>()
@@ -80,6 +81,11 @@ function addHumanHandRig(options: {
     fingers: bones.fingers,
     thumb: bones.thumb,
     pose: (pose, amount = 1) => poseHand(bones, pose, amount),
+    setDetailed: (detailed) => {
+      hand.material = detailed ? hiddenMaterial(material) : material
+      mesh.visible = detailed
+      if (oldThumb) oldThumb.visible = !detailed
+    },
   }
   rig.pose('relaxed')
   mesh.userData.humanHandRig = 'roster-v1'

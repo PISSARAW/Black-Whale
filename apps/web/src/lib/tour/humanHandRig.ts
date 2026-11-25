@@ -213,9 +213,9 @@ function poseHand(bones: ReturnType<typeof handBones>, pose: HumanHandPose, amou
   const target = POSES[pose]
   bones.fingers.forEach((finger, index) => {
     const turns = pose === 'point' && index === 1 ? POSES.relaxed.fingers : target.fingers
-    rotateFinger(finger, turns, amount)
+    rotateFinger(finger, { turns, rest: POSES.relaxed.fingers, amount })
   })
-  rotateFinger(bones.thumb, target.thumb, amount)
+  rotateFinger(bones.thumb, { turns: target.thumb, rest: POSES.relaxed.thumb, amount })
 }
 
 const POSES: Record<
@@ -232,12 +232,20 @@ const POSES: Record<
 
 function rotateFinger(
   finger: FingerBones,
-  turns: readonly [number, number, number],
-  amount: number,
+  options: {
+    turns: readonly [number, number, number]
+    rest: readonly [number, number, number]
+    amount: number
+  },
 ): void {
-  finger.proximal.rotation.x = turns[0] * amount
-  finger.middle.rotation.x = turns[1] * amount
-  finger.distal.rotation.x = turns[2] * amount
+  const { turns, rest, amount } = options
+  finger.proximal.rotation.x = blend(rest[0], turns[0], amount)
+  finger.middle.rotation.x = blend(rest[1], turns[1], amount)
+  finger.distal.rotation.x = blend(rest[2], turns[2], amount)
+}
+
+function blend(from: number, to: number, amount: number): number {
+  return from + (to - from) * Math.min(1, Math.max(0, amount))
 }
 
 function namedBone(THREE: Three, name: string): Bone {

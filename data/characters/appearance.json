@@ -884,28 +884,28 @@
       },
       "head": {
         "face": "round",
-        "hairStyle": "ponytail",
+        "hairStyle": "bun",
         "expression": "neutral"
       },
       "colours": {
         "basis": "chosen",
-        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; palette choisie pour les tenues des planches en noir et blanc.",
+        "source": "Références manga fournies par le mainteneur le 2026-11-25, notamment le chapitre 366 ; cheveux clairs et costume sombre de garde royal interprétés depuis les planches monochromes.",
         "skin": "0xf3e2ce",
         "hair": "0xe6c96a",
         "attire": {
-          "jacket": "0xbc6c90",
+          "jacket": "0x292a31",
           "shirt": "0xf4ebdc",
-          "trousers": "0x5c3049",
-          "accent": "0x532c42"
+          "trousers": "0x292a31",
+          "accent": "0x202127"
         }
       },
-      "attire": "gown",
+      "attire": "suit",
       "signatures": [],
       "verified": {
         "chapterIds": ["ch-350", "ch-366"],
         "status": "confirmed"
       },
-      "note": "Référence fournie pour la forme compacte : frange droite, deux longues couettes et nœuds sombres, col et manches à volants, boléro contrasté et jupe à pans ornés. La vraie forme demeure réservée à la transformation explicite ; sa tenue et ses tresses suivent la référence fournie sans changer l’apparence compacte par défaut."
+      "note": "Références fournies pour la forme compacte à bord du Black Whale : petite silhouette et traits juvéniles, frange arrondie, cheveux relevés en un chignon lacé avec une longue mèche bouclée devant l’oreille, costume sombre de garde royal, chemise claire et cravate. La vraie forme musclée demeure réservée à la transformation explicite."
     },
     {
       "id": "hanzo",

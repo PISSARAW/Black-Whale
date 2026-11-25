@@ -1472,9 +1472,11 @@ describe('manga cast shared by the visit and Fighting', () => {
     expect(adult.root.getObjectByName('biscuit-true-form-crop-top')).toBeTruthy()
     expect(adult.root.getObjectByName('biscuit-petal-skirt')).toBeUndefined()
     const compact = buildFightFigure({ THREE, glow, fighter: base.player })
-    expect(compact.root.getObjectByName('biscuit-hair-ribbons')).toBeTruthy()
-    expect(compact.root.getObjectByName('biscuit-sleeve-frill')).toBeTruthy()
-    expect(compact.root.getObjectByName('biscuit-petal-skirt')).toBeTruthy()
+    expect(compact.root.getObjectByName('biscuit-laced-bun')).toBeTruthy()
+    expect(compact.root.getObjectByName('biscuit-bodyguard-cuff')).toBeTruthy()
+    expect(compact.root.getObjectByName('biscuit-royal-bodyguard-suit')).toBeTruthy()
+    expect(compact.root.getObjectByName('manga-tie')).toBeTruthy()
+    expect(compact.root.getObjectByName('biscuit-petal-skirt')).toBeUndefined()
     expect(compact.root.getObjectByName('biscuit-true-form-crop-top')).toBeUndefined()
     const disguised = buildFightFigure({
       THREE,

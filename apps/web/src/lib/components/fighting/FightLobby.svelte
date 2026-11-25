@@ -1,11 +1,12 @@
 <script lang="ts">
+  import type { FightSelectionMode } from '$lib/fighting/fightSetupDraft'
   import type { ReplayReviewActions } from '$lib/fighting/fightReplayReview'
   import { goto } from '$app/navigation'
   import { link } from '$lib/i18n'
   import type { FightScreen } from '$lib/fighting/fightNavigation'
   import type { FightEnvironment } from '$lib/fighting/fightEnvironment'
   import type { FightFormatId } from '$lib/fighting/formats'
-  import type { FightMode, FighterId, FightState } from '$lib/fighting/types'
+  import type { FighterId, FightState } from '$lib/fighting/types'
   import type { FightSide } from '$lib/fighting/types'
   import type { KameoPicks } from '$lib/fighting/kameos/state'
   import type { KameoId } from '$lib/fighting/kameos/types'
@@ -36,7 +37,7 @@
   export let opponent: FighterId
   export let environment: FightEnvironment
   export let format: FightFormatId
-  export let mode: FightMode
+  export let mode: FightSelectionMode
   export let controls: FightControls
   export let kameos: KameoPicks = {}
   export let onKameo: (side: FightSide, id?: KameoId) => void = () => {}
@@ -48,7 +49,7 @@
   export let onOpponent: (id: FighterId) => void
   export let onEnvironment: (next: FightEnvironment) => void
   export let onFormat: (id: FightFormatId) => void
-  export let onMode: (mode: FightMode) => void
+  export let onMode: (mode: FightSelectionMode) => void
   export let onLaunch: () => void
   export let onLesson: (id: LessonId) => void
   export let onPractice: (next: FightState | null) => void
@@ -62,7 +63,7 @@
   function navigate(destination: string) {
     void goto($link(`/fighting/${destination}`))
   }
-  function chooseMode(next: FightMode) {
+  function chooseMode(next: FightSelectionMode) {
     onMode(next)
     onFormat(duelFormat(format))
     navigate('characters')

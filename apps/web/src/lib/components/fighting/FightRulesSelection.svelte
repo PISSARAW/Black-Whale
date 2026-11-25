@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { FightSelectionMode } from '$lib/fighting/fightSetupDraft'
   import FightKameoPicker from './FightKameoPicker.svelte'
   import type { KameoPicks } from '$lib/fighting/kameos/state'
   import type { KameoId } from '$lib/fighting/kameos/types'
@@ -7,7 +8,7 @@
   import { fighterDefinition } from '$lib/fighting/roster'
   import type { FightEnvironment } from '$lib/fighting/fightEnvironment'
   import type { FightFormatId } from '$lib/fighting/formats'
-  import type { FightMode, FighterId } from '$lib/fighting/types'
+  import type { FighterId } from '$lib/fighting/types'
   import { link } from '$lib/i18n'
   import FightPortrait from './FightPortrait.svelte'
   import FightFormatPicker from './FightFormatPicker.svelte'
@@ -22,7 +23,7 @@
   export let opponent: FighterId
   export let environment: FightEnvironment
   export let format: FightFormatId
-  export let mode: FightMode
+  export let mode: FightSelectionMode
   export let controls: FightControls
   export let onEnvironment: (next: FightEnvironment) => void
   export let onFormat: (id: FightFormatId) => void
@@ -32,6 +33,7 @@
   $: fr = language === 'fr'
   $: stage = fightStage(environment.stageId)
   $: modeLabel = {
+    'versus-rayxie': fr ? 'Affronter Rayxie' : 'Challenge Rayxie',
     'versus-ai': fr ? 'Contre l’IA' : 'Versus AI',
     'versus-local': fr ? 'Versus local' : 'Local versus',
     training: fr ? 'Entraînement' : 'Training',

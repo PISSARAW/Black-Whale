@@ -9,6 +9,7 @@ import { allowedNen } from './catalogue'
 
 export interface QwenStatus {
   enabled: boolean
+  control: 'both' | 'opponent'
   /** Model that produced the latest accepted plan of each seat. */
   models: Record<FightSide, string | null>
   pending: FightSide | null
@@ -39,6 +40,7 @@ export function createQwenDuel(options: { clock?: () => number; transport?: Qwen
   const transport = options.transport ?? postPlan
   const initial = (): QwenStatus => ({
     enabled: false,
+    control: 'both',
     models: { player: null, opponent: null },
     pending: null,
     accepted: 0,
@@ -75,13 +77,13 @@ export function createQwenDuel(options: { clock?: () => number; transport?: Qwen
     abort = null
     status.pending = null
   }
-  function setEnabled(enabled: boolean) {
+  function setEnabled(enabled: boolean, control: QwenStatus['control'] = 'both') {
     cancel()
-    status = { ...initial(), enabled }
+    status = { ...initial(), enabled, control }
     controllers = createControllers()
     timestamps.player = timestamps.opponent = -Infinity
     due = 0
-    next = 'player'
+    next = control === 'opponent' ? 'opponent' : 'player'
     round = 0
     history.length = 0
     perception.reset()
@@ -131,7 +133,7 @@ export function createQwenDuel(options: { clock?: () => number; transport?: Qwen
   function poll(state: FightState) {
     if (status.pending || clock() < due) return
     const side = next
-    next = side === 'player' ? 'opponent' : 'player'
+    next = status.control === 'opponent' ? 'opponent' : side === 'player' ? 'opponent' : 'player'
     due = clock() + 1600
     abort = new AbortController()
     const observation = observeCombat(state, side)
@@ -161,7 +163,9 @@ export function createQwenDuel(options: { clock?: () => number; transport?: Qwen
     perception.observe(state)
     poll(state)
     const decisions = (['player', 'opponent'] as const).map((side) => {
-      if (status.pending === side) return { input: EMPTY_INPUT }
+      if (status.control === 'opponent' && side === 'player')
+        return { input: undefined, command: undefined, utility: undefined }
+      if (status.control === 'both' && status.pending === side) return { input: EMPTY_INPUT }
       const fresh = clock() - timestamps[side] <= QWEN_PLAN_TTL_MS
       status.source[side] = fresh ? 'qwen' : 'local'
       return controllers[side](state, fresh ? status.plans[side]! : FALLBACK_PLAN)

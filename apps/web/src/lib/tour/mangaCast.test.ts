@@ -36,6 +36,149 @@ function mesh(root: THREE.Object3D, name: string) {
   return node as THREE.Mesh
 }
 describe('manga cast shared by the visit and Fighting', () => {
+  it('draws Vincent broad and shaven with a left earpiece and Kakin combat uniform', () => {
+    const appearance = seen('vincent')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'vincent',
+      build: 'broad',
+      height: 1.04,
+      shoulders: 1.15,
+      face: 'square',
+      hairStyle: 'shaved',
+      clothing: 'uniform',
+      expression: 'hostile',
+    })
+    expect(look).toMatchObject({ eyes: 'narrow', jaw: 0.15, nose: 1.75, brow: 1.35 })
+    expect(model.root.getObjectByName('vincent-shaven-scalp-shadow')).toBeTruthy()
+    expect(model.root.getObjectByName('vincent-long-nose-and-grin')).toBeTruthy()
+    expect(model.root.getObjectByName('vincent-left-earpiece')).toBeTruthy()
+    expect(model.root.getObjectByName('vincent-uniform-zipper')).toBeTruthy()
+    expect(model.root.getObjectByName('vincent-padded-jacket-seams')).toBeTruthy()
+    expect(model.root.getObjectByName('vincent-standing-collar')).toBeTruthy()
+    const boots: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'vincent-combat-boot-shaft') boots.push(node)
+    })
+    expect(boots).toHaveLength(2)
+  })
+  it('draws Vergei with a high forehead, groomed dark hair, gaunt cheekbones and black suit', () => {
+    const appearance = seen('vergei')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'vergei',
+      build: 'slim',
+      height: 1.02,
+      shoulders: 0.98,
+      face: 'narrow',
+      hairStyle: 'short',
+      clothing: 'suit',
+      expression: 'severe',
+      hair: 0x29282b,
+    })
+    expect(look).toMatchObject({
+      eyes: 'almond',
+      cheek: 0.13,
+      jaw: 0.07,
+      chin: 0.24,
+      nose: 1.45,
+    })
+    expect(model.root.getObjectByName('vergei-prominent-cheekbone-lines')).toBeTruthy()
+    expect(model.root.getObjectByName('vergei-groomed-short-hairline')).toBeTruthy()
+    expect(model.root.getObjectByName('vergei-combed-hair-lines')).toBeTruthy()
+    expect(model.root.getObjectByName('manga-tie')).toBeTruthy()
+    expect(model.root.getObjectByName('vergei-sharp-lapel-seam--1')).toBeTruthy()
+    expect(model.root.getObjectByName('vergei-sharp-lapel-seam-1')).toBeTruthy()
+  })
+  it('draws Babimyna with a fair curly fade, left earpiece and Kakin field uniform', () => {
+    const appearance = seen('babimyna')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'babimyna',
+      build: 'average',
+      height: 1.03,
+      shoulders: 1.04,
+      face: 'narrow',
+      hairStyle: 'military',
+      clothing: 'uniform',
+      expression: 'severe',
+      hair: 0xd7c28f,
+    })
+    expect(look).toMatchObject({ eyes: 'almond', jaw: 0.095, nose: 1.35, brow: 1.15 })
+    expect(model.root.getObjectByName('babimyna-fair-curly-fade-top')).toBeTruthy()
+    expect(model.root.getObjectByName('babimyna-faded-hair-sides')).toBeTruthy()
+    expect(model.root.getObjectByName('babimyna-left-earpiece')).toBeTruthy()
+    expect(model.root.getObjectByName('babimyna-uniform-zipper')).toBeTruthy()
+    expect(model.root.getObjectByName('babimyna-padded-jacket-seams')).toBeTruthy()
+    expect(model.root.getObjectByName('babimyna-standing-collar')).toBeTruthy()
+    const boots: THREE.Object3D[] = []
+    model.root.traverse((node) => {
+      if (node.name === 'babimyna-combat-boot-shaft') boots.push(node)
+    })
+    expect(boots).toHaveLength(2)
+  })
+  it('draws Balsamilco bald and stocky with a left facial scar and Benjamin soldier gear', () => {
+    const appearance = seen('balsamilco-might')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'balsamilco-might',
+      build: 'broad',
+      height: 0.98,
+      shoulders: 1.18,
+      face: 'square',
+      hairStyle: 'shaved',
+      clothing: 'uniform',
+      expression: 'severe',
+      skin: 0x76503e,
+    })
+    expect(look).toMatchObject({ eyes: 'heavy', cheek: 0.185, jaw: 0.155, nose: 1.65 })
+    expect(model.root.getObjectByName('balsamilco-left-temple-scar')).toBeTruthy()
+    expect(model.root.getObjectByName('balsamilco-forehead-and-eye-folds')).toBeTruthy()
+    expect(model.root.getObjectByName('balsamilco-might-puffer-zipper')).toBeTruthy()
+    expect(model.root.getObjectByName('balsamilco-might-puffer-seams')).toBeTruthy()
+    expect(model.root.getObjectByName('balsamilco-might-puffer-collar')).toBeTruthy()
+    expect(model.root.getObjectByName('balsamilco-tactical-pocket')).toBeTruthy()
+    expect(model.root.getObjectByName('balsamilco-combat-boot')).toBeTruthy()
+  })
+  it('draws Longhi with a centre-parted fair ponytail, gaunt cheeks and a royal bodyguard suit', () => {
+    const appearance = seen('longhi')
+    const profile = humanProfile(appearance)
+    const look = mangaLikeness(profile)
+    const model = buildHumanFigure({ THREE, glow, seen: appearance })
+    expect(profile).toMatchObject({
+      likeness: 'longhi',
+      build: 'slim',
+      height: 1.02,
+      shoulders: 0.96,
+      face: 'narrow',
+      hairStyle: 'ponytail',
+      clothing: 'suit',
+      expression: 'severe',
+    })
+    expect(look).toMatchObject({
+      eyes: 'narrow',
+      cheek: 0.135,
+      jaw: 0.072,
+      chin: 0.235,
+      nose: 1.35,
+      hair: 'tied-part',
+    })
+    expect(model.root.getObjectByName('longhi-gaunt-cheek-lines')).toBeTruthy()
+    expect(model.root.getObjectByName('longhi-centre-part-hair-flow')).toBeTruthy()
+    expect(model.root.getObjectByName('longhi-ponytail-tie')).toBeTruthy()
+    expect(model.root.getObjectByName('manga-tie')).toBeTruthy()
+    expect(model.root.getObjectByName('longhi-shoulder-seam--1')).toBeTruthy()
+    expect(model.root.getObjectByName('longhi-shoulder-seam-1')).toBeTruthy()
+    expect(model.root.getObjectByName('longhi-tie-bar')).toBeTruthy()
+  })
   it('draws Kurton with short spikes, heavy angular brows and a royal bodyguard suit', () => {
     const appearance = seen('kurton')
     const profile = humanProfile(appearance)

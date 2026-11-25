@@ -1348,13 +1348,13 @@
     },
     {
       "id": "babimyna",
-      "body": { "build": "broad", "height": 1.02, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "short", "expression": "severe" },
+      "body": { "build": "average", "height": 1.03, "frame": "adult", "shoulders": 1.04 },
+      "head": { "face": "narrow", "hairStyle": "military", "expression": "severe" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 363, 415 ; uniforme de l'armée royale kakine",
-        "skin": "0xc08160",
-        "hair": "0x1e1b19",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-25 ; cheveux clairs et uniforme militaire Kakin canoniques, palette choisie pour les planches monochromes.",
+        "skin": "0xd6b094",
+        "hair": "0xd7c28f",
         "attire": {
           "jacket": "0x474835",
           "shirt": "0xdad6c6",
@@ -1365,17 +1365,17 @@
       "attire": "uniform",
       "signatures": [],
       "verified": { "chapterIds": ["ch-363", "ch-415"], "status": "confirmed" },
-      "note": "Trapu, paupières lourdes : le regard qui pèse. `severe` porte les paupières, ce qui est le seul endroit du visage où ce personnage se lit."
+      "note": "Références fournies : jeune homme élancé aux cheveux clairs et bouclés, concentrés en volume arrondi sur le dessus tandis que les côtés sont coupés en dégradé très court. Il porte une oreillette à l'oreille gauche et l'uniforme militaire standard de Kakin : veste zippée à col montant, pantalon et bottes de combat sombres."
     },
     {
       "id": "balsamilco-might",
-      "body": { "build": "slim", "height": 0.98, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "bald-crown", "expression": "severe" },
+      "body": { "build": "broad", "height": 0.98, "frame": "adult", "shoulders": 1.18 },
+      "head": { "face": "square", "hairStyle": "shaved", "expression": "severe" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 358, 363 ; état-major de Benjamin, palette d'uniforme assombrie",
-        "skin": "0xd0a98d",
-        "hair": "0x8d8880",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-25 ; peau foncée et uniforme matelassé canoniques, palette choisie pour les planches monochromes.",
+        "skin": "0x76503e",
+        "hair": "0x302925",
         "attire": {
           "jacket": "0x3d4034",
           "shirt": "0xe4e0d2",
@@ -1386,17 +1386,17 @@
       "attire": "uniform",
       "signatures": ["moustache"],
       "verified": { "chapterIds": ["ch-358", "ch-363"], "status": "confirmed" },
-      "note": "Sec, âgé, crâne dégarni : l'état-major de Benjamin tient dans ce visage. Ce que Cross Game fait plus tard de ce corps est un fait d'ability et de dossier ; l'apparence reste celle de l'homme."
+      "note": "Références fournies : homme trapu à la peau foncée, entièrement chauve, au visage large et marqué par l'âge. Une grande cicatrice irrégulière descend de sa tempe gauche jusqu'à la joue. Comme les soldats privés de Benjamin, il porte une veste matelassée zippée à grand col, un pantalon tactique ample et de hautes bottes de combat sombres."
     },
     {
       "id": "vincent",
-      "body": { "build": "average", "height": 1.04, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "short", "expression": "hostile" },
+      "body": { "build": "broad", "height": 1.04, "frame": "adult", "shoulders": 1.15 },
+      "head": { "face": "square", "hairStyle": "shaved", "expression": "hostile" },
       "colours": {
         "basis": "chosen",
-        "source": "planche n&b ch. 358 ; uniforme de garde, palette sombre",
-        "skin": "0xc08160",
-        "hair": "0x1f1c1a",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-25 ; crâne rasé et uniforme militaire Kakin canoniques, palette choisie pour les planches monochromes.",
+        "skin": "0xc79272",
+        "hair": "0x4a3a32",
         "attire": {
           "jacket": "0x39404b",
           "shirt": "0xdfe1e0",
@@ -1407,7 +1407,7 @@
       "attire": "uniform",
       "signatures": [],
       "verified": { "chapterIds": ["ch-358"], "status": "confirmed" },
-      "note": "Carrure sèche, mâchoire serrée : l'exécuteur. Mort tôt dans l'arc — l'apparence sert la timeline d'avant, ce qui est la seule raison pour laquelle elle existe."
+      "note": "Références fournies : soldat Kakin massif au crâne entièrement rasé, au visage carré, au nez très long et au sourire marqué. Il porte une oreillette à l'oreille gauche et l'uniforme militaire standard : veste zippée et rembourrée à col haut, pantalon et bottes de combat sombres."
     },
     {
       "id": "furykov",
@@ -1517,24 +1517,24 @@
     },
     {
       "id": "vergei",
-      "body": { "build": "broad", "height": 1.0, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "bald-crown", "expression": "hostile" },
+      "body": { "build": "slim", "height": 1.02, "frame": "adult", "shoulders": 0.98 },
+      "head": { "face": "narrow", "hairStyle": "short", "expression": "severe" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 361, 415 ; uniforme du poste de Marayam",
-        "skin": "0xc99473",
-        "hair": "0x4a453f",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-25 ; cheveux sombres et costume noir canoniques, palette choisie pour les planches monochromes.",
+        "skin": "0xd5ad91",
+        "hair": "0x29282b",
         "attire": {
-          "jacket": "0x444c3c",
-          "shirt": "0xe2ded0",
-          "trousers": "0x30362b",
-          "accent": "0xa89044"
+          "jacket": "0x1d2026",
+          "shirt": "0xf0eee8",
+          "trousers": "0x17191e",
+          "accent": "0x343842"
         }
       },
-      "attire": "uniform",
-      "signatures": ["moustache"],
+      "attire": "suit",
+      "signatures": [],
       "verified": { "chapterIds": ["ch-361", "ch-415"], "status": "confirmed" },
-      "note": "Chauve à couronne de cheveux et grosse moustache : la colère bureaucratique du poste de Marayam a un visage, et c'est celui-là."
+      "note": "Références fournies : garde du corps élancé aux cheveux foncés, courts et soigneusement coiffés, avec une implantation haute qui dégage un grand front. Son visage étroit et anguleux est dominé par des pommettes très saillantes et des joues creuses. Il porte un costume noir ajusté, une chemise claire et une cravate noire."
     },
     {
       "id": "sayird",
@@ -2116,7 +2116,8 @@
       "body": {
         "build": "slim",
         "height": 1.02,
-        "frame": "adult"
+        "frame": "adult",
+        "shoulders": 0.96
       },
       "head": {
         "face": "narrow",
@@ -2125,7 +2126,7 @@
       },
       "colours": {
         "basis": "chosen",
-        "source": "Référence manga fournie par le mainteneur le 2026-11-16 ; palette neutre choisie pour le noir et blanc.",
+        "source": "Référence manga et description fournies par le mainteneur le 2026-11-24 ; cheveux clairs et costume noir canoniques, palette choisie pour les planches monochromes.",
         "skin": "0xdac1a7",
         "hair": "0xe2c998",
         "attire": {
@@ -2141,7 +2142,7 @@
         "chapterIds": ["ch-369", "ch-401"],
         "status": "confirmed"
       },
-      "note": "Référence manga fournie : cheveux clairs à raie centrale tirés en queue-de-cheval, visage long aux joues creuses, costume noir ajusté, chemise claire et cravate noire."
+      "note": "Référence fournie : garde royale élancée aux cheveux clairs séparés au centre, soigneusement tirés vers une longue queue-de-cheval dans le dos. Le visage étroit se distingue par des joues fortement creusées, un menton anguleux et un regard sévère. Elle porte un costume noir ajusté, une chemise claire et une cravate noire."
     },
     {
       "id": "padaille",

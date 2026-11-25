@@ -25,6 +25,11 @@ import { addDuazulGentleFaceAndWaves } from './mangaDuazul'
 import { addTangZhaoLiPortraitFace } from './mangaTangZhaoLi'
 import { addMomozeElaboratePonytail } from './mangaMomoze'
 import { addKurtonAngularFace } from './mangaKurton'
+import { addLonghiGauntFaceAndPonytail } from './mangaLonghi'
+import { addBalsamilcoScarAndAge } from './mangaBalsamilco'
+import { addBabimynaFadeAndEarpiece } from './mangaBabimyna'
+import { addVergeiAngularFaceAndHair } from './mangaVergei'
+import { addVincentShavenFaceAndEarpiece } from './mangaVincent'
 
 export const MANGA_FACE_SIGNATURES = new Set([
   'lips-full',
@@ -247,6 +252,11 @@ const REFERENCE_FACES: Record<string, (build: HumanHeadBuild, head: Group) => vo
   'tang-zhao-li-hui-guo-rou': addTangZhaoLiPortraitFace,
   'prince-momoze': addMomozeElaboratePonytail,
   kurton: addKurtonAngularFace,
+  longhi: addLonghiGauntFaceAndPonytail,
+  'balsamilco-might': addBalsamilcoScarAndAge,
+  babimyna: addBabimynaFadeAndEarpiece,
+  vergei: addVergeiAngularFaceAndHair,
+  vincent: addVincentShavenFaceAndEarpiece,
 }
 
 export function addMangaFaceTraits(build: HumanHeadBuild, head: Group): void {

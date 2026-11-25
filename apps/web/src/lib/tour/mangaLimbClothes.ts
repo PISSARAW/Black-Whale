@@ -24,6 +24,8 @@ import { shapeDogmanLimbs } from './mangaDogman'
 import { addShikakuCombatBoots } from './mangaShikaku'
 import { addSanbicaMedicalGloves } from './mangaSanbica'
 import { addTokarineSleeveStripes } from './mangaTokarine'
+import { addBabimynaCombatBoots } from './mangaBabimyna'
+import { addVincentCombatBoots } from './mangaVincent'
 
 function machi(build: HumanLimbsBuild, limbs: HumanLimbs) {
   const { THREE, geometry, profile, glow } = build
@@ -110,6 +112,8 @@ const REFERENCE_LIMBS: Record<string, (build: HumanLimbsBuild, limbs: HumanLimbs
   shikaku: addShikakuCombatBoots,
   'sanbica-norton': addSanbicaMedicalGloves,
   tokarine: addTokarineSleeveStripes,
+  babimyna: addBabimynaCombatBoots,
+  vincent: addVincentCombatBoots,
 }
 
 export function shapeMangaLimbs(build: HumanLimbsBuild, limbs: HumanLimbs): void {

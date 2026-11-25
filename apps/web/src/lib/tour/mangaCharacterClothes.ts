@@ -47,6 +47,11 @@ import { addNasubiRoyalOrnaments } from './mangaNasubi'
 import { addUnmaFrillyDress } from './mangaUnma'
 import { addDuazulFormalDress } from './mangaDuazul'
 import { addMomozeRoyalGown } from './mangaMomoze'
+import { addLonghiRoyalBodyguardSuit } from './mangaLonghi'
+import { addBalsamilcoPrivateSoldierUniform } from './mangaBalsamilco'
+import { addBabimynaKakinUniform } from './mangaBabimyna'
+import { addVergeiBodyguardSuit } from './mangaVergei'
+import { addVincentKakinUniform } from './mangaVincent'
 
 function machi(build: HumanClothesBuild) {
   const { THREE, geometry, figure, materials } = build
@@ -205,6 +210,11 @@ const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
   bill: addBodyguardReferenceSuit,
   basho: addBodyguardReferenceSuit,
   kurton: addBodyguardReferenceSuit,
+  longhi: addLonghiRoyalBodyguardSuit,
+  'balsamilco-might': addBalsamilcoPrivateSoldierUniform,
+  babimyna: addBabimynaKakinUniform,
+  vergei: addVergeiBodyguardSuit,
+  vincent: addVincentKakinUniform,
   saiyu: addSaiyuCostume,
   cluck: addCluckFeatherCostume,
   gel: addGelScallopedTop,

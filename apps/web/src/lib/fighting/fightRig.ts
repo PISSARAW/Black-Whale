@@ -2,6 +2,7 @@ import { constrainCombatJoint, constrainFightRig } from './fightAnatomy'
 import { applyProceduralClavicles } from './fightClavicle'
 import type { Euler, Group, Object3D, Vector3 } from 'three'
 import type { AnimatedHuman } from '$lib/tour/humanAnimation'
+import { humanFootContactPoint } from '$lib/tour/humanFootContact'
 import type { FightPose, Turn } from './fightPose'
 import { humanChestTurn, keepHumanJoint, keepHumanJoints } from './fightJointLimits'
 
@@ -36,6 +37,7 @@ export interface FightRig {
 
 export interface FootPlantAnchor {
   positions: readonly [Vector3, Vector3]
+  contacts?: readonly [Vector3, Vector3]
 }
 
 export interface PlantFeetOptions {
@@ -56,6 +58,7 @@ const UPPER_BODY_ABOVE_HIP = 0.1
 /** The chest pivots at the belt, not at the feet. */
 const WAIST_ABOVE_HIP = 0.08
 const MAX_ANKLE = 0.9
+const MAX_SOLE_LIFT = 0.075
 
 const RIGS = new WeakMap<Object3D, FightRig>()
 
@@ -261,7 +264,10 @@ export function captureFootPlant(rig: FightRig): FootPlantAnchor {
   const positions = rig.ankles.map((ankle) =>
     ground.worldToLocal(ankle.getWorldPosition(rig.probe)).clone(),
   ) as [Vector3, Vector3]
-  return { positions }
+  const contacts = rig.ankles.map((ankle) =>
+    humanFootContactPoint(ankle, ground, rig.probe),
+  ) as [Vector3, Vector3]
+  return { positions, contacts }
 }
 
 /**
@@ -303,6 +309,16 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
   }
   if (options.horizontal === false) correction.x = correction.z = 0
   human.figure.position.add(correction)
+  liftPenetratingSole(rig, options, support)
+}
+
+function liftPenetratingSole(rig: FightRig, options: PlantFeetOptions, support: number): void {
+  const target = options.anchor.contacts?.[support]
+  if (!target) return
+  const ground = rig.human.figure.parent ?? rig.human.figure
+  const current = humanFootContactPoint(rig.ankles[support], ground, rig.probe)
+  const lift = target.y + (options.root?.[1] ?? 0) - current.y
+  if (lift > 0.002) rig.human.figure.position.y += Math.min(MAX_SOLE_LIFT, lift)
 }
 
 function biasPursuitSupport(

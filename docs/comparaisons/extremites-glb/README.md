@@ -48,5 +48,20 @@ référence et confirme les ancrages main, pied et orteil disponibles dans leurs
 - Aucun buffer ni tableau d'animation n'est alloué pendant une frame.
 - Le passage au LOD moyen ne change ni la simulation ni les contacts.
 
-`humanExtremityBudget.test.ts` contrôle les ancrages et la borne géométrique de la base
-procédurale avant l'introduction du sous-rig.
+## Audit de livraison
+
+Audit du 25 novembre 2026, exécuté depuis le commit de livraison dans un checkout propre :
+
+- 77 tests ciblés passent sur 12 fichiers Tour et Clash ;
+- ESLint passe sur les modules de budget, ancrage, rigs, contacts, familles, LOD et poses ;
+- le rendu WebGL partagé produit les quatre vues sans erreur pour Kurapika, Hisoka,
+  Biscuit et Franklin ;
+- les mains utilisent 16 os, les pieds 4 os et 2 surfaces, dans les plafonds déclarés ;
+- le roster déclaré reçoit les rigs par famille morphologique, sauf les mains-canons de
+  Franklin qui conservent leur géométrie dédiée ;
+- Tour bascule les extrémités à 8 m puis le corps à 24 m, tandis que Clash garde le détail
+  proche et ses poses déterministes.
+
+Le typecheck ciblé du chantier passe sans diagnostic dans le workspace de développement.
+Dans le checkout propre, le typecheck global atteint ensuite deux erreurs préexistantes dans
+`mangaTokarine.ts` (`bands` inféré en `any[]`), sans rapport avec les extrémités.

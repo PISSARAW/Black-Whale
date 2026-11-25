@@ -129,6 +129,7 @@ export function buildHumanHead(build: HumanHeadBuild): Group {
     skin,
   )
   nose.rotation.x = Math.PI / 2
+  nose.name = 'face-nose'
   nose.position.set(0, -0.018, 0.195)
   if (melody) {
     nose.scale.set(1.7, 1.55, 1.45)

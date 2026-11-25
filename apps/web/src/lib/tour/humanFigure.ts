@@ -1,3 +1,7 @@
+import { humanFaceMotion } from './humanFaceMotion'
+import { humanSecondaryMotionChannels } from './humanSecondaryMotion'
+import { humanExpressionChannel } from './expressions/humanExpressionChannel'
+import { registerExpressionOwner } from './expressions/expressionPlayer'
 import type { BufferGeometry, Group, Material, MeshBasicMaterial, Object3D } from 'three'
 import type { Apparition } from './apparitions'
 import { humanAnimation, poseHuman } from './humanAnimation'
@@ -365,7 +369,17 @@ export function buildHumanFigure({
   far.scale.setScalar(unit)
   far.position.copy(figure.position)
   far.rotation.copy(figure.rotation)
-  const animateHuman = humanAnimation({ pose, figure, torso, pelvis, head, arms, legs, knees })
+  const animationRig = { pose, figure, torso, pelvis, head, arms, legs, knees }
+  registerExpressionOwner(root, figure)
+  const animateHuman = humanAnimation(animationRig, {
+    channels: [
+      ...(seen.kind === 'combatant' ? [] : [humanFaceMotion(head, profile)]),
+      ...humanSecondaryMotionChannels(animationRig, profile),
+      ...(seen.kind === 'combatant'
+        ? []
+        : [humanExpressionChannel({ THREE, rig: animationRig, profile })]),
+    ],
+  })
   const animateAura = animateHumanAura(aura)
   const firstPerson = seen.human?.firstPerson === true
   const animate: ReturnType<typeof humanAnimation> = (seconds, nextPose, layer) => {
@@ -374,5 +388,11 @@ export function buildHumanFigure({
     animateAura(seconds)
   }
   finishHumanModel({ THREE, glow, model: { root }, profile })
+  if (pose === 'zetsu') {
+    for (const name of ['face-eye-left', 'face-eye-right']) {
+      const eye = root.getObjectByName(name)
+      if (eye) eye.scale.y = 0.06
+    }
+  }
   return { root, turns: figure, lod: { near: figure, far }, animate }
 }

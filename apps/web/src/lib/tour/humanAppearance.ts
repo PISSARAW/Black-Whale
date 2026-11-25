@@ -29,6 +29,7 @@ export interface HumanAppearance {
     | 'cross-legged'
     | 'bow'
     | 'flute'
+    | 'zetsu'
   /**
    * What this body is wearing, when its role's own clothes are not the answer.
    *

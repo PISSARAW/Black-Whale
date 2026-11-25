@@ -4,6 +4,8 @@ import { raiseConcertFlute } from './humanFlutePose'
 import { HUMAN_REST_POSES } from './humanRestPoses'
 import { rememberHang, stride } from './humanWalk'
 import { rememberHumanReach } from './humanReachMemory'
+import { setFrameExpression } from './expressions/expressionPlayer'
+import type { ExpressionCue } from './expressions/types'
 
 export type HumanPose = NonNullable<Apparition['human']>['pose']
 
@@ -44,6 +46,7 @@ export function registerHumanAnimationRig(rig: AnimatedHuman): void {
 }
 
 export interface HumanAnimationLayer {
+  expression?: ExpressionCue
   motion?: HumanMotion
   /** Final contact constraints run after all pose cross-fades and motion layers. */
   afterMotion?: HumanMotion
@@ -52,6 +55,22 @@ export interface HumanAnimationLayer {
   transitionSeconds?: number
   /** Clock that drives the walk cycle instead of wall time, so feet match ground speed. */
   strideClock?: number
+}
+
+export interface HumanAnimationFrame {
+  seconds: number
+  pose: HumanPose
+  layer?: HumanAnimationLayer
+}
+
+/** Optional authored expression, hair, jewellery or garment motion. */
+export interface HumanAnimationChannel {
+  beforeFrame?: (frame: HumanAnimationFrame) => void
+  afterFrame?: (frame: HumanAnimationFrame) => void
+}
+
+export interface HumanAnimationOptions {
+  channels?: readonly HumanAnimationChannel[]
 }
 
 interface TransformFrame {
@@ -174,6 +193,7 @@ export function poseHuman(rig: PosedHuman): void {
 
 export function humanAnimation(
   rig: AnimatedHuman,
+  options: HumanAnimationOptions = {},
 ): (seconds: number, pose?: HumanPose, layer?: HumanAnimationLayer) => void {
   registerHumanAnimationRig(rig)
   if (rig.pose === 'flute') raiseConcertFlute(rig.figure)
@@ -194,6 +214,7 @@ export function humanAnimation(
   const torsoBaseY = rig.torso.position.y
   const pelvisBaseX = rig.pelvis.position.x
   const parts = animatedParts(rig)
+  const channels = options.channels ?? []
   let displayedPose: string = rig.pose
   let transitionFrom: TransformFrame | null = null
   let transitionStarted = 0
@@ -301,6 +322,9 @@ export function humanAnimation(
   }
 
   return (seconds: number, pose = rig.pose, layer?: HumanAnimationLayer) => {
+    setFrameExpression(rig.figure, layer)
+    const frame = { seconds, pose, ...(layer ? { layer } : {}) }
+    channels.forEach((channel) => channel.beforeFrame?.(frame))
     rig.arms.forEach(rememberHumanReach)
     rig.legs.forEach(rememberHumanReach)
     syncTransition(seconds, pose, layer)
@@ -332,5 +356,6 @@ export function humanAnimation(
       if (amount === 1) transitionFrom = null
     }
     layer?.afterMotion?.(rig)
+    channels.forEach((channel) => channel.afterFrame?.(frame))
   }
 }

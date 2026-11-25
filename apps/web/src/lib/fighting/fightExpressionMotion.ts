@@ -1,4 +1,6 @@
+import { fightCatalogueExpression } from './fightCatalogueExpression'
 import type { HumanMotion } from '$lib/tour/humanAnimation'
+import { humanBlink } from '$lib/tour/humanFaceMotion'
 import type { ArcadeFighter } from './types'
 import {
   FACE_CONTROLS,
@@ -31,9 +33,29 @@ export function expressiveFightMotion(
       return
     }
     const target = fightExpressionTarget(context.fighter, context.progress, context.activity)
-    const pose = blendFace(rig, { target: target.pose, seconds: context.seconds })
+    const authored = fightCatalogueExpression({
+      figure: human.figure,
+      fighter: context.fighter,
+      seconds: context.seconds,
+      base: target.pose,
+      mode: target.mode,
+    })
+    const pose = blendFace(rig, { target: authored, seconds: context.seconds })
     rig.mode = target.mode
-    drawFightFace(rig, context.fighter.melodyPerformance ? { ...pose, eye: 0.12 } : pose)
+    const blink =
+      ['concentration', 'vigilance', 'fatigue', 'determination', 'confidence'].includes(
+        target.mode,
+      ) &&
+      !context.fighter.parallelEyesClosed &&
+      !['hisoka', 'illumi', 'bonolenov'].includes(context.fighter.id)
+        ? humanBlink(context.seconds, context.fighter.id)
+        : 0
+    drawFightFace(
+      rig,
+      context.fighter.melodyPerformance
+        ? { ...pose, eye: 0.12 }
+        : { ...pose, eye: pose.eye * (1 - blink * 0.94) },
+    )
     if (context.fighter.melodyPerformance) return
     human.head.rotation.x += pose.headPitch
     human.head.rotation.y += pose.headYaw

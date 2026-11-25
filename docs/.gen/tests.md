@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 1283
+Fichiers : 1301
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -332,6 +332,10 @@ Fichiers : 1283
 ## `apps/web/src/lib/components/tour/TourCameraPlacement.test.ts`
 
 - third-person combat camera > locks the walking heading onto each side of a target
+
+## `apps/web/src/lib/fighting/accelCancel.test.ts`
+
+- relance (special → special on hit) > stays off for derived grammars
 
 ## `apps/web/src/lib/fighting/accelHeatPresentation.test.ts`
 
@@ -801,6 +805,14 @@ Fichiers : 1283
 - Feitan — the two Zazan video references > authors moving cuts and holds only the straight thrust contacts
 - Feitan reference corrections > keeps normal blade pressure ahead of the generic Nen preparation projection
 - Feitan physical sword presentation > keeps the left sword and right umbrella together, rebuilds, confiscates and disposes
+
+## `apps/web/src/lib/fighting/feitanHeatLift.test.ts`
+
+- Rising Sun heat presentation > suspends only a scored victim and settles before the sun expires
+
+## `apps/web/src/lib/fighting/feitanIdentity.test.ts`
+
+- Feitan visual identity > uses the horizontal-blade guard and a raised free hand at rest
 
 ## `apps/web/src/lib/fighting/feitanPain.test.ts`
 
@@ -1489,6 +1501,14 @@ Fichiers : 1283
 
 - Kurapika golden heavy support > locks the lead foot and peaks the rear pivot at contact
 
+## `apps/web/src/lib/fighting/kurapikaIdentity.test.ts`
+
+- Kurapika speed identity > uses brief visual gaps without changing the ordinary dash state
+
+## `apps/web/src/lib/fighting/kurapikaSpeedScene.test.ts`
+
+- Kurapika 1999 speed scene > takes three full-body snapshots and restores the real body
+
 ## `apps/web/src/lib/fighting/leorio.test.ts`
 
 - Leorio’s surface-transmitted punch > strikes the floor before emitting aura, without a contact hitbox or instant damage
@@ -1874,6 +1894,10 @@ Fichiers : 1283
 - bounded tactics and legal execution > rejects invented moves, arbitrary Nen and extra state-writing fields
 - nonblocking tactical scheduler > keeps one inference in flight, then alternates seats and applies a validated reply
 
+## `apps/web/src/lib/fighting/qwen/rayxie.test.ts`
+
+- player versus Rayxie > requests only the opponent and keeps it moving while inference is pending
+
 ## `apps/web/src/lib/fighting/qwen/roster.test.ts`
 
 - Qwen covers the selected roster > contains exactly 40 real selectable fighters, with no guessed identifiers
@@ -2025,6 +2049,10 @@ Fichiers : 1283
 ## `apps/web/src/lib/fighting/singleCombatPanels.test.ts`
 
 - Secret Window private feed panel > renders the audio-only mode and escaped, reviewable speech in both languages
+
+## `apps/web/src/lib/fighting/sixthFiveMeleeWeapons.test.ts`
+
+- sixth wave melee weapons > registers the arm as Gel’s melee Hatsu while its added reach follows Nen access
 
 ## `apps/web/src/lib/fighting/skillHunterAcquisition.test.ts`
 
@@ -3356,6 +3384,10 @@ Fichiers : 1283
 - what the visitor is handed for asking > prefers the solid: aiming at a thing is how you say which you meant
 - the claims table covers the ship > states what every kind of solid actually on board asserts
 
+## `apps/web/src/lib/tour/expressions/catalogue.test.ts`
+
+- complete expression catalogue > contains every announced family and gesture as a distinct authored pose
+
 ## `apps/web/src/lib/tour/firstClassResidentialFidelity.test.ts`
 
 - the published first-class residential plan > keeps six cabins, six WC cells and only the drawn beds and storage
@@ -3506,6 +3538,10 @@ Fichiers : 1283
 - a visitor whose nodes are still shut > bends the air around a raised aura without drawing any of it
 - Ko > leaves the rest of the body bare, with no skin and no bending volume
 - En > keeps the rings on the floor and raises a dome over them
+
+## `apps/web/src/lib/tour/humanFaceMotion.test.ts`
+
+- Tour facial animation > changes the actual face with the pose and restores it without cumulative deformation
 
 ## `apps/web/src/lib/tour/humanFigure.test.ts`
 
@@ -4058,6 +4094,10 @@ Fichiers : 1283
 ## `apps/web/src/routes/spoiler-limit/spoiler-limit.test.ts`
 
 - POST /spoiler-limit > stores the cap the reader submitted
+
+## `apps/web/ui-tests/fighting-hisoka-machi-video/demo.test.ts`
+
+- Hisoka versus Machi video choreography > records the confirmed routes used in the vertical edit
 
 ## `apps/web/ui-tests/fighting-motion/motionLab.test.ts`
 

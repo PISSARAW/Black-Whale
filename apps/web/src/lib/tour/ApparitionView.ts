@@ -1,3 +1,4 @@
+import { disposeExpressionEffects } from './expressions/faceEffects'
 import type * as Three from 'three'
 import type { PortalRenderer } from './PortalRenderer'
 
@@ -81,6 +82,7 @@ export class ApparitionView<T extends RenderedApparition> {
   drop(id: string): void {
     const held = this.detach(id)
     if (!held) return
+    disposeExpressionEffects(held.root)
     this.scene.remove(held.root)
     this.portals.drop(id)
     held.root.traverse((part) => {

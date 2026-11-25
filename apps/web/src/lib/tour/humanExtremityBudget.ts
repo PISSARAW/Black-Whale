@@ -22,7 +22,10 @@ export function geometryMetrics(root: Object3D): GeometryMetrics {
     if (!mesh.isMesh || !mesh.visible) return
     const position = mesh.geometry.getAttribute('position')
     if (!position) return
-    metrics.drawCalls += Array.isArray(mesh.material) ? mesh.material.length : 1
+    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+    const visibleMaterials = materials.filter((material) => material.visible)
+    if (!visibleMaterials.length) return
+    metrics.drawCalls += visibleMaterials.length
     metrics.vertices += position.count
     metrics.triangles += Math.floor((mesh.geometry.index?.count ?? position.count) / 3)
   })

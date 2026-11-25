@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import * as THREE from 'three'
 import { buildFightFigure } from './fighterFigure'
 import { FIGHTING_ROSTER } from './roster'
+import { KAMEO_IDS } from './kameos/catalogue'
 import { createFightState } from './fightState'
 import { combatFaceGeometry } from './fightFaceReadability'
 import { trackFightOpponent, FIGHTER_FACING_ANGLE } from './fighterFacing'
@@ -21,7 +22,40 @@ function counts(root: THREE.Object3D) {
   return { meshes, triangles }
 }
 
+function chinWorldY(head: THREE.Object3D): number {
+  const face = head.getObjectByName('manga-face') ?? head.getObjectByName('kurapika-face') ?? head
+  head.updateWorldMatrix(true, true)
+  return new THREE.Box3().setFromObject(face).min.y
+}
+
+function isDescendantOf(node: THREE.Object3D, ancestor: THREE.Object3D): boolean {
+  for (let parent: THREE.Object3D | null = node; parent; parent = parent.parent)
+    if (parent === ancestor) return true
+  return false
+}
+
 describe('combat face readability without extra rendering work', () => {
+  it('keeps all roster and kameo hair attached while anchoring the real chin', () => {
+    const ids = [...FIGHTING_ROSTER.map(({ id }) => id), ...KAMEO_IDS] as const
+    for (const id of ids) {
+      const fighter = createFightState(id, 'hisoka').player
+      const original = buildFightFigure({ THREE, glow, fighter, readability: false })
+      const readable = buildFightFigure({ THREE, glow, fighter })
+      const oldHead = original.root.getObjectByName('face-eye-left')!.parent!
+      const head = readable.root.getObjectByName('face-eye-left')!.parent!
+      expect(head.scale.x, id).toBeGreaterThan(oldHead.scale.x)
+      expect(head.scale.y, id).toBeGreaterThan(oldHead.scale.y)
+      expect(head.scale.z, id).toBeCloseTo(oldHead.scale.z)
+      expect(Math.abs(chinWorldY(head) - chinWorldY(oldHead)), id).toBeLessThan(0.01)
+
+      readable.root.traverse((node) => {
+        if (!/(hair|beard|moustache|stubble|curl|ponytail|topknot|chignon|bun)/i.test(node.name))
+          return
+        if (node.name === 'saiyu-curled-tail') return
+        expect(isDescendantOf(node, head), `${id}: ${node.name}`).toBe(true)
+      })
+    }
+  })
   it.each(FIGHTING_ROSTER)(
     '$name keeps its model topology, signature and simulation data',
     ({ id }) => {

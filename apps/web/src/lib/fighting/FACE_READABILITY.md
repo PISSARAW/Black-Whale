@@ -19,8 +19,10 @@ conservent leurs orientations. La rotation d’un changement de côté reste lis
 Les poses particulières, les yeux fermés, les masques et les déguisements restent
 ceux du moteur et du catalogue d’apparences.
 
-`fightFaceReadability.ts` agrandit légèrement la tête autour du menton, renforce
-les sourcils et calcule trois tons sur les normales de la peau. Les buffers sont
+`fightFaceReadability.ts` agrandit légèrement la tête dans le plan de l’écran autour
+du vrai bas de visage, sans gonfler sa profondeur, renforce les sourcils et calcule
+trois tons sur les normales de la peau. Les cheveux, moustaches et barbes restent
+ainsi au contact du crâne et du menton dans la vue de trois-quarts. Les buffers sont
 clonés puis partagés : le modèle commun de la visite conserve ses propres couleurs.
 Aucun maillage, triangle, éclairage dynamique ou passage de rendu n’est ajouté.
 Les matériaux gardent leur transparence, notamment pour la projection de Hanzo.
@@ -39,8 +41,9 @@ de WebGL conserve le nom et les jauges. Cette image fixe ne révèle pas un éta
 
 ## Vérification
 
-- `fightFaceReadability.test.ts` vérifie les quarante modèles, la topologie inchangée,
-  la conservation des signatures et le partage des buffers.
+- `fightFaceReadability.test.ts` vérifie les quarante combattants et les six kaméos,
+  l’ancrage du menton, la profondeur inchangée, la parenté des cheveux et barbes,
+  la topologie inchangée, la conservation des signatures et le partage des buffers.
 - `fightIdentityPortrait.test.ts` vérifie la mise en cache, la génération séquentielle,
   la libération des contextes et le repli en cas d’indisponibilité.
 - Les suites de caméra, de direction et de roster couvrent les cadrages et les poses.

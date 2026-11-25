@@ -44938,18 +44938,31 @@
         "fromChapterId": "ch-358"
       },
       {
+        "location": "tier-1-royal-residential-sector-corridor-outside-room-1009",
+        "fromChapterId": "ch-413.3",
+        "outsideDoorOf": "tier-1-royal-residential-sector-room-1009",
+        "note": "Posted in the royal corridor outside room 1009 before the breach"
+      },
+      {
         "location": "tier-1-royal-residential-sector-room-1009",
-        "fromChapterId": "ch-414.3"
+        "fromChapterId": "ch-417.3",
+        "note": "The later account places the breach team with the discovery inside room 1009"
       },
       {
         "location": "tier-1-vvip-living-quarters",
         "fromChapterId": "ch-417.4"
       }
     ],
-    "modifiedAt": "2026-11-13",
+    "modifiedAt": "2026-11-25",
     "sources": [
       {
         "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
       },
       {
         "chapterId": "ch-417"
@@ -45027,22 +45040,22 @@
         "fromChapterId": "ch-361"
       },
       {
-        "location": "tier-1-royal-residential-sector-room-1004",
-        "fromChapterId": "ch-383"
-      },
-      {
-        "location": "tier-1-royal-residential-sector-room-1003",
-        "fromChapterId": "ch-415.2"
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-417.3",
+        "note": "Held with Balsamilco in an exact detention room that the chapter does not identify"
       },
       {
         "location": "tier-2-ministry-of-justice",
         "fromChapterId": "ch-417.5"
       }
     ],
-    "modifiedAt": "2026-11-13",
+    "modifiedAt": "2026-11-25",
     "sources": [
       {
         "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-413"
       },
       {
         "chapterId": "ch-415"
@@ -48417,14 +48430,24 @@
         "fromChapterId": "ch-383"
       },
       {
+        "location": "tier-1-royal-residential-sector-corridor-outside-room-1009",
+        "fromChapterId": "ch-413.3",
+        "outsideDoorOf": "tier-1-royal-residential-sector-room-1009",
+        "note": "Posted in the royal corridor outside room 1009 before the breach"
+      },
+      {
         "location": "tier-1-royal-residential-sector-room-1009",
-        "fromChapterId": "ch-414.3"
+        "fromChapterId": "ch-417.3",
+        "note": "The later account places the breach team with the discovery inside room 1009"
       }
     ],
-    "modifiedAt": "2026-11-13",
+    "modifiedAt": "2026-11-25",
     "sources": [
       {
         "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-413"
       },
       {
         "chapterId": "ch-414"

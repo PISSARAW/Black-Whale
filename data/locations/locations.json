@@ -260,6 +260,16 @@
     "exits": []
   },
   {
+    "id": "tier-1-royal-residential-sector-corridor-outside-room-1009",
+    "name": "Royal corridor outside Room 1009",
+    "parentLocationId": "tier-1-royal-residential-sector",
+    "deck": 1,
+    "zoneType": "corridor",
+    "description": "The guarded stretch of the royal residential corridor immediately outside Halkenburg's Room 1009. Yushohi and Chiyamasi stage here before the special-martial-law breach.",
+    "entrances": ["tier-1-royal-residential-sector-room-1009"],
+    "exits": ["tier-1-royal-residential-sector"]
+  },
+  {
     "id": "tier-1-royal-residential-sector-room-1001",
     "name": "Room 1001 (Benjamin)",
     "parentLocationId": "tier-1-royal-residential-sector",

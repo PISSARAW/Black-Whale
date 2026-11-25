@@ -2792,6 +2792,21 @@
         "location": "Tier 1 - Room 1001"
       },
       {
+        "event": "Benjamin's soldiers take their pre-martial-law posts",
+        "storyDate": "Day 12 · Thursday · 14:00",
+        "charactersInvolved": [
+          "coventoba",
+          "rihan",
+          "orau",
+          "kanjidol",
+          "yushohi",
+          "chiyamasi",
+          "babimyna",
+          "saquelle"
+        ],
+        "location": "Tier 1 - Royal Residential Sector"
+      },
+      {
         "event": "Benjamin proclaims special martial law at 14:15",
         "storyDate": "Day 12 · Thursday · 14:15",
         "charactersInvolved": ["prince-benjamin"],
@@ -2802,9 +2817,10 @@
     "keyEvents": [
       "An unlit flame proves a soul without its body still holds succession rights",
       "Benjamin's poisoning is traced to Unma through Furykov",
+      "The 14:00 overview fixes Benjamin's embedded soldiers at their pre-breach posts",
       "Martial law puts every prince under summons to room 1001"
     ],
-    "description": "Nasubi and Nugui inspect Halkenburg's unlit flame in the princes' burial chamber: his rights stand as long as his soul remains alive in another body. Halkenburg works from room 1009 inside Balsamilco. In room 1001 Benjamin discovers the TSK-17 infection, hears Furykov's explanation and at 14:15 proclaims special martial law. Unma and Beyond are discussed but are not physically present."
+    "description": "Nasubi and Nugui inspect Halkenburg's unlit flame in the princes' burial chamber: his rights stand as long as his soul remains alive in another body. Halkenburg works from room 1009 inside Balsamilco. In room 1001 Benjamin discovers the TSK-17 infection and hears Furykov's explanation. The final 14:00 overview fixes the embedded soldiers' pre-breach posts, including Yushohi and Chiyamasi in the corridor outside room 1009; at 14:15 Benjamin proclaims special martial law. Unma and Beyond are discussed but are not physically present."
   },
   {
     "id": "ch-414",
@@ -2829,7 +2845,8 @@
         "event": "Yushohi and Chiyamasi prepare outside room 1009",
         "storyDate": "Day 12 · Thursday · five minutes before 14:15",
         "charactersInvolved": ["yushohi", "chiyamasi"],
-        "location": "Black Whale 1 - Tier 1 - Room 1009"
+        "location": "Black Whale 1 - Tier 1 - Royal corridor outside Room 1009",
+        "locationId": "tier-1-royal-residential-sector-corridor-outside-room-1009"
       },
       {
         "event": "Kurapika seeks his friends' help to protect Woble",
@@ -3026,7 +3043,12 @@
       {
         "event": "Balsamilco is found unconscious in room 1009",
         "storyDate": "Day 12 · Thursday · after 14:15",
-        "charactersInvolved": ["balsamilco-might", "prince-halkenburg"],
+        "charactersInvolved": [
+          "balsamilco-might",
+          "prince-halkenburg",
+          "yushohi",
+          "chiyamasi"
+        ],
         "location": "Black Whale 1 - Tier 1 - Room 1009"
       },
       {

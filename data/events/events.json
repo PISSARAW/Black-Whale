@@ -1435,6 +1435,27 @@
     "chapter": 413,
     "chapterTitle": "Loyalty",
     "sequence": 3,
+    "title": "Benjamin's soldiers take their pre-martial-law posts",
+    "summary": "At 14:00 Benjamin's embedded soldiers hold their pre-breach posts across the royal residential sector: Coventoba remains in room 1003, while Yushohi and Chiyamasi stage in the corridor outside room 1009.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Kurapika and Oito prepare a message for the mainland",
+    "occurredAt": {
+      "basis": "derived",
+      "hours": 266
+    },
+    "occurredAtLabel": "≈ Day 12 · 14:00",
+    "id": "ch-413-benjamin-s-soldiers-take-their-pre-martial-law-posts",
+    "modifiedAt": "2026-11-25",
+    "sources": [
+      {
+        "chapterId": "ch-413"
+      }
+    ]
+  },
+  {
+    "chapter": 413,
+    "chapterTitle": "Loyalty",
+    "sequence": 4,
     "title": "Benjamin proclaims martial law",
     "summary": "From room 1001, Benjamin declares special martial law at 14:15, orders rival guards neutralized and summons the remaining princes into protective custody.",
     "legacyTitles": [],
@@ -2316,7 +2337,7 @@
     "chapterTitle": "Friends",
     "sequence": 3,
     "title": "Yushohi and Chiyamasi prepare to breach room 1009",
-    "summary": "Outside Halkenburg's room, Yushohi lends Stand By Me to Chiyamasi while Benjamin's detail prepares to treat any resistance as treason.",
+    "summary": "In the royal corridor outside Halkenburg's room, Yushohi lends Stand By Me to Chiyamasi while Benjamin's detail prepares to treat any resistance as treason.",
     "legacyTitles": [],
     "occursAfterTitle": "Luzurus orders his guards not to resist",
     "id": "ch-414-yushohi-and-chiyamasi-prepare-to-breach-room-1009",
@@ -2584,7 +2605,7 @@
     "chapterTitle": "Emergency",
     "sequence": 3,
     "title": "Balsamilco and Coventoba are held under surveillance",
-    "summary": "Balsamilco, still occupied by Halkenburg, is found unconscious in room 1009 and later held with Coventoba before both are brought into Benjamin's consolidated command structure.",
+    "summary": "Yushohi and Chiyamasi find Balsamilco, still occupied by Halkenburg, unconscious in room 1009; he is later held with Coventoba before both are brought into Benjamin's consolidated command structure.",
     "legacyTitles": [],
     "occurredAt": {
       "basis": "derived",

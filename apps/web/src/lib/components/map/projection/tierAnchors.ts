@@ -50,6 +50,11 @@ export const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
     'tier-1-royal-residential-sector-room-1007': { x: 616.4, y: 270.8, small: true },
     'tier-1-royal-residential-sector-room-1008': { x: 616.4, y: 329.2, small: true },
     'tier-1-royal-residential-sector-room-1009': { x: 635.5, y: 270.8, small: true },
+    'tier-1-royal-residential-sector-corridor-outside-room-1009': {
+      x: 635.5,
+      y: 292.0,
+      small: true,
+    },
     'tier-1-royal-residential-sector-room-1010': { x: 635.5, y: 329.2, small: true },
     'tier-1-royal-residential-sector-room-1011': { x: 654.6, y: 270.8, small: true },
     'tier-1-royal-residential-sector-room-1012': { x: 654.6, y: 329.2, small: true },

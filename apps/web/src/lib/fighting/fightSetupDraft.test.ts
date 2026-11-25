@@ -57,6 +57,12 @@ describe('Clash setup restoration', () => {
     }
   })
 
+  it('restores the Rayxie selection after navigation or refresh', () => {
+    storage()
+    saveFightSetup({ ...defaultFightSetup(), mode: 'versus-rayxie' })
+    expect(readFightSetup().mode).toBe('versus-rayxie')
+  })
+
   it('remains playable when browser storage is unavailable', () => {
     vi.stubGlobal('sessionStorage', {
       getItem: () => {

@@ -6,12 +6,15 @@ import type { FighterId, FightMode } from './types'
 import type { KameoPicks } from './kameos/state'
 import { parseKameoPicks, kameoSetupField } from './kameos/pvp'
 
+/** Rayxie uses local-versus simulation so only recorded inputs drive the opponent. */
+export type FightSelectionMode = FightMode | 'versus-rayxie'
+
 export interface FightSetupDraft {
   player: FighterId
   opponent: FighterId
   environment: FightEnvironment
   format: FightFormatId
-  mode: FightMode
+  mode: FightSelectionMode
   kameos?: KameoPicks
 }
 const KEY = 'black-whale:clash:setup:v1'
@@ -34,8 +37,9 @@ function restoreDraft(value: Record<string, unknown>): FightSetupDraft {
   const format =
     PICKABLE_FIGHT_FORMATS.find((entry) => entry.id === value.format)?.id ?? fallback.format
   const mode =
-    (['versus-ai', 'versus-local', 'training'] as const).find((entry) => entry === value.mode) ??
-    fallback.mode
+    (['versus-ai', 'versus-local', 'training', 'versus-rayxie'] as const).find(
+      (entry) => entry === value.mode,
+    ) ?? fallback.mode
   return {
     player,
     opponent,

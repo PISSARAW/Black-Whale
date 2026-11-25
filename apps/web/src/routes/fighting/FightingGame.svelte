@@ -27,6 +27,7 @@
   import { designateBlinkyTarget, selectBlinkyCommand } from '$lib/fighting/blinky'
   import { fightAcceptsCommands } from '$lib/fighting/fightOutcome'
   import FightGameSeo from '$lib/components/fighting/FightGameSeo.svelte'
+  import FightRayxieStatus from '$lib/components/fighting/FightRayxieStatus.svelte'
   import FightBattle from '$lib/components/fighting/FightBattle.svelte'
   import { createFightPausePlan } from '$lib/fighting/fightPausePlan'
   import type { FightBattleActions } from '$lib/fighting/fightBattleActions'
@@ -35,7 +36,11 @@
   import { page } from '$app/stores'
   import { goto, afterNavigate } from '$app/navigation'
   import { fightScreen } from '$lib/fighting/fightNavigation'
-  import { readFightSetup, saveFightSetup } from '$lib/fighting/fightSetupDraft'
+  import {
+    readFightSetup,
+    saveFightSetup,
+    type FightSelectionMode,
+  } from '$lib/fighting/fightSetupDraft'
   import { link, locale } from '$lib/i18n'
   import { createFight } from '$lib/fighting/engine'
   import { introDialogue } from '$lib/fighting/presentation/introDialogue'
@@ -47,7 +52,6 @@
     EMPTY_INPUT,
     type AttackKind,
     type FightInput,
-    type FightMode,
     type FightState,
     type FightSide,
     type FighterId,
@@ -77,7 +81,7 @@
   let selectedOpponent: FighterId = 'hisoka'
   let environment = createFightEnvironment({ arenaInteractions: true })
   let selectedFormat: FightFormatId = DEFAULT_FIGHT_FORMAT
-  let selectedMode: FightMode = 'versus-ai'
+  let selectedMode: FightSelectionMode = 'versus-ai'
   let kameos: KameoPicks = {}
   let state: FightState | null = null
   let input: FightInput = { ...EMPTY_INPUT }
@@ -87,6 +91,7 @@
     career: createCareerTracker(clashCareer.record),
   })
   const pausePlan = createFightPausePlan()
+  const qwen = match.qwen
   const replays = match.replays
   const diagnostics = match.diagnostics
   const replayActions = {
@@ -152,9 +157,12 @@
         withKameos(
           createFight(selectedPlayer, selectedOpponent, {
             formatId: selectedFormat,
-            mode: selectedMode,
+            mode: selectedMode === 'versus-rayxie' ? 'versus-local' : selectedMode,
             environment,
-            controls: controls.schemesFor(selectedMode, coarsePointer()),
+            controls: controls.schemesFor(
+              selectedMode === 'versus-rayxie' ? 'versus-ai' : selectedMode,
+              coarsePointer(),
+            ),
           }),
           kameos,
         ),
@@ -164,6 +172,7 @@
     )
     resetFightInputs()
     match.begin(state)
+    if (selectedMode === 'versus-rayxie') qwen.setEnabled(true, 'opponent')
     if (state.mode !== 'training' && $clashCareer.appearance.intro === 'full') {
       const dialogue = introDialogue(state)
       if (dialogue) primeIntroSpeech(dialogue, language)
@@ -213,7 +222,7 @@
     if (school.demonstrating) return
     if (
       side === 'opponent' &&
-      ($lessons || practice.active || school.active || state?.mode === 'versus-ai')
+      ($lessons || practice.active || school.active || qwen.enabled || state?.mode === 'versus-ai')
     )
       return
     const pressed = controls.combine(side, side === 'player' ? input : opponentInput)
@@ -229,7 +238,7 @@
   }
   function opponentControl(key: keyof FightInput, active: boolean) {
     if ($lessons || practice.active || school.active) return
-    if (paused || state?.mode === 'versus-ai') return
+    if (paused || qwen.enabled || state?.mode === 'versus-ai') return
     opponentInput = { ...opponentInput, [key]: active }
   }
   function gamepadAction(side: FightSide, action: PadAction) {
@@ -252,7 +261,9 @@
       keys: easterEggPreferences.keys,
       input: controls.combine('player', input),
       opponentInput: controls.combine('opponent', opponentInput),
-      easter: (side, slot) => queueCommand({ kind: 'easter', side, slot }),
+      easter: (side, slot) => {
+        if (side === 'player' || !qwen.enabled) queueCommand({ kind: 'easter', side, slot })
+      },
       control,
       opponentControl,
       opponentAttack,
@@ -396,7 +407,7 @@
     easterEggPreferences = readEasterEggPreferences()
     controls.load()
     void replays.load()
-    return mountFightingPage({
+    const stopPage = mountFightingPage({
       controls,
       school,
       practice,
@@ -407,6 +418,10 @@
       update: (next) => (state = next),
       pause: () => (paused = true),
     })
+    return () => {
+      stopPage()
+      qwen.dispose()
+    }
   })
 </script>
 
@@ -440,6 +455,7 @@
       onExit={resetFightInputs}
     />
   {:else}
+    {#if $qwen.enabled && !replays.active}<FightRayxieStatus {qwen} {language} />{/if}
     <FightBattle
       bind:state
       {language}

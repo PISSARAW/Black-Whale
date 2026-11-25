@@ -4,7 +4,10 @@ import type { Structure } from './types'
 const ROW_PATTERN = /^(tier-3-cineplex-screen-\d)-seat-row-(\d{2})$/
 const ROW_RISE = 0.24
 const FRONT_HEIGHT = 0.16
-const CENTRAL_AISLE = 0.86
+// A 0.86 m aisle only matched the visitor's 0.8 m collision diameter on
+// paper. The extra clearance keeps turns and diagonal movement fluid without
+// changing the inferred auditorium count or the manga-established rooms.
+const CENTRAL_AISLE = 1.4
 
 function inferred(structure: Structure, options: Partial<Structure>): Structure {
   return {

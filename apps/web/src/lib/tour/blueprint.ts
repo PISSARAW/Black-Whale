@@ -8,6 +8,7 @@
  * that into a failing test instead of a room nobody can reach.
  */
 import blueprintJson from '../../../../../data/ship/blueprint.json'
+import { applyPrinceApartmentPlans } from './princeApartmentPlans'
 import { cineplexHallDoorOverrides } from './cineplexHallLayout'
 import { cineplexWalkStructures } from './cineplexWalkStructures'
 import { spawnFacing, spawnPoint } from './spawn'
@@ -43,7 +44,7 @@ import type {
   WallSegment,
 } from './types'
 
-export const blueprint = blueprintJson as unknown as Blueprint
+export const blueprint = applyPrinceApartmentPlans(blueprintJson as unknown as Blueprint)
 export { spawnFacing, spawnPoint }
 
 /** One deck, resolved: its spaces, the doorways between them, its walls. */

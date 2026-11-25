@@ -20,6 +20,7 @@ import { auraLayersFor, type AuraSight } from './auraSight'
 import { firstPersonArms } from './humanFirstPerson'
 import { ensureHumanExtremityAnchors } from './humanExtremityAnchors'
 import { addHumanHandRigs } from './humanHandRig'
+import { addHumanFootRigs } from './humanFootRig'
 type Three = typeof import('three')
 export type HumanLook = Apparition & { kind: 'avatar' | 'combatant' }
 export interface HumanFigureBuild {
@@ -378,5 +379,6 @@ export function buildHumanFigure({
   finishHumanModel({ THREE, glow, model: { root }, profile })
   ensureHumanExtremityAnchors(root)
   addHumanHandRigs({ THREE, root, profile })
+  addHumanFootRigs({ THREE, root, profile })
   return { root, turns: figure, lod: { near: figure, far }, animate }
 }

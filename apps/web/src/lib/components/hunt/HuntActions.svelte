@@ -1,9 +1,12 @@
 <script lang="ts">
+  import ModeCommand from '$lib/components/game/ModeCommand.svelte'
+  import { HUNT_PAGE_KEYS } from '$lib/hunt/manualControls'
   import type { HuntHatsuId } from '$lib/hunt/hatsu'
 
   interface Props {
     canLay: boolean
     canTake: boolean
+    hatsuDisabled: boolean
     hatsuId: HuntHatsuId
     labels: {
       sweep: string
@@ -16,64 +19,52 @@
     }
     onLay: () => void
     onTake: () => void
+    onHatsu: () => void
   }
 
-  let { canLay, canTake, hatsuId, labels, onLay, onTake }: Props = $props()
+  let { canLay, canTake, hatsuDisabled, hatsuId, labels, onLay, onTake, onHatsu }: Props = $props()
 </script>
 
 <nav
-  class="absolute inset-x-0 bottom-3 z-20 flex flex-wrap justify-center gap-2 px-3 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:max-w-md sm:justify-end mb-[env(safe-area-inset-bottom)]"
+  class="mode-hud mode-hud-actions hunt-actions absolute right-3 z-20 max-w-[calc(100%-1.5rem)] justify-end"
   aria-label={labels.hint}
 >
   {#if hatsuId === 'bungee-gum'}
-    <button class="hunt-action" disabled={!canLay} onclick={onLay}>
-      <kbd>V</kbd><span>{labels.lay}</span>
-    </button>
+    <ModeCommand
+      label={labels.lay}
+      shortcut={canTake ? `${HUNT_PAGE_KEYS.lay.slice(3)} L H` : 'F V L H'}
+      keyLabel={canTake ? 'V' : 'F'}
+      disabled={!canLay}
+      onclick={onLay}
+    />
   {/if}
   {#if canTake}
-    <button class="hunt-action active" onclick={onTake}>
-      <kbd>R</kbd><span>{labels.take}</span>
-    </button>
+    <ModeCommand
+      label={labels.take}
+      shortcut={`F ${HUNT_PAGE_KEYS.take.slice(3)}`}
+      keyLabel="F"
+      onclick={onTake}
+    />
+  {/if}
+  {#if hatsuId !== 'bungee-gum'}
+    <ModeCommand
+      label={labels.hatsu[hatsuId]}
+      shortcut="L H"
+      keyLabel="L"
+      primary
+      disabled={hatsuDisabled}
+      onclick={onHatsu}
+    />
   {/if}
 </nav>
 
 <style>
-  .hunt-action {
-    display: flex;
-    min-height: 2.75rem;
-    align-items: center;
-    gap: 0.5rem;
-    border: 1px solid rgb(255 255 255 / 0.18);
-    border-radius: 9999px;
-    background: rgb(0 0 0 / 0.72);
-    padding: 0.45rem 0.8rem;
-    color: rgb(255 255 255 / 0.78);
-    font-size: 0.72rem;
-    backdrop-filter: blur(10px);
-  }
-
-  .hunt-action:hover:not(:disabled),
-  .hunt-action:focus-visible,
-  .hunt-action.active {
-    border-color: rgb(125 211 252 / 0.65);
-    color: white;
-  }
-
-  .hunt-action:disabled {
-    opacity: 0.3;
-  }
-  .hunt-action:focus-visible {
-    outline: 2px solid white;
-    outline-offset: 2px;
-  }
-  kbd {
-    color: rgb(125 211 252);
-    font: inherit;
-    font-weight: 700;
+  .hunt-actions {
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
   @media (pointer: coarse) {
-    kbd {
-      display: none;
+    .hunt-actions {
+      bottom: calc(11.25rem + env(safe-area-inset-bottom));
     }
   }
 </style>

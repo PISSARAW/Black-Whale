@@ -270,6 +270,7 @@
     showNenControls?: boolean
     /** Lets a mode replace the Tour keyboard vocabulary with its own shared control scheme. */
     keyboardNen?: boolean
+    modeKeyboard?: boolean
     /** Freezes movement and scene shortcuts while a modal owned by the page is open. */
     inputDisabled?: boolean
     movementDisabled?: boolean
@@ -632,6 +633,7 @@
     onPhysicalNenAction,
     showNenControls = true,
     keyboardNen = true,
+    modeKeyboard = false,
     inputDisabled = false,
     movementDisabled = false,
     concert = { mode: null, playing: false },
@@ -3563,9 +3565,13 @@
         index === 2 ? 'third' : index === 1 ? 'second' : 'first'
       let hatsuHoldTimer: number | null = null
       let hatsuPressed = false
+      let hatsuCode = NEN_KEYS.hatsu as string
 
       function beginHatsu(event: KeyboardEvent) {
         if (!onHatsu || hatsuBlockedByMode() || event.repeat) return false
+        if (modeKeyboard && (hatsuPressed || event.ctrlKey || event.metaKey || event.altKey))
+          return false
+        hatsuCode = event.code
         hatsuPressed = true
         hatsuVariantIndex = event.shiftKey && hatsuVariants.length > 1 ? 1 : lastHatsuVariant
         hatsuHoldTimer = window.setTimeout(() => {
@@ -3576,7 +3582,7 @@
       }
 
       function finishHatsu(event: KeyboardEvent) {
-        if (event.code !== NEN_KEYS.hatsu || !hatsuPressed) return false
+        if (event.code !== hatsuCode || !hatsuPressed) return false
         hatsuPressed = false
         if (hatsuHoldTimer !== null) window.clearTimeout(hatsuHoldTimer)
         hatsuHoldTimer = null
@@ -3646,26 +3652,17 @@
       }
 
       const onKeyDown = (event: KeyboardEvent) => {
-        // Giving the pointer back, without giving the screen back with it.
-        //
-        // Esc releases the pointer, and in full screen it also leaves full
-        // screen — the browser answers it before the page does, so a visitor who
-        // touched the walk to look around has to drop out of full screen to get
-        // a cursor for the panel beside it. Tab is the second way out: it means
-        // "hand the keyboard back to the page" everywhere else, it is nothing to
-        // the walk while the pointer is held, and full screen is untouched.
-        //
-        // Ahead of `typingElsewhere` on purpose: a captured pointer belongs to
-        // the scene whatever the page last focused, and that is exactly the case
-        // where the visitor most needs the way out.
+        // Tab releases the pointer without leaving fullscreen. Check before
+        // focus guards so it works even if another element had focus on entry.
         if (event.code === 'Tab' && document.pointerLockElement === canvas) {
           event.preventDefault()
           document.exitPointerLock()
           return
         }
-        if (inputDisabled) return
+        if (inputDisabled || (modeKeyboard && event.defaultPrevented)) return
         if (sceneKeyIsForElsewhere(event, canvas)) return
-        if (keyboardNen && event.code === NEN_KEYS.hatsu && beginHatsu(event)) return
+        const hatsuKey = event.code === NEN_KEYS.hatsu || (modeKeyboard && event.code === 'KeyL')
+        if (keyboardNen && hatsuKey && beginHatsu(event)) return
         const wheelZone = nenZoneIndex(event.code)
         if (hatsuWheelOpen && wheelZone !== null) {
           if (wheelZone < hatsuVariants.length) hatsuVariantIndex = wheelZone
@@ -5154,7 +5151,8 @@
         {french}
         onAction={useNen}
         onTen={toggleTen}
-        onInteract={() => interactWithNen?.()}
+        onInteract={() =>
+          (modeKeyboard ? (onPhysicalNenAction ?? interactWithNen) : interactWithNen)?.()}
         onHatsu={openOrCastHatsu}
       />
       <TourNenJournal entries={nenCauses} {french} />

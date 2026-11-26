@@ -7,6 +7,7 @@
    * "he is somewhere over there and he just looked" is the sentence the whole
    * of step 1 is trying to produce, and a minimap would answer it instead.
    */
+  import '$lib/components/game/mode-hud.css'
   import AuraGauge from './AuraGauge.svelte'
   import type { AuraPool } from '$lib/hunt/aura'
   import type { HuntFeedback } from '$lib/hunt/feedback'
@@ -56,32 +57,28 @@
   let hatsuBearing = $derived(degreesTo(reading.hatsu?.bearing ?? null))
 </script>
 
-<div
-  class="pointer-events-none absolute inset-x-0 bottom-0 p-4 sm:inset-auto sm:bottom-6 sm:left-6 sm:w-72 mb-[env(safe-area-inset-bottom)]"
->
-  <div class="rounded-lg bg-black/65 p-4 text-sm text-white/85 backdrop-blur">
-    <p class="text-xs uppercase tracking-widest text-white/45">
-      {reading.roomName ? labels.hud.room : labels.hud.nowhere}
-    </p>
-    <p class="mb-3 font-medium">{reading.roomName || '—'}</p>
-
-    <AuraGauge {pool} zetsu={reading.nen === 'zetsu'} labels={labels.hud} />
-
-    <dl class="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-xs text-white/60">
-      <dt>{labels.hud.entraves}</dt>
-      <dd class="text-right tabular-nums text-white/85">{reading.entraves}</dd>
-      <dt>{labels.hud.target}</dt>
-      <dd class="truncate text-right text-white/85">{reading.targetName}</dd>
-    </dl>
-
-    <p
-      class="mt-2 text-xs uppercase tracking-widest"
-      class:text-slate-400={reading.nen === 'zetsu'}
-    >
+<aside class="mode-hud mode-hud-surface grid gap-2 p-3" aria-label={labels.hud.aura}>
+  <div class="flex items-start justify-between gap-2">
+    <div class="min-w-0">
+      <p class="mode-hud-label">{reading.roomName ? labels.hud.room : labels.hud.nowhere}</p>
+      <p class="mode-hud-title mt-1">{reading.roomName || '—'}</p>
+    </div>
+    <span class="mode-hud-label nen-state" class:quiet={reading.nen === 'zetsu'}>
       {reading.nen === 'zetsu' ? labels.hud.zetsu : labels.hud.ten}
-    </p>
+    </span>
+  </div>
 
-    <div class="mt-3 min-h-[3.25rem] space-y-1 text-xs">
+  <AuraGauge {pool} zetsu={reading.nen === 'zetsu'} labels={labels.hud} />
+
+  <dl class="grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-3 gap-y-1 text-xs">
+    <dt class="mode-hud-label">{labels.hud.target}</dt>
+    <dd class="break-words text-right">{reading.targetName}</dd>
+    <dt class="mode-hud-label">{labels.hud.entraves}</dt>
+    <dd class="mode-hud-value text-right">{reading.entraves}</dd>
+  </dl>
+
+  {#if reading.hatsu || feedback.sweptFrom || feedback.footsteps || feedback.entraveSprung || feedback.entraveFound}
+    <div class="space-y-1 border-t border-white/15 pt-2 text-xs">
       {#if reading.hatsu}
         <p class="flex items-center gap-2 text-violet-200">
           {#if reading.hatsu.bearing}
@@ -115,5 +112,17 @@
         <p class="text-white/50">{labels.feel.found}</p>
       {/if}
     </div>
-  </div>
-</div>
+  {/if}
+</aside>
+
+<style>
+  .nen-state {
+    padding: 0.25rem 0.35rem;
+    border: 1px solid var(--mode-edge);
+    color: var(--mode-accent);
+    white-space: nowrap;
+  }
+  .nen-state.quiet {
+    color: #c7b3e2;
+  }
+</style>

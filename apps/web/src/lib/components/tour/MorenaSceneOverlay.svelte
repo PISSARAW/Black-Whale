@@ -83,9 +83,9 @@
   >
     {#if pointedLabel}
       <p
-        class="rounded border border-[#FFD700]/50 bg-[#050505]/85 px-3 py-1 text-center text-xs text-[#FFD700]"
+        class="rounded border border-[#FFD700]/50 bg-[#050505]/85 px-3 py-1 text-center text-xs text-[#FFD700] pointer-coarse:hidden"
       >
-        {pointedLabel}
+        <kbd aria-hidden="true">F</kbd> · {pointedLabel}
       </p>
     {:else if !phaseOver}
       <p class="rounded bg-[#050505]/70 px-3 py-1 text-center text-xs text-[#FFFFF0]/55">

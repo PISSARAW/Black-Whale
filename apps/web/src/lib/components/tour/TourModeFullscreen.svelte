@@ -3,6 +3,9 @@
   import { t } from '$lib/i18n'
   import { Fullscreen } from '$lib/tour/fullscreen.svelte'
 
+  let { keyboard = true, shiftShortcut = false }: { keyboard?: boolean; shiftShortcut?: boolean } =
+    $props()
+
   const screen = new Fullscreen()
   let button = $state<HTMLButtonElement | null>(null)
   const immersive = $derived(screen.immersive)
@@ -20,8 +23,14 @@
     void screen.toggle()
   }
 
+  function fullscreenKey(event: KeyboardEvent): boolean {
+    if (!keyboard || event.key.toLowerCase() !== 'v') return false
+    if (event.metaKey || event.ctrlKey || event.altKey) return false
+    return !shiftShortcut || (event.shiftKey && !event.repeat && !event.defaultPrevented)
+  }
+
   function onWindowKeydown(event: KeyboardEvent) {
-    if (event.metaKey || event.ctrlKey || event.altKey || event.key.toLowerCase() !== 'v') return
+    if (!fullscreenKey(event)) return
     const target = event.target
     if (
       target instanceof HTMLElement &&
@@ -42,11 +51,11 @@
   type="button"
   onclick={toggle}
   aria-pressed={immersive}
-  aria-keyshortcuts="V"
+  aria-keyshortcuts={keyboard ? (shiftShortcut ? 'Shift+V' : 'V') : undefined}
   class="absolute right-3 top-3 z-[85] rounded border px-2.5 py-1 text-xs shadow-lg backdrop-blur-sm transition-colors {immersive
     ? 'border-[#FFD700] bg-[#050505]/90 text-[#FFD700]'
     : 'border-white/25 bg-black/70 text-white/75 hover:border-[#FFD700]/60 hover:text-[#FFD700]'}"
 >
   {immersive ? $t.tour.fullscreen.exit : $t.tour.fullscreen.enter}
-  <kbd class="ml-1 text-[10px] opacity-70">V</kbd>
+  {#if keyboard}<kbd class="ml-1 text-[10px] opacity-70">{shiftShortcut ? '⇧ V' : 'V'}</kbd>{/if}
 </button>

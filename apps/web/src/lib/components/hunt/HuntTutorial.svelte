@@ -1,4 +1,5 @@
 <script lang="ts">
+  import '$lib/components/game/mode-hud.css'
   import type { TutorialStep } from '$lib/hunt/tutorial'
 
   interface Props {
@@ -14,18 +15,16 @@
   let { step, labels, onDismiss }: Props = $props()
 </script>
 
-<aside
-  class="pointer-events-auto absolute inset-x-3 top-20 z-30 mx-auto max-w-sm rounded-xl border border-sky-300/20 bg-black/75 p-4 shadow-xl backdrop-blur-md"
-  aria-live="polite"
->
+<aside class="mode-hud mode-hud-surface p-3" data-tone="gold" aria-live="polite">
   <div class="flex items-start justify-between gap-4">
     <div>
-      <p class="text-[0.65rem] uppercase tracking-[0.25em] text-sky-300/60">{labels.title}</p>
+      <p class="mode-hud-label">{labels.title}</p>
       <h2 class="mt-1 text-sm font-medium text-white">{labels.step[step].title}</h2>
-      <p class="mt-1 text-xs leading-relaxed text-white/55">{labels.step[step].body}</p>
+      <p class="mt-1 text-xs leading-relaxed text-slate-300">{labels.step[step].body}</p>
     </div>
     <button
-      class="text-xs text-white/40 transition hover:text-white"
+      class="mode-hud-button pointer-events-auto shrink-0"
+      type="button"
       onclick={onDismiss}
       aria-label={labels.dismiss}>×</button
     >

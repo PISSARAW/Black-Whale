@@ -1,4 +1,5 @@
 <script lang="ts">
+  import '$lib/components/game/mode-hud.css'
   import { onDestroy } from 'svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import { activateHatsu, activeHatsu, deactivateHatsu } from '$lib/nen/hatsuState'
@@ -145,13 +146,19 @@
 </script>
 
 <div class="scene-shell" data-hatsu-pass>
-  <div class="scene-toolbar">
+  <div class="scene-toolbar mode-hud mode-hud-surface" data-tone="gold">
     <div>
-      <small>{$t.reconstruction.v3.scene.title}</small>
-      <strong>{selectedProfile?.name ?? abilityId}</strong>
+      <small class="mode-hud-label">{$t.reconstruction.v3.scene.title}</small>
+      <strong class="mode-hud-title">{selectedProfile?.name ?? abilityId}</strong>
       <span>{report?.kind ?? $t.reconstruction.v3.scene.hint}</span>
     </div>
-    <button type="button" onclick={arm} disabled={!selectedProfile}>
+    <button
+      class="mode-hud-button"
+      data-primary
+      type="button"
+      onclick={arm}
+      disabled={!selectedProfile}
+    >
       {selectedProfile ? $t.reconstruction.v3.scene.arm : $t.reconstruction.v3.scene.unavailable}
     </button>
   </div>
@@ -187,6 +194,7 @@
       bind:aimedAt
       bind:aimedSolidAt
       onCast={cast}
+      modeKeyboard
       onHatsu={cast}
       nen={session.nen}
       onNenChange={session.useNen}
@@ -216,28 +224,14 @@
     justify-content: space-between;
     gap: 1rem;
     padding: 0.8rem 1rem;
-    background: #0b121d;
   }
   .scene-toolbar div {
     display: grid;
     gap: 0.15rem;
   }
-  .scene-toolbar small {
-    color: #e8b05b;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
   .scene-toolbar span {
     color: #91a0b1;
     font-size: 0.78rem;
-  }
-  .scene-toolbar button {
-    border: 1px solid #4b7688;
-    border-radius: 999px;
-    background: #102431;
-    color: #bfeaff;
-    padding: 0.65rem 1rem;
-    font-weight: 800;
   }
   .viewport {
     height: min(58vh, 560px);

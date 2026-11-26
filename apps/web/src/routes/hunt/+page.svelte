@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { modeShortcut, runModeCommand } from '$lib/components/game/modeKeyboard'
   import { onDestroy, onMount } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import HuntScene from '$lib/components/hunt/HuntScene.svelte'
@@ -360,17 +361,36 @@
       (placement) => placement.state === 'set' && placement.spaceId === game.player.spaceId,
     ),
   )
+  const canUseHuntHatsu = $derived(
+    !game.duel &&
+      (game.hatsu.id === 'parallel-future'
+        ? game.player.nen === 'zetsu'
+        : game.player.nen === 'ten' && game.player.atRest),
+  )
 
   function onKeyDown(event: KeyboardEvent) {
-    if (!briefed || finished || event.repeat || event.metaKey || event.ctrlKey) return
-    if (event.key === '?') {
-      manualOpen = !manualOpen
-      event.preventDefault()
-      return
-    }
-    if (manualOpen || isNenControlCode(event.code)) return
-    const handled = game.duel ? duelKey(event.code) : huntKey(event.code)
+    if (!briefed || finished) return
+    const code = modeShortcut(event)
+    if (code === '?') return runModeCommand(event, () => (manualOpen = !manualOpen))
+    if (!code || manualOpen) return
+    if (code === 'KeyF') return runModeCommand(event, huntContext)
+    if (code === 'KeyL' || code === 'KeyH') return runModeCommand(event, useHuntHatsu)
+    if (isNenControlCode(code)) return
+    const handled = game.duel ? duelKey(code) : huntKey(code)
     if (handled) event.preventDefault()
+  }
+
+  function huntContext() {
+    if (game.duel) return strike()
+    if (canTake) send({ type: 'TAKE' })
+    else if (canLay && game.hatsu.id === 'bungee-gum') send({ type: 'LAY' })
+  }
+
+  function useHuntHatsu() {
+    if (game.duel) return
+    if (game.hatsu.id === 'bungee-gum') {
+      if (canLay) send({ type: 'LAY' })
+    } else if (canUseHuntHatsu) send({ type: 'HATSU' })
   }
 
   function huntKey(code: string): boolean {
@@ -381,7 +401,10 @@
   }
 
   function duelKey(code: string): boolean {
-    if (code === 'Space') return strike()
+    if (code === 'Space' || code === 'KeyJ') {
+      strike()
+      return true
+    }
     if (code !== HUNT_PAGE_KEYS.take) return false
     send({ type: 'TAKE_IN_DUEL' })
     return true
@@ -481,13 +504,20 @@
       position[0] - game.player.position[0],
       position[1] - game.player.position[1],
     )
-    if (moved === 0 && game.player.atRest && heading === game.player.heading) return
+    const spaceId = currentSpace?.id ?? (moved === 0 ? game.player.spaceId : null)
+    if (
+      moved === 0 &&
+      game.player.atRest &&
+      heading === game.player.heading &&
+      spaceId === game.player.spaceId
+    )
+      return
     send({
       type: 'WALKED',
       player: {
-        position: position,
+        position: [position[0], position[1]],
         heading,
-        spaceId: currentSpace?.id ?? null,
+        spaceId,
         atRest: moved === 0,
       },
     })
@@ -649,9 +679,12 @@
   ])}
 />
 
-<div class="relative h-[100dvh] w-full overflow-hidden bg-black text-white">
-  <TourModeFullscreen />
+<div
+  class="relative h-[calc(100dvh-var(--header-height))] w-full overflow-hidden bg-black text-white"
+>
+  <TourModeFullscreen shiftShortcut />
   <TourMinimapPanel
+    compact
     {plan}
     {position}
     {heading}
@@ -694,8 +727,9 @@
     inputDisabled={manualOpen || finished}
     showNenControls={true}
     onNenChange={useStandardNen}
-    onPhysicalNenAction={() => game.duel && strike()}
-    onHatsu={() => send({ type: 'HATSU' })}
+    onPhysicalNenAction={huntContext}
+    modeKeyboard
+    onHatsu={useHuntHatsu}
     hatsuAllowedInZetsu={game.hatsu.id === 'parallel-future'}
     extras={figures}
     touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
@@ -708,20 +742,31 @@
     <NenVeil {cues} {calm} />
   {/if}
 
-  {#if !finished && !inDuel}
-    <HuntHud
-      pool={game.duel ? game.duel.player.pool : game.ledger.pool}
-      feedback={game.feedback}
-      reading={{
-        nen: game.player.nen,
-        roomName: roomName(game.player.spaceId),
-        targetName: roomName(game.targetSpaceId),
-        entraves: liveOf(game.ledger.placements).length,
-        heading: game.player.heading,
-        hatsu: hatsuReading,
-      }}
-      labels={{ hud: $t.hunt.hud, feel: $t.hunt.feel }}
-    />
+  {#if briefed && !finished && !inDuel}
+    <div
+      class="pointer-events-none absolute right-3 top-14 z-10 grid w-[min(19rem,calc(100%-5.5rem))] gap-2"
+    >
+      <HuntHud
+        pool={game.duel ? game.duel.player.pool : game.ledger.pool}
+        feedback={game.feedback}
+        reading={{
+          nen: game.player.nen,
+          roomName: roomName(game.player.spaceId),
+          targetName: roomName(game.targetSpaceId),
+          entraves: liveOf(game.ledger.placements).length,
+          heading: game.player.heading,
+          hatsu: hatsuReading,
+        }}
+        labels={{ hud: $t.hunt.hud, feel: $t.hunt.feel }}
+      />
+      {#if !tutorialDismissed && lesson !== 'done'}
+        <HuntTutorial
+          step={lesson}
+          labels={tutorialMessages($locale)}
+          onDismiss={() => (tutorialDismissed = true)}
+        />
+      {/if}
+    </div>
   {/if}
 
   {#if briefed && !inDuel && !finished}
@@ -730,16 +775,10 @@
       {canTake}
       hatsuId={game.hatsu.id}
       labels={$t.hunt.actions}
+      hatsuDisabled={!canUseHuntHatsu}
+      onHatsu={useHuntHatsu}
       onLay={() => send({ type: 'LAY' })}
       onTake={() => send({ type: 'TAKE' })}
-    />
-  {/if}
-
-  {#if briefed && !tutorialDismissed && lesson !== 'done' && !finished}
-    <HuntTutorial
-      step={lesson}
-      labels={tutorialMessages($locale)}
-      onDismiss={() => (tutorialDismissed = true)}
     />
   {/if}
 

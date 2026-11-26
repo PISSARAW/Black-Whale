@@ -484,6 +484,7 @@ export const fr: Messages = {
     sourcesLink: "D'où vient chaque pièce",
 
     plan: {
+      toggle: 'Plan',
       open: 'Plan plein écran',
       close: 'Fermer',
       crossingUp: (destination) => `Monter vers ${destination}`,
@@ -1805,8 +1806,8 @@ export const fr: Messages = {
 
       reach: {
         hint: 'Visez une carte et cliquez.',
-        cast: (effect: string) => `F — ${effect}`,
-        castSecond: (effect: string) => `R — ${effect}`,
+        cast: (effect: string) => `L — ${effect}`,
+        castSecond: (effect: string) => `⇧ L — ${effect}`,
         ask: (question: string) => `Demander — ${question}`,
         kiss: (card: string) => `L’embrasser, et reprendre le ${card}`,
         decline: 'Refuser le baiser, et jouer la main que vous avez',
@@ -2575,7 +2576,7 @@ export const fr: Messages = {
     controls: {
       walk: 'ZQSD — marcher',
       look: 'Souris — regarder',
-      sweep: 'F — balayer au En (15)',
+      sweep: 'N — balayer au En (15)',
       zetsu: 'X — Zetsu : invisible, et sans avertissement',
       lay: 'V — poser une entrave (25)',
       take: 'R — en reprendre une',

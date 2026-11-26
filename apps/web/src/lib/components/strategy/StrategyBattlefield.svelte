@@ -1,4 +1,6 @@
 <script lang="ts">
+  import ModeCommand from '$lib/components/game/ModeCommand.svelte'
+  import { modeShortcut, runModeCommand } from '$lib/components/game/modeKeyboard'
   import { onDestroy } from 'svelte'
   import PlanMap from '$lib/components/map/PlanMap.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
@@ -25,7 +27,15 @@
     locationLabel: string | null
   }
 
-  let { markers, hatsuCues = [] }: { markers: Marker[]; hatsuCues?: StrategyHatsuCue[] } = $props()
+  let {
+    markers,
+    hatsuCues = [],
+    inputDisabled = false,
+  }: {
+    markers: Marker[]
+    hatsuCues?: StrategyHatsuCue[]
+    inputDisabled?: boolean
+  } = $props()
   const ship = theShip()
   const navigation = new TourNavigationState(ship, ship.tiers[0].id)
   const modeNen = new ModeNenState()
@@ -146,47 +156,48 @@
     selectedTier = id
     navigation.selectTier(id)
   }
+  function keyboard(event: KeyboardEvent) {
+    if (!inputDisabled && modeShortcut(event) === 'KeyM')
+      runModeCommand(event, () => (view = view === 'tour' ? 'map' : 'tour'))
+  }
 </script>
 
+<svelte:window onkeydown={keyboard} />
+
 <div
-  class="mb-4 flex flex-wrap gap-2 sm:justify-end"
+  class="mode-hud mode-hud-surface mode-hud-actions mb-3 justify-between p-2"
   role="group"
   aria-label={$t.strategy.ui.battlefield.label}
 >
-  <button
-    class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {view ===
-    'tour'
-      ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
-      : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}"
-    type="button"
-    onclick={() => (view = 'tour')}>{$t.strategy.ui.battlefield.tour}</button
-  >
-  <button
-    class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {view ===
-    'map'
-      ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
-      : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}"
-    type="button"
-    onclick={() => (view = 'map')}>{$t.strategy.ui.battlefield.map}</button
-  >
+  <p class="mode-hud-label px-1">{$t.strategy.ui.battlefield.label}</p>
+  <div class="mode-hud-actions">
+    <ModeCommand
+      label={$t.strategy.ui.battlefield.tour}
+      pressed={view === 'tour'}
+      onclick={() => (view = 'tour')}
+    />
+    <ModeCommand
+      label={$t.strategy.ui.battlefield.map}
+      shortcut="M"
+      pressed={view === 'map'}
+      onclick={() => (view = 'map')}
+    />
+  </div>
 </div>
 
 {#if latestHatsuCue}
-  <div
-    class="mb-4 flex items-center justify-between gap-4 rounded-lg border-l-4 border-amber-400 bg-amber-950/40 px-4 py-3 text-xs text-white shadow-[0_0_20px_rgba(251,191,36,0.15)]"
-    role="status"
-    aria-live="polite"
-  >
-    <strong class="font-black tracking-widest text-amber-300"
-      >{hatsuById(latestHatsuCue.abilityId)?.name ?? latestHatsuCue.abilityId}</strong
-    >
-    <span class="text-amber-100/70">{latestHatsuCue.report}</span>
+  <div class="mode-hud mode-hud-surface mb-3 grid gap-1 p-3" data-tone="gold" role="status">
+    <strong class="mode-hud-label">
+      {hatsuById(latestHatsuCue.abilityId)?.name ?? latestHatsuCue.abilityId}
+    </strong>
+    <span class="text-xs text-slate-200">{latestHatsuCue.report}</span>
   </div>
 {/if}
 
 {#if view === 'tour'}
   <div class="tour-stage">
     <TourMinimapPanel
+      compact
       {plan}
       position={navigation.position}
       heading={navigation.heading}
@@ -213,6 +224,8 @@
       bind:aimedSolidAt={navigation.aimedSolidAt}
       nen={modeNen.value}
       onNenChange={modeNen.use}
+      {inputDisabled}
+      modeKeyboard
       touchLabels={{ move: $t.strategy.ui.battlefield.move, cast: $t.strategy.ui.battlefield.cast }}
       soundLabels={{
         silence: $t.strategy.ui.battlefield.silence,
@@ -224,15 +237,13 @@
   </div>
 {:else}
   <div
-    class="mb-4 flex flex-wrap gap-2 sm:justify-end"
+    class="mode-hud mode-hud-actions mb-3 sm:justify-end"
     aria-label={$t.strategy.ui.battlefield.displayDeck}
   >
     {#each availableTiers as tier (tier)}
       <button
-        class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {selectedTier ===
-        tier
-          ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
-          : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}"
+        class="mode-hud-button"
+        aria-pressed={selectedTier === tier}
         type="button"
         onclick={() => selectTier(tier)}>{$t.strategy.ui.battlefield.deck(tier)}</button
       >

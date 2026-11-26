@@ -1,4 +1,6 @@
 <script lang="ts">
+  import '$lib/components/game/mode-hud.css'
+  import { modeShortcut, runModeCommand } from '$lib/components/game/modeKeyboard'
   import { onDestroy, type Snippet } from 'svelte'
   import ReconstructionTransport from './ReconstructionTransport.svelte'
   import { t } from '$lib/i18n'
@@ -88,29 +90,28 @@
     openPanel('person')
     selectedDeck = tier
   }
-  function editing(target: EventTarget | null) {
-    return (
-      target instanceof HTMLElement &&
-      Boolean(target.closest('input, textarea, select, [contenteditable="true"]'))
-    )
+  function overviewShortcut(event: KeyboardEvent, code: string | null) {
+    if (viewMode !== 'overview') return
+    if (code === 'Space') return runModeCommand(event, onPlay)
+    const next = code === 'ArrowLeft' ? index - 1 : code === 'ArrowRight' ? index + 1 : index
+    if (next !== index && next >= 0 && next < count) runModeCommand(event, () => onChoose(next))
   }
+
   function keyboard(event: KeyboardEvent) {
-    if (event.metaKey || event.ctrlKey || event.altKey || panel) return
-    if (editing(event.target)) return
-    if (event.key.toLowerCase() === 'v') {
-      event.preventDefault()
-      void screen.toggle()
-    }
-    if (event.key === 'Escape' && screen.immersive && !screen.native) {
-      event.preventDefault()
-      void screen.toggle()
-    }
+    if (panel) return
+    const code = modeShortcut(event)
+    if (code === 'KeyV' || (code === 'Escape' && screen.immersive && !screen.native))
+      return runModeCommand(event, () => void screen.toggle())
+    if (code === 'KeyP') return runModeCommand(event, onPlay)
+    if (code === 'KeyF') return runModeCommand(event, () => openPanel('event'))
+    if (code === 'KeyM') return runModeCommand(event, () => openPanel('timeline'))
+    overviewShortcut(event, code)
   }
 </script>
 
 <svelte:window onkeydown={keyboard} />
-<div class="reconstruction-workspace" class:immersive={screen.immersive}>
-  <div class="workspace-toolbar" data-hatsu-pass>
+<div class="reconstruction-workspace mode-hud" class:immersive={screen.immersive} data-tone="gold">
+  <div class="workspace-toolbar mode-hud-actions" data-hatsu-pass>
     <nav class="view-switch" aria-label={$t.reconstruction.viewLabel}>
       <button
         type="button"
@@ -135,7 +136,8 @@
       <button
         type="button"
         onclick={(event) => openPanel('timeline', event.currentTarget)}
-        aria-haspopup="dialog">{$reconstructionWords.timeline}</button
+        aria-haspopup="dialog"
+        aria-keyshortcuts="M">{$reconstructionWords.timeline}</button
       >
       <button
         type="button"
@@ -164,19 +166,22 @@
     </div>
   </div>
   <button
-    class="event-strip"
+    class="event-strip mode-hud-surface"
     type="button"
     onclick={(event) => openPanel('event', event.currentTarget)}
     aria-label={$reconstructionWords.details}
+    aria-keyshortcuts="F"
     aria-haspopup="dialog"
     data-hatsu-pass
   >
     <span class="event-heading"
-      ><small
+      ><small class="mode-hud-label"
         >{$t.common.chapterShort(event.chapter)}{#if event.time}
           · {event.time}{/if}</small
       ><strong>{event.title}</strong></span
-    ><span class="details-label">{$reconstructionWords.details} →</span>
+    ><span class="details-label mode-hud-label"
+      ><kbd aria-hidden="true">F</kbd> {$reconstructionWords.details} →</span
+    >
   </button>
   {#if loading}<p class="perspective-status" role="status">
       {$t.reconstruction.loadingPerspective}
@@ -214,6 +219,7 @@
     {index}
     {count}
     {isPlaying}
+    arrowShortcuts={viewMode === 'overview'}
     {onChoose}
     {onPlay}
     immersive={screen.immersive}
@@ -245,21 +251,26 @@
     display: flex;
     gap: 0.15rem;
     padding: 0.2rem;
-    border: 1px solid #303d44;
+    border: 1px solid var(--mode-edge);
     border-radius: 5px;
   }
   button {
     min-height: 44px;
     padding: 0.5rem 0.8rem;
-    border: 1px solid #303d44;
+    border: 1px solid var(--mode-edge);
     border-radius: 4px;
-    background: #0b1419;
+    background: #0e1924;
     color: #b9c7cc;
     font-size: 0.8rem;
   }
+  button:focus-visible,
+  select:focus-visible {
+    outline: 2px solid var(--mode-accent);
+    outline-offset: 2px;
+  }
   button:hover {
     color: #f1dfb9;
-    border-color: #a78d51;
+    border-color: var(--mode-accent);
   }
   .view-switch button {
     min-height: 38px;
@@ -268,8 +279,8 @@
     padding: 0.4rem 0.75rem;
   }
   .view-switch button[aria-pressed='true'] {
-    background: #29291d;
-    color: #e5c57a;
+    background: color-mix(in srgb, var(--mode-accent) 18%, #0e1924);
+    color: var(--mode-accent);
   }
   .observer {
     flex: 0 1 250px;
@@ -279,9 +290,9 @@
     width: 100%;
     min-height: 44px;
     padding: 0.5rem 0.75rem;
-    border: 1px solid #303d44;
+    border: 1px solid var(--mode-edge);
     border-radius: 4px;
-    background: #0b1419;
+    background: #0e1924;
     color: #c7d1d5;
     font-size: 0.8rem;
   }
@@ -292,7 +303,7 @@
     margin-left: auto;
   }
   .filtered {
-    border-color: #a78d51;
+    border-color: var(--mode-accent);
     color: #e5c57a;
   }
   .fullscreen {
@@ -307,6 +318,8 @@
     height: 18px;
   }
   .event-strip {
+    border-inline-start: 2px solid var(--mode-accent);
+    background: linear-gradient(135deg, #18232c, #080e16 75%);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -330,8 +343,8 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: 0.85rem;
-    font-weight: 500;
-    color: #e1e7e6;
+    font-weight: 700;
+    color: #f2f5f6;
   }
   .details-label {
     flex-shrink: 0;
@@ -439,6 +452,8 @@
       padding: 0.5rem 0.55rem;
     }
     .event-strip {
+      border-inline-start: 2px solid var(--mode-accent);
+      background: linear-gradient(135deg, #18232c, #080e16 75%);
       gap: 0.5rem;
     }
     .details-label {

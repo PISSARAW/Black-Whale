@@ -8,6 +8,8 @@
    * duelists and lets `AuraOverlay` decide what is legible rather than deciding
    * it here.
    */
+  import '$lib/components/game/mode-hud.css'
+  import { HUNT_PAGE_KEYS } from '$lib/hunt/manualControls'
   import AuraOverlay from './AuraOverlay.svelte'
   import { BODY_ZONES, type BodyZone, type DuelState } from '$lib/hunt/duel/state'
   import { STRIKE_THRESHOLD } from '$lib/hunt/duel/ryu'
@@ -74,13 +76,13 @@
   let forward = $derived(duel.player.attack >= STRIKE_THRESHOLD)
 </script>
 
-<div class="pointer-events-none absolute inset-0 overflow-hidden">
+<div class="mode-hud pointer-events-none absolute inset-0 overflow-hidden" data-tone="rose">
   <!-- The room remains the arena. These edge gradients frame it without
        replacing it, so doors, the hunter and every prepared object stay part
        of the player's reading during contact. -->
   <div class="duel-vignette absolute inset-0"></div>
 
-  <h2 class="absolute inset-x-0 top-5 text-center text-xs uppercase tracking-[0.4em] text-rose-300">
+  <h2 class="mode-hud-label duel-title absolute left-1/2 top-4 -translate-x-1/2 text-center">
     {labels.title}
   </h2>
 
@@ -117,15 +119,15 @@
   </p>
 
   <section
-    class="pointer-events-auto absolute inset-x-3 bottom-3 mx-auto w-[min(94vw,38rem)] rounded-xl border border-white/10 bg-black/75 p-3 shadow-2xl backdrop-blur-md sm:bottom-6 mb-[env(safe-area-inset-bottom)]"
+    class="mode-hud-surface duel-console pointer-events-auto absolute inset-x-3 bottom-3 mx-auto max-w-[38rem] overflow-y-auto p-2 sm:bottom-6 sm:p-3 mb-[env(safe-area-inset-bottom)]"
     aria-label={labels.title}
   >
     <div class="grid grid-cols-4 gap-1.5" aria-label={labels.action.guard}>
       {#each BODY_ZONES as zone, index (zone)}
         <button
-          class="duel-action"
-          class:active={duel.player.guard === zone}
+          class="mode-hud-button"
           aria-pressed={duel.player.guard === zone}
+          aria-keyshortcuts={String(index + 1)}
           onclick={() => onGuard(zone)}
         >
           <kbd>{index + 1}</kbd>{labels.zone[zone]}
@@ -151,106 +153,75 @@
     </label>
 
     <div class="mt-3 grid grid-cols-4 gap-1.5">
-      <button
-        class="duel-action"
-        class:active={duel.player.gyo}
-        aria-pressed={duel.player.gyo}
-        onclick={onGyo}
-      >
+      <button class="mode-hud-button" aria-pressed={duel.player.gyo} onclick={onGyo}>
         <kbd>G</kbd>{labels.action.observe}
       </button>
-      <button
-        class="duel-action"
-        class:active={duel.player.in}
-        aria-pressed={duel.player.in}
-        onclick={onIn}
-      >
+      <button class="mode-hud-button" aria-pressed={duel.player.in} onclick={onIn}>
         <kbd>I</kbd>{labels.action.conceal}
       </button>
-      <button
-        class="duel-action"
-        class:active={duel.player.ken}
-        aria-pressed={duel.player.ken}
-        onclick={onKen}
-      >
+      <button class="mode-hud-button" aria-pressed={duel.player.ken} onclick={onKen}>
         <kbd>K</kbd>{labels.action.endure}
       </button>
-      <button class="duel-action danger" disabled={!canCharge(duel.player)} onclick={onKo}>
-        <kbd>␣</kbd>{labels.action.strike}
+      <button
+        class="mode-hud-button mode-command"
+        data-primary
+        aria-keyshortcuts="J Space C F"
+        disabled={!canCharge(duel.player)}
+        onclick={onKo}
+      >
+        <kbd>J</kbd>{labels.action.strike}
       </button>
     </div>
 
     <div class="mt-1.5 grid grid-cols-2 gap-1.5">
-      <button
-        class="duel-action warning"
-        class:active={duel.player.zetsu}
-        aria-pressed={duel.player.zetsu}
-        onclick={onBreakAway}
-      >
+      <button class="mode-hud-button" aria-pressed={duel.player.zetsu} onclick={onBreakAway}>
         <kbd>X</kbd>{labels.action.breakAway}
       </button>
       {#if canRecover}
-        <button class="duel-action active" onclick={onRecover}>
-          <kbd>R</kbd>{labels.action.recover}
+        <button
+          class="mode-hud-button"
+          data-primary
+          aria-keyshortcuts={HUNT_PAGE_KEYS.take.slice(3)}
+          onclick={onRecover}
+        >
+          <kbd>{HUNT_PAGE_KEYS.take.slice(3)}</kbd>{labels.action.recover}
         </button>
       {/if}
     </div>
-    <button class="duel-action arena mt-1.5 w-full" onclick={onArena}>
+    <button class="mode-hud-button arena mt-1.5 w-full" onclick={onArena}>
       {arenaLabel}
     </button>
   </section>
 </div>
 
 <style>
-  .duel-action {
-    display: flex;
-    min-height: 2.35rem;
-    align-items: center;
-    justify-content: center;
-    gap: 0.35rem;
-    border: 1px solid rgb(255 255 255 / 0.12);
-    border-radius: 0.5rem;
-    background: rgb(255 255 255 / 0.04);
-    color: rgb(255 255 255 / 0.6);
-    font-size: 0.68rem;
-    transition: 120ms ease;
+  .duel-title {
+    color: var(--mode-accent);
   }
-  .duel-action:hover:not(:disabled),
-  .duel-action:focus-visible,
-  .duel-action.active {
-    border-color: rgb(125 211 252 / 0.65);
-    background: rgb(125 211 252 / 0.1);
-    color: white;
+  .duel-console {
+    max-height: 48%;
+    container-type: inline-size;
   }
-  .duel-action.warning {
-    border-color: rgb(196 181 253 / 0.3);
+  .duel-console button {
+    min-height: 2.5rem;
+    padding-inline: 0.3rem;
   }
-  .duel-action.danger {
-    border-color: rgb(251 113 133 / 0.35);
+  .arena {
+    color: #efce88;
   }
-  .duel-action.arena {
-    border-color: rgb(212 183 107 / 0.55);
-    color: rgb(230 210 156);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+  @media (pointer: coarse) {
+    .duel-console button {
+      min-height: 2.75rem;
+    }
   }
-  .duel-action:disabled {
-    opacity: 0.25;
-  }
-  .duel-action:focus-visible,
   .ryu-range:focus-visible {
     outline: 2px solid white;
     outline-offset: 2px;
   }
-  @media (pointer: coarse) {
-    .duel-action {
-      min-height: 2.75rem;
+  @container (max-width: 24rem) {
+    .duel-console button {
+      font-size: 0.72rem;
     }
-  }
-  kbd {
-    color: rgb(125 211 252);
-    font: inherit;
-    font-weight: 700;
   }
   .ryu-range {
     accent-color: rgb(125 211 252);
@@ -277,11 +248,6 @@
   .duel-bodies :global(figure) {
     transform: scale(0.72);
     transform-origin: top center;
-  }
-  @media (pointer: coarse) {
-    kbd {
-      display: none;
-    }
   }
   @media (max-height: 720px) {
     .duel-bodies :global(figure) {

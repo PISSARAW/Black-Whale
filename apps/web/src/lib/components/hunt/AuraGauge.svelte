@@ -56,10 +56,12 @@
   let justSpent = $derived(percent(Math.max(0, ghost - pool.available)))
 </script>
 
-<div class="w-full" aria-label={labels.aura}>
+<div class="w-full">
+  <p class="mode-hud-label mb-1" aria-hidden="true">{labels.aura}</p>
   <div
-    class="relative h-3 w-full overflow-hidden rounded-full bg-white/10 ring-1 ring-white/15"
+    class="relative h-2.5 w-full overflow-hidden border border-slate-500/65 bg-[#061018]"
     role="meter"
+    aria-label={labels.aura}
     aria-valuemin="0"
     aria-valuemax={MAX_AURA}
     aria-valuenow={Math.round(pool.available)}
@@ -70,8 +72,8 @@
     <!-- What has just left the body, still glowing where it was. -->
     <div class="absolute inset-y-0 hunt-spent" style:left={inHand} style:width={justSpent}></div>
     <div
-      class="absolute inset-y-0 left-0 transition-[width] duration-300 ease-out"
-      class:bg-sky-300={!zetsu}
+      class="absolute inset-y-0 left-0 transition-[width] duration-300 ease-out motion-reduce:transition-none"
+      class:hunt-available={!zetsu}
       class:bg-slate-500={zetsu}
       class:hunt-quiet={zetsu}
       style:width={inHand}
@@ -80,7 +82,7 @@
     <div class="absolute inset-y-0 right-0 hunt-laid" style:width={laidDown}></div>
   </div>
 
-  <div class="mt-1 flex justify-between text-[0.65rem] uppercase tracking-wider text-white/45">
+  <div class="mt-1 flex justify-between mode-hud-label">
     <span>{labels.available}</span>
     {#if pool.committed > 0}
       <span class="text-violet-300">{labels.committed}</span>
@@ -91,6 +93,10 @@
 <style>
   /* The trail a spend leaves. It is the only thing on the gauge that moves, and
      it moves because it is the only thing on it that is an event. */
+  .hunt-available {
+    background: linear-gradient(90deg, #3289a9, var(--mode-accent));
+  }
+
   .hunt-spent {
     background: rgb(248 113 113 / 0.75);
     transition:
@@ -115,7 +121,8 @@
 
   @media (prefers-reduced-motion: reduce) {
     .hunt-spent,
-    .hunt-quiet {
+    .hunt-quiet,
+    .hunt-laid {
       transition: none;
       animation: none;
     }

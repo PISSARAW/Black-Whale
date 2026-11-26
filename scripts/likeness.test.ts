@@ -26,13 +26,18 @@ function listBetween(source: string, opening: string): string[] {
 }
 
 const contracts = readFileSync(`${ROOT}packages/contracts/src/appearance.ts`, 'utf8')
-const walk = readFileSync(`${ROOT}apps/web/src/lib/tour/humanProfiles.ts`, 'utf8')
+const walk = [
+  readFileSync(`${ROOT}apps/web/src/lib/tour/humanProfiles.ts`, 'utf8'),
+  readFileSync(`${ROOT}apps/web/src/lib/tour/humanFaceFeatures.ts`, 'utf8'),
+].join('\n')
 
 const PAIRS: ReadonlyArray<readonly [string, string, string]> = [
   ['hairstyles', 'export const APPEARANCE_HAIR_STYLES = [', 'export const HAIR_STYLES = ['],
   ['attire', 'export const APPEARANCE_ATTIRE = [', 'export const ATTIRE = ['],
   ['signatures', 'export const APPEARANCE_SIGNATURES = [', 'export const SIGNATURES = ['],
   ['frames', 'export const APPEARANCE_FRAMES = [', 'export const FRAMES = ['],
+  ['postures', 'export const APPEARANCE_POSTURES = [', 'export const POSTURES = ['],
+  ['eye shapes', 'export const APPEARANCE_EYE_SHAPES = [', 'export const HUMAN_EYE_SHAPES = ['],
 ]
 
 describe('the likeness vocabularies', () => {

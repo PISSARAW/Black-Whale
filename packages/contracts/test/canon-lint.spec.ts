@@ -411,6 +411,40 @@ describe('likeness-covers-the-roster', () => {
 })
 
 describe('what a likeness may and may not say', () => {
+  it('accepts bounded silhouette proportions and rejects invented posture names', () => {
+    const entry = catalogue!.appearance.declared.find((row) => row.id === 'kurapika')!
+    const valid = appearanceSchema.safeParse({
+      ...entry,
+      body: {
+        ...entry.body,
+        proportions: { torso: 1.04, limbs: 0.98, hips: 1.06, posture: 'upright' },
+      },
+    })
+    const invalid = appearanceSchema.safeParse({
+      ...entry,
+      body: { ...entry.body, proportions: { torso: 1.5, posture: 'heroic' } },
+    })
+    expect(valid.success).toBe(true)
+    expect(invalid.success).toBe(false)
+  })
+
+  it('accepts bounded face features and rejects unsupported eye geometry', () => {
+    const entry = catalogue!.appearance.declared.find((row) => row.id === 'kurapika')!
+    const valid = appearanceSchema.safeParse({
+      ...entry,
+      head: {
+        ...entry.head,
+        features: { eyes: 'narrow', cheek: 0.18, jaw: 0.12, nose: 1.4, headY: 1.7 },
+      },
+    })
+    const invalid = appearanceSchema.safeParse({
+      ...entry,
+      head: { ...entry.head, features: { eyes: 'laser', cheek: 0.4, headY: 2.1 } },
+    })
+    expect(valid.success).toBe(true)
+    expect(invalid.success).toBe(false)
+  })
+
   // The vocabularies are closed, and the closure is the whole mechanism: a
   // hairstyle outside the list has to be an amendment to annexe B rather than
   // a string somebody typed, or the archive quietly grows a second way of

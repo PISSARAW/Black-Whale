@@ -106,6 +106,16 @@ export const MANGA_VIEWS: MangaView[] = [
     chapter: 393,
     volume: 38,
     pages: '64–67',
+    staging: [
+      {
+        characterId: 'gateaume',
+        at: [-4.82, -2.44],
+        heading: Math.PI / 2,
+        pose: 'seated',
+        floorOffset: 0.12,
+        projection: true,
+      },
+    ],
     label: 'Room 3101 facing the stacked bunk and open wall storage',
     labelFr: 'La chambre 3101 face au lit superposé et au rangement mural ouvert',
   }),

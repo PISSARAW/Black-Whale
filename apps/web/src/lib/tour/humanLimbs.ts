@@ -2,6 +2,7 @@ import type { BufferGeometry, Group, Material, MeshBasicMaterial } from 'three'
 import type { HumanLook } from './humanFigure'
 import type { FrameShape, HumanProfile } from './humanProfiles'
 import { CANON } from './humanProportions'
+import { humanProportions } from './humanProfiles'
 import { addBanquetSleeveBands } from './mangaTwinClothes'
 import { shapeKurapikaLimbs } from './kurapikaSuit'
 import { shapeMangaLimbs } from './mangaLimbClothes'
@@ -155,7 +156,7 @@ function buildLeg(build: HumanLimbsBuild, side: number): { leg: Group; knee: Gro
   knee.add(shoe)
   addShoeDetails(build, shoe)
   leg.scale.y = frame.limb
-  leg.position.set(side * CANON.hipX, CANON.hipY * frame.neck, 0)
+  leg.position.set(side * CANON.hipX * humanProportions(profile).hips, CANON.hipY * frame.neck, 0)
   return { leg, knee }
 }
 
@@ -230,7 +231,7 @@ function buildArm(build: HumanLimbsBuild, side: number): { arm: Group; elbow: Gr
   if (profile.royalCostume === 'twins-banquet') addBanquetSleeveBands(build, arm)
   arm.scale.y = frame.limb
   arm.position.set(side * build.shoulder * profile.shoulders, CANON.shoulderY * frame.neck, 0)
-  arm.rotation.z = side * -0.07
+  arm.rotation.z = side * (-0.07 + humanProportions(profile).shoulderSlope)
   return { arm, elbow }
 }
 

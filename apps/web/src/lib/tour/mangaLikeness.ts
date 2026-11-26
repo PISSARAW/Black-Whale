@@ -1,6 +1,7 @@
 import type { HumanProfile } from './humanProfiles'
 
-export type MangaEyes = 'almond' | 'round' | 'narrow' | 'doll' | 'heavy'
+export type { HumanEyeShape as MangaEyes } from './humanFaceFeatures'
+import type { HumanEyeShape as MangaEyes } from './humanFaceFeatures'
 export interface MangaLikeness {
   eyes: MangaEyes
   cheek: number
@@ -553,5 +554,5 @@ export function mangaLikeness(profile: HumanProfile): MangaLikeness {
     }
   if (profile.likeness === 'illumi' && profile.hairStyle === 'short')
     return { ...base, eyes: 'round' }
-  return { ...base, ...DIRECTIONS[profile.likeness ?? ''] }
+  return { ...base, ...DIRECTIONS[profile.likeness ?? ''], ...profile.faceFeatures }
 }

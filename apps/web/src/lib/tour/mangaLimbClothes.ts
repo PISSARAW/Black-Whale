@@ -1,3 +1,4 @@
+import { addLowerDeckLimbs } from './mangaLowerDeckLimbs'
 import { addFeitanBoots } from './mangaFeitanClothes'
 import { addMarayamShorts } from './mangaMarayamClothes'
 import { addZhangLeiLimbs } from './mangaZhangLeiLimbs'
@@ -143,6 +144,7 @@ export function shapeMangaLimbs(build: HumanLimbsBuild, limbs: HumanLimbs): void
   colourShoes(build, limbs)
   hoodieSilhouette(build, limbs)
   addMangaReferenceLimbs(build, limbs)
+  addLowerDeckLimbs(build, limbs)
   addZoldyckLimbClothes(build, limbs)
   addRoyalMilitaryLimbDetails(build, limbs)
   addCamillaSleeves(build, limbs)

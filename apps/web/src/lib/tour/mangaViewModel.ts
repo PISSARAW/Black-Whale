@@ -10,6 +10,8 @@ export interface MangaCastStaging {
   at: Vec2
   heading?: number
   pose?: NonNullable<Apparition['human']>['pose']
+  /** This panel shows the character’s Nen double. */
+  projection?: boolean
 }
 
 export interface MangaView {

@@ -1,3 +1,4 @@
+import { addLowerDeckHeadDetails } from './mangaLowerDeckHeads'
 import { addFeitanScarf } from './mangaFeitanHead'
 import { addSaiyuHead } from './mangaSaiyuHead'
 import { addCluckHeaddress } from './mangaCluckHead'
@@ -14,6 +15,7 @@ export function addMangaHeadwear(build: HumanHeadBuild, head: Group): void {
   addCluckHeaddress(build, head)
   addSaiyuHead(build, head)
   addDogmanMask(build, head)
+  addLowerDeckHeadDetails(build, head)
   if (id === 'feitan-portor') addFeitanScarf(build, head)
   if (id === 'chrollo-lucilfer') {
     const { THREE, geometry, glow } = build

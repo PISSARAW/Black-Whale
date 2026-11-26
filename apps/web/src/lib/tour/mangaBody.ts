@@ -1,7 +1,7 @@
 import type { HumanProfile } from './humanProfiles'
 import { ZHANG_LEI_BODY } from './mangaZhangLeiProfile'
 import { SALESALE_BODY, SALESALE_SECTIONS } from './mangaSalesaleBody'
-import { frameShape } from './humanProfiles'
+import { humanProportions, profileFrameShape } from './humanProfiles'
 import { mangaLikeness } from './mangaLikeness'
 import type { HumanTrunk, HumanTrunkBuild } from './humanTrunk'
 import type { HumanClothesBuild } from './humanClothes'
@@ -9,7 +9,8 @@ import type { Material } from 'three'
 import { kurapikaSurfacePanel, type Point3 } from './kurapikaGeometry'
 
 export function mangaBodyShape(profile: HumanProfile) {
-  const frame = frameShape(profile.frame, profile.likeness)
+  const frame = profileFrameShape(profile)
+  const proportions = humanProportions(profile)
   if (profile.likeness === 'prince-zhanglei') return ZHANG_LEI_BODY
   if (profile.likeness === 'prince-salesale') return SALESALE_BODY
   const mass = {
@@ -31,7 +32,7 @@ export function mangaBodyShape(profile: HumanProfile) {
     return { chest: 0.325, waist: 0.315, depth: 0.255, neck: frame.neck }
   return {
     chest: mass[0] * profile.shoulders * frame.width,
-    waist: mass[1] * frame.width,
+    waist: mass[1] * frame.width * proportions.hips,
     depth: mass[2],
     neck: frame.neck,
   }

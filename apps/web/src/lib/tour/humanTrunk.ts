@@ -3,6 +3,7 @@ import { buildKurapikaTrunk } from './kurapikaSuit'
 import { buildMangaTrunk } from './mangaBody'
 import type { FrameShape, HumanProfile } from './humanProfiles'
 import type { Geometry, Outlined, Three } from './silentMajorityParts'
+import { humanProportions } from './humanProfiles'
 
 /**
  * The trunk: a pelvis, a torso turned from a profile, a collar and a neck.
@@ -102,7 +103,7 @@ export function buildHumanTrunk(build: HumanTrunkBuild): HumanTrunk {
   if (build.profile.likeness) return buildMangaTrunk(build)
   const { THREE, geometry, outlined, figure, profile, frame, materials } = build
   const { cloth, ink, skin, shirt } = materials
-  const width = PELVIS_WIDTH[profile.build] * frame.width
+  const width = PELVIS_WIDTH[profile.build] * frame.width * humanProportions(profile).hips
 
   const pelvis = outlined({
     THREE,

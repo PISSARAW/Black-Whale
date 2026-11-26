@@ -5,12 +5,12 @@ import { legacyHumanPose as legacyPose } from './humanRestPoses'
 import { addPrisonBook } from './humanPrisonProps'
 import { addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
 import { addMorenaSkirt } from './mangaMorenaClothes'
-import { frameShape, hasLikeness, humanProfile, isMorena, type HumanProfile } from './humanProfiles'
+import { hasLikeness, humanProfile, isMorena, profileFrameShape, type HumanProfile } from './humanProfiles'
 import { twinWardrobe } from './mangaTwinWardrobe'
 import { finishHumanModel } from './humanModelFinish'
 import { buildHumanHead } from './humanHead'
 import { buildHumanLimbs } from './humanLimbs'
-import { CANON, stance } from './humanProportions'
+import { applyHumanPosture, CANON, stance } from './humanProportions'
 import { buildHumanTrunk } from './humanTrunk'
 import { addHumanClothes } from './humanClothes'
 import { contactShadow } from './contactShadow'
@@ -195,7 +195,7 @@ export function buildHumanFigure({
   const figure = new THREE.Group()
   const far = new THREE.Group()
   // A child is not a small man and a baby is not a small child — ADR-005 §4-P2.
-  const frame = frameShape(profile.frame, profile.likeness)
+  const frame = profileFrameShape(profile)
   const { lift, stature } = stance(frame)
   const unit = (seen.kind === 'avatar' ? seen.size / 0.42 : seen.size) * profile.height * stature
   figure.scale.setScalar(unit)
@@ -296,6 +296,7 @@ export function buildHumanFigure({
   // body somewhere else — a chair, a cushion, the floor — says so itself.
   figure.position.y = lift * unit
   poseHuman({ pose, figure, head, arms, legs, elbows, knees })
+  applyHumanPosture({ figure, head, posture: profile.proportions?.posture })
 
   // Annexe B, last, because §2.2 says so: the gabarit, the hair and the palette
   // have already named this person at walking distance, and a diadem or a pair

@@ -36,6 +36,7 @@ export function stagePostsForMangaView(
         ...(entry.heading === undefined ? {} : { heading: entry.heading }),
         ...(entry.pose === undefined ? {} : { pose: entry.pose }),
         ...(entry.floorOffset === undefined ? {} : { floorOffset: entry.floorOffset }),
+        ...(entry.projection ? { projection: true } : {}),
       },
     ]
   })

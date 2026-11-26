@@ -1,4 +1,5 @@
-import type { FrameShape } from './humanProfiles'
+import type { Group, Object3D } from 'three'
+import type { FrameShape, HumanPosture } from './humanProfiles'
 
 /**
  * The canon — how many heads tall a body aboard is, and where its joints sit.
@@ -56,4 +57,22 @@ export function stance(frame: FrameShape): Stance {
   const former = FORMER_HEAD_Y * frame.neck + SKULL * frame.head
   const crown = CANON.headY * frame.neck + SKULL * CANON.headScale * frame.head + lift
   return { lift, stature: former / crown }
+}
+
+const POSTURE: Record<HumanPosture, { body: number; head: number }> = {
+  upright: { body: -0.015, head: 0.01 },
+  neutral: { body: 0, head: 0 },
+  relaxed: { body: 0.025, head: -0.012 },
+  stooped: { body: 0.065, head: -0.03 },
+}
+
+/** Apply only the catalogue's resting carriage; animation remains an additive layer. */
+export function applyHumanPosture(options: {
+  figure: Group
+  head: Object3D
+  posture?: HumanPosture
+}): void {
+  const posture = POSTURE[options.posture ?? 'neutral']
+  options.figure.rotation.x += posture.body
+  options.head.rotation.x += posture.head
 }

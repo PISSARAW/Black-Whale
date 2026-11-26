@@ -221,7 +221,7 @@ export function castApparitions(
     if (!plan || !space) continue
     const pace = paceOf(ship, post)
     found.push({
-      id: `cast:${post.member.characterId}`,
+      id: `cast:${post.member.characterId}${post.projection ? ':projection' : ''}`,
       kind: 'avatar',
       spaceId: post.spaceId,
       tierId: post.tierId,

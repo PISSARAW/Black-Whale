@@ -1,3 +1,4 @@
+import { LOWER_DECK_CLOTHES } from './mangaLowerDeckClothes'
 import { addFeitanCoat } from './mangaFeitanClothes'
 import { addTubeppaSuit } from './mangaTubeppaSuit'
 import { addMarayamTuxedo } from './mangaMarayamClothes'
@@ -264,7 +265,8 @@ const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
 }
 
 export function addMangaCharacterClothes(build: HumanClothesBuild): boolean {
-  const custom = SPECIAL[build.profile.likeness ?? '']
+  const id = build.profile.likeness ?? ''
+  const custom = SPECIAL[id] ?? LOWER_DECK_CLOTHES[id]
   custom?.(build)
   return Boolean(custom)
 }

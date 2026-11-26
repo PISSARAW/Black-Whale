@@ -13,7 +13,7 @@ export type HisokaIntent =
   | { kind: 'gum'; target: string }
   | { kind: 'cut'; target: string }
   | { kind: 'decapitate'; target: string }
-  | { kind: 'tie-head'; head: string; limb: HisokaLimb }
+  | { kind: 'tie-head'; head: string; limb: HisokaLimb; replace?: boolean }
   | { kind: 'launch-head'; head: string; at: Vec3 }
   | { kind: 'swing'; target: string }
   | { kind: 'hostage'; target: string }
@@ -34,7 +34,7 @@ const CROWD_LAUNCH = 5
 
 type Tactic = (world: DeathMatchWorld) => HisokaIntent
 
-function nearestTo(
+export function nearestTo(
   world: DeathMatchWorld,
   keep: (spectator: Spectator) => boolean,
 ): Spectator | undefined {
@@ -127,9 +127,10 @@ function launchCrowd(world: DeathMatchWorld): HisokaIntent {
     world,
     (spectator) => living(spectator) && !spectator.gum && spectator.id !== REFEREE_ID,
   )
-  return body && distance(body.at, world.hisoka.at) < 4
+  if (!body) return { kind: 'scan' }
+  return distance(body.at, world.hisoka.at) < 4
     ? { kind: 'gum', target: body.id }
-    : { kind: 'scan' }
+    : { kind: 'move', to: body.at }
 }
 
 function trapFake(world: DeathMatchWorld): HisokaIntent {
@@ -139,8 +140,9 @@ function trapFake(world: DeathMatchWorld): HisokaIntent {
   )
   if (!fake) return cutAttacker(world) ?? { kind: 'scan' }
   if (fake.gum) return { kind: 'crush', target: fake.id }
-  if (!fake.gum && distance(fake.at, world.hisoka.at) < 8) return { kind: 'gum', target: fake.id }
-  return { kind: 'scan' }
+  return distance(fake.at, world.hisoka.at) < 8
+    ? { kind: 'gum', target: fake.id }
+    : { kind: 'move', to: fake.at }
 }
 
 function fiveBodyHammer(world: DeathMatchWorld): HisokaIntent {
@@ -189,7 +191,9 @@ const TACTICS: Record<HisokaPhase, Tactic> = {
       world,
       (spectator) => attacking(spectator) && spectator.nature === 'copy',
     )
-    return inReach(world, puppet) ? { kind: 'hostage', target: puppet.id } : { kind: 'scan' }
+    return puppet
+      ? reachThen(world, puppet, { kind: 'hostage', target: puppet.id })
+      : { kind: 'scan' }
   },
   'launch-crowd': launchCrowd,
   'trap-fake': trapFake,

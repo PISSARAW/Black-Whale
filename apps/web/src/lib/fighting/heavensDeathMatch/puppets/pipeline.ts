@@ -175,6 +175,10 @@ export function isBomb(spectator: Spectator): boolean {
   return spectator.nature === 'copy' && stamped && sun && moon && living(spectator)
 }
 
+export function isMobileBomb(body: Spectator): boolean {
+  return isBomb(body) && (body.posture === 'standing' || body.posture === 'seated')
+}
+
 /** Each stamped copy walks toward where its order sends it. */
 export function steerPuppets(
   crowd: CrowdState,
@@ -197,6 +201,8 @@ export function steerPuppets(
   return { ...crowd, spectators }
 }
 
+export const LEG_TRAP_OFFSET = 0.42
+
 function orderGoal(
   order: PuppetOrder,
   targets: { hisoka: Vec3; chrollo: Vec3; sun?: Vec3 },
@@ -215,6 +221,8 @@ function orderGoal(
     case 'charge':
     case 'pile-on-hisoka':
       return targets.hisoka
+    case 'trip-hisoka':
+      return { ...targets.hisoka, x: targets.hisoka.x + LEG_TRAP_OFFSET }
     case 'shield-chrollo':
       return around(targets.chrollo, 1.5)
     case 'touch-sun':

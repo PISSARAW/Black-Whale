@@ -1,12 +1,13 @@
+import { strikeDefender } from '../combatDamage'
+import type { DetachedHead } from './crowd/types'
 import { FIGHT_WORLD_X, FIGHT_WORLD_Y, fightWorldX, fightWorldY } from '../fightCoordinates'
 import type { DamagedBodyPart } from '../bodyDamage'
 import { recordFightDeath } from '../fightDeaths'
-import { resolveFightOutcome } from '../fightOutcome'
-import type { ArcadeFighter, AttackKind, FightSide, FightState } from '../types'
+import type { ArcadeFighter, AttackKind, FightInput, FightSide, FightState } from '../types'
 import { chrolloPhase, inCrowdPhase } from './chrolloPlan/phases'
-import { stepDeathMatchWorld } from './chrolloPlan/simulate'
+import { stepDeathMatchWorld, type WorldInput } from './chrolloPlan/simulate'
 import type { ChrolloIntent } from './chrolloPlan/tactics'
-import type { DeathMatchWorld } from './chrolloPlan/world'
+import { STARTING_DEPTH, type DeathMatchWorld } from './chrolloPlan/world'
 import { blastRadius, shieldedPower } from './crowd/actions'
 import type { Blast } from './stands/damage'
 import { inRing, type Vec3 } from './stands/geometry'
@@ -114,18 +115,70 @@ function performIntent(
   return kind && !state[intent.side].attack ? attack(state, intent.side, kind) : state
 }
 
+/** The physical contact has already been confirmed in the hall. */
+function strikeChrollo(state: FightState, head: DetachedHead): FightState {
+  const { hisoka, chrollo } = deathMatchSides(state)
+  const defender = state[chrollo]
+  const damage = Math.min(18, Math.max(0, defender.health - 1))
+  const hit = strikeDefender({
+    fighter: defender,
+    attacker: state[hisoka],
+    zone: 'torso',
+    damage,
+    blocked: false,
+    knockdown: false,
+    antiAir: false,
+    wallSplat: false,
+    counterHit: false,
+    comboHits: 1,
+  })
+  return {
+    ...state,
+    [chrollo]: { ...hit, x: defender.x },
+    hitstop: Math.max(state.hitstop, 4),
+    impact: {
+      sequence: (state.impact?.sequence ?? 0) + 1,
+      attacker: hisoka,
+      kind: 'ranged',
+      damage,
+      zone: 'torso',
+      blocked: false,
+      parried: false,
+      critical: false,
+      knockdown: false,
+      counterHit: false,
+      punish: false,
+      antiAir: false,
+      wallSplat: false,
+      invulnerable: false,
+      concealed: false,
+      avoided: false,
+      comboHits: 1,
+      damageScale: 1,
+      points: 0,
+      projectileId: null,
+      position: hallToLane(head.at),
+    },
+  }
+}
+
 /** Each blast in reach of Hisoka hurts him, less behind ordinary bodies. */
 function blastHisoka(state: FightState, blasts: readonly Blast[], world: DeathMatchWorld) {
   const side = deathMatchSides(state).hisoka
-  const at = laneToHall(state[side])
+  const at = world.hisoka.at
   let damage = 0
   for (const blast of blasts) {
-    const gap = Math.hypot(blast.at.x - at.x, blast.at.z - at.z)
+    const gap = Math.hypot(blast.at.x - at.x, blast.at.y - at.y, blast.at.z - at.z)
     if (gap > blastRadius(blast.power).reach) continue
     damage += 6 * shieldedPower(world.crowd, blast, at)
   }
   if (!damage) return state
-  return { ...state, [side]: { ...state[side], health: state[side].health - damage } }
+  const { difficulty, playMode } = world.scenario.options
+  const scale = playMode === 'scripted' ? 1 : { canonical: 1, normal: 0.7, free: 0.4 }[difficulty]
+  return {
+    ...state,
+    [side]: { ...state[side], health: Math.max(1, state[side].health - damage * scale) },
+  }
 }
 
 /** The hall's anatomical wounds drive the duel renderer and its prosthesis mechanics too. */
@@ -148,47 +201,84 @@ function asphyxiate(state: FightState, world: DeathMatchWorld): FightState {
   if (!world.scenario.done.includes('hisoka-asphyxiated')) return state
   const { hisoka, chrollo } = deathMatchSides(state)
   const dead = { ...state, [hisoka]: { ...state[hisoka], health: 0, pose: 'ko' as const } }
-  return resolveFightOutcome(
-    recordFightDeath(dead, {
-      victimSide: hisoka,
-      killerSide: chrollo,
-      cause: 'asphyxia',
-      fatalCondition: true,
-    }),
-  )
+  return recordFightDeath(dead, {
+    victimSide: hisoka,
+    killerSide: chrollo,
+    cause: 'asphyxia',
+    fatalCondition: true,
+  })
+}
+
+function offDuelLane(at: Vec3): boolean {
+  return at.z !== LANE_Z && at.z !== STARTING_DEPTH
+}
+
+/** The hall keeps depth after the player releases Context. Horizontal input still moves
+ * against the duel lane; a held Context lets Bungee Gum guide the whole trajectory. */
+function manualHisokaPosition(state: FightState, side: FightSide, world: DeathMatchWorld): Vec3 {
+  const lane = laneToHall(state[side])
+  const at = world.hisoka.at
+  if (at.z === LANE_Z) return lane
+  const previous = state.previousPositions?.[side]
+  return {
+    ...at,
+    x: at.x + (previous ? lane.x - fightWorldX(previous.x) : 0),
+    y: at.z === STARTING_DEPTH ? lane.y : at.y,
+  }
+}
+
+function hallHisokaInput(
+  state: FightState,
+  world: DeathMatchWorld,
+  request: { side: FightSide; context?: boolean },
+): Pick<WorldInput, 'hisoka' | 'hisokaPlan' | 'hisokaAction'> {
+  const fighter = state[request.side]
+  const occupied = busy(fighter)
+  if (hisokaPlanLeads(state, world)) return { hisoka: { busy: occupied }, hisokaPlan: true }
+  const contextual = Boolean(request.context) && !occupied
+  return {
+    hisoka: {
+      at: contextual ? world.hisoka.at : manualHisokaPosition(state, request.side, world),
+      facing: contextual ? world.hisoka.facing : { x: fighter.facing, z: 0 },
+      busy: occupied,
+    },
+    hisokaAction: contextual,
+  }
+}
+
+function syncChrollo(state: FightState, side: FightSide, world: DeathMatchWorld): FightState {
+  if (!planLeads(state, world)) return state
+  const next = { ...state, [side]: { ...state[side], chrolloBook: world.chrollo.book } }
+  return chrolloInStands(world)
+    ? parkChrollo(next, side, world.chrollo.at)
+    : followPlan(next, side, world.chrollo.at)
 }
 
 /**
  * One frame of the hall after one frame of the duel. In the ring the engine leads Chrollo;
  * once he is in the stands the plan leads and the lane only keeps his place.
  */
-export function stepDeathMatchFight(state: FightState, attack: PerformAttack): FightState {
+export function stepDeathMatchFight(
+  state: FightState,
+  attack: PerformAttack,
+  inputs: Partial<Record<FightSide, FightInput>> = {},
+): FightState {
   const world = state.deathMatch
   if (!world || state.phase !== 'fighting') return state
   const sides = deathMatchSides(state)
-  const hisoka = state[sides.hisoka]
-  const hisokaLed = hisokaPlanLeads(state, world)
-  const hisokaActing = busy(hisoka)
+  const hisokaInput = hallHisokaInput(state, world, {
+    side: sides.hisoka,
+    context: inputs[sides.hisoka]?.context,
+  })
   const led = planLeads(state, world)
     ? world
     : { ...world, chrollo: { ...world.chrollo, at: laneToHall(state[sides.chrollo]) } }
-  const frame = stepDeathMatchWorld(led, {
-    hisoka: hisokaLed
-      ? { busy: hisokaActing }
-      : {
-          at: laneToHall(hisoka),
-          facing: { x: hisoka.facing, z: 0 },
-          busy: hisokaActing,
-        },
-    hisokaPlan: hisokaLed,
-    hisokaAction: !hisokaLed && hisokaActing,
-  })
-  let next: FightState = { ...state, deathMatch: frame.world }
-  if (chrolloInStands(frame.world)) next = parkChrollo(next, sides.chrollo, frame.world.chrollo.at)
-  else if (planLeads(next, frame.world))
-    next = followPlan(next, sides.chrollo, frame.world.chrollo.at)
-  if (hisokaLed) next = followPlan(next, sides.hisoka, frame.world.hisoka.at)
+  const frame = stepDeathMatchWorld(led, hisokaInput)
+  let next = syncChrollo({ ...state, deathMatch: frame.world }, sides.chrollo, frame.world)
+  if (hisokaInput.hisokaPlan || hisokaInput.hisokaAction || offDuelLane(frame.world.hisoka.at))
+    next = followPlan(next, sides.hisoka, frame.world.hisoka.at)
   next = performIntent(next, { side: sides.chrollo, intent: frame.outcome.engineIntent }, attack)
+  if (frame.chrolloHit) next = strikeChrollo(next, frame.chrolloHit)
   next = blastHisoka(next, frame.blasts, frame.world)
   next = syncHisokaDamage(next, frame.world)
   return asphyxiate(next, frame.world)
@@ -203,7 +293,8 @@ export function deathMatchBodyPosition(
   const world = state.deathMatch
   if (!world) return lane
   const sides = deathMatchSides(state)
-  if (side === sides.hisoka && hisokaPlanLeads(state, world)) return hallToLane(world.hisoka.at)
+  if (side === sides.hisoka && (hisokaPlanLeads(state, world) || offDuelLane(world.hisoka.at)))
+    return hallToLane(world.hisoka.at)
   if (side === sides.chrollo && chrolloInStands(world)) return hallToLane(world.chrollo.at)
   return lane
 }

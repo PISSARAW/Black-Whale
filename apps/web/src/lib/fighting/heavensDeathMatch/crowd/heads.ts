@@ -65,6 +65,13 @@ export function tieHead(crowd: CrowdState, id: string, limb: HisokaLimb): CrowdS
   return changeHead(crowd, id, (head) => ({ ...head, tiedTo: limb, flying: false }))
 }
 
+export function replaceTiedHead(crowd: CrowdState, id: string, limb: HisokaLimb): CrowdState {
+  const heads = headsOf(crowd).map((head) =>
+    head.id !== id && head.tiedTo === limb ? { ...head, tiedTo: null, flying: true } : head,
+  )
+  return tieHead(withHeads(crowd, heads), id, limb)
+}
+
 /** The gum lets go and the head flies at `target`: a hammer, or a thrown stone. */
 export function launchHead(crowd: CrowdState, id: string, target: Vec3): CrowdState {
   return changeHead(crowd, id, (head) => {

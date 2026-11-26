@@ -359,7 +359,7 @@ export interface FightImpact {
   /** A last-health On heavy consumed the attacker's grudge for one lethal strike. */
   onRage?: boolean
   projectileId: number | null
-  position: { x: number; y: number }
+  position: { x: number; y: number; z?: number }
   /** Sweet Home moves the wound once; it never creates an invulnerable/avoided hit. */
   /** `ally`: the wound came from the owner's own kameo, held by the right hand. */
   objectTransfer?: { objectId: string; owner: FightSide; damage: number; ally?: true }

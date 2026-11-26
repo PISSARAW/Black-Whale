@@ -1,6 +1,7 @@
 import { reconcileBlackVoice } from './blackVoice'
 import { settleTeamBodyOutcome } from './teamOutcome'
 import { finishFight } from './combatVerdict'
+import { historicalSequenceFinished } from './heavensDeathMatch/library'
 import { BIOHAZARD_GRACE } from './biohazard'
 import { releaseBiohazardWounds } from './biohazardWounds'
 import { explicitDeath, resolvePostMortemDeaths } from './fightDeaths'
@@ -14,7 +15,13 @@ export function fightResolutionPending(state: FightState): boolean {
 }
 
 export function fightAcceptsCommands(state: FightState): boolean {
-  return state.phase === 'fighting' && !state.catsName && !state.gumResuscitation
+  return (
+    state.phase === 'fighting' &&
+    !state.catsName &&
+    !state.gumResuscitation &&
+    state.deathMatch?.scenario.survival.deathFrame == null &&
+    !historicalSequenceFinished(state.deathMatch)
+  )
 }
 
 /** The sole verdict path for damage and attributed deaths; time and expulsion are nonlethal. */

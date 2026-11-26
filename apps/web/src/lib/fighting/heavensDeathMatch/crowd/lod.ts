@@ -51,10 +51,12 @@ export function crowdInstances(crowd: CrowdState): CrowdInstance[] {
     headless: Boolean(spectator.headless),
     referee: spectator.id === REFEREE_ID,
     character:
-      spectator.nature === 'copy'
-        ? 'hisoka'
-        : spectator.face === 'chrollo'
-          ? 'chrollo-lucilfer'
-          : null,
+      spectator.id === 'aftermath-machi'
+        ? 'machi'
+        : spectator.nature === 'copy'
+          ? 'hisoka'
+          : spectator.face === 'chrollo'
+            ? 'chrollo-lucilfer'
+            : null,
   }))
 }

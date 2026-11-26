@@ -85,12 +85,7 @@ export function createFightImpactScene(options: {
       })
       const punctuation = fightImpactPunctuation(impact)
       shake.hit(impact, { profile, facing: state[impact.attacker].facing })
-      const origin = new THREE.Vector3(
-        fightWorldX(impact.position.x),
-        fightWorldY(displayContactHeight(state, impact)),
-        0.25,
-      )
-      alignCloseImpact(origin, { state, impact, figureOf: options.figureOf })
+      const origin = contactOrigin(THREE, { state, impact, figureOf: options.figureOf })
       const count = style === 'parry' && profile.sparks > 0 ? 1 : profile.sparks
       for (let i = 0; i < count; i++) {
         const angle = (i / count) * Math.PI * 2
@@ -171,6 +166,26 @@ export function createFightImpactScene(options: {
       sparks.length = 0
     },
   }
+}
+
+function contactOrigin(
+  THREE: typeof Three,
+  options: {
+    state: FightState
+    impact: FightImpact
+    figureOf?: (side: FightSide) => Three.Object3D
+  },
+): Three.Vector3 {
+  const { state, impact } = options
+  const { x, y, z } = impact.position
+  if (z !== undefined) return new THREE.Vector3(fightWorldX(x), fightWorldY(y), z)
+  const origin = new THREE.Vector3(
+    fightWorldX(x),
+    fightWorldY(displayContactHeight(state, impact)),
+    0.25,
+  )
+  alignCloseImpact(origin, options)
+  return origin
 }
 
 function alignCloseImpact(

@@ -4,8 +4,9 @@
   import type { DeathMatchOptions } from '$lib/fighting/heavensDeathMatch/scenario'
   import type { FightEnvironment } from '$lib/fighting/fightEnvironment'
   import FightPortrait from './FightPortrait.svelte'
+  import FightHistoricalLibrary from './FightHistoricalLibrary.svelte'
   import FightSetupFooter from './FightSetupFooter.svelte'
-  import type { FighterId } from '$lib/fighting/types'
+  import type { FighterId, FightState } from '$lib/fighting/types'
 
   export let language: 'fr' | 'en'
   export let player: FighterId
@@ -13,6 +14,7 @@
   export let environment: FightEnvironment
   export let onOptions: (options: Partial<DeathMatchOptions>) => void
   export let onLaunch: () => void
+  export let onLibraryStart: (state: FightState) => void
 
   $: fr = language === 'fr'
   $: options = historicalOptions(environment)
@@ -25,14 +27,18 @@
         {
           value: 'normal',
           name: fr ? 'Normale' : 'Normal',
-          hint: fr ? 'Plus permissive' : 'More forgiving',
+          hint: fr ? '30 % de dégâts d’explosion en moins' : '30% less blast damage',
         },
         {
           value: 'canonical',
           name: fr ? 'Canonique' : 'Canonical',
           hint: fr ? 'Fidèle' : 'Faithful',
         },
-        { value: 'free', name: fr ? 'Libre' : 'Free', hint: fr ? 'Sans contrainte' : 'Unbound' },
+        {
+          value: 'free',
+          name: fr ? 'Entraînement' : 'Practice',
+          hint: fr ? '60 % de dégâts d’explosion en moins' : '60% less blast damage',
+        },
       ],
     },
   ]
@@ -99,26 +105,26 @@
             : 'Spectator mode: no manual attack is required.'}
         {:else}
           {fr
-            ? 'Mode jouable : déplace-toi et attaque près des cibles contextuelles pour répondre au plan de Chrollo.'
-            : 'Playable mode: move and attack near contextual targets to answer Chrollo’s plan.'}
+            ? 'Maintiens Contexte pour engager l’action indiquée, y compris les déplacements de Bungee Gum vers le plafond et les gradins.'
+            : 'Hold Context to perform the indicated action, including Bungee Gum traversal to the ceiling and stands.'}
         {/if}
       </p>
-      {#each groups as group (group.key)}
-        <fieldset>
-          <legend>{group.label}</legend>
-          <div class="choices">
-            {#each group.choices as choice (choice.value)}
-              <button
-                type="button"
-                class:selected={options[group.key] === choice.value}
-                aria-pressed={options[group.key] === choice.value}
-                onclick={() => pick(group.key, choice.value)}
-                ><strong>{choice.name}</strong><small>{choice.hint}</small></button
-              >
-            {/each}
-          </div>
-        </fieldset>
-      {/each}
+      {#if experience === 'player'}{#each groups as group (group.key)}
+          <fieldset>
+            <legend>{group.label}</legend>
+            <div class="choices">
+              {#each group.choices as choice (choice.value)}
+                <button
+                  type="button"
+                  class:selected={options[group.key] === choice.value}
+                  aria-pressed={options[group.key] === choice.value}
+                  onclick={() => pick(group.key, choice.value)}
+                  ><strong>{choice.name}</strong><small>{choice.hint}</small></button
+                >
+              {/each}
+            </div>
+          </fieldset>
+        {/each}{/if}
       <label class="assists">
         <input
           type="checkbox"
@@ -133,6 +139,7 @@
           ></span
         >
       </label>
+      <FightHistoricalLibrary {language} {options} onStart={onLibraryStart} />
     </div>
     <aside class="historical-ticket" aria-label={fr ? 'Les chapitres' : 'The chapters'}>
       <div class="ticket-fighters">

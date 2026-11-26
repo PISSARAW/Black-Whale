@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { link } from '$lib/i18n'
+  import { historicalSequenceFinished } from '$lib/fighting/heavensDeathMatch/library'
   import { onMount } from 'svelte'
   import FightStage from './FightStage.svelte'
   import FightFullscreenButton from './FightFullscreenButton.svelte'
@@ -186,6 +188,14 @@
     >
       <FightActiveObjective {language} {lessons} {school} {practice} />
     </FightStage>
+    {#if historicalSequenceFinished(state.deathMatch)}
+      <div class="historical-sequence-end" role="status">
+        <strong>{fr ? 'Séquence terminée' : 'Sequence complete'}</strong>
+        <a href={$link('/fighting/historical')}
+          >{fr ? 'Retour au combat historique' : 'Back to the historical fight'}</a
+        >
+      </div>
+    {/if}
     {#if state.player.id === 'chrollo' && state.phase === 'fighting' && !pausedView && !replays.active && !victoryActive}
       <FightChrolloLiveBook {state} {language} {actions} />
     {/if}
@@ -281,3 +291,22 @@
     </FightPauseMenu>
   {/if}
 </div>
+
+<style>
+  .historical-sequence-end {
+    position: absolute;
+    z-index: 40;
+    inset: auto 0 15%;
+    margin: auto;
+    width: fit-content;
+    display: grid;
+    gap: 0.75rem;
+    background: #181517ed;
+    color: #fff6e5;
+    padding: 1rem 1.5rem;
+    text-align: center;
+  }
+  .historical-sequence-end a {
+    color: #e9cda0;
+  }
+</style>

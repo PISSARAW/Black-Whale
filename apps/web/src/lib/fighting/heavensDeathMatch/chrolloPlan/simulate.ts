@@ -2,8 +2,8 @@ import { headStriking, spendHead, stepHeads } from '../crowd/heads'
 import { stepCrowd } from '../crowd/step'
 import { stepHisokaBody } from '../hisokaPlan/body'
 import { executeHisoka, type HisokaOutcome } from '../hisokaPlan/execute'
-import { decideHisoka } from '../hisokaPlan/tactics'
-import type { CrowdState } from '../crowd/types'
+import { decideHisokaInHall } from '../hisokaPlan/hallTactics'
+import type { CrowdState, DetachedHead } from '../crowd/types'
 import { closeGalleryFake, pageActive, steerPuppets, triggerBombs } from '../puppets/pipeline'
 import { advanceDeathMatch } from '../scenario'
 import { advanceDamage, damageFromBlast, type Blast } from '../stands/damage'
@@ -22,7 +22,7 @@ export interface WorldFrame {
   /** Every detonation of the frame: Chrollo's own and the bombs beside Hisoka. */
   blasts: readonly Blast[]
   /** A head thrown by Hisoka struck Chrollo this frame. */
-  chrolloHit: boolean
+  chrolloHit: DetachedHead | null
 }
 
 /** Copies Hisoka watches break or vanish no longer pass for people in his eyes. */
@@ -55,20 +55,24 @@ export interface WorldInput {
   reported?: readonly string[]
   /** Hisoka's own canonical plan plays him (CPU or scripted replay). */
   hisokaPlan?: boolean
-  /** A human-controlled Hisoka is attacking, so his contextual action may resolve. */
+  /** A human-controlled Hisoka is holding the dedicated hall action. */
   hisokaAction?: boolean
 }
 
 /** A head Hisoka threw that reached Chrollo this frame. */
-function headOnChrollo(world: DeathMatchWorld): { world: DeathMatchWorld; hit: boolean } {
+function headOnChrollo(world: DeathMatchWorld): {
+  world: DeathMatchWorld
+  hit: DetachedHead | null
+} {
   const head = headStriking(world.crowd, world.chrollo.at)
-  if (!head) return { world, hit: false }
-  return { world: { ...world, crowd: spendHead(world.crowd, head.id) }, hit: true }
+  if (!head) return { world, hit: null }
+  return { world: { ...world, crowd: spendHead(world.crowd, head.id) }, hit: head }
 }
 
 function actHisoka(world: DeathMatchWorld, input: WorldInput): HisokaOutcome | null {
-  if (input.hisokaPlan) return executeHisoka(world, decideHisoka(world), true)
-  return input.hisokaAction ? executeHisoka(world, decideHisoka(world), false) : null
+  return input.hisokaPlan || input.hisokaAction
+    ? executeHisoka(world, decideHisokaInHall(world))
+    : null
 }
 
 function moveCrowd(next: DeathMatchWorld): DeathMatchWorld {
@@ -118,7 +122,7 @@ export function stepDeathMatchWorld(world: DeathMatchWorld, input: WorldInput = 
     outcome,
     blasts,
     hisoka: hisokaOutcome?.intent ?? null,
-    chrolloHit: struck.hit,
+    chrolloHit: struck.hit !== null,
     decision,
   }
   const beats = [...(input.reported ?? []), ...observedBeats(next, facts)]

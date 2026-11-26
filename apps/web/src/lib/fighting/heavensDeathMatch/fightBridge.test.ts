@@ -94,6 +94,7 @@ describe('the death match inside the duel', () => {
       state = tickFight(state, EMPTY_INPUT, { dt: FIXED_STEP, ai: true })
     expect(state.deathMatch?.scenario.done).toContain('hisoka-buried')
     expect(state.deathMatch?.scenario.done).toContain('hisoka-asphyxiated')
+    expect(state.deathMatch?.scenario.done).toContain('machi-bound')
     expect(state.phase).toBe('finished')
   })
 
@@ -157,6 +158,28 @@ describe('the drawn crowd', () => {
     }
     scene.sync(gone)
     expect(scene.root.children).toHaveLength(21)
+    expect(scene.root.children.slice(1, 6).every((body) => !body.visible)).toBe(true)
+    scene.sync(crowd)
+    expect(scene.root.children.slice(1).every((body) => body.visible)).toBe(true)
+  })
+
+  it('updates the pose of a body already drawn in the scene', () => {
+    const scene = buildCrowdScene(kit as never, 10)
+    const crowd = createCrowd({ count: 1 })
+    scene.sync(crowd)
+    const body = scene.root.children[1]
+    const pose = () => {
+      const rotations: unknown[] = []
+      body.traverse((node) => rotations.push(node.rotation.toArray()))
+      return rotations
+    }
+    const seated = pose()
+    scene.sync({
+      ...crowd,
+      spectators: crowd.spectators.map((spectator) => ({ ...spectator, posture: 'dead' })),
+    })
+    expect(scene.root.children[1]).toBe(body)
+    expect(pose()).not.toEqual(seated)
   })
 
   it('moves a severed head off its body without changing the instance budget', () => {

@@ -13,6 +13,7 @@
   import FightIdentityPortrait from './FightIdentityPortrait.svelte'
   import FightLivingPortrait from './FightLivingPortrait.svelte'
   import FightOpponentDossier from './FightOpponentDossier.svelte'
+  import FightHistoricalStatus from './FightHistoricalStatus.svelte'
   import FightHealth from './FightHealth.svelte'
   import FightComboMaster from './FightComboMaster.svelte'
   import FightKameoBadge from './FightKameoBadge.svelte'
@@ -162,6 +163,14 @@
       </div>
     {/if}
   </div>
+  {#if state.deathMatch}
+    <FightHistoricalStatus
+      scenario={state.deathMatch.scenario}
+      {language}
+      manual={state.deathMatch.scenario.options.playMode !== 'scripted' &&
+        state.player.id === 'hisoka'}
+    />
+  {/if}
 </div>
 
 <style>

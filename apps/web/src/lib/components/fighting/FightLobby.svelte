@@ -92,6 +92,7 @@
     {opponent}
     {environment}
     onOptions={setHistorical}
+    onLibraryStart={onPractice}
     {onLaunch}
   />
 {:else if screen === 'characters'}

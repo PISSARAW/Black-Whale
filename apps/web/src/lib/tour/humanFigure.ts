@@ -6,6 +6,7 @@ import { addPrisonBook } from './humanPrisonProps'
 import { addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
 import { addMorenaSkirt } from './mangaMorenaClothes'
 import { frameShape, hasLikeness, humanProfile, isMorena, type HumanProfile } from './humanProfiles'
+import { twinWardrobe } from './mangaTwinWardrobe'
 import { finishHumanModel } from './humanModelFinish'
 import { buildHumanHead } from './humanHead'
 import { buildHumanLimbs } from './humanLimbs'
@@ -186,7 +187,7 @@ export function buildHumanFigure({
   observerSight = 'sight',
   auraStyle = 'human',
 }: HumanFigureBuild): HumanFigure {
-  const baseProfile = suppliedProfile ?? humanProfile(seen)
+  const baseProfile = twinWardrobe(suppliedProfile ?? humanProfile(seen), seen.human)
   const profile = seen.human?.expression
     ? { ...baseProfile, expression: seen.human.expression }
     : baseProfile

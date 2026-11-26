@@ -128,7 +128,7 @@ describe('the manga models', () => {
     }
   })
 
-  it('makes Without You the same opaque named figure as Kacho', () => {
+  it('makes Without You the same opaque figure as Kacho at the banquet', () => {
     const ctx = context()
     buildBasicApparition(seen('double'), ctx)
     const original = buildHumanFigure({
@@ -137,13 +137,20 @@ describe('the manga models', () => {
         ...seen('avatar'),
         kind: 'avatar',
         size: 0.42,
-        human: { role: 'witness', identity: 'prince-kacho', pose: 'idle', aura: 'none' },
+        human: {
+          role: 'witness',
+          identity: 'prince-kacho',
+          pose: 'idle',
+          aura: 'none',
+          royalCostume: 'twins-banquet',
+        },
       },
     })
     const bounds = new THREE.Box3().setFromObject(ctx.root, true),
-      reference = new THREE.Box3().setFromObject(original.root)
+      reference = new THREE.Box3().setFromObject(original.root, true)
     expect(bounds.min.toArray()).toEqual(reference.min.toArray())
     expect(bounds.max.toArray()).toEqual(reference.max.toArray())
+    expect(ctx.root.getObjectByName('twins-banquet-standing-collar')).toBeDefined()
     const materials: THREE.Material[] = []
     ctx.root.traverse((part) => {
       const mesh = part as THREE.Mesh
@@ -151,6 +158,18 @@ describe('the manga models', () => {
         materials.push(...(Array.isArray(mesh.material) ? mesh.material : [mesh.material]))
     })
     expect(materials.some((material) => material.opacity === 0.42)).toBe(false)
+  })
+
+  it('keeps the destination pane independent of the carved, right-hinged leaf', () => {
+    const ctx = context()
+    const destination = new THREE.MeshBasicMaterial()
+    const pane = buildWormPortal(seen('portal'), ctx, destination)
+    const leaf = ctx.root.getObjectByName('magical-worm-door-leaf')!
+    expect(pane?.material).toBe(destination)
+    expect(pane?.parent).toBe(ctx.root)
+    expect(leaf.rotation.y).toBeGreaterThan(0)
+    expect(leaf.getObjectByName('magical-worm-handle')!.position.x).toBeLessThan(0)
+    expect(leaf.getObjectByName('magical-worm-heart-and-scrollwork')).toBeDefined()
   })
 
   it('never gives the third-lie transformation a guessed monster body', () => {

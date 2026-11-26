@@ -189,6 +189,25 @@ export function mangaRoyalUpdo(kit: MangaHairKit) {
       })
 }
 
+export function mangaShortHair(kit: MangaHairKit, height: number) {
+  kit.parts.push(mangaScalpGeometry(kit))
+  for (let i = 0; i < 26; i++) {
+    const angle = (i / 26) * Math.PI * 2
+    const x = Math.cos(angle) * 0.135
+    const z = Math.sin(angle) * 0.13
+    kit.lock({
+      width: 0.032,
+      depth: 0.022,
+      points: [
+        [x, 0.12, z],
+        [x * 0.96, height * 0.88, z * 0.95],
+        [x * 0.91, height, z * 0.9],
+        [x * 0.89, height + 0.035, z * 0.87],
+      ],
+    })
+  }
+}
+
 export function mangaHairExtras(kit: MangaHairKit, build: HumanHeadBuild): void {
   const { THREE, parts } = kit
   const makers: Partial<Record<HumanHeadBuild['profile']['hairStyle'], () => void>> = {

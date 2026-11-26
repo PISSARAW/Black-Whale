@@ -2,6 +2,7 @@ import appearanceFile from '../../../../../data/characters/appearance.json'
 import { MARAYAM_FRAME } from './mangaMarayamProfile'
 import { ZHANG_LEI_FRAME } from './mangaZhangLeiProfile'
 import type { Apparition } from './apparitions'
+import type { TwinCostume } from './mangaTwinWardrobe'
 
 /**
  * What a body aboard looks like: the declaration first, the role second.
@@ -117,6 +118,7 @@ export interface HumanProfile {
   shirt: number
   accent: number
   clothing: Attire
+  royalCostume?: TwinCostume
   /**
    * The body plan the figure is built on.
    *

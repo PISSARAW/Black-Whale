@@ -44,6 +44,30 @@ function irisOf(build: HumanHeadBuild, type: MangaEyes): Mesh {
   return iris
 }
 
+function addTwinEyeDetails(build: HumanHeadBuild, eye: Mesh, side: number): void {
+  const { THREE, geometry, materials, profile } = build
+  const kacho = profile.likeness === 'prince-kacho'
+  eye.scale.set(0.9, 1.28, 1)
+  const pupil = eye.getObjectByName('eye-pupil')!
+  pupil.scale.set(0.71, 1.12, 1)
+  const lashes = new THREE.Mesh(
+    geometry(THREE, `manga:twin-upper-lashes:${kacho}`, () => {
+      const shape = new THREE.Shape()
+      shape.moveTo(0.002, 0.033)
+      shape.quadraticCurveTo(0.026, 0.034, 0.035, 0.008)
+      shape.quadraticCurveTo(kacho ? 0.047 : 0.04, 0.012, kacho ? 0.052 : 0.043, 0.02)
+      shape.quadraticCurveTo(0.048, 0.005, 0.034, 0)
+      shape.quadraticCurveTo(0.022, 0.028, 0.002, 0.033)
+      return new THREE.ShapeGeometry(shape, 10)
+    }),
+    materials.ink,
+  )
+  lashes.name = 'eye-upper-lashes'
+  lashes.scale.x = side
+  lashes.position.z = 0.002
+  eye.add(lashes)
+}
+
 export function addMangaEyes(build: HumanHeadBuild, head: Group): void {
   const { THREE, geometry, materials, profile, glow } = build
   const look = mangaLikeness(profile)
@@ -66,6 +90,8 @@ export function addMangaEyes(build: HumanHeadBuild, head: Group): void {
     white.name = 'eye-sclera'
     white.position.z = 0.001
     eye.add(white, irisOf(build, look.eyes))
+    if (profile.likeness === 'prince-kacho' || profile.likeness === 'prince-fugetsu')
+      addTwinEyeDetails(build, eye, side)
     head.add(eye)
     const brow = new THREE.Mesh(
       geometry(THREE, 'manga:brow', () => new THREE.PlaneGeometry(0.067, 0.005)),

@@ -1,4 +1,5 @@
 import type { NenTechniqueState } from '@black-whale/nen-engine'
+import type { TwinCostume } from './mangaTwinWardrobe'
 import type { Pace } from './cast/pace'
 
 export type HumanExpression = 'neutral' | 'severe' | 'tired' | 'anxious' | 'hostile'
@@ -40,6 +41,7 @@ export interface HumanAppearance {
    * `lib/tour/cast/wardrobe.ts`, which is the only thing that sets this.
    */
   dress?: 'civilian' | 'uniform' | 'suit' | 'combat' | 'ritual' | 'gown'
+  royalCostume?: TwinCostume
   aura?: 'none' | 'ten' | 'ren' | 'zetsu'
   /** Shared Nen state; every human figure consumes the same engine contract. */
   nen?: NenTechniqueState<'head' | 'torso' | 'hands' | 'feet'>

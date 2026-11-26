@@ -23,6 +23,7 @@ import { addNasubiRoyalFace } from './mangaNasubi'
 import { addUnmaFaceAndHair } from './mangaUnma'
 import { addDuazulGentleFaceAndWaves } from './mangaDuazul'
 import { addTangZhaoLiPortraitFace } from './mangaTangZhaoLi'
+import { addTwinHairDetails } from './mangaTwinHair'
 import { addMomozeElaboratePonytail } from './mangaMomoze'
 import { addKurtonAngularFace } from './mangaKurton'
 import { addLonghiGauntFaceAndPonytail } from './mangaLonghi'
@@ -258,6 +259,8 @@ const REFERENCE_FACES: Record<string, (build: HumanHeadBuild, head: Group) => vo
   'unma-hui-guo-rou': addUnmaFaceAndHair,
   'duazul-hui-guo-rou': addDuazulGentleFaceAndWaves,
   'tang-zhao-li-hui-guo-rou': addTangZhaoLiPortraitFace,
+  'prince-kacho': addTwinHairDetails,
+  'prince-fugetsu': addTwinHairDetails,
   'prince-momoze': addMomozeElaboratePonytail,
   kurton: addKurtonAngularFace,
   longhi: addLonghiGauntFaceAndPonytail,

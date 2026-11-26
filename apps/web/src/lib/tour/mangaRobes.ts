@@ -1,16 +1,16 @@
 import type { HumanClothesBuild } from './humanClothes'
 import { mangaBodyShape, mangaClothesKey, mangaPanel } from './mangaBody'
 
-export function addMangaDress(build: HumanClothesBuild): void {
+export function addMangaDress(build: HumanClothesBuild, hem?: number): void {
   const { THREE, geometry, figure, frame, materials, profile } = build
   const child = profile.frame === 'child'
   const biscuit = profile.likeness === 'biscuit-krueger'
   const { chest, waist } = mangaBodyShape(profile)
-  const bottom = biscuit ? 0.24 : -0.15
+  const bottom = hem ?? (biscuit ? 0.24 : -0.15)
   const skirt = new THREE.Mesh(
     geometry(
       THREE,
-      `manga:dress:${mangaClothesKey(profile)}`,
+      `manga:dress:${mangaClothesKey(profile)}:${bottom}`,
       () =>
         new THREE.LatheGeometry(
           [

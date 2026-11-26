@@ -2,6 +2,7 @@ import type { BufferGeometry, Group, Material, MeshBasicMaterial } from 'three'
 import type { HumanLook } from './humanFigure'
 import type { FrameShape, HumanProfile } from './humanProfiles'
 import { CANON } from './humanProportions'
+import { addBanquetSleeveBands } from './mangaTwinClothes'
 import { shapeKurapikaLimbs } from './kurapikaSuit'
 import { shapeMangaLimbs } from './mangaLimbClothes'
 import { humanHandGeometry, addSleeveCuff, addShoeDetails } from './humanExtremityDetails'
@@ -178,16 +179,25 @@ function buildHand(build: HumanLimbsBuild, side: number) {
   return hand
 }
 
+function sleeveColour(profile: HumanProfile): number {
+  if (profile.likeness === 'illumi') return profile.skin
+  if (profile.likeness === 'hisoka') return profile.shirt
+  if (profile.likeness === 'prince-fugetsu' && !profile.royalCostume) return profile.shirt
+  if (profile.likeness === 'prince-kacho' && !profile.royalCostume) return profile.skin
+  return profile.jacket
+}
+
+function forearmColour(profile: HumanProfile, sleeve: number): number {
+  if (profile.likeness === 'beyond-netero' || profile.royalCostume === 'twins-banquet')
+    return profile.skin
+  return sleeve
+}
+
 function buildArm(build: HumanLimbsBuild, side: number): { arm: Group; elbow: Group } {
   const { THREE, geometry, outlined, glow, profile, frame, materials } = build
   const arm = new THREE.Group()
   arm.name = side < 0 ? 'shoulder-left' : 'shoulder-right'
-  const sleeve =
-    profile.likeness === 'illumi'
-      ? profile.skin
-      : profile.likeness === 'hisoka'
-        ? profile.shirt
-        : profile.jacket
+  const sleeve = sleeveColour(profile)
   arm.add(
     segment(build, { key: 'upper-arm', length: CANON.upperArm, taper: UPPER_ARM, colour: sleeve }),
   )
@@ -200,7 +210,7 @@ function buildArm(build: HumanLimbsBuild, side: number): { arm: Group; elbow: Gr
       key: 'forearm',
       length: FOREARM_LENGTH,
       taper: FOREARM,
-      colour: profile.likeness === 'beyond-netero' ? profile.skin : sleeve,
+      colour: forearmColour(profile, sleeve),
     }),
   )
   elbow.add(buildHand(build, side))
@@ -217,6 +227,7 @@ function buildArm(build: HumanLimbsBuild, side: number): { arm: Group; elbow: Gr
   cap.scale.set(girth, 0.86, girth)
   cap.position.y = -0.012
   arm.add(cap)
+  if (profile.royalCostume === 'twins-banquet') addBanquetSleeveBands(build, arm)
   arm.scale.y = frame.limb
   arm.position.set(side * build.shoulder * profile.shoulders, CANON.shoulderY * frame.neck, 0)
   arm.rotation.z = side * -0.07

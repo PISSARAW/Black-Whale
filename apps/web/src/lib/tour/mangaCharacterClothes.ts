@@ -46,6 +46,7 @@ import { addOitoKimono } from './mangaOito'
 import { addNasubiRoyalOrnaments } from './mangaNasubi'
 import { addUnmaFrillyDress } from './mangaUnma'
 import { addDuazulFormalDress } from './mangaDuazul'
+import { addKachoCeremonialDress, addFugetsuClothes } from './mangaTwinClothes'
 import { addMomozeRoyalGown } from './mangaMomoze'
 import { addLonghiRoyalBodyguardSuit } from './mangaLonghi'
 import { addBalsamilcoPrivateSoldierUniform } from './mangaBalsamilco'
@@ -257,6 +258,8 @@ const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
   'nasubi-hui-guo-rou': addNasubiRoyalOrnaments,
   'unma-hui-guo-rou': addUnmaFrillyDress,
   'duazul-hui-guo-rou': addDuazulFormalDress,
+  'prince-kacho': addKachoCeremonialDress,
+  'prince-fugetsu': addFugetsuClothes,
   'prince-momoze': addMomozeRoyalGown,
 }
 

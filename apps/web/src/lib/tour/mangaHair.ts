@@ -24,13 +24,24 @@ import {
   mangaWingedPart,
   mangaFlameCrest,
 } from './mangaUnderworldHair'
-import { mangaHairExtras, mangaMessyCrop, mangaRoyalUpdo } from './mangaHairExtras'
+import {
+  mangaHairExtras,
+  mangaMessyCrop,
+  mangaRoyalUpdo,
+  mangaShortHair,
+} from './mangaHairExtras'
+import { mangaKachoHair, mangaFugetsuHair } from './mangaTwinHair'
 import { mangaShikakuBrush } from './mangaShikaku'
 export interface MangaHairKit {
   THREE: HumanHeadBuild['THREE']
   parts: BufferGeometry[]
   face?: BufferGeometry
   lock: (lock: HairLock) => void
+}
+
+const TWIN_HAIR: Partial<Record<string, (kit: MangaHairKit) => void>> = {
+  'prince-kacho': mangaKachoHair,
+  'prince-fugetsu': mangaFugetsuHair,
 }
 
 function cap(kit: MangaHairKit) {
@@ -104,25 +115,6 @@ function swept(kit: MangaHairKit, quiff: boolean) {
         [x * 0.9, (quiff ? 0.3 : 0.215) - Math.abs(x) * 0.4, 0.13],
         [x * 0.8 - 0.02, (quiff ? 0.37 : 0.245) - Math.abs(x) * 0.55, -0.035],
         [x * 0.7 - 0.035, (quiff ? 0.31 : 0.13) - Math.abs(x) * 0.35 + (i % 3) * 0.012, -0.16],
-      ],
-    })
-  }
-}
-
-function short(kit: MangaHairKit, height: number) {
-  cap(kit)
-  for (let i = 0; i < 26; i++) {
-    const angle = (i / 26) * Math.PI * 2
-    const x = Math.cos(angle) * 0.135
-    const z = Math.sin(angle) * 0.13
-    kit.lock({
-      width: 0.032,
-      depth: 0.022,
-      points: [
-        [x, 0.12, z],
-        [x * 0.96, height * 0.88, z * 0.95],
-        [x * 0.91, height, z * 0.9],
-        [x * 0.89, height + 0.035, z * 0.87],
       ],
     })
   }
@@ -409,7 +401,7 @@ function hairParts(build: HumanHeadBuild, face: BufferGeometry) {
     'winged-part': () => mangaWingedPart(kit),
     'flame-crest': () => mangaFlameCrest(kit),
     'flat-top': () => {
-      short(kit, 0.265)
+      mangaShortHair(kit, 0.265)
       for (let i = -5; i <= 5; i++)
         kit.lock({
           width: 0.022,
@@ -469,11 +461,13 @@ function hairParts(build: HumanHeadBuild, face: BufferGeometry) {
     curtain: () => bob(kit, 'curtain'),
     'slicked-back': () => swept(kit, false),
     long: () => long(kit, profile.likeness === 'illumi' ? 0.92 : 0.68),
-    military: () => short(kit, 0.185),
-    short: () => short(kit, 0.23),
+    military: () => mangaShortHair(kit, 0.185),
+    short: () => mangaShortHair(kit, 0.23),
   }
+  const twin = TWIN_HAIR[profile.likeness ?? '']
   const make = variants[look.hair] ?? styles[style] ?? (() => mangaHairExtras(kit, build))
-  make()
+  if (twin) twin(kit)
+  else make()
   kit.face!.dispose()
   return mergeHumanDetails(parts)
 }
@@ -482,12 +476,13 @@ export function addMangaHair(build: HumanHeadBuild, head: Group): void {
   const { THREE, profile, geometry, outlined, materials } = build
   if (profile.hairStyle === 'shaved') return
   const look = mangaLikeness(profile)
+  const hairVariant = TWIN_HAIR[profile.likeness ?? ''] ? profile.likeness : look.hair
   const face = (head.getObjectByName('manga-face')!.children[1] as import('three').Mesh).geometry
   const hair = outlined({
     THREE,
     geometry: geometry(
       THREE,
-      `manga:hair:${profile.hairStyle}:${look.hair}:${profile.likeness === 'illumi'}:${profile.likeness === 'melody'}:${look.cheek}:${look.jaw}:${look.chin}`,
+      `manga:hair:${profile.hairStyle}:${hairVariant}:${profile.likeness === 'illumi'}:${profile.likeness === 'melody'}:${look.cheek}:${look.jaw}:${look.chin}`,
       () => hairParts(build, face),
     ),
     material: materials.hairInk,

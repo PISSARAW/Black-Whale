@@ -369,10 +369,14 @@
     {
       "id": "prince-kacho",
       "body": { "build": "slim", "height": 0.96, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "hime", "expression": "neutral" },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "hime",
+        "expression": "neutral"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches ch. 349, 350, 359 et couleurs officielles ; cheveux blonds aux épaules, tenue glamour",
+        "source": "Portrait fourni et planches ch. 349, 358–359, 383 ; palette de la robe choisie pour les planches en noir et blanc.",
         "skin": "0xf2e0ca",
         "hair": "0xe1c36e",
         "attire": {
@@ -384,29 +388,33 @@
       },
       "attire": "gown",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-350", "ch-359"], "status": "confirmed" },
-      "note": "Les cheveux blonds aux épaules et la tenue glamour la distinguent immédiatement de Fugetsu. L'expression publique reste un masque : la scène la charge, pas la fiche."
+      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-359", "ch-383"], "status": "confirmed" },
+      "note": "Mèche blonde balayée sur le côté, pointes relevées sur la nuque, grands yeux noirs bordés de cils. Robe d’embarquement à grand nœud et collier. Without You reprend ses traits avec la tenue du banquet dans sa manifestation du chapitre 383."
     },
     {
       "id": "prince-fugetsu",
       "body": { "build": "slim", "height": 0.96, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "bob", "expression": "anxious" },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "bob",
+        "expression": "anxious"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches ch. 349, 358, 359 ; cheveux foncés au menton et tenue plus simple que celle de Kacho",
+        "source": "Portrait fourni et planches ch. 349, 358–359, 374–375, 383 ; couleurs des tissus choisies.",
         "skin": "0xf2e0ca",
         "hair": "0x231f28",
         "attire": {
-          "jacket": "0x8c3a52",
+          "jacket": "0x35333d",
           "shirt": "0xf4efe6",
-          "trousers": "0x5f2739",
-          "accent": "0xd8a2b4"
+          "trousers": "0x2b2933",
+          "accent": "0x575361"
         }
       },
-      "attire": "gown",
+      "attire": "suit",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-359"], "status": "confirmed" },
-      "note": "Jumelle de Kacho par les traits, mais pas par la coiffure : Fugetsu porte un carré foncé au menton. Son expression anxieuse et sa tenue simple renforcent cette différence visible."
+      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-359", "ch-374", "ch-375", "ch-383"], "status": "confirmed" },
+      "note": "Carré foncé au menton, mèche latérale et grands yeux noirs. À bord, chemise claire, gilet court, cravate et pantalon. Le pyjama clair correspond à la première apparition de Magical Worm."
     },
     {
       "id": "prince-momoze",

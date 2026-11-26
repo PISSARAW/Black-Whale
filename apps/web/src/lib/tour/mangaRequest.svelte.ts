@@ -2,7 +2,7 @@ import { untrack } from 'svelte'
 import { mangaViewById, type MangaView } from './mangaViews'
 import type { Ship } from './blueprint'
 import type { TourNavigationState } from './pageNavigationState.svelte'
-import type { Space } from './types'
+import type { Space, Vec2 } from './types'
 
 export function initialTierForRequest(ship: Ship, url: URL): string {
   const view = mangaViewById(url.searchParams.get('mangaView'))
@@ -31,16 +31,28 @@ export function applyMangaView(navigation: CameraArrival, view: CameraView): voi
 /** The existing URL-to-camera effect, kept outside the page's presentation. */
 export function watchMangaRequest(options: {
   navigation: TourNavigationState
-  read: () => { space: Space | null; deck: string | null; view: MangaView | null }
+  read: () => {
+    space: Space | null
+    deck: string | null
+    view: MangaView | null
+    arrival?: { at: Vec2; heading: number } | null
+  }
   onView: (view: MangaView) => void
 }): void {
   $effect(() => {
-    const { space, deck, view } = options.read()
+    const { space, deck, view, arrival } = options.read()
     untrack(() => {
-      options.navigation.honor(space, deck)
-      if (!view) return
-      options.onView(view)
-      applyMangaView(options.navigation, view)
+      if (view) {
+        options.navigation.honor(space, deck)
+        options.onView(view)
+        applyMangaView(options.navigation, view)
+      } else if (space && arrival) {
+        options.navigation.goToSpace(space, arrival.at)
+        options.navigation.jumpHeading = arrival.heading
+        options.navigation.jumpPitch = 0
+      } else {
+        options.navigation.honor(space, deck)
+      }
     })
   })
 }

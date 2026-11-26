@@ -1,4 +1,5 @@
 import type * as Three from 'three'
+import { finishDeckSteps } from './deckBuildSteps'
 import { ceilingOf, floorOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder, disposeBanquetDetails } from './banquetDetailBuilder'
 import { dressDiningHallArchitecture } from './diningHallArchitecture'
@@ -13,6 +14,7 @@ import { dressMenuBoards, dressServiceCounter, dressVendingMachines } from './di
 import type { Structure } from './types'
 import { hasDiningHallModel } from './diningHallSurfacePlan'
 import { buildDiningHallGlazing } from './diningHallGlazing'
+import { addDiningVisitSigns } from './diningVisitSigns'
 
 export { disposeBanquetDetails }
 export const DINING_HALL_SPACE = 'tier-5-central-dining-hall'
@@ -74,12 +76,20 @@ function dressDiningHallStructure(context: StructureContext): void {
  * Finishes, roof trusses, catwalks, service counter and tableware interpret
  * Togashi's black-and-white artwork. See data/ship/central-dining-hall-audit.md.
  */
-export function buildDiningHallDetails(options: {
+type DiningHallViewOptions = {
   THREE: typeof Three
   plan: TierPlan
   spaceId: string
   reveal: boolean
-}): Three.Group | null {
+}
+
+export function buildDiningHallDetails(options: DiningHallViewOptions): Three.Group | null {
+  return finishDeckSteps(buildDiningHallDetailSteps(options))
+}
+
+export function* buildDiningHallDetailSteps(
+  options: DiningHallViewOptions,
+): Generator<void, Three.Group | null> {
   const { THREE, plan, spaceId, reveal } = options
   if (reveal || spaceId !== DINING_HALL_SPACE) return null
 
@@ -91,16 +101,19 @@ export function buildDiningHallDetails(options: {
   const ceiling = floor + ceilingOf(space, plan.tier)
 
   // 1. Industrial overhead architecture, trusses, catwalks, lamps, ducts and columns
-  dressDiningHallArchitecture({ THREE, into, plan, space })
+  yield* dressDiningHallArchitecture({ THREE, into, plan, space })
 
   // 2. Specific furniture, counters and tableware
   const structures = plan.structures.filter(hasDiningHallModel)
   for (const structure of structures) {
+    yield
     dressDiningHallStructure({ into, structure, floor, ceiling })
   }
 
+  yield
   const root = into.finish('central-dining-hall-manga-details')
   const glass = buildDiningHallGlazing(THREE, plan)
   if (glass) root.add(glass)
+  addDiningVisitSigns({ THREE, plan, spaceId, root })
   return root
 }

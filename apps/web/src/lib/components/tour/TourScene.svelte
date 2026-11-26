@@ -69,7 +69,7 @@
   import { comfort, reducedMotion, setComfort, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh } from '$lib/tour/mesh'
   import { animateDealerFace } from '$lib/tour/dealer'
-  import { HUMAN_LOD_DISTANCE, humanStateKey } from '$lib/tour/humanFigure'
+  import { HUMAN_LOD_DISTANCE } from '$lib/tour/humanFigure'
   import { shownState } from '$lib/tour/apparitionShown'
   import type { HumanPose } from '$lib/tour/humanAnimation'
   import type { HumanFigure } from '$lib/tour/humanFigure'
@@ -89,7 +89,7 @@
     walkInput,
     wayOutOfInterior,
   } from '$lib/tour/navigation'
-  import { StairNavigator, type JumpArrival } from '$lib/tour/StairNavigator'
+  import { StairNavigator, stairInteractionArrival, type JumpArrival } from '$lib/tour/StairNavigator'
   import { SurfaceWalker } from '$lib/tour/SurfaceWalker'
   import {
     beginTierTransition,
@@ -146,6 +146,7 @@
   import { playNenObjectSound, playNenTechniqueSound, sustainNenSound } from '$lib/audio/nenSounds'
   import { NEN_KEYS, nenZoneIndex, ryuDistribution, type NenBodyZone } from '$lib/nen/controls'
   import { visibleSpaces } from '$lib/tour/visibility'
+  import { prepareStairLandings } from '$lib/tour/stairLandingWarmup'
   import { createShaftDecks } from '$lib/tour/shaftDecks'
   import { buildGangwayView, type GangwayView } from '$lib/tour/gangwayView'
   import {
@@ -175,6 +176,7 @@
     NIGHT_LIGHT_INTENSITY,
     TourAtmosphereView,
   } from '$lib/tour/TourAtmosphereView'
+  import { apparitionKey, landingActorSteps } from '$lib/tour/landingActorWarmup'
   import { ApparitionView } from '$lib/tour/ApparitionView'
   import { buildBasicApparition, BIRD_TETHER, BIRD_WINGS } from '$lib/tour/apparitionBasicView'
   import { buildAntennaApparition } from '$lib/tour/antennaModel'
@@ -378,6 +380,7 @@
      * treatment: built once, keyed on `id`, moved rather than rebuilt.
      */
     extras?: Apparition[]
+    landingActors?: (tierId: string, spaceId: string) => Apparition[]
     /** Moving solids supplied by a game layered over the walk. */
     collisionWalls?: WallSegment[]
     /** Named canonical bodies by room; sound may react without drawing a crowd. */
@@ -650,6 +653,7 @@
     roomDetailMode = 'default',
     seated = null,
     extras = [],
+    landingActors,
     collisionWalls = [],
     roomOccupancy = {},
     paceMultiplier = 1,
@@ -1159,16 +1163,10 @@
        * however many rooms it has. Each room then differs only in its draw range
        * and in the bounding sphere `buildTierMesh` measured for it.
        */
-      function extrude(nextTierId: string): Built {
-        return tierView.build({
-          ship,
-          world,
-          tierId: nextTierId,
-          reveal,
-          detailMode: roomDetailMode,
-          dustScale: quality.dustScale,
-        })
-      }
+      const deckOptions = (id: string) => ({
+        ship, world, tierId: id, reveal, detailMode: roomDetailMode, dustScale: quality.dustScale,
+      })
+      const extrude = (id: string) => tierView.build(deckOptions(id))
 
       const dispose = (built: Built) => tierView.dispose(built)
 
@@ -1215,6 +1213,19 @@
         variants[nextTierId] = { key, built }
         return { built, key }
       }
+
+      const prepareLandings = prepareStairLandings({
+        THREE, runtime, ship,
+        readPlan: (id) => walkedPlan(ship, world, id),
+        readDeck: (id) => decks[id],
+        prepareActors: prepareLandingActors,
+        buildSteps: (id) => tierView.buildSteps(deckOptions(id)),
+        canPrepare: (id) => !reveal && worldKey(id) === `${id}::::::`,
+        cacheDeck: (id, built) => {
+          if (decks[id]) dispose(built)
+          else decks[id] = built
+        },
+      })
 
       /** State the render loop owns; Svelte state is only mirrored out of it. */
       let pointer: Vec2 = [0, 0]
@@ -1334,6 +1345,21 @@
           report()
         }
         tierId = space.tierId
+      }
+
+      const crossStair = (to: string, arrival?: JumpArrival) => {
+        const origin = currentTierId
+        const from = spaceAt(ship.plans.get(origin)!, pointer)?.id ?? ''
+        const start = pointer
+        const arrive = () => {
+          goTo(to, arrival)
+          stairs.arrived(from, to)
+        }
+        const valid = () =>
+          currentTierId === origin &&
+          linkIsOpen(world, from) &&
+          Math.hypot(pointer[0] - start[0], pointer[1] - start[1]) < 6
+        if (!prepareLandings.cross({ from, to, arrive, valid })) arrive()
       }
 
       loadTier(tierId)
@@ -2099,8 +2125,12 @@
         }
       }
 
-      function dropApparition(id: string) {
-        apparitionView.drop(id)
+      function prepareLandingActors(space: Space) {
+        return landingActorSteps({
+          actors: landingActors?.(space.tierId, space.id) ?? [],
+          prepare: (seen) =>
+            apparitionView.prepare(seen.id, apparitionKey(seen, sight), () => buildApparition(seen)),
+        })
       }
 
       /** Puts what the world says is standing into the scene, and takes out the rest. */
@@ -2119,8 +2149,7 @@
         ].filter((seen) => !seen.hidden || effectiveNen.gyo)
         apparitionView.sync(wanted, {
           idOf: (seen) => seen.id,
-          keyOf: (seen) =>
-            `${seen.kind}|${seen.variant ?? ''}|${seen.carried ?? ''}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|sight:${sight}`,
+          keyOf: (seen) => apparitionKey(seen, sight),
           build: buildApparition,
           preserve: humanCarry.preserve,
           restore: humanCarry.restore,
@@ -3728,7 +3757,7 @@
           beginGangway(found.link)
           return
         }
-        if (found) goTo(found.to)
+        if (found) crossStair(found.to, stairInteractionArrival(found, { facing: yaw, looking: pitch }))
       }
 
       function beginGangway(link: Link) {
@@ -4154,6 +4183,7 @@
       const temporal = new WalkTemporalState()
 
       const tick = (now: number) => {
+        const frameStarted = performance.now()
         const delta = Math.min((now - previous) / 1000, 0.1)
         previous = now
 
@@ -4497,7 +4527,7 @@
               !gangwayWalk && !seated && linkIsOpen(world, spaceAt(plan, pointer)?.id ?? null),
           })
           if (stair) {
-            goTo(stair.spaceId, { ...stair.arrival, facing: yaw, looking: pitch })
+            crossStair(stair.spaceId, { ...stair.arrival, facing: yaw, looking: pitch })
             return
           }
         }
@@ -4905,6 +4935,7 @@
           showing: Boolean(showing),
           record,
         })
+        prepareLandings.frame(currentTierId, frameStarted)
       }
 
       /**
@@ -4942,6 +4973,7 @@
         takeScreenshot = null
         if (hatsuHoldTimer !== null) window.clearTimeout(hatsuHoldTimer)
         stopAnimating()
+        prepareLandings.dispose()
         resize.dispose()
         stopListening()
         for (const built of Object.values(decks)) if (built) dispose(built)
@@ -4955,7 +4987,7 @@
         eyeCamera = null
         insets.clear()
         for (const id of Object.keys(solids)) dropSolid(id)
-        for (const id of Object.keys(apparitions)) dropApparition(id)
+        apparitionView.dispose()
         while (leaving.length) dropLeavingCard(leaving.length - 1)
         for (const material of Object.values(glowMaterials)) material?.dispose()
         for (const material of Object.values(glassMaterials)) material?.dispose()

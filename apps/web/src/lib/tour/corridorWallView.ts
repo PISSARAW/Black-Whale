@@ -1,4 +1,5 @@
 import type * as Three from 'three'
+import { finishDeckSteps } from './deckBuildSteps'
 import { floorOf, ceilingOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { corridorWallRuns, tierOfSpace, type WallSurface } from './corridorWallLayout'
@@ -6,7 +7,8 @@ import { dressTier1CorridorWall } from './corridorWallTier1'
 import { dressTier2CorridorWall } from './corridorWallTier2'
 import { dressTier3CorridorWall } from './corridorWallTier3'
 import { dressTier4CorridorWall } from './corridorWallTier4'
-import { dressTier5CorridorWall } from './corridorWallTier5'
+import { dressTier5CorridorWallSteps } from './corridorWallTier5'
+import { addDiningVisitSigns } from './diningVisitSigns'
 import { SOLDIERS_QUARTERS } from './royalArmyRoomsStyle'
 
 interface CorridorDetailOptions {
@@ -43,11 +45,11 @@ export function isCorridorSpace(spaceId: string, category?: string): boolean {
   return CORRIDOR_KEYWORDS.some((keyword) => spaceId.includes(keyword))
 }
 
-function dressCorridorWallByTier(
+function* dressCorridorWallByTier(
   wall: WallSurface,
   tier: 1 | 2 | 3 | 4 | 5,
   context: WallDressContext,
-): void {
+): Generator<void> {
   switch (tier) {
     case 1:
       dressTier1CorridorWall(wall, context)
@@ -62,13 +64,19 @@ function dressCorridorWallByTier(
       dressTier4CorridorWall(wall, context)
       break
     case 5:
-      dressTier5CorridorWall(wall, context)
+      yield* dressTier5CorridorWallSteps(wall, context)
       break
   }
 }
 
 /** Builds faithful 3D manga corridor wall architecture for the specified space according to its tier. */
 export function buildCorridorWallDetails(options: CorridorDetailOptions): Three.Group | null {
+  return finishDeckSteps(buildCorridorWallDetailSteps(options))
+}
+
+export function* buildCorridorWallDetailSteps(
+  options: CorridorDetailOptions,
+): Generator<void, Three.Group | null> {
   const { THREE, plan, spaceId } = options
   const space = plan.spaces.find((s) => s.id === spaceId)
   if (!space || space.locationId === SOLDIERS_QUARTERS) return null
@@ -84,8 +92,12 @@ export function buildCorridorWallDetails(options: CorridorDetailOptions): Three.
 
   const into = new BanquetDetailBuilder(THREE)
   for (const run of runs) {
-    dressCorridorWallByTier({ into, run }, tier, context)
+    yield
+    yield* dressCorridorWallByTier({ into, run }, tier, context)
   }
 
-  return into.finish(`corridor-walls-${space.id}`)
+  yield
+  const root = into.finish(`corridor-walls-${space.id}`)
+  if (!options.reveal) addDiningVisitSigns({ THREE, plan, spaceId, root })
+  return root
 }

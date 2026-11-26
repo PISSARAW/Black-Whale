@@ -1,3 +1,4 @@
+import { finishDeckSteps } from './deckBuildSteps'
 import { runsAlong } from './meshSeals'
 /**
  * Extrudes a deck into triangles: floors, ceilings, walls and door lintels.
@@ -1241,6 +1242,13 @@ export function buildSolidMesh(structure: Structure, where: SolidPlacement): Tie
  * and is what makes each room drawable on its own: see `MeshGroup`.
  */
 export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}): TierMesh {
+  return finishDeckSteps(buildTierMeshSteps(plan, options))
+}
+
+export function* buildTierMeshSteps(
+  plan: TierPlan,
+  options: { reveal?: boolean } = {},
+): Generator<void, TierMesh> {
   const builder = new MeshBuilder()
   const { tier } = plan
   const reveal = options.reveal ?? false
@@ -1417,6 +1425,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
   const groups: MeshGroup[] = []
 
   for (const space of plan.spaces) {
+    yield
     // Everything in this pass hangs off the floor of this room, which is the
     // deck everywhere but the handful of rooms a panel draws a step into.
     const base = floorOf(space, tier)
@@ -1466,6 +1475,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
         }
 
     for (let i = 0; i < indices.length; i += 3) {
+      yield
       const a = space.footprint[indices[i]]
       const b = space.footprint[indices[i + 1]]
       const c = space.footprint[indices[i + 2]]
@@ -1587,11 +1597,13 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       // because a fitting burns at a value this bake settles and the glass burns
       // at the hour of the voyage, which it does not.
       for (const structure of standingIn.get(space.id) ?? []) {
+        yield
         if (structure.kind === 'window') pane(structure, floorOf(space, tier))
       }
     }
 
     for (const wall of wallsOf.get(space.id) ?? []) {
+      yield
       // Under the reveal a wall says one of two things: what the room is worth
       // as evidence, or — where the blueprint declared it blind — that the walk
       // shut it on purpose, which is a claim about the ship in its own right.
@@ -1658,6 +1670,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     // only has to raise them: the same outline, extruded to its own height and
     // capped, and never taller than the room it stands in.
     for (const structure of standingIn.get(space.id) ?? []) {
+      yield
       extrudeSolid({ builder, edges }, structure, {
         room: space,
         tier,
@@ -1669,6 +1682,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     // Above each opening the wall carries on to the ceiling, so a doorway reads
     // as a door and not as a room with a side missing.
     for (const door of lintelsOf.get(space.id) ?? []) {
+      yield
       const other = spaces.get(door.b)
       if (!other) continue
       const {
@@ -1801,6 +1815,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
   const vertices = builder.positions.length / 3
   if (builder.skies.length) while (builder.skies.length < vertices) builder.skies.push(0)
 
+  yield
   return {
     positions: new Float32Array(builder.positions),
     normals: new Float32Array(builder.normals),

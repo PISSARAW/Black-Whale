@@ -84,6 +84,14 @@
     TSERRIEDNICH_ROUTE_START,
     tserriednichRouteUrl,
   } from '$lib/tour/tserriednichRoute'
+  import {
+    DINING_VISIT,
+    DINING_VISIT_HEADING,
+    DINING_VISIT_START,
+    diningVisitUrl,
+    isDiningVisitStart,
+  } from '$lib/tour/diningVisit'
+  import { diningVisitActors } from '$lib/tour/diningVisitActors'
   import { tourWorldMode } from '$lib/tour/simulation/mode'
   import { evolveTourSimulation, type TourSimulationV1 } from '$lib/tour/simulation/state'
   import { loadTourSimulation, saveTourSimulation } from '$lib/tour/simulation/persistence'
@@ -135,7 +143,12 @@
     const url = tserriednichRouteUrl($page.url)
     return $link(`${parsePathname(url.pathname).path}${url.search}`)
   })
+  const diningRouteActive = $derived($page.url.searchParams.get('route') === DINING_VISIT)
+  const diningHref = $derived(
+    $link(`/tour${diningVisitUrl($page.url).search}#tour-stage-container`),
+  )
   const tierId = $derived(navigation.tierId)
+  const diningActors = $derived(diningVisitActors(ship, tierId, tourMode))
   const currentSpace = $derived(navigation.currentSpace)
   const availableLink = $derived(navigation.availableLink)
   const engaged = $derived(navigation.engaged)
@@ -197,7 +210,14 @@
   }
   watchMangaRequest({
     navigation,
-    read: () => ({ space: requestedSpace, deck: requestedDeck, view: requestedMangaView }),
+    read: () => ({
+      space: requestedSpace,
+      deck: requestedDeck,
+      view: requestedMangaView,
+      arrival: isDiningVisitStart($page.url)
+        ? { at: DINING_VISIT_START, heading: DINING_VISIT_HEADING }
+        : null,
+    }),
     onView: (view) => (activeMangaView = view),
   })
 
@@ -720,8 +740,8 @@
 
   const castView = new TourCastView({
     ship,
+    readCast: () => cast,
     read: () => ({
-      cast,
       world: { ...world, vestiges: cast.vestiges },
       tierId,
       visitorIn: currentSpace?.id ?? null,
@@ -1028,7 +1048,7 @@
 
 <svelte:window onkeydown={keyboard.onKeydown} />
 
-<TourPageIntro {ship} {routeHref} />
+<TourPageIntro {ship} {routeHref} {diningHref} />
 
 <TourWorkspace
   immersive={chrome.immersive}
@@ -1164,7 +1184,11 @@
       soundLabels: { silence: $t.tour.sound.silence, restore: $t.tour.sound.restore },
       loadingLabel: $t.tour.loading,
       unsupportedLabel: $t.tour.unsupported,
-      extras: castView.apparitions,
+      extras: [...castView.apparitions, ...diningActors],
+      landingActors: (tierId, spaceId) => [
+        ...castView.landingActors(tierId, spaceId),
+        ...diningVisitActors(ship, tierId, tourMode),
+      ],
       roomOccupancy: castView.occupancy,
       // Taking hold of a beast is the one thing §2.4 lets one do: it answers,
       // and nothing else in the ship changes.
@@ -1286,7 +1310,7 @@
   </a>
 {/if}
 
-{#if simulation}
+{#if simulation && !diningRouteActive}
   <TourNenProfilePanel
     {simulation}
     spaceId={currentSpace?.id ?? null}

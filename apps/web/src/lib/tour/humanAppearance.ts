@@ -20,6 +20,7 @@ export interface HumanAppearance {
     | 'walk'
     | 'listen'
     | 'search'
+    | 'wipe-table'
     | 'held'
     | 'guard'
     | 'brace'

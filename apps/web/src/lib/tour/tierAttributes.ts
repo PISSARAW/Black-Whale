@@ -2,7 +2,7 @@ import type * as Three from 'three'
 
 import type { TierPlan } from './blueprint'
 import type { TierMesh } from './mesh'
-import { conditionUniformsOf, trafficAttribute } from './surfaceCondition'
+import { conditionUniformsOf, trafficAttributeSteps } from './surfaceCondition'
 import { fittingFlickerAttribute, fittingFlickerUniformsOf } from './fittingFlicker'
 
 /** Shared GPU attributes: one upload, then a draw range for each room. */
@@ -23,13 +23,13 @@ export interface TierAttributes {
   sky: Three.BufferAttribute | null
 }
 
-export function tierAttributesOf(options: {
+export function* tierAttributesOf(options: {
   THREE: typeof Three
   mesh: TierMesh
   plan: TierPlan
   surface: Three.Material
   fitting: Three.Material
-}): TierAttributes {
+}): Generator<void, TierAttributes> {
   const { THREE, mesh, plan, surface, fitting } = options
   const of = (data: Float32Array, size = 3) => new THREE.BufferAttribute(data, size)
   return {
@@ -38,7 +38,7 @@ export function tierAttributesOf(options: {
     color: of(mesh.colors),
     sheen: of(mesh.sheens, 1),
     traffic: conditionUniformsOf(surface)
-      ? new THREE.BufferAttribute(trafficAttribute(mesh, plan), 1, true)
+      ? new THREE.BufferAttribute(yield* trafficAttributeSteps(mesh, plan), 1, true)
       : null,
     edge: of(mesh.edges),
     seam: of(mesh.seams),

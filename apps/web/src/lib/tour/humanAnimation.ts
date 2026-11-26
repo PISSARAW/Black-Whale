@@ -97,6 +97,22 @@ function blendFrame(parts: Object3D[], from: TransformFrame, amount: number): vo
   })
 }
 
+function wipeTable(
+  {
+    figure,
+    head,
+    arm,
+    elbow,
+  }: { figure: Object3D; head: Object3D; arm: Object3D; elbow: Object3D },
+  seconds: number,
+): void {
+  const sweep = Math.sin(seconds * 4.2)
+  figure.rotation.x = 0.28
+  head.rotation.x = 0.22
+  arm.rotation.set(-0.65 + sweep * 0.12, 0, -0.18 + sweep * 0.28)
+  elbow.rotation.x = -0.42
+}
+
 /**
  * The pose a body is *built* in, as opposed to the one it is animated through.
  *
@@ -276,6 +292,11 @@ export function humanAnimation(
       rig.arms[1].rotation.set(0, 0, -2.15)
       rig.head.rotation.y = headBase.y + Math.sin(seconds * 0.65) * 0.28
     },
+    'wipe-table': (seconds: number) =>
+      wipeTable(
+        { figure: rig.figure, head: rig.head, arm: rig.arms[1], elbow: rig.arms[1].children[1] },
+        seconds,
+      ),
     search: () => {
       rig.figure.rotation.x = -0.12
       rig.head.rotation.x = 0.22

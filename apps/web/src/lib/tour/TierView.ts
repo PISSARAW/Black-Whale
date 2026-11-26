@@ -1,5 +1,7 @@
 import type * as Three from 'three'
-import { buildTierMesh, type MeshGroup } from './mesh'
+import { buildTierMeshSteps, type MeshGroup } from './mesh'
+import { deckSurfacePlan } from './deckSurfacePlan'
+import { finishDeckSteps } from './deckBuildSteps'
 import { walkedPlan, type TourWorld } from './hatsu'
 import { dustOf, type Dust } from './dust'
 import type { Ship } from './blueprint'
@@ -8,54 +10,47 @@ import { conditionedRoomSurface } from './surfaceCondition'
 import { tierAttributesOf, type TierAttributes } from './tierAttributes'
 import { bindFittingFlicker } from './fittingFlicker'
 import { buildBanquetDetails, disposeBanquetDetails } from './banquetView'
-import { buildRoyalSalonDetails, royalSalonSurfacePlan } from './royalSalonView'
-import { buildDiningHallDetails } from './diningHallView'
-import { diningHallSurfacePlan } from './diningHallSurfacePlan'
-import { buildPrisonDetails, prisonSurfacePlan } from './prisonView'
-import { buildCasinoDetails, casinoSurfacePlan } from './casinoView'
-import { buildBurialChamberDetails, burialSurfacePlan } from './burialChamberView'
-import { buildQueenApartmentDetails, queenApartmentSurfacePlan } from './queenApartmentView'
-import { buildQueenUnmaDetails, queenUnmaSurfacePlan } from './queenUnmaView'
-import { buildBenjaminRoomDetails, benjaminSurfacePlan } from './benjaminRoomView'
-import { buildCamillaRoomDetails, camillaSurfacePlan } from './camillaView'
-import { buildTserriednichRoomDetails, tserriednichSurfacePlan } from './tserriednichRoomView'
-import { buildWobleDetails, wobleSurfacePlan } from './wobleView'
-import { buildMarayamDetails, marayamSurfacePlan } from './marayamView'
-import { buildMomozeDetails, momozeSurfacePlan } from './momozeView'
-import { buildFugetsuDetails, fugetsuSurfacePlan } from './fugetsuView'
-import { buildKachoDetails, kachoSurfacePlan } from './kachoView'
-import { buildHalkenburgDetails, halkenburgSurfacePlan } from './halkenburgView'
-import { buildSalesaleDetails, salesaleSurfacePlan } from './salesaleView'
-import { buildLuzurusDetails, luzurusSurfacePlan } from './luzurusView'
-import { buildTysonDetails, tysonSurfacePlan } from './tysonView'
-import { buildTubeppaDetails, tubeppaSurfacePlan } from './tubeppaView'
-import { buildZhangLeiDetails, zhangLeiSurfacePlan } from './zhangLeiView'
+import { buildRoyalSalonDetails } from './royalSalonView'
+import { buildDiningHallDetailSteps } from './diningHallView'
+import { buildPrisonDetails } from './prisonView'
+import { buildCasinoDetails } from './casinoView'
+import { buildBurialChamberDetails } from './burialChamberView'
+import { buildQueenApartmentDetails } from './queenApartmentView'
+import { buildQueenUnmaDetails } from './queenUnmaView'
+import { buildBenjaminRoomDetails } from './benjaminRoomView'
+import { buildCamillaRoomDetails } from './camillaView'
+import { buildTserriednichRoomDetails } from './tserriednichRoomView'
+import { buildWobleDetails } from './wobleView'
+import { buildMarayamDetails } from './marayamView'
+import { buildMomozeDetails } from './momozeView'
+import { buildFugetsuDetails } from './fugetsuView'
+import { buildKachoDetails } from './kachoView'
+import { buildHalkenburgDetails } from './halkenburgView'
+import { buildSalesaleDetails } from './salesaleView'
+import { buildLuzurusDetails } from './luzurusView'
+import { buildTysonDetails } from './tysonView'
+import { buildTubeppaDetails } from './tubeppaView'
+import { buildZhangLeiDetails } from './zhangLeiView'
 import { buildVvipRecreationDetails } from './vvipRecreationView'
-import { buildPrincesQuartersDetails, princesSurfacePlan } from './princesQuartersView'
-import { buildPrinceApartmentEnvelope, princeApartmentSurfacePlan } from './princeApartmentEnvelope'
-import { buildHeillyHideoutDetails, heillySurfacePlan } from './heillyHideoutView'
-import { buildJusticeBureauDetails, justiceSurfacePlan } from './justiceBureauView'
-import { buildPoliceStationDetails, policeSurfacePlan } from './policeStationView'
-import { buildChaROfficeDetails, chaRSurfacePlan } from './chaROfficeView'
-import { buildHospitalDetails, hospitalSurfacePlan } from './hospitalView'
-import {
-  buildRoyalArmyConferenceDetails,
-  royalArmyConferenceSurfacePlan,
-} from './royalArmyConferenceView'
-import { buildCineplexDetails, cineplexSurfacePlan } from './cineplexView'
-import { buildPodCabinDetails, podCabinSurfacePlan } from './podCabinView'
-import { buildCorridorWallDetails } from './corridorWallView'
+import { buildPrincesQuartersDetails } from './princesQuartersView'
+import { buildPrinceApartmentEnvelope } from './princeApartmentEnvelope'
+import { buildHeillyHideoutDetails } from './heillyHideoutView'
+import { buildJusticeBureauDetails } from './justiceBureauView'
+import { buildPoliceStationDetails } from './policeStationView'
+import { buildChaROfficeDetails } from './chaROfficeView'
+import { buildHospitalDetails } from './hospitalView'
+import { buildRoyalArmyConferenceDetails } from './royalArmyConferenceView'
+import { buildCineplexDetails } from './cineplexView'
+import { buildPodCabinDetails } from './podCabinView'
+import { buildCorridorWallDetailSteps } from './corridorWallView'
 import { buildDoorDetails } from './doorView'
-import { buildSupremeCourtDetails, supremeCourtSurfacePlan } from './supremeCourtView'
-import { buildScreeningRoomDetails, screeningRoomSurfacePlan } from './screeningRoomView'
-import { buildHangarEntranceDetails, hangarEntranceSurfacePlan } from './hangarEntranceView'
-import { buildWarehouseDetails, warehouseSurfacePlan } from './warehouseView'
-import { buildHullSuspensionDetails, hullSuspensionSurfacePlan } from './hullSuspensionView'
-import { buildRoom3101Details, room3101SurfacePlan } from './room3101View'
-import {
-  buildSourceBoundInteriorDetails,
-  sourceBoundInteriorSurfacePlan,
-} from './sourceBoundInteriorView'
+import { buildSupremeCourtDetails } from './supremeCourtView'
+import { buildScreeningRoomDetails } from './screeningRoomView'
+import { buildHangarEntranceDetails } from './hangarEntranceView'
+import { buildWarehouseDetailSteps } from './warehouseView'
+import { buildHullSuspensionDetails } from './hullSuspensionView'
+import { buildRoom3101Details } from './room3101View'
+import { buildSourceBoundInteriorDetails } from './sourceBoundInteriorView'
 
 export interface TierRoomView {
   spaceId: string
@@ -157,12 +152,14 @@ export interface RoomDetailOptions {
   detailMode?: RoomDetailMode
 }
 
-type RoomDetailBuilder = (options: RoomDetailOptions) => Three.Group | null
+type RoomDetailBuilder = (
+  options: RoomDetailOptions,
+) => Three.Group | null | Generator<void, Three.Group | null>
 
 const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildBanquetDetails,
   buildRoyalSalonDetails,
-  buildDiningHallDetails,
+  buildDiningHallDetailSteps,
   buildPrisonDetails,
   buildCasinoDetails,
   buildBurialChamberDetails,
@@ -193,20 +190,21 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildRoyalArmyConferenceDetails,
   buildCineplexDetails,
   buildPodCabinDetails,
-  buildCorridorWallDetails,
+  buildCorridorWallDetailSteps,
   buildSupremeCourtDetails,
   buildScreeningRoomDetails,
   buildHangarEntranceDetails,
-  buildWarehouseDetails,
+  buildWarehouseDetailSteps,
   buildHullSuspensionDetails,
   buildRoom3101Details,
   buildSourceBoundInteriorDetails,
 ]
 
 /** Builds and disposes the shared-buffer visual representation of a deck. */
-function roomDetails(options: RoomDetailOptions): Three.Group | null {
+function* roomDetails(options: RoomDetailOptions): Generator<void, Three.Group | null> {
   for (const builder of DETAIL_BUILDERS) {
-    const group = builder(options)
+    const prepared = builder(options)
+    const group = prepared && 'next' in prepared ? yield* prepared : prepared
     if (group) return group
   }
   return null
@@ -218,110 +216,25 @@ export class TierView {
     private readonly materials: TierMaterials,
   ) {}
 
-  build({
+  build(options: TierBuild): BuiltTierView {
+    return finishDeckSteps(this.buildSteps(options))
+  }
+
+  *buildSteps({
     ship,
     world,
     tierId,
     reveal,
     detailMode = 'default',
     dustScale = 1,
-  }: TierBuild): BuiltTierView {
+  }: TierBuild): Generator<void, BuiltTierView> {
     const plan = walkedPlan(ship, world, tierId)
-    const apartmentPlan = tubeppaSurfacePlan(
-      princeApartmentSurfacePlan(
-        tserriednichSurfacePlan(
-          zhangLeiSurfacePlan(camillaSurfacePlan(prisonSurfacePlan(plan, reveal), reveal), reveal),
-          reveal,
-        ),
-        reveal,
-      ),
-      reveal,
-    )
-    const basePlan = wobleSurfacePlan(
-      marayamSurfacePlan(
-        momozeSurfacePlan(
-          fugetsuSurfacePlan(
-            kachoSurfacePlan(
-              halkenburgSurfacePlan(
-                salesaleSurfacePlan(
-                  luzurusSurfacePlan(tysonSurfacePlan(apartmentPlan, reveal), reveal),
-                  reveal,
-                ),
-                reveal,
-              ),
-              reveal,
-            ),
-            reveal,
-          ),
-          reveal,
-        ),
-        reveal,
-      ),
-      reveal,
-    )
-    const surfacePlan = warehouseSurfacePlan(
-      hangarEntranceSurfacePlan(
-        screeningRoomSurfacePlan(
-          supremeCourtSurfacePlan(
-            podCabinSurfacePlan(
-              cineplexSurfacePlan(
-                hospitalSurfacePlan(
-                  chaRSurfacePlan(
-                    policeSurfacePlan(
-                      justiceSurfacePlan(
-                        heillySurfacePlan(
-                          benjaminSurfacePlan(
-                            burialSurfacePlan(
-                              casinoSurfacePlan(princesSurfacePlan(basePlan, reveal), reveal),
-                              reveal,
-                            ),
-                            reveal,
-                          ),
-                          reveal,
-                        ),
-                        reveal,
-                      ),
-                      reveal,
-                    ),
-                    reveal,
-                  ),
-                  reveal,
-                ),
-                reveal,
-              ),
-              reveal,
-            ),
-            reveal,
-          ),
-          reveal,
-        ),
-        reveal,
-      ),
-      reveal,
-    )
-    const detailedPlan = sourceBoundInteriorSurfacePlan(
-      room3101SurfacePlan(
-        hullSuspensionSurfacePlan(
-          queenUnmaSurfacePlan(
-            queenApartmentSurfacePlan(
-              royalArmyConferenceSurfacePlan(
-                royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
-                reveal,
-              ),
-              reveal,
-            ),
-            reveal,
-          ),
-          reveal,
-        ),
-        reveal,
-      ),
-      reveal,
-    )
-    const mesh = buildTierMesh(detailedPlan, {
+    const detailedPlan = deckSurfacePlan(plan, reveal)
+    yield
+    const mesh = yield* buildTierMeshSteps(detailedPlan, {
       reveal,
     })
-    const shared = tierAttributesOf({
+    const shared = yield* tierAttributesOf({
       THREE: this.THREE,
       mesh,
       plan: detailedPlan,
@@ -331,34 +244,42 @@ export class TierView {
     const root = new this.THREE.Group()
     const rooms: TierRoomView[] = []
 
-    for (const group of mesh.groups) {
-      const room = this.room(group, shared, { ship, tierId, reveal, dustScale })
-      const detailsOptions = {
-        THREE: this.THREE,
-        plan,
-        spaceId: group.spaceId,
-        reveal,
-        detailMode,
-      }
-      room.details = roomDetails(detailsOptions)
-      if (room.details) room.mesh.add(room.details)
-      room.doors = buildDoorDetails(detailsOptions)
-      if (room.doors) room.mesh.add(room.doors)
-      root.add(room.mesh, room.edges, room.seams, room.patterns, room.fittings)
-      if (room.panes) root.add(room.panes)
-      if (room.motes) root.add(room.motes)
-      rooms.push(room)
-    }
-    const lampAir = reveal
-      ? null
-      : lampAirOf({
+    let complete = false
+    try {
+      for (const group of mesh.groups) {
+        yield
+        const room = this.room(group, shared, { ship, tierId, reveal, dustScale })
+        rooms.push(room)
+        const detailsOptions = {
           THREE: this.THREE,
-          mesh,
-          plan: detailedPlan,
-          material: this.materials.lampAir,
-        })
-    if (lampAir) root.add(lampAir)
-    return { root, rooms, lampAir }
+          plan,
+          spaceId: group.spaceId,
+          reveal,
+          detailMode,
+        }
+        room.details = yield* roomDetails(detailsOptions)
+        if (room.details) room.mesh.add(room.details)
+        room.doors = buildDoorDetails(detailsOptions)
+        if (room.doors) room.mesh.add(room.doors)
+        root.add(room.mesh, room.edges, room.seams, room.patterns, room.fittings)
+        if (room.panes) root.add(room.panes)
+        if (room.motes) root.add(room.motes)
+      }
+      yield
+      const lampAir = reveal
+        ? null
+        : lampAirOf({
+            THREE: this.THREE,
+            mesh,
+            plan: detailedPlan,
+            material: this.materials.lampAir,
+          })
+      if (lampAir) root.add(lampAir)
+      complete = true
+      return { root, rooms, lampAir }
+    } finally {
+      if (!complete) this.dispose({ root, rooms, lampAir: null })
+    }
   }
 
   /**

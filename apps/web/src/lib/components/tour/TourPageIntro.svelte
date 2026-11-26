@@ -9,9 +9,10 @@
   interface Props {
     ship: Ship
     routeHref: string
+    diningHref: string
   }
 
-  let { ship, routeHref }: Props = $props()
+  let { ship, routeHref, diningHref }: Props = $props()
 </script>
 
 <Seo
@@ -39,6 +40,14 @@
 />
 
 <div class="route-start">
+  <a href={diningHref}>
+    <strong>{$locale === 'fr' ? 'Du pont 4 au réfectoire' : 'From deck 4 to the refectory'}</strong>
+    <small>
+      {$locale === 'fr'
+        ? 'Vie libre · env. 10 min · suivez les panneaux et observez les routines reconstituées'
+        : 'Free life · about 10 min · follow the signs and watch the reconstructed routines'}
+    </small>
+  </a>
   <a href={routeHref}>
     {$locale === 'fr'
       ? 'Refaire le parcours de Tserriednich (chap. 419–420)'
@@ -50,6 +59,9 @@
   .route-start {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0.5rem;
     margin: -0.5rem 1rem 1.25rem;
   }
   .route-start a {
@@ -60,6 +72,13 @@
     font-size: 0.76rem;
     letter-spacing: 0.04em;
     text-decoration: none;
+  }
+  .route-start small {
+    display: block;
+    margin-top: 0.2rem;
+    color: rgb(255 255 240 / 0.76);
+    font-size: 0.72rem;
+    letter-spacing: normal;
   }
   .route-start a:hover,
   .route-start a:focus-visible {

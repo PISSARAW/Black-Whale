@@ -210,7 +210,7 @@ function dressPillars(context: DiningArchitectureContext, floor: number, ceiling
   }
 }
 
-export function dressDiningHallArchitecture(context: DiningArchitectureContext): void {
+export function* dressDiningHallArchitecture(context: DiningArchitectureContext): Generator<void> {
   const { into, space, plan } = context
   const floor = floorOf(space, plan.tier)
   const ceiling = floor + ceilingOf(space, plan.tier)
@@ -219,25 +219,38 @@ export function dressDiningHallArchitecture(context: DiningArchitectureContext):
   // 1. Spanning roof trusses every 4.5 metres along Z
   const trussZs = [14.5, 19.0, 23.5, 28.0, 32.5, 37.0, 40.5]
   for (const z of trussZs) {
+    yield
     roofTruss(into, { z, span: [bounds.minX, bounds.maxX], top: ceiling })
   }
 
+  yield
+
   // 2. Two service catwalks running along X = 23.5 and X = 37.5
   catwalk(into, { x: 23.5, span: [bounds.minZ, bounds.maxZ], y: ceiling - 1.35, ceiling })
+  yield
   catwalk(into, { x: 37.5, span: [bounds.minZ, bounds.maxZ], y: ceiling - 1.35, ceiling })
   dressCatwalkLadder({ into, x: 23.5, z: bounds.maxZ - 0.18, floor, topY: ceiling - 1.35 })
 
+  yield
+
   // 3. Industrial pendant lamps beneath the catwalks and trusses
   for (const [x, z] of DINING_LAMPS) {
+    yield
     industrialLamp({ into, at: [x, ceiling - DINING_LAMP_DROP + 0.12, z], ceiling })
   }
 
+  yield
+
   // 4. Detailed ducts & structural pillars
   dressDucts(context, floor, ceiling)
+  yield
   dressPillars(context, floor, ceiling)
+  yield
 
   // Steel lining follows the same openings as the walked room.
   dressDiningHallWalls({ into, plan, space })
+
+  yield
 
   // 6. Buor toll passage guide stanchions and guard station (ch. 358)
   passageBarrier({ into, floor, z: bounds.minZ + 0.4 })
@@ -247,8 +260,12 @@ export function dressDiningHallArchitecture(context: DiningArchitectureContext):
     colour: DARK_STEEL,
   })
 
+  yield
+
   // 7. Overhead electrical cable trays beneath the trusses
   cableTrays({ into, spanZ: [bounds.minZ, bounds.maxZ], y: ceiling - 0.7, ceiling })
+
+  yield
 
   // 8. Chapter 378 service wall fixtures: PA speaker, vertical drop duct and kitchen window
   dressChapter378Fixtures({ into, floor, ceiling, minX: bounds.minX })

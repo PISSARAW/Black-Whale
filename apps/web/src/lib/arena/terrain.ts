@@ -1,6 +1,8 @@
 import { theShip, type TierPlan } from '../tour/blueprint'
 import { closestPointOnSegment, pointInPolygon, structureWalls } from '../tour/geometry'
+import { resolveMovement, wallsNear } from '../tour/navigation'
 import type { Polygon, Space, Structure, Vec2, WallSegment } from '../tour/types'
+import { lineOfSightClear } from '../combat/resolve'
 
 export const BANQUET_HALL_ID = 'tier-1-banquet-hall'
 export const SCREENING_ROOM_ID = 'tier-2-screening-room'
@@ -128,12 +130,19 @@ function spawnPair(footprint: Polygon, walls: WallSegment[]): readonly [Vec2, Ve
   const bounds = boundsOf(footprint)
   const centre: Vec2 = [bounds.minX + bounds.width / 2, bounds.minZ + bounds.height / 2]
   const first = nearestTo(candidates, centre)
-  const second = candidates.reduce((best, point) =>
-    Math.abs(distance(point, first) - OPENING_DISTANCE) <
-    Math.abs(distance(best, first) - OPENING_DISTANCE)
-      ? point
-      : best,
-  )
+  const openings = candidates
+    .filter((point) => point !== first)
+    .map((point) => ({ point, gap: distance(first, point) }))
+    .sort((a, b) => Math.abs(a.gap - OPENING_DISTANCE) - Math.abs(b.gap - OPENING_DISTANCE))
+  const second =
+    openings.find(({ point, gap }) => {
+      if (gap < 8 || !lineOfSightClear(walls, first, point)) return false
+      const walked = resolveMovement(first, point, {
+        walls: wallsNear(walls, first, gap + 1),
+        radius: 0.45,
+      })
+      return distance(walked, point) < 0.1
+    })?.point ?? openings[0].point
   return [first, second]
 }
 

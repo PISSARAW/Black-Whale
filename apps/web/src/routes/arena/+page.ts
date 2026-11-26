@@ -7,7 +7,21 @@ import { ARENA_CAMPAIGN } from '$lib/arena/campaign'
 import { arenaFighterId, DEFAULT_ARENA_OPPONENT } from '$lib/arena/fighting'
 import type { PageLoad } from './$types'
 
+const MATCH_PARAMETERS = [
+  'play',
+  'terrain',
+  'challenge',
+  'doctrine',
+  'difficulty',
+  'format',
+  'opponent',
+  'mission',
+  'fighter',
+  'enemy',
+]
+
 export const load: PageLoad = ({ url }) => ({
+  openMatch: MATCH_PARAMETERS.some((parameter) => url.searchParams.has(parameter)),
   terrainId: arenaTerrainId(url.searchParams.get('terrain')),
   challengeId: ARENA_CHALLENGES.some(({ id }) => id === url.searchParams.get('challenge'))
     ? url.searchParams.get('challenge')

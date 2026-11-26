@@ -81,7 +81,7 @@
   import { safeStorageGet, safeStorageSet } from '$lib/arena/storage'
   import { arenaPov } from '$lib/arena/pov'
   import { readAura } from '$lib/combat/perception'
-  import { STRIKE_RANGE } from '$lib/combat/resolve'
+  import { lineOfSightClear, STRIKE_RANGE } from '$lib/combat/resolve'
   import { combatReducer } from '$lib/combat/reducer'
   import { BODY_ZONES, type BodyZone, type CombatAction, type CombatEvent } from '$lib/combat/types'
   import { floorOf, theShip, crossingsOn, spaceAt } from '$lib/tour/blueprint'
@@ -119,6 +119,12 @@
   import { arenaDuelPresence } from '$lib/arena/duelPresence'
   import { advanceArenaLesson, ARENA_LESSON_COUNT } from '$lib/arena/training'
   import { arenaJumpAction } from '$lib/arena/jump'
+  import {
+    arenaFootworkAvailable,
+    arenaRushStep,
+    RUSH_DURATION,
+    RUSH_STOP_DISTANCE,
+  } from '$lib/arena/rush'
   import { arenaImpactCamera } from '$lib/arena/impactCamera'
   import { ryuDistribution } from '$lib/combat/ryu'
   import {
@@ -138,7 +144,7 @@
   let plan = $state(ship.plans.get(terrain.tierId)!)
   let ground = $derived(floorOf(terrain.space, plan.tier))
 
-  let game = $state(freshGame())
+  let game = $state.raw(freshGame())
   let started = $state(false)
   let briefingOpen = $state(true)
   let manualOpen = $state(false)
@@ -147,8 +153,6 @@
   let position = $state<Vec2>(terrain.spawns[0])
   let heading = $state(0)
   let lookPitch = $state(0)
-  let aimedExtra = $state<string | null>(null)
-  let visibleOpponentAt = $state<Vec2 | null>(null)
   let aimedSolidAt = $state<Structure | null>(null)
   let currentSpace = $state<Space | null>(null)
   let engaged = $state(false)
@@ -195,7 +199,9 @@
   let clashBindings = $state(defaultBindings())
   let clashAuraHeld = false
   let clashGuardHeld = false
-  let focusSequence = $state(0)
+  let touchGuardHeld = false
+  let rushTime = $state(0)
+  let rushAttack = false
   let moveDirection = $state<ArenaDirection>(null)
   let commandAnimationSeq = $state(0)
   let hatsuAnimationSeq = $state(0)
@@ -261,10 +267,16 @@
   let carriedHatsu = $derived($activeHatsu ? localizeHatsu($activeHatsu, $locale) : null)
   let hatsuEffect = $derived(arenaHatsuEffect($activeHatsu))
   let hatsuDefinition = $derived(arenaDefinition($activeHatsu))
-  let opponentVisible = $derived(visibleOpponentAt !== null)
-  let opponentAimed = $derived(opponentVisible && aimedExtra === 'arena-opponent')
-  let inRange = $derived(
-    opponentAimed && distance(game.player.position, game.opponent.position) <= STRIKE_RANGE,
+  const playerAt = $derived(game.player.position)
+  const opponentAt = $derived(game.opponent.position)
+  const visibleOpponentAt = $derived(
+    lineOfSightClear(terrain.walls, playerAt, opponentAt) ? opponentAt : null,
+  )
+  const opponentVisible = $derived(visibleOpponentAt !== null)
+  const opponentGap = $derived(distance(playerAt, opponentAt))
+  const inRange = $derived(opponentVisible && opponentGap <= STRIKE_RANGE)
+  const rushAvailable = $derived(
+    opponentGap > RUSH_STOP_DISTANCE && arenaFootworkAvailable(game.player),
   )
   let hideOpponentIntent = $derived(replayMatch().bossRule === 'no-visible-intent')
   let aimedZone = $derived(zoneFromPitch(lookPitch))
@@ -422,7 +434,7 @@
   }
 
   function send(action: CombatAction): boolean {
-    if (briefingOpen || manualOpen || game.outcome !== 'playing') return false
+    if (briefingOpen || manualOpen || arenaPanel || game.outcome !== 'playing') return false
     if (action.type !== 'FACE') started = true
     const previousGame = game
     const previous = game.lastEvent
@@ -467,6 +479,11 @@
   }
 
   function fightingMove(action: MoveAction) {
+    if (action === 'light' && (rushTime > 0 || beginAttackApproach())) {
+      rushAttack = true
+      return
+    }
+    cancelRush()
     const slot = arenaMoveSlot({
       fighterId,
       action,
@@ -480,7 +497,7 @@
         fighterId,
         slot,
         position: game.player.position,
-        heading,
+        heading: opponentVisible ? facing(playerAt, opponentAt) : heading,
         targetObject: aimedSolidAt
           ? { id: aimedSolidAt.id, position: solidCentre(aimedSolidAt) }
           : undefined,
@@ -490,6 +507,7 @@
   }
 
   function jump() {
+    cancelRush()
     send(arenaJumpAction(heldDirection.vector(heading)))
   }
 
@@ -499,6 +517,7 @@
   }
 
   function guard() {
+    cancelRush()
     command({ type: 'GUARD', side: 'player' }, 'ken')
   }
 
@@ -512,11 +531,44 @@
   }
 
   function spatialEvade() {
+    cancelRush()
     command({ type: 'EVADE', side: 'player', vector: heldDirection.vector(heading, 'back') }, 'ken')
   }
 
-  function focusOpponent() {
-    if (opponentVisible) focusSequence += 1
+  function cancelRush() {
+    rushTime = 0
+    rushAttack = false
+  }
+
+  function rush(): boolean {
+    if (briefingOpen || manualOpen || arenaPanel || !rushAvailable || rushTime > 0) return false
+    if (game.outcome !== 'playing' || game.hitstop > 0) return false
+    rushTime = RUSH_DURATION
+    started = true
+    return true
+  }
+
+  function beginAttackApproach(): boolean {
+    return (
+      opponentVisible && !aimedSolidAt && opponentGap > STRIKE_RANGE && opponentGap <= 6 && rush()
+    )
+  }
+
+  function advanceRush() {
+    if (rushTime <= 0) return
+    if (opponentGap <= RUSH_STOP_DISTANCE + 0.001) {
+      const attack = rushAttack
+      cancelRush()
+      if (attack) strike()
+      return
+    }
+    const next = arenaRushStep(game, DT)
+    if (!next || !send({ type: 'SYNC_POSITION', side: 'player', position: next })) {
+      cancelRush()
+      return
+    }
+    rushTime = Math.max(0, rushTime - DT)
+    if (rushTime === 0) cancelRush()
   }
 
   function togglePause() {
@@ -634,7 +686,7 @@
     if (manualOpen || briefingOpen || arenaPanel || game.outcome !== 'playing') return true
     if (event.code === 'KeyX') jump()
     else if (event.code === 'KeyR') spatialEvade()
-    else focusOpponent()
+    else rush()
     return true
   }
 
@@ -676,6 +728,7 @@
       clashKeyboard.clear()
       clashAuraHeld = false
       clashGuardHeld = false
+      touchGuardHeld = false
     }
     moveDirection = heldDirection.current()
   }
@@ -702,6 +755,7 @@
     last = now
     owed = Math.min(owed + elapsed, 0.2)
     if (briefingOpen || manualOpen || arenaPanel) {
+      if (rushTime > 0) cancelRush()
       owed = 0
       return
     }
@@ -712,6 +766,10 @@
     }
     while (owed >= DT && game.outcome === 'playing') {
       owed -= DT
+      advanceRush()
+      if ((touchGuardHeld || (clashGuardHeld && !clashAuraHeld)) && game.player.guardWindow <= DT) {
+        send({ type: 'GUARD', side: 'player' })
+      }
       const previous = game.lastEvent
       game = advanceArena(game, DT, {
         doctrine: opponentDoctrine,
@@ -730,7 +788,8 @@
     if (persistentSector) game = restoreArenaSector(game, sectorSnapshot)
     if (sourceHandoff) game = applyArenaHandoff(game, sourceHandoff)
     extendedNen.reset()
-    visibleOpponentAt = null
+    cancelRush()
+    touchGuardHeld = false
     tierId = terrain.tierId
     plan = ship.plans.get(terrain.tierId)!
     position = terrain.spawns[0]
@@ -764,7 +823,7 @@
     if (!lastReplay) return
     const branch = forkReplayAtTick(lastReplay, tick)
     game = branch.state
-    visibleOpponentAt = null
+    cancelRush()
     recorder = branch.recorder
     position = game.player.position
     agreed = game.player.position
@@ -1048,8 +1107,6 @@
     bind:position
     bind:heading
     bind:lookPitch
-    bind:aimedExtra
-    bind:visibleExtraAt={visibleOpponentAt}
     bind:aimedSolidAt
     bind:currentSpace
     bind:engaged
@@ -1061,19 +1118,15 @@
     world={sceneWorld}
     nen={playerNen}
     keyboardNen={false}
-    sightExtra="arena-opponent"
-    {focusSequence}
+    paceMultiplier={1.55}
+    movementDisabled={rushTime > 0 || game.hitstop > 0 || !arenaFootworkAvailable(game.player)}
     thirdPerson={{
       target: game.opponent.position,
       distance: 3.6,
       shoulder: 0.48,
       lockOn: true,
     }}
-    inputDisabled={briefingOpen ||
-      manualOpen ||
-      arenaPanel !== null ||
-      game.outcome !== 'playing' ||
-      game.player.height > 0}
+    inputDisabled={briefingOpen || manualOpen || arenaPanel !== null || game.outcome !== 'playing'}
     eyeHeightOffset={game.player.height}
     cameraImpulse={arenaImpactCamera(game)}
     onNenChange={useStandardNen}
@@ -1095,7 +1148,9 @@
   {/if}
 
   <div class="reticle" class:near={inRange} class:locked={inRange}>
-    {#if inRange}<span>{$t.arena.zone[aimedZone]}</span>{/if}
+    {#if inRange}
+      <span>{$t.arena.zone[aimedZone]}</span>
+    {/if}
   </div>
 
   {#if opponentVisible && !hideOpponentIntent && (reading.intentZone || reading.koZone) && !briefingOpen && !manualOpen}
@@ -1161,9 +1216,10 @@
           : terrain.space.source}</small
       >
     </div>
-    <div class="match-rule">
+    <div class="match-rule" data-arena-distance={opponentGap}>
       <span>{$locale === 'fr' ? activeFormat.titleFr : activeFormat.titleEn}</span>
       <strong>{game.player.score} — {game.opponent.score}</strong>
+      <small>Distance · {opponentGap.toFixed(1)} m</small>
       {#if remainingSeconds !== null}<small>⏱ {remainingSeconds.toFixed(1)} s</small>{/if}
       {#if waitingForRequiredAction}
         <small
@@ -1281,7 +1337,7 @@
       >
       <span><kbd>X</kbd>{$locale === 'fr' ? 'Saut' : 'Jump'}</span>
       <span><kbd>R</kbd>{$locale === 'fr' ? 'Esquive' : 'Evade'}</span>
-      <span><kbd>F</kbd>{$locale === 'fr' ? 'Recentrer' : 'Recenter'}</span>
+      <span><kbd>F</kbd>{$locale === 'fr' ? 'Ruée' : 'Rush'}</span>
       <span><kbd>{clashKey('pause')}</kbd>Pause</span>
     </div>
   {/if}
@@ -1297,9 +1353,12 @@
         arenaPanel = null
         command(nen.action, nen.animation)
       }}
-      onGuard={() => {
-        arenaPanel = null
-        guard()
+      onGuard={(held) => {
+        touchGuardHeld = held
+        if (held) {
+          arenaPanel = null
+          guard()
+        }
       }}
       onRyu={() => toggleArenaPanel('ryu')}
       onOn={() => {
@@ -1319,6 +1378,22 @@
       <strong>{$t.arena.lesson[lesson].title}</strong>
       <p>{$t.arena.lesson[lesson].body}</p>
     </aside>
+  {/if}
+
+  {#if !briefingOpen && !manualOpen && arenaPanel === null && game.outcome === 'playing'}
+    <div class="arena-footwork">
+      <button
+        type="button"
+        data-arena-action="rush"
+        disabled={!rushAvailable || rushTime > 0}
+        onclick={rush}
+      >
+        <kbd>F</kbd><span>{$locale === 'fr' ? 'Ruée' : 'Rush'}</span>
+      </button>
+      <button type="button" data-arena-action="evade" onclick={spatialEvade}>
+        <kbd>R</kbd><span>{$locale === 'fr' ? 'Esquive' : 'Evade'}</span>
+      </button>
+    </div>
   {/if}
 
   {#if !engaged && game.outcome === 'playing'}

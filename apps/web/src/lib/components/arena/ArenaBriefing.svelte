@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { t } from '$lib/i18n'
   import type { ArenaSectorSituation } from '$lib/arena/sectorTour'
 
@@ -13,6 +14,11 @@
     sector?: ArenaSectorSituation | null
     french?: boolean
   } = $props()
+
+  let ready = $state(false)
+  onMount(() => {
+    ready = true
+  })
 
   const phaseLabel = $derived.by(() => {
     if (!sector) return null
@@ -77,18 +83,33 @@
     {/if}
     <ol class="briefing-steps">
       <li>
-        <kbd>{$t.arena.ui.moveKeys}</kbd>
-        <span><strong>{$t.arena.ui.approach}</strong>{$t.arena.ui.approachSuffix}</span>
+        <kbd>{$t.arena.ui.moveKeys} · F</kbd>
+        <span>
+          <strong>{french ? 'Approche' : 'Close the gap'}</strong>
+          {french
+            ? ' Déplace-toi autour de l’adversaire ou utilise Ruée pour l’engager.'
+            : ' Circle your opponent or use Rush to engage.'}
+        </span>
       </li>
       <li>
-        <kbd>CLIC · J</kbd>
-        <span><strong>{$t.arena.ui.strike}</strong>{$t.arena.ui.strikeSuffix}</span>
+        <kbd>{french ? 'CLIC · J' : 'CLICK · J'}</kbd>
+        <span>
+          <strong>{french ? 'Enchaîne' : 'Keep attacking'}</strong>
+          {french
+            ? ' Presse J pendant la ruée pour attaquer dès que l’adversaire est à portée.'
+            : ' Press J during a rush to attack as soon as your opponent is in range.'}
+        </span>
       </li>
       <li>
-        <kbd>ESPACE</kbd>
-        <span><strong>{$t.arena.ui.block}</strong>{$t.arena.ui.blockSuffix}</span>
+        <kbd>{french ? 'ESPACE · R' : 'SPACE · R'}</kbd>
+        <span>
+          <strong>{french ? 'Défends-toi' : 'Defend'}</strong>
+          {french
+            ? ' Maintiens la garde ou esquive latéralement avec R et une direction.'
+            : ' Hold guard or press R with a direction to dodge.'}
+        </span>
       </li>
     </ol>
-    <button class="briefing-start" onclick={onStart}>{startLabel}</button>
+    <button class="briefing-start" disabled={!ready} onclick={onStart}>{startLabel}</button>
   </div>
 </div>

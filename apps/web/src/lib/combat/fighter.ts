@@ -155,16 +155,24 @@ export function move(
   const gathering = fighter.ko && !usesClashNen(context.state)
   if (fighter.condition !== 'ready' || gathering || fighter.intent || fighter.bound > 0)
     return { ...fighter, movement: [0, 0] }
-  const proposed: Vec2 = [
-    fighter.position[0] + fighter.movement[0] * MOVE_SPEED * context.dt,
-    fighter.position[1] + fighter.movement[1] * MOVE_SPEED * context.dt,
-  ]
-  const nearby = wallsNear(
-    context.state.terrain.walls,
-    fighter.position,
-    MOVE_SPEED * context.dt + 2,
-  )
-  const resolved = resolveMovement(fighter.position, proposed, { walls: nearby, radius: 0.45 })
+  const resolved =
+    fighter.movement[0] || fighter.movement[1]
+      ? resolveMovement(
+          fighter.position,
+          [
+            fighter.position[0] + fighter.movement[0] * MOVE_SPEED * context.dt,
+            fighter.position[1] + fighter.movement[1] * MOVE_SPEED * context.dt,
+          ],
+          {
+            walls: wallsNear(
+              context.state.terrain.walls,
+              fighter.position,
+              MOVE_SPEED * context.dt + 2,
+            ),
+            radius: 0.45,
+          },
+        )
+      : fighter.position
   if (distance(resolved, rival.position) < MIN_SEPARATION) {
     return { ...fighter, movement: [0, 0] }
   }

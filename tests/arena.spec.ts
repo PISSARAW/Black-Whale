@@ -1,12 +1,7 @@
 import { expect, test, type Locator, type Page } from 'playwright/test'
 
-const distanceOf = async (page: Page) => {
-  const text = await page
-    .locator('.match-rule small')
-    .filter({ hasText: /distance/i })
-    .innerText()
-  return Number(text.match(/[\d.]+/)?.[0] ?? Number.NaN)
-}
+const distanceOf = async (page: Page) =>
+  Number(await page.locator('[data-arena-distance]').getAttribute('data-arena-distance'))
 
 const control = (page: Page, action: 'guard' | 'strike'): Locator =>
   page.locator(`[data-arena-action="${action}"]`)
@@ -18,6 +13,66 @@ const activate = async (button: Locator, mobile: boolean, timeout = 10_000) => {
 }
 
 test.describe('Arena playable journey', () => {
+  test('rushes into attack range on keyboard and touch', async ({ page, isMobile }) => {
+    test.slow()
+    await page.goto('/arena?play=1&terrain=tier-3-observation-deck')
+    await page.getByRole('button', { name: 'Enter the arena' }).click()
+
+    const rush = page.getByRole('button', { name: /Rush/ })
+    await expect(rush).toBeEnabled()
+    expect(await distanceOf(page)).toBeGreaterThan(8)
+    if (isMobile) await rush.tap()
+    else await page.keyboard.press('KeyF')
+    await expect.poll(() => distanceOf(page)).toBeLessThan(2.5)
+  })
+
+  test('opens Arena modes from the menu and preserves the locale', async ({ page }) => {
+    await page.goto('/fr/arena')
+    const briefing = page.getByRole('dialog', { name: /Touchez votre adversaire/ })
+
+    await expect(page.getByRole('heading', { name: 'Choisis ton mode' })).toBeVisible()
+    await expect(page.locator('.arena-world')).toHaveCount(0)
+    await expect(page.getByRole('link', { name: 'Duel privé en ligne' })).toHaveAttribute(
+      'href',
+      '/fr/arena/pvp',
+    )
+
+    await page.getByRole('button', { name: 'Campagne', exact: true }).click()
+    await expect(page.getByRole('heading', { name: 'Missions de campagne' })).toBeFocused()
+    await expect(page.getByRole('link', { name: /Fondations/ })).toHaveAttribute(
+      'href',
+      /\/fr\/arena\?.*mission=initiation/,
+    )
+    await expect(page.getByText('Verrouillée').first()).toBeVisible()
+
+    await page.getByRole('button', { name: 'Défis du Nen' }).click()
+    await page.getByRole('link', { name: 'Déplacer le Ryu' }).click()
+    await expect(page).toHaveURL(/\/fr\/arena\?challenge=ryu$/)
+    await expect(briefing).toBeVisible()
+
+    await page.goBack()
+    await page.getByRole('button', { name: 'Combat libre' }).click()
+    await expect(page.getByRole('heading', { name: 'Prépare ton duel' })).toBeFocused()
+    await expect(briefing).toHaveCount(0)
+    await page.getByRole('combobox', { name: 'Ton combattant' }).selectOption('feitan')
+    await page.getByRole('combobox', { name: 'Adversaire' }).selectOption('chrollo')
+    await page.getByRole('radio', { name: 'Salle de projection' }).check()
+
+    await page.getByRole('button', { name: 'Campagne', exact: true }).click()
+    await page.getByRole('button', { name: 'Combat libre' }).click()
+    await expect(page.getByRole('radio', { name: 'Salle de projection' })).toBeChecked()
+    await expect(page.getByRole('link', { name: 'Lancer le duel' })).toHaveAttribute(
+      'href',
+      '/fr/arena?play=1&fighter=feitan&enemy=chrollo&terrain=tier-2-screening-room',
+    )
+
+    await page.getByRole('link', { name: 'Lancer le duel' }).click()
+    await expect(briefing).toBeVisible()
+    await expect(page.getByLabel('Personnage incarné')).toHaveValue('feitan')
+    await expect(page.getByLabel('Personnage adverse')).toHaveValue('chrollo')
+    await expect(page).toHaveTitle(/Salle de projection/)
+  })
+
   test('waits for the player and reaches a verdict on desktop and mobile', async ({
     page,
     isMobile,

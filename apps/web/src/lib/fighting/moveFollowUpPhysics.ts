@@ -19,6 +19,15 @@ export interface FollowUpPhysicsSpec {
  * Purely martial / kinetic parameters — no invented Hatsu, no invulnerability, no teleport.
  */
 export const FOLLOW_UP_PHYSICS: Readonly<Record<string, FollowUpPhysicsSpec>> = {
+  // Signature-route launchers. These are ordinary authored strikes, so their
+  // launch is keyed by the same move id used by the combat simulation.
+  'saiyu:forwardHeavy': {
+    launchVelocityY: 34,
+  },
+  'bonolenov:standingHeavy': {
+    launchVelocityY: 32,
+  },
+
   // Feitan — traversées et ascension aérienne
   'feitan:pain-stairway': {
     launchVelocityY: 42,

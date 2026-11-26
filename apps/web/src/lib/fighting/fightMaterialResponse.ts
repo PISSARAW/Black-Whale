@@ -3,8 +3,6 @@ import type { HumanFigure, HumanFigureBuild } from '$lib/tour/humanFigure'
 import type { HumanProfile } from '$lib/tour/humanProfiles'
 import { moveById } from './movesets'
 import type { ArcadeFighter } from './types'
-import { addFightHandGripResponse, animateFightHandGripResponse } from './fightHandGrip'
-import { addFightFootPoseResponse, animateFightFootPoseResponse } from './fightFootPose'
 
 type Three = HumanFigureBuild['THREE']
 
@@ -42,8 +40,6 @@ export function addFightMaterialResponse(options: {
   profile: HumanProfile
 }): void {
   const { THREE, model, profile } = options
-  addFightHandGripResponse(model)
-  addFightFootPoseResponse(model)
   if (!profile.likeness || MODELS.has(model.turns)) return
   const hands = ['left', 'right']
     .map((side) => model.root.getObjectByName(`hand-${side}`))
@@ -94,8 +90,6 @@ export function addFightMaterialResponse(options: {
 
 /** Apply deterministic pose response after the current combat state is known. */
 export function animateFightMaterialResponse(figure: Object3D, fighter: ArcadeFighter): void {
-  animateFightHandGripResponse(figure, fighter)
-  animateFightFootPoseResponse(figure, fighter)
   const model = MODELS.get(figure)
   if (!model) return
   const response = attackResponse(fighter)
@@ -132,7 +126,6 @@ export function animateFightMaterialResponse(figure: Object3D, fighter: ArcadeFi
   })
 
   model.shoes.forEach((shoe, index) => {
-    if (shoe.userData.skinnedFootRig) return
     const rest = model.shoeRest[index]
     shoe.position.copy(rest.position)
     shoe.rotation.copy(rest.rotation)

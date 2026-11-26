@@ -27,8 +27,9 @@ export function pinnedKnockdown(
   hitstun: number,
 ): number {
   const { fighter, attacker } = options
-  if (options.melee || options.blocked || fighter.knockdownFrames === 0)
-    return fighter.knockdownFrames
+  if (options.blocked || fighter.knockdownFrames === 0) return fighter.knockdownFrames
+  // Keep a body down through the active reaction when a grounded strike lands.
+  if (options.melee) return Math.max(fighter.knockdownFrames, hitstun)
   if (!attacker.attack?.accel) return fighter.knockdownFrames
   // The hold lasts the volley's own hitstun, not the single bullet's.
   const volley = moveById(attacker.attack.moveId)?.tuning.hitstun ?? 0

@@ -5,7 +5,6 @@ import { fightBodyMotion } from './fightBodyMotion'
 import { createFightState } from './fightState'
 import { movesetFor } from './movesets'
 import type { ArcadeFighter, MoveSlot } from './types'
-import { humanFootRig } from '$lib/tour/humanFootRig'
 
 const glow = (color: number, opacity = 1) =>
   new THREE.MeshBasicMaterial({ color, opacity, transparent: opacity < 1 })
@@ -94,14 +93,9 @@ describe('P18 responsive extremities and tailoring', () => {
         ) as THREE.Mesh
         expect(hand.morphTargetInfluences?.[0], `${facing}:${slot}:grip`).toBeGreaterThan(0.5)
         if (slot !== 'standingHeavy') {
-          const shoe = model.root.getObjectByName(
-            lead === 0 ? 'knee-left' : 'knee-right',
-          )!.children[1]
-          const rig = humanFootRig(shoe)
-          if (rig) {
-            expect(Math.abs(rig.ankle.rotation.x), `${facing}:${slot}:ankle`).toBeGreaterThan(0)
-            expect(Math.abs(rig.toe.rotation.x), `${facing}:${slot}:toe`).toBeGreaterThan(0)
-          } else expect(shoe.scale.z, `${facing}:${slot}:shoe`).toBeGreaterThan(shoeRest[lead].z)
+          const shoe = model.root.getObjectByName(lead === 0 ? 'knee-left' : 'knee-right')!
+            .children[1]
+          expect(shoe.scale.z, `${facing}:${slot}:shoe`).toBeGreaterThan(shoeRest[lead].z)
           changedLeads.add(lead)
         }
         expect(

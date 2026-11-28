@@ -9,6 +9,8 @@ export interface WakeupSignature {
   slot: Extract<MoveSlot, 'neutralSpecial' | 'forwardSpecial' | 'downSpecial' | 'finisher'>
   requirement: readonly [string, string]
   setup?: CombatRouteSetup
+  hits?: readonly number[]
+  recoveryFinish?: true
 }
 
 type Finish = 'backHeavy' | 'forwardLight' | WakeupSignature
@@ -77,6 +79,7 @@ export const WAKEUP_ROSTER_FINISHES = {
   phinks: {
     slot: 'finisher',
     setup: 'cyclotron',
+    recoveryFinish: true,
     requirement: [
       'L’exercice commence après une rotation réelle de Cyclotron. Le poing final dépense la charge disponible.',
       'The drill begins after a real Cyclotron rotation. The finishing punch spends the available charge.',
@@ -84,15 +87,17 @@ export const WAKEUP_ROSTER_FINISHES = {
   },
   machi: {
     slot: 'forwardSpecial',
+    recoveryFinish: true,
     requirement: [
-      'L’aiguille pose un fil de pistage. La cible reste debout après le contact.',
-      'The needle sets a tracking thread. The defender remains standing after contact.',
+      'Après la récupération, pose le fil de pistage avec l’aiguille. La cible reste debout après le contact.',
+      'After recovery, use the needle to set a tracking thread. The defender remains standing after contact.',
     ],
   },
   illumi: 'backHeavy',
   kalluto: {
     slot: 'forwardSpecial',
     setup: 'paper',
+    hits: [1, 1, 3],
     requirement: [
       'Un fragment est posé au torse avant l’exercice. Confirme la frappe de papier pendant que ce fragment est disponible.',
       'A fragment is placed on the torso before the drill. Confirm the paper strike while the fragment is available.',
@@ -101,6 +106,7 @@ export const WAKEUP_ROSTER_FINISHES = {
   bonolenov: {
     slot: 'forwardSpecial',
     setup: 'prologue',
+    recoveryFinish: true,
     requirement: [
       'L’exercice prépare Prologue. Confirme la lance pendant que cette forme et l’aura sont disponibles.',
       'The drill prepares Prologue. Confirm the spear while the form and aura are available.',

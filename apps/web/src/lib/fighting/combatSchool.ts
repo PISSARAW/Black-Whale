@@ -13,6 +13,7 @@ import {
   type CombatProgress,
 } from './combatSchoolProgress'
 import { canStartFighterAttack } from './fighterAttacks'
+import { recoveryFinishReady, recoveryFinishStep } from './combatRouteContacts'
 import { moveForSlot } from './movesets'
 import { setTrainingDummy } from './trainingSession'
 import { packReplayInput } from './fightReplayInput'
@@ -120,9 +121,7 @@ export function createCombatSchool() {
       const signature = signatureOf(current)
       if (signature) return signatureInput(signature, state)
       if (current.wakeup && current.wakeupSettings)
-        return current.wakeup.result
-          ? EMPTY_INPUT
-          : wakeupDemoInput(state, current.wakeupSettings.followup)
+        return current.wakeup.result ? EMPTY_INPUT : wakeupDemoInput(state, current.wakeupSettings)
       const route = definition(current.id)
       if (current.complete || current.failed) return EMPTY_INPUT
       return demonstrationInput(state, route, { step: current.step, whiffAt })
@@ -130,9 +129,12 @@ export function createCombatSchool() {
     opponentInput(input: FightInput): FightInput {
       const current = get(view)
       if (!current) return input
-      if (!current.wakeupSettings) return EMPTY_INPUT
-      if (!current.wakeup) return { ...EMPTY_INPUT, guard: current.lastImpact > 0 }
-      return wakeupGuard(current.wakeup, current.wakeupSettings.reaction)
+      if (current.signature) return EMPTY_INPUT
+      if (current.wakeup && current.wakeupSettings)
+        return wakeupGuard(current.wakeup, current.wakeupSettings.reaction)
+      const route = definition(current.id)
+      if (recoveryFinishStep(route, current.step)) return EMPTY_INPUT
+      return openingGuard(current, route)
     },
     wakeupCommands(state: FightState): ReplayCommand[] {
       const current = get(view)
@@ -238,6 +240,12 @@ function sentWakeupAttack(command: ReturnType<typeof wakeupDemoCommand>): boolea
   return command !== undefined && command.action !== 'special'
 }
 
+function openingGuard(current: SchoolProgress, route: CombatRoute): FightInput {
+  return current.wakeupSettings || route.recoveryFinish
+    ? { ...EMPTY_INPUT, guard: current.lastImpact > 0 }
+    : EMPTY_INPUT
+}
+
 function demonstrationInput(
   state: FightState,
   route: CombatRoute,
@@ -335,20 +343,23 @@ function demonstrationCommand(
   if (!progress.demo || sentStep === progress.step) return null
   const route = combatRoute(progress.id)
   if (progress.step >= route.moves.length) return null
-  const move = moveForSlot(route.fighter, route.moves[progress.step])!
-  if (waitingForComboSupport(state, route, { step: progress.step, startup: move.tuning.startup }))
-    return null
-  if (progress.step === 0 && !demonstrationOpeningReady(state, route)) return null
   const slot = route.moves[progress.step]
-  if (
-    state.player.attack?.moveId === move.id ||
-    !canStartFighterAttack(state.player, move.kind, move.id)
-  )
-    return null
+  if (!canDemonstrateStep(state, route, progress.step)) return null
   return {
     kind: 'move',
     side: 'player',
     action: combatRouteAction(slot),
     input: packReplayInput(combatRouteInput(slot, state.player.facing)),
   }
+}
+
+function canDemonstrateStep(state: FightState, route: CombatRoute, step: number): boolean {
+  const move = moveForSlot(route.fighter, route.moves[step])!
+  if (waitingForComboSupport(state, route, { step, startup: move.tuning.startup })) return false
+  if (step === 0 && !demonstrationOpeningReady(state, route)) return false
+  if (recoveryFinishStep(route, step) && !recoveryFinishReady(state)) return false
+  return (
+    state.player.attack?.moveId !== move.id &&
+    canStartFighterAttack(state.player, move.kind, move.id)
+  )
 }

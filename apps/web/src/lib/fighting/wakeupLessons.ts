@@ -66,7 +66,7 @@ type WakeupEnding =
       id: Exclude<Ending, 'technique'>
       slot: MoveSlot
     }
-  | (WakeupSignature & { id: 'technique'; hits?: readonly number[] })
+  | (WakeupSignature & { id: 'technique' })
 
 function lesson(opener: WakeupOpener, ending: WakeupEnding): CombatRoute {
   const { id, slot } = ending
@@ -78,7 +78,9 @@ function lesson(opener: WakeupOpener, ending: WakeupEnding): CombatRoute {
     moves: ['standingLight', opener.second, slot],
     requirement: id === 'technique' ? ending.requirement : REQUIREMENTS[id],
     wakeup: opener.opponent,
-    ...(id === 'technique' ? { setup: ending.setup, hits: ending.hits } : {}),
+    ...(id === 'technique'
+      ? { setup: ending.setup, hits: ending.hits, recoveryFinish: ending.recoveryFinish }
+      : {}),
   }
 }
 

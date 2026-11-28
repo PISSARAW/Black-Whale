@@ -38,7 +38,7 @@ export function createCombatRouteFight(route: CombatRoute, opponent?: FighterId)
   if (route.kameo?.id === 'tubeppa')
     state = { ...state, player: { ...state.player, health: state.player.maxHealth - 40 } }
   if (route.whiff) state = { ...state, player: { ...state.player, x: 50 - route.whiff.gap } }
-  return setTrainingDummy(state, { behavior: 'guard-after-hit' })
+  return setTrainingDummy(state, { behavior: route.recoveryFinish ? 'manual' : 'guard-after-hit' })
 }
 
 function routeOpponent(route: CombatRoute): FighterId {
@@ -46,6 +46,27 @@ function routeOpponent(route: CombatRoute): FighterId {
     route.wakeup ?? route.whiff?.opponent ?? (route.fighter === 'chrollo' ? 'hisoka' : 'chrollo')
   )
 }
+
+export function relocatePreparedPaper(
+  state: FightState,
+  { x, facing }: { x: number; facing: 1 | -1 },
+): Pick<FightState, 'battlefield' | 'projectiles'> {
+  const relocate = (position: number) => x + facing * (position - state.opponent.x)
+  return {
+    battlefield: state.battlefield && {
+      ...state.battlefield,
+      entities: state.battlefield.entities.map((entity) =>
+        entity.paperScatter ? { ...entity, x: relocate(entity.x) } : entity,
+      ),
+    },
+    projectiles: state.projectiles.map((shot) =>
+      shot.kallutoPaper
+        ? { ...shot, x: relocate(shot.x), velocityX: shot.velocityX * facing }
+        : shot,
+    ),
+  }
+}
+
 /** Relative directions keep the same route when the fighters exchange sides. */
 export function combatRouteInput(slot: MoveSlot, facing: 1 | -1): FightInput {
   return {

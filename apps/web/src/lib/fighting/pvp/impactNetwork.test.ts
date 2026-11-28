@@ -38,7 +38,9 @@ describe('actual combo impacts across the input pipeline, authority and replay',
               feedback: result.final.commandFeedback,
             }),
           ).toEqual(expected)
-          expect(hits.map((hit) => hit.impact?.comboHits)).toEqual(expected.map((_, i) => i + 1))
+          const ranked = expected.map((_, i) => i + 1)
+          if (route.recoveryFinish) ranked[ranked.length - 1] = 1
+          expect(hits.map((hit) => hit.impact?.comboHits)).toEqual(ranked)
         }
         expect(hits.every((hit) => !hit.impact?.blocked && !hit.impact?.avoided)).toBe(true)
       })

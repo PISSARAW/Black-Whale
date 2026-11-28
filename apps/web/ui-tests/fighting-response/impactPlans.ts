@@ -15,7 +15,11 @@ import { guardInput, mirrorNetworkFight, type ImpactIntent } from './impactNetwo
 import { createCombatSchool } from '$lib/fighting/combatSchool'
 import type { CombatFighter } from '$lib/fighting/combatRoutes'
 import type { PvpCommand } from '$lib/fighting/pvp/types'
-import { routeHitsBefore } from '$lib/fighting/combatRouteContacts'
+import {
+  recoveryFinishReady,
+  recoveryFinishStep,
+  routeHitsBefore,
+} from '$lib/fighting/combatRouteContacts'
 import { INPUT_BUFFER_FRAMES } from '$lib/fighting/fightClock'
 
 function routeCommand(options: {
@@ -29,7 +33,9 @@ function routeCommand(options: {
   const slot = route.moves[index]
   const move = moveForSlot(route.fighter, slot)!
   if (!canStartFighterAttack(state.player, move.kind, move.id)) return null
-  if (
+  if (recoveryFinishStep(route, index)) {
+    if (!recoveryFinishReady(state)) return null
+  } else if (
     index > 0 &&
     (state.opponent.comboHits !== routeHitsBefore(route, index) || state.opponent.hitStun === 0)
   )
@@ -55,7 +61,8 @@ export function comboImpactPlan(route: CombatRoute, side: FightSide) {
   let state: FightState = initial
   let index = 0,
     firstHit = Infinity,
-    lastImpact = 0
+    lastImpact = 0,
+    guardUntil = Infinity
   const intents: ImpactIntent[] = []
   const jump = packReplayInput({ ...EMPTY_INPUT, jump: true })
   const inputs = (frame: number, owner: FightSide) =>
@@ -63,12 +70,13 @@ export function comboImpactPlan(route: CombatRoute, side: FightSide) {
       ? route.kind === 'air' && frame < 4
         ? jump
         : 0
-      : frame > firstHit + 3
+      : frame > firstHit + 3 && frame < guardUntil
         ? guardInput
         : 0
   for (let frame = 0; frame < 180 && index < route.moves.length; frame++) {
     const command = routeCommand({ route, state, index, frame })
     if (command) {
+      if (recoveryFinishStep(route, index)) guardUntil = frame
       state = applyPvpCommand(state, 'player', command)
       intents.push({ frame, side, command })
       index++

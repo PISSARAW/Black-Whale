@@ -26,6 +26,8 @@ export interface CombatRoute {
   whiff?: CombatWhiffPractice
   wakeup?: FighterId
   kameo?: KameoComboLesson
+  /** The final command is a new attack after both bodies recover. */
+  recoveryFinish?: true
   /** Expected contacts per command; a barrage is entered once and must land every bullet. */
   hits?: readonly number[]
 }

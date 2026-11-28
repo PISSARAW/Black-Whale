@@ -3,7 +3,13 @@ import { canStartFighterAttack } from './fighterAttacks'
 import { moveForSlot } from './movesets'
 import type { CombatRoute } from './combatRoutes'
 import type { FightState } from './types'
-import { combatRouteContactId, routeStepHits, routeHitsBefore } from './combatRouteContacts'
+import {
+  combatRouteContactId,
+  recoveryFinishReady,
+  recoveryFinishStep,
+  routeStepHits,
+  routeHitsBefore,
+} from './combatRouteContacts'
 import { attackPhase } from './frameData'
 import { comboSupportLanded, waitingForComboSupport } from './kameos/comboLessons'
 
@@ -80,7 +86,10 @@ function routeContact(
   }
   if (rejectedContact(state)) return { ...next, cue: 'blocked', failed: true }
   if (wrongWhiffOpening(state, progress, route)) return { ...next, cue: 'wrong', failed: true }
-  const hits = (state.impact!.comboHits ?? 0) - routeHitsBefore(route, progress.step)
+  const previousHits = recoveryFinishStep(route, progress.step)
+    ? 0
+    : routeHitsBefore(route, progress.step)
+  const hits = (state.impact!.comboHits ?? 0) - previousHits
   const gained = hits - progress.stepHits
   if (!validRouteHit(state, progress, { route, hits, gained }))
     return { ...next, cue: 'wrong', failed: true }
@@ -141,6 +150,7 @@ function missedWhiffPunish(progress: CombatProgress, state: FightState, route: C
 }
 
 function comboDropped(progress: CombatProgress, state: FightState, route: CombatRoute) {
+  if (recoveryFinishStep(route, progress.step)) return false
   if (progress.step === 0 || state.opponent.hitStun > 0 || state.hitstop > 0) return false
   const expected = moveForSlot(route.fighter, route.moves[progress.step])
   return combatRouteContactId(state.player.attack?.moveId) !== expected?.id
@@ -181,6 +191,8 @@ function routeCue(progress: CombatProgress, state: FightState, route: CombatRout
   if (progress.step === 0) return openingCue(state, route)
   if (state.player.attack?.moveId === move.id)
     return routeStepHits(route, progress.step) > 1 ? 'volley' : 'wait'
+  if (recoveryFinishStep(route, progress.step))
+    return recoveryFinishReady(state) ? 'link' : 'link-wait'
   return continuationCue(progress, state, route)
 }
 

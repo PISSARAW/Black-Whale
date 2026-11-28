@@ -6,14 +6,15 @@ import { canStartFighterAttack } from './fighterAttacks'
 import { moveForSlot } from './movesets'
 import { comboChoices } from './comboChoices'
 import { SENSE_BITS } from './saiyuSenses'
+import { recoveryFinishReady, recoveryFinishStep } from './combatRouteContacts'
 import { EMPTY_INPUT, type FightState, type MoveSlot } from './types'
 
 const FIGHTERS = ['saiyu', 'bonolenov', 'hinrigh', 'mizaistom'] as const
-function tick(state: FightState) {
+function tick(state: FightState, guard = Boolean(state.impact)) {
   return tickFight(state, EMPTY_INPUT, {
     dt: 1 / 60,
     ai: false,
-    opponentInput: { ...EMPTY_INPUT, guard: Boolean(state.impact) },
+    opponentInput: { ...EMPTY_INPUT, guard },
   })
 }
 function command(state: FightState, slot: MoveSlot) {
@@ -31,15 +32,17 @@ function play(id: string, options: { initial?: FightState; steps?: number } = {}
   const timings: number[] = []
   for (const [step, slot] of route.moves.slice(0, options.steps ?? route.moves.length).entries()) {
     const move = moveForSlot(route.fighter, slot)!
-    for (let i = 0; i < 120 && !canStartFighterAttack(state.player, move.kind, move.id); i++)
-      state = tick(state)
+    const recovery = recoveryFinishStep(route, step)
+    for (let i = 0; i < 120 && !readyForCommand(state, move, recovery); i++) state = tick(state)
     const before = state.player.aura
     const started = state.frame
     state = command(state, slot)
     spent += before - state.player.aura
     expect(state.player.attack?.moveId).toBe(move.id)
-    for (let i = 0; i < 120 && state.opponent.comboHits !== step + 1; i++) state = tick(state)
-    expect(state.opponent.comboHits).toBe(step + 1)
+    const hits = recovery ? 1 : step + 1
+    for (let i = 0; i < 120 && state.opponent.comboHits !== hits; i++)
+      state = tick(state, !recovery && Boolean(state.impact))
+    expect(state.opponent.comboHits).toBe(hits)
     expect(state.impact?.blocked).toBe(false)
     timings.push(state.frame - started)
   }
@@ -50,6 +53,17 @@ function play(id: string, options: { initial?: FightState; steps?: number } = {}
     damage: state.opponent.comboDamage,
     distance: Math.abs(state.player.x - state.opponent.x),
   }
+}
+
+function readyForCommand(
+  state: FightState,
+  move: NonNullable<ReturnType<typeof moveForSlot>>,
+  recovery: boolean,
+): boolean {
+  return (
+    (!recovery || recoveryFinishReady(state)) &&
+    canStartFighterAttack(state.player, move.kind, move.id)
+  )
 }
 
 describe.each(FIGHTERS)('%s conversion choices', (fighter) => {
@@ -96,8 +110,8 @@ describe('fourth expansion personal mechanics', () => {
     expect(initial.player.aura).toBeGreaterThanOrEqual(60)
     expect(initial.player.aura).toBeLessThan(62)
     let state = play('bonolenov:spear', { initial, steps: 2 }).state
-    const choice = comboChoices(state).find((entry) => entry.move.slot === 'forwardSpecial')
-    expect(choice?.status).toBe('wait')
+    const choice = comboChoices(state).find((entry) => entry.move.id === 'bonolenov:forwardSpecial')
+    expect(choice).toMatchObject({ link: true, status: 'wait' })
     expect(command(state, 'forwardSpecial').player.attack).toBe(state.player.attack)
     const result = play('bonolenov:spear', { initial })
     expect(result.spent).toBe(12)

@@ -82,7 +82,11 @@ export const FOURTH_DUEL_LESSONS: readonly CombatRoute[] = [
     id: 'bonolenov:spear',
     fighter: 'bonolenov',
     kind: 'confirm',
-    title: ['Prologue préparé · liaison de la lance', 'Prepared Prologue · spear link'],
+    recoveryFinish: true,
+    title: [
+      'Prologue préparé · lance après récupération',
+      'Prepared Prologue · spear after recovery',
+    ],
     moves: ['standingLight', 'standingHeavy', 'forwardSpecial'],
     requirement: [
       'Prépare réellement Prologue : 40 aura et 60 frames exposées. Attends ensuite la récupération de K avant la lance (12 aura). Aucun raccourci vers Jupiter ni bonus global de dégâts.',

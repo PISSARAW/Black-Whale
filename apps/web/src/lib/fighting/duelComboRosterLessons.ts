@@ -171,8 +171,12 @@ export const ROSTER_DUEL_LESSONS: readonly CombatRoute[] = [
     id: 'phinks:charged',
     fighter: 'phinks',
     kind: 'confirm',
+    recoveryFinish: true,
     setup: 'cyclotron',
-    title: ['Charge préparée · liaison vers Cyclotron', 'Prepared charge · link into Cyclotron'],
+    title: [
+      'Charge préparée · relancer après récupération',
+      'Prepared charge · strike after recovery',
+    ],
     moves: ['standingLight', 'standingHeavy', 'finisher'],
     requirement: [
       'L’exercice effectue une rotation complète avant l’ouverture (2 aura). Après K, attends la récupération avant H : toute la charge est dépensée au départ du poing, même s’il manque.',

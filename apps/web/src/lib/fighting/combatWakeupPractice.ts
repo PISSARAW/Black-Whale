@@ -1,4 +1,4 @@
-import { combatRouteAction, combatRouteInput } from './combatRouteFight'
+import { combatRouteAction, combatRouteInput, relocatePreparedPaper } from './combatRouteFight'
 import { toggleChrolloBookmark } from './chrolloBook'
 import { attackPhase, hurtboxes } from './frameData'
 import { canStartFighterAttack } from './fighterAttacks'
@@ -65,6 +65,7 @@ export function prepareWakeupFight(state: FightState, settings: WakeupSettings):
   return setTrainingDummy(
     {
       ...state,
+      ...relocatePreparedPaper(state, { x, facing: 1 }),
       player: { ...state.player, x: x - 6 },
       opponent: { ...opponent, x },
     },
@@ -130,9 +131,12 @@ export function wakeupGuard(
   }
 }
 
-export function wakeupDemoInput(state: FightState, followup: WakeupFollowup): FightInput {
+export function wakeupDemoInput(
+  state: FightState,
+  { followup, reaction }: WakeupSettings,
+): FightInput {
   const { player, opponent } = state
-  if (followup === 'bait' && opponent.attack?.kind === 'light') {
+  if (followup === 'bait' && (reaction === 'jab' || opponent.attack?.kind === 'light')) {
     return { ...EMPTY_INPUT, guard: true }
   }
   if (followup === 'bait' && opponent.knockdownFrames <= 14)

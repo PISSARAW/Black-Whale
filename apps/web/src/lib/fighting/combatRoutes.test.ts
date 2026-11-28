@@ -5,13 +5,20 @@ import {
   createCombatRouteFight,
   combatRouteAction,
   combatRouteInput,
+  relocatePreparedPaper,
 } from './combatRouteFight'
 import { tickFight } from './engine'
 import { performTrainingAction } from './trainingAction'
 import { EMPTY_INPUT, type FightState } from './types'
 import { canStartFighterAttack } from './fighterAttacks'
 import { moveForSlot } from './movesets'
-import { combatRouteContactId, combatRouteContacts, routeHitsBefore } from './combatRouteContacts'
+import {
+  combatRouteContactId,
+  combatRouteContacts,
+  recoveryFinishReady,
+  recoveryFinishStep,
+  routeHitsBefore,
+} from './combatRouteContacts'
 
 function step(state: FightState, guarding: boolean) {
   return tickFight(state, EMPTY_INPUT, {
@@ -25,20 +32,9 @@ function prepare(id: string, options: { mirrored: boolean; corner: boolean; gap:
   let state = createCombatRouteFight(route)
   const facing = options.mirrored ? -1 : 1
   const target = options.corner ? (options.mirrored ? 7 : 93) : 50
-  const relocate = (x: number) => target + facing * (x - state.opponent.x)
   state = {
     ...state,
-    battlefield: state.battlefield && {
-      ...state.battlefield,
-      entities: state.battlefield.entities.map((entity) =>
-        entity.paperScatter ? { ...entity, x: relocate(entity.x) } : entity,
-      ),
-    },
-    projectiles: state.projectiles.map((shot) =>
-      shot.kallutoPaper
-        ? { ...shot, x: relocate(shot.x), velocityX: shot.velocityX * facing }
-        : shot,
-    ),
+    ...relocatePreparedPaper(state, { x: target, facing }),
     player: { ...state.player, x: target - facing * options.gap, facing },
     opponent: {
       ...state.opponent,
@@ -70,6 +66,7 @@ function runRoute(id: string, options: { mirrored: boolean; corner: boolean; gap
     if (
       move &&
       (index === 0 || contacts.length === routeHitsBefore(route, index)) &&
+      (!recoveryFinishStep(route, index) || recoveryFinishReady(state)) &&
       canStartFighterAttack(state.player, move.kind, move.id)
     ) {
       const slot = route.moves[index]
@@ -91,6 +88,7 @@ function runRoute(id: string, options: { mirrored: boolean; corner: boolean; gap
       const gained = state.impact.sequence - lastImpact
       lastImpact = state.impact.sequence
       if (state.impact.attacker === 'player') {
+        if (route.recoveryFinish && index === route.moves.length) return { state, contacts }
         if (state.impact.blocked)
           throw Error(
             `Guard escaped at ${state.frame}: ${JSON.stringify(contacts)}; ${state.player.attack?.moveId}`,
@@ -110,10 +108,13 @@ describe('all forty fighters’ combat routes against guard after the first hit'
     for (const mirrored of [false, true])
       for (const corner of [false, true])
         it.each([4, 6])(`${route.id}, mirrored=${mirrored}, corner=${corner}, gap=%s`, (gap) => {
-          const { contacts } = runRoute(route.id, { mirrored, corner, gap })
-          expect(contacts.map((hit) => hit.move)).toEqual(combatRouteContacts(route))
-          expect(contacts.map((hit) => hit.combo)).toEqual(
-            combatRouteContacts(route).map((_, index) => index + 1),
-          )
+          const { state, contacts } = runRoute(route.id, { mirrored, corner, gap })
+          const expected = combatRouteContacts(route)
+          if (route.recoveryFinish) {
+            expect(state.impact).toMatchObject({ attacker: 'player', blocked: true })
+            expect(combatRouteContactId(state.player.attack?.moveId)).toBe(expected.pop())
+          }
+          expect(contacts.map((hit) => hit.move)).toEqual(expected)
+          expect(contacts.map((hit) => hit.combo)).toEqual(expected.map((_, index) => index + 1))
         })
 })

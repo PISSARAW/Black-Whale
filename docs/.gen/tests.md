@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 1283
+Fichiers : 1308
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -332,6 +332,10 @@ Fichiers : 1283
 ## `apps/web/src/lib/components/tour/TourCameraPlacement.test.ts`
 
 - third-person combat camera > locks the walking heading onto each side of a target
+
+## `apps/web/src/lib/fighting/accelCancel.test.ts`
+
+- relance (special → special on hit) > stays off for derived grammars
 
 ## `apps/web/src/lib/fighting/accelHeatPresentation.test.ts`
 
@@ -802,6 +806,14 @@ Fichiers : 1283
 - Feitan reference corrections > keeps normal blade pressure ahead of the generic Nen preparation projection
 - Feitan physical sword presentation > keeps the left sword and right umbrella together, rebuilds, confiscates and disposes
 
+## `apps/web/src/lib/fighting/feitanHeatLift.test.ts`
+
+- Rising Sun heat presentation > suspends only a scored victim and settles before the sun expires
+
+## `apps/web/src/lib/fighting/feitanIdentity.test.ts`
+
+- Feitan visual identity > uses the horizontal-blade guard and a raised free hand at rest
+
 ## `apps/web/src/lib/fighting/feitanPain.test.ts`
 
 - Feitan — Pain Packer and Rising Sun > refuses armour and sun without actual injuries, without spending aura
@@ -864,6 +876,14 @@ Fichiers : 1283
 
 - the six fighters express combat through their existing face > gives the six fighters distinct expressions and keeps Chrollo restrained
 
+## `apps/web/src/lib/fighting/fightFaceReadability.test.ts`
+
+- combat face readability without extra rendering work > keeps all roster and kameo hair attached while anchoring the real chin
+
+## `apps/web/src/lib/fighting/fightFootPose.test.ts`
+
+- deterministic skinned fight feet > articulates the lead toe for a low heavy without moving its contact anchor
+
 ## `apps/web/src/lib/fighting/fightGameplayIdentity.test.ts`
 
 - P19 gameplay-camera identity lock > mounts five shared canonical accents on the parts that own them
@@ -871,6 +891,10 @@ Fichiers : 1283
 ## `apps/web/src/lib/fighting/fightGraphics.test.ts`
 
 - graphics profiles leave gameplay information intact > preserves the previous render settings for old or invalid preferences
+
+## `apps/web/src/lib/fighting/fightHandGrip.test.ts`
+
+- deterministic skinned fight grips > closes the lead hand for a punch without moving its public grip anchor
 
 ## `apps/web/src/lib/fighting/fightImpactPunctuation.test.ts`
 
@@ -1489,6 +1513,14 @@ Fichiers : 1283
 
 - Kurapika golden heavy support > locks the lead foot and peaks the rear pivot at contact
 
+## `apps/web/src/lib/fighting/kurapikaIdentity.test.ts`
+
+- Kurapika speed identity > uses brief visual gaps without changing the ordinary dash state
+
+## `apps/web/src/lib/fighting/kurapikaSpeedScene.test.ts`
+
+- Kurapika 1999 speed scene > takes three full-body snapshots and restores the real body
+
 ## `apps/web/src/lib/fighting/leorio.test.ts`
 
 - Leorio’s surface-transmitted punch > strikes the floor before emitting aura, without a contact hitbox or instant damage
@@ -2026,6 +2058,10 @@ Fichiers : 1283
 
 - Secret Window private feed panel > renders the audio-only mode and escaped, reviewable speech in both languages
 
+## `apps/web/src/lib/fighting/sixthFiveMeleeWeapons.test.ts`
+
+- sixth wave melee weapons > registers the arm as Gel’s melee Hatsu while its added reach follows Nen access
+
 ## `apps/web/src/lib/fighting/skillHunterAcquisition.test.ts`
 
 - Skill Hunter executes all four canonical acquisition conditions > cannot steal from observation and an ordinary contact alone
@@ -2189,6 +2225,10 @@ Fichiers : 1283
 
 - victory selection > uses all real opponents and every stage for either winning side, including mirrors
 - victory playback > keeps real ten-second timing when rendering drops below ten frames per second
+
+## `apps/web/src/lib/fighting/victory/premiumCinematic.test.ts`
+
+- premium cinematic foundation > provides anticipation, contact hold and a deterministic recovery
 
 ## `apps/web/src/lib/fighting/voconte.test.ts`
 
@@ -3382,6 +3422,10 @@ Fichiers : 1283
 
 - Fugetsu’s apartment against the bedroom panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
 
+## `apps/web/src/lib/tour/furnitureAccess.test.ts`
+
+- furniture circulation throughout the ship > never separates two accesses unless the architecture explicitly seals them
+
 ## `apps/web/src/lib/tour/gangwayNavigation.test.ts`
 
 - walking the royal gangways > walks all three routes continuously, uphill and back down, to their actual interiors
@@ -3498,7 +3542,7 @@ Fichiers : 1283
 
 ## `apps/web/src/lib/tour/humanAnimation.test.ts`
 
-- humanAnimation > changes a combatant pose without rebuilding its rig
+- humanAnimation > runs generic authored channels around the shared pose clock
 
 ## `apps/web/src/lib/tour/humanAuraLook.test.ts`
 
@@ -3507,9 +3551,25 @@ Fichiers : 1283
 - Ko > leaves the rest of the body bare, with no skin and no bending volume
 - En > keeps the rings on the floor and raises a dome over them
 
+## `apps/web/src/lib/tour/humanExtremityAnchors.test.ts`
+
+- semantic human extremity anchors > mounts stable hand, grip, effect and ground contacts on both sides
+
+## `apps/web/src/lib/tour/humanExtremityFamily.test.ts`
+
+- roster extremity families > maps body plans to bounded family scales
+
+## `apps/web/src/lib/tour/humanExtremityLod.test.ts`
+
+- extremity distance LOD > uses skinned detail near and procedural geometry at mid distance
+
 ## `apps/web/src/lib/tour/humanFigure.test.ts`
 
 - shared human figure > forwards locomotion poses and combat motion to the articulated rig
+
+## `apps/web/src/lib/tour/humanFootContact.test.ts`
+
+- semantic sole contact > uses the lower endpoint while retaining the authored sole centre
 
 ## `apps/web/src/lib/tour/humanHair.test.ts`
 
@@ -3520,6 +3580,10 @@ Fichiers : 1283
 ## `apps/web/src/lib/tour/humanLocomotion.test.ts`
 
 - the rendered Tour walk > eases guard-to-walk shoulders instead of jumping by 57 degrees in one frame
+
+## `apps/web/src/lib/tour/humanModelDetails.test.ts`
+
+- shared model detail integration > keeps build and hairstyle identity in the three-mass far LOD
 
 ## `apps/web/src/lib/tour/humanProfiles.test.ts`
 
@@ -3572,7 +3636,7 @@ Fichiers : 1283
 
 ## `apps/web/src/lib/tour/mangaCast.test.ts`
 
-- manga cast shared by the visit and Fighting > shares Salé-salé’s round face, smile, right-ear rings and light robe with Clash
+- manga cast shared by the visit and Fighting > draws Saquelle tall and long-faced with small eyes, thick lips, stubble and temple veins
 
 ## `apps/web/src/lib/tour/mangaEvent.test.ts`
 
@@ -3717,6 +3781,10 @@ Fichiers : 1283
 ## `apps/web/src/lib/tour/princeApartmentEnvelope.test.ts`
 
 - the shared manga envelope of the princely apartments > covers every internal room of all fourteen princes
+
+## `apps/web/src/lib/tour/princeApartmentPlans.test.ts`
+
+- the fourteen chapter 363 prince-apartment transcriptions > keeps one explicit partition record and one distinct plan per prince
 
 ## `apps/web/src/lib/tour/princeBedroomDetails.test.ts`
 
@@ -4059,6 +4127,10 @@ Fichiers : 1283
 
 - POST /spoiler-limit > stores the cap the reader submitted
 
+## `apps/web/ui-tests/fighting-hisoka-machi-video/demo.test.ts`
+
+- Hisoka versus Machi video choreography > records the confirmed routes used in the vertical edit
+
 ## `apps/web/ui-tests/fighting-motion/motionLab.test.ts`
 
 - motion lab timeline > maps every frame to the authored combat phase
@@ -4261,7 +4333,7 @@ Fichiers : 1283
 - what the schemas are allowed to drop > keeps the fields the voyage clock reads
 - likeness-names-somebody-real > refuses a likeness for somebody the catalogue has never heard of
 - likeness-covers-the-roster > refuses an annexe A id that is neither declared nor deferred
-- what a likeness may and may not say > refuses a hairstyle nobody can draw
+- what a likeness may and may not say > accepts bounded silhouette proportions and rejects invented posture names
 
 ## `packages/domain/src/voyage-clock.test.ts`
 

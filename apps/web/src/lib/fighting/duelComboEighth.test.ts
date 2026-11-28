@@ -80,7 +80,7 @@ describe.each(FIGHTERS)('%s conversion choices', (fighter) => {
 const SCENARIOS = [
   ['bill:growth', 'plants', 20],
   ['cluck:courier', 'birds', 5],
-  ['sayird:little-eye', 'animals', 2],
+  ['sayird:little-eye-setup', 'animals', 2],
   ['luini:anchor', 'rooms', 20],
 ] as const
 
@@ -158,7 +158,7 @@ describe('eighth expansion scenario prerequisites', () => {
 
   it('Sayird’s real animal follows its ordered destination while physical hits do the damage', () => {
     const initial = performArsenalCommand(
-      createCombatRouteFight(combatRoute('sayird:little-eye')),
+      createCombatRouteFight(combatRoute('sayird:little-eye-setup')),
       'player',
       { action: 'little-eye-right' },
     )
@@ -168,7 +168,7 @@ describe('eighth expansion scenario prerequisites', () => {
       material: 'real',
       controller: { side: 'player', source: 'sayird' },
     })
-    const result = play('sayird:little-eye', { initial })
+    const result = play('sayird:little-eye-setup', { initial })
     const observing = controlledEntities(result.state, 'player', 'sayird')[0]
     expect(observing.id).toBe(animal.id)
     expect(observing.x).toBeGreaterThan(animal.x)

@@ -125,7 +125,7 @@ export const EIGHTH_DUEL_LESSONS: readonly CombatRoute[] = [
     ],
   },
   {
-    id: 'sayird:little-eye',
+    id: 'sayird:little-eye-setup',
     fighter: 'sayird',
     kind: 'low',
     title: ['Little Eye préparé · cinq frappes', 'Prepared Little Eye · five strikes'],

@@ -75,7 +75,7 @@ Fichiers : 1326
 
 ## `apps/web/src/lib/arena/formats.test.ts`
 
-- Arena V3 terrains and formats > derives four tactically identified arenas from attested spaces
+- Arena V3 terrains and formats > derives tactically identified arenas from the ship plans and panels
 
 ## `apps/web/src/lib/arena/hatsu.test.ts`
 
@@ -619,7 +619,7 @@ Fichiers : 1326
 
 ## `apps/web/src/lib/fighting/commandQualification.test.ts`
 
-- command qualification from the frozen six-fighter states > keeps the original archive and v20 input packets intact alongside current recordings
+- command qualification from six-fighter replay states > keeps the original archive and v20 input packets intact
 - held inputs and neutral gating > retains the logical key across a binding change, then clears lost-focus input
 - draw observation stays outside the simulation > does not record render metadata unless a probe is enabled
 

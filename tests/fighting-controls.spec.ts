@@ -49,15 +49,13 @@ test('two local gamepads support Nen, disconnection and pause/resume', async ({ 
     Object.defineProperty(navigator, 'getGamepads', { value: () => window.fightTestPads })
   })
   await localFight(page)
+  await startPreparedFight(page)
   await page.evaluate(
     (pads) => {
       window.fightTestPads = pads
     },
     [fakePad(0), fakePad(1)],
   )
-  await neutralPad(page, 0)
-  await pressPad(page, 0, [9])
-  await expect(page.locator('.fight-introduction, .ready-overlay')).toHaveCount(0)
   await neutralPad(page, 0)
   await pressPad(page, 0, [7])
   await expect(page.locator('.hud .nen-status').first()).toContainText('ren', { ignoreCase: true })

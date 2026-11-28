@@ -107,6 +107,7 @@
 <div
   class="clash-battle"
   class:with-touch={showControls}
+  data-phase={state.phase}
   bind:this={target}
   use:mountFightViewport
   style={`--hud-scale:${hudScale}`}

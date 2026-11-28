@@ -1,4 +1,5 @@
 import { expect, test } from 'playwright/test'
+import { startPreparedFight } from './helpers/fighting'
 
 test('preparation pages keep the matchup and stage through back navigation and reload', async ({
   page,
@@ -32,6 +33,7 @@ test('preparation pages keep the matchup and stage through back navigation and r
   await page.getByRole('button', { name: 'Règles du combat', exact: true }).click()
   await page.getByRole('button', { name: 'Entrer dans l’arène', exact: true }).click()
   await expect(page).toHaveURL(/\/fighting\/battle$/)
+  await startPreparedFight(page)
   const hud = page.locator('.fight-arena .hud')
   await expect(hud).toContainText('Benjamin')
   await expect(hud).toContainText('Chrollo')

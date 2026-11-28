@@ -3,6 +3,15 @@ import type { AttackFlowFrame } from './fightAttackFlow'
 import { COMBO_LINK_SECONDS } from './fightAttackFlow'
 import { duelBridge } from './duelAttackBridges'
 
+const COMBO_LINK_POSTURES = new Set([
+  'stance',
+  'crouch',
+  'battle-cantabile-dance',
+  'bonolenov:prologue-ready',
+  'bonolenov:unarmed-rhythm',
+  'feitan:iconic-guard',
+])
+
 export interface PoseMemory {
   key: string
   from: FightPose
@@ -41,10 +50,6 @@ function poseOrigin(memory: PoseMemory, seconds: number) {
 }
 
 function comboLink(memory: PoseMemory, plan: BodyPlan, seconds: number) {
-  if (
-    !memory.attack?.transfer ||
-    !['stance', 'crouch', 'battle-cantabile-dance'].includes(plan.key)
-  )
-    return undefined
+  if (!memory.attack?.transfer || !COMBO_LINK_POSTURES.has(plan.key)) return undefined
   return { frame: memory.attack, key: memory.key, until: seconds + COMBO_LINK_SECONDS }
 }

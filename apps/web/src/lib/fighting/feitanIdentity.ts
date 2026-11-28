@@ -3,7 +3,9 @@ import type { ArcadeFighter } from './types'
 
 /** Feitan's reference guard: calm, blade presented, free index raised. */
 function freeIdleGuard(fighter: ArcadeFighter): boolean {
-  return fighter.hitStun === 0 && fighter.blockStun === 0 && !fighter.blocking
+  const motion = motionOf(fighter)
+  const stepping = motion.dash || motion.prejumpFrames > 0 || motion.landingFrames > 0
+  return fighter.hitStun === 0 && fighter.blockStun === 0 && !fighter.blocking && !stepping
 }
 
 export function feitanIconicIdle(fighter: ArcadeFighter): boolean {
@@ -11,7 +13,6 @@ export function feitanIconicIdle(fighter: ArcadeFighter): boolean {
     fighter.id === 'feitan' &&
     fighter.pose === 'idle' &&
     !fighter.attack &&
-    !motionOf(fighter).dash &&
     fighter.y === 0 &&
     freeIdleGuard(fighter) &&
     !fighter.umbrellaFeintFrames &&

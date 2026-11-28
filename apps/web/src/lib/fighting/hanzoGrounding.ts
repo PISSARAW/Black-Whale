@@ -8,22 +8,19 @@ export function plantHanzoSoles(rig: FightRig, fighter: ArcadeFighter): void {
   const parent = rig.human.figure.parent
   if (!parent) return
   let lowest = Infinity
-  for (const ankle of rig.ankles)
+  for (const ankle of rig.ankles) {
+    ankle.updateWorldMatrix(true, false)
+    ankle.updateMatrixWorld(true)
     ankle.traverse((node) => {
       const mesh = node as Mesh
       if (!mesh.isMesh) return
-      mesh.updateWorldMatrix(true, false)
-      const vertices = mesh.geometry.getAttribute('position'),
-        matrix = mesh.matrixWorld.elements
-      for (let i = 0; i < vertices.count; i++)
-        lowest = Math.min(
-          lowest,
-          matrix[1] * vertices.getX(i) +
-            matrix[5] * vertices.getY(i) +
-            matrix[9] * vertices.getZ(i) +
-            matrix[13],
-        )
+      const vertices = mesh.geometry.getAttribute('position')
+      for (let i = 0; i < vertices.count; i++) {
+        mesh.getVertexPosition(i, rig.probe).applyMatrix4(mesh.matrixWorld)
+        lowest = Math.min(lowest, rig.probe.y)
+      }
     })
+  }
   if (!Number.isFinite(lowest)) return
   const ground = parent.getWorldPosition(rig.probe).y
   const scale = parent.getWorldScale(rig.probe).y

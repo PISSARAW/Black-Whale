@@ -5,6 +5,7 @@ import { attackData } from './frameData'
 import { impactPresentation } from './fightImpactPresentation'
 import { createFightState } from './fightState'
 import { fighterMotionProfile } from './fighterMotionProfile'
+import { fighterMovementBible } from './fighterMovementBible'
 import { LANDING_FRAMES, motionOf, PREJUMP_FRAMES } from './fighterMovement'
 import { FIGHTING_ROSTER } from './roster'
 import type { ArcadeFighter, FighterDash } from './types'
@@ -48,7 +49,8 @@ describe('fight presentation', () => {
     const backward = bodyPlan(dashing(-1), { seconds: 1, progress: 0 })!
     expect(forward.key).toBe('dash:true')
     expect(backward.key).toBe('dash:false')
-    expect(forward.pose.body?.[0]).toBeGreaterThan(0)
+    expect(forward.pose.root?.[2]).toBeGreaterThan(backward.pose.root?.[2] ?? 0)
+    expect(forward.pose.body?.[0]).toBeGreaterThan(backward.pose.body?.[0] ?? 0)
     expect(backward.pose.body?.[0]).toBeLessThan(0)
   })
 
@@ -176,11 +178,20 @@ describe('fight presentation', () => {
   it('gives every playable fighter a complete individual motion profile', () => {
     const signatures = FIGHTING_ROSTER.map(({ id }) => {
       const profile = fighterMotionProfile(id)
-      Object.values(profile).forEach((value) => {
-        expect(Number.isFinite(value)).toBe(true)
-        expect(value).toBeGreaterThan(0.75)
-        expect(value).toBeLessThan(1.3)
-      })
+      const bible = fighterMovementBible(id)
+      const normalized = [
+        profile.walk / bible.locomotion,
+        profile.dash / bible.burst,
+        profile.jump / bible.air,
+        profile.landing / bible.weight,
+        profile.attack / bible.commitment,
+        profile.impact / (bible.weight * bible.exaggeration),
+      ]
+      for (const value of normalized) {
+        expect(Number.isFinite(value), id).toBe(true)
+        expect(value, id).toBeGreaterThanOrEqual(0.78)
+        expect(value, id).toBeLessThanOrEqual(1.17)
+      }
       return Object.values(profile)
         .map((value) => value.toFixed(3))
         .join(':')
@@ -218,8 +229,8 @@ describe('fight presentation', () => {
         context,
       )
       expect([walk?.key, dash?.key, prejump?.key, landing?.key]).toEqual([
-        'walk:forward',
-        'dash:true',
+        definition.id === 'bonolenov' ? 'bonolenov:step:true' : 'walk:forward',
+        definition.id === 'bonolenov' ? 'bonolenov:pivot:true' : 'dash:true',
         'prejump',
         'landing',
       ])

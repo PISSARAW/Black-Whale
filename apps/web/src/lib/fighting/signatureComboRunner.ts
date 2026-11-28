@@ -5,7 +5,8 @@ import { performAuraAttack, tickFight } from './engine'
 import { performArsenalAction } from './arsenalExecution'
 import { canStartFighterAttack } from './fighterAttacks'
 import { attackPhase } from './frameData'
-import { moveForSlot } from './movesets'
+import { moveById, moveForAction, moveForSlot } from './movesets'
+import { signatureDirectionInput } from './alternateSignatureAttacks'
 import { performTrainingAction } from './trainingAction'
 import { setTrainingResources } from './trainingSession'
 import { isMotionStep, motionStepFrame, type SignatureMotionStep } from './signatureMotionSteps'
@@ -174,6 +175,7 @@ function attempt(
 /** One command attempt; the unchanged state when the engine refuses it this frame. */
 function commandStep(state: FightState, step: SignaturePreparationStep): FightState {
   if ('move' in step) return startMove(state, step.move, step.hit === false)
+  if ('signatureAttack' in step) return startSignatureAttack(state, step.signatureAttack)
   if ('ranged' in step) return fire(state, 'player')
   if ('incoming' in step) return incoming(state)
   if ('trueForm' in step) return revealTrueForm(state)
@@ -209,6 +211,25 @@ function moveBlocked(
   if (closingDash(state) || (!utility && waitingForPuppetApproach(state))) return true
   if (state.player.attack && !state.player.attack.confirmedHit) return true
   return !canStartFighterAttack(comboAdmissionBody(state, 'player', move), move.kind, move.id)
+}
+
+/** Resolve the actual contextual command against the current attack and facing. */
+export function signatureAttackCommand(state: FightState, id: string) {
+  const move = moveById(id)
+  if (!move || move.signatureDirection === undefined) return null
+  const action = move.kind
+  if (action !== 'light' && action !== 'heavy') return null
+  const input = signatureDirectionInput(move.signatureDirection, state.player.facing)
+  if (moveForAction(state.player, action, input)?.id !== id || moveBlocked(state, move, false))
+    return null
+  return { action, input }
+}
+
+function startSignatureAttack(state: FightState, id: string): FightState {
+  const command = signatureAttackCommand(state, id)
+  if (!command) return state
+  const after = performTrainingAction({ state, side: 'player', ...command })
+  return after.player.attack?.moveId === id ? after : state
 }
 
 function startMove(

@@ -3,6 +3,7 @@ import type { AttackKind, AttackVariant, FightNenZone, FighterId, MoveSlot } fro
 import type { TechniqueCanonContract } from './techniqueContracts'
 
 export type MoveCategory = 'normal' | 'command' | 'special' | 'throw' | 'finisher'
+export type SignatureDirection = 1 | 3 | 4 | 5 | 6
 
 export interface MoveTuning {
   startup: number
@@ -30,6 +31,7 @@ export interface FighterMove {
   nameFr: string
   nameEn: string
   input: string
+  signatureDirection?: SignatureDirection
   auraCost: number
   canon: TechniqueCanonContract
   tuning: MoveTuning
@@ -50,6 +52,7 @@ export type MoveFollowUpCondition = 'on-hit' | 'on-block' | 'airborne' | 'crosse
 export interface MoveFollowUp {
   id: string
   sourceMoveId: string
+  legacySourceMoveId?: string
   input: MoveFollowUpInput
   condition: MoveFollowUpCondition
   move: FighterMove
@@ -62,6 +65,7 @@ export interface FighterMoveset {
   finisherConditionFr: string
   finisherConditionEn: string
   moves: readonly FighterMove[]
+  signatureOpening?: FighterMove
   followUps?: readonly MoveFollowUp[]
   combos: readonly (readonly string[])[]
 }

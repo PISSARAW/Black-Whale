@@ -1,6 +1,6 @@
 import { finisherHint, moveInputHint } from './fightControlHints'
 import type { KeyboardBindings } from './fightInputBindings'
-import { moveForSlot } from './movesets'
+import { moveById, moveForSlot } from './movesets'
 import type { SignatureCombo, SignatureStep } from './signatureCombos'
 
 type Language = 0 | 1
@@ -12,8 +12,10 @@ export function signatureStepLabel(
   options: { language: Language; bindings: KeyboardBindings },
 ): string {
   const { language, bindings } = options
-  if ('move' in step) {
-    const move = moveForSlot(combo.fighter, step.move)!
+  if ('move' in step || 'signatureAttack' in step) {
+    const move = (
+      'move' in step ? moveForSlot(combo.fighter, step.move) : moveById(step.signatureAttack)
+    )!
     const name = language === 0 ? move.nameFr : move.nameEn
     return `${name} (${moveInputHint(move.input, bindings)})`
   }

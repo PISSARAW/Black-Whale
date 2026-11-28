@@ -1,6 +1,7 @@
 import type { Graph } from '$lib/audio/ambient/mixer'
 import { rush, startsAt, swept } from '$lib/audio/hatsu/synth'
 import { rosterMoveShape } from '../rosterStrikeMotion'
+import { PERSONAL_SIGNATURE_MOVES } from '../personalSignatureMoves'
 import type { FightImpact } from '../types'
 
 const KICKS = new Set(['kick', 'lowKick', 'sweep', 'spin', 'dive'])
@@ -29,6 +30,10 @@ type ContactMaterial = 'fist' | 'boot' | 'chain' | 'blade' | 'paper' | 'grapple'
 
 export function moveMaterial(moveId?: string): ContactMaterial {
   if (!moveId) return 'fist'
+  return PERSONAL_SIGNATURE_MOVES[moveId]?.material ?? intrinsicMaterial(moveId)
+}
+
+function intrinsicMaterial(moveId: string): ContactMaterial {
   if (moveId.endsWith(':throw')) return 'grapple'
   if (CHAIN_MOVES.has(moveId)) return 'chain'
   if (PAPER_MOVES.has(moveId)) return 'paper'

@@ -124,6 +124,7 @@ describe('wave one movesets', () => {
       'kurapika:lowHeavy',
       'kurapika:forwardHeavy',
       'kurapika:forwardSpecial',
+      'kurapika:chain-heel',
     ])
     expect(moveForSlot('kurapika', 'backHeavy')?.cancelInto).toEqual([
       'kurapika:standingHeavy',

@@ -22,7 +22,10 @@ function roll(state: FightState): [FightState, number] {
 /** Hit confirm: chain while the combo is short, then the affordable super, else an ender. */
 function onHit(state: FightState, move: FighterMove): MoveSlot | null {
   const grammar = cancelGrammarFor(state.opponent.id)!
-  const targets = move.cancelInto.map(slotOf)
+  // The generic AI only issues slot commands. A signature needs a contextual diagonal.
+  const targets = move.cancelInto
+    .filter((id) => moveById(id)?.signatureDirection === undefined)
+    .map(slotOf)
   const usable = (slot: MoveSlot) => {
     const next = moveById(`${state.opponent.id}:${slot}`)
     return Boolean(next && canUseMovesetMove(state, 'opponent', next))

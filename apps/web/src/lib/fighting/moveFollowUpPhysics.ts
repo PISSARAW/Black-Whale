@@ -1,5 +1,6 @@
 import type { MoveTuning } from './movesetTypes'
 import type { ArcadeFighter } from './types'
+import { FEITAN_FINAL_REVERSAL } from './personalSignatureMoves'
 
 export interface FollowUpPhysicsSpec {
   /** Override partial frame / hitbox / knockback tuning for this contextual follow-up. */
@@ -29,6 +30,7 @@ export const FOLLOW_UP_PHYSICS: Readonly<Record<string, FollowUpPhysicsSpec>> = 
   },
 
   // Feitan — traversées et ascension aérienne
+  [FEITAN_FINAL_REVERSAL]: { launchVelocityY: 36 },
   'feitan:pain-stairway': {
     launchVelocityY: 42,
     selfLiftVelocityY: 22,

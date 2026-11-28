@@ -26,6 +26,7 @@ export function kurapikaChainPath(
   const centre = chainChest(options, { state, side: targetSide })
   const direction = new THREE.Vector3(fighter.facing, 0, 0)
   const contact = centre.clone().add(new THREE.Vector3(-fighter.facing * 0.18, 0, 0.15))
+  contact.y = chainTargetY(contact.y, motion.targetHeight)
   if (motion.mode === 'map') {
     contact.copy(mapContact(options, { state, side, fallback: contact }))
     direction.set(0, -1, 0)
@@ -61,6 +62,10 @@ export function kurapikaChainPath(
   }
   points.push(end)
   return { points, stage: motion.stage, direction }
+}
+
+function chainTargetY(y: number, target: ChainMotion['targetHeight']): number {
+  return target === 'ankle' ? Math.max(0.15, y - 0.82) : y
 }
 
 function freeChainPoints(

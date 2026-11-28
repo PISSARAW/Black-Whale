@@ -1,5 +1,6 @@
 import { FIXED_STEP } from './fightClock'
 import type { FightSide, FightState } from './types'
+import { FEITAN_FINAL_REVERSAL } from './personalSignatureMoves'
 
 /** Beyond this jump in one frame (a round reset, a teleport) the renderer snaps. */
 const SNAP_DISTANCE = 10
@@ -20,6 +21,7 @@ export function interpolatedPosition(state: FightState, side: FightSide): { x: n
   const current = state[side]
   const previous = state.previousPositions?.[side]
   if (!previous || state.phase !== 'fighting') return { x: current.x, y: current.y }
+  if (immediateReversalContact(state, side)) return { x: current.x, y: current.y }
   const far = Math.abs(current.x - previous.x) + Math.abs(current.y - previous.y) > SNAP_DISTANCE
   if (far) return { x: current.x, y: current.y }
   const alpha = Math.min(1, Math.max(0, state.frameAccumulator / FIXED_STEP))
@@ -27,4 +29,12 @@ export function interpolatedPosition(state: FightState, side: FightSide): { x: n
     x: previous.x + (current.x - previous.x) * alpha,
     y: previous.y + (current.y - previous.y) * alpha,
   }
+}
+
+/** Draw the received launch on its contact frame, before ordinary interpolation resumes. */
+function immediateReversalContact(state: FightState, side: FightSide): boolean {
+  const impact = state.impact
+  if (!impact || !state.hitstop || impact.attacker === side) return false
+  const attack = state[impact.attacker].attack
+  return attack?.moveId === FEITAN_FINAL_REVERSAL && Boolean(attack.confirmedHit)
 }

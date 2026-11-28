@@ -438,7 +438,6 @@
           projectileScene.sync(arsenalProjectilePresentation(state), seconds, state[viewer])
           predatorScene.sync(state, seconds)
           lsdfScene.sync(state, seconds)
-          feitanScene.sync(state, seconds)
           projectionScene.sync(state, seconds)
           animateFighter({
             side: 'opponent',
@@ -450,6 +449,7 @@
           feitanSpeed.sync(state, now)
           kurapikaSpeed.sync(state, now)
           alignPhysicalContact(state)
+          feitanScene.sync(state, seconds)
           impacts.emit(state, now)
           fighterEffects.sync(state, seconds)
           onAwakening.sync(state, onFrames)

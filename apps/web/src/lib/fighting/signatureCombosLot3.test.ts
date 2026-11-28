@@ -1,13 +1,53 @@
 import { describe, expect, it } from 'vitest'
 import { createSignatureFight, playSignatureCombo } from './signatureComboRunner'
 import { DUEL_COMBO_FIGHTERS } from './duelComboProfiles'
-import { SIGNATURE_COMBOS, signatureCombo, signatureCombosFor } from './signatureCombos'
+import { moveById, movesetFor } from './movesets'
+import {
+  SIGNATURE_COMBOS,
+  signatureCombo,
+  signatureCombosFor,
+  signatureHits,
+} from './signatureCombos'
+import { isSignatureLesson } from './signatureSchool'
+import { ALTERNATE_SIGNATURE_CHOREOGRAPHY } from './alternateSignatureChoreography'
+import { ALTERNATE_SIGNATURE_MOVES } from './alternateSignatureMoves'
 
 describe('Lot 3 signature combos & 40/40 roster coverage (31–40)', () => {
-  it('covers every single one of the 40 duel roster fighters', () => {
-    const missing = DUEL_COMBO_FIGHTERS.filter((id) => signatureCombosFor(id).length === 0)
-    expect(missing).toEqual([])
-    expect(SIGNATURE_COMBOS.length).toBeGreaterThanOrEqual(41)
+  it('gives all 40 fighters a distinct sequence of three new attacks and an Academy lesson', () => {
+    const attacks = new Set<string>()
+    const choreographies = new Set<string>()
+    for (const id of DUEL_COMBO_FIGHTERS) {
+      const combos = signatureCombosFor(id)
+      expect(combos.length, id).toBeGreaterThanOrEqual(2)
+      const alternate = signatureCombo(`${id}:alternate-signature`)
+      expect(isSignatureLesson(alternate.id)).toBe(true)
+      expect(alternate.steps).toHaveLength(3)
+      expect(
+        alternate.steps.every((step) => 'signatureAttack' in step),
+        id,
+      ).toBe(true)
+      const ids = signatureHits(alternate)
+      const moveset = movesetFor(id)!
+      expect(moveset.signatureOpening?.id).toBe(ids[0])
+      expect(moveset.combos).toContainEqual(ids)
+      for (const attackId of ids) {
+        const attack = moveById(attackId)!
+        expect(attack.id).toBe(attackId)
+        expect(
+          moveset.moves.some((move) => move.nameFr === attack.nameFr),
+          id,
+        ).toBe(false)
+        expect(
+          moveset.moves.some((move) => move.nameEn === attack.nameEn),
+          id,
+        ).toBe(false)
+        attacks.add(attackId)
+      }
+      const [opening, transition] = ALTERNATE_SIGNATURE_CHOREOGRAPHY[id]!
+      choreographies.add(`${opening[0]}:${transition[0]}:${ALTERNATE_SIGNATURE_MOVES[id]!.base}`)
+    }
+    expect(attacks.size).toBe(120)
+    expect(choreographies.size).toBe(40)
   })
 
   it('keeps every signature route within ten movements', () => {

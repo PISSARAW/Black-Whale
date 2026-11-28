@@ -315,7 +315,7 @@ function impactCue(cue: Cue): void {
 }
 
 function punctuateImpactAudio({ g, event }: Cue): void {
-  const accent = fightImpactPunctuation(event.impact!)
+  const accent = fightImpactPunctuation(event.impact!, event.moveId)
   if (accent.rank < 2) return
   swept(g, startsAt(g), {
     type: 'sine',

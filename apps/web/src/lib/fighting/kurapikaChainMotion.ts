@@ -1,4 +1,5 @@
 import { attackData } from './frameData'
+import { PERSONAL_SIGNATURE_MOVES } from './personalSignatureMoves'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export type ChainStage = 0 | 1 | 2 | 3 | 4
@@ -8,6 +9,7 @@ export interface ChainMotion {
   extension: number
   reach: number
   returning?: boolean
+  targetHeight?: 'ankle' | 'torso'
 }
 const STAGES: Record<string, ChainStage> = {
   'kurapika:neutralSpecial': 2,
@@ -41,19 +43,33 @@ function maintainedChains(target: ArcadeFighter, side: FightSide): ChainMotion[]
 /** Gameplay frames own deployment and recovery, never an independent six-second timer. */
 function attackChain(fighter: ArcadeFighter): ChainMotion | null {
   const attack = fighter.attack
-  if (!attack || !isChainAttack(attack)) return null
+  if (!attack) return null
+  const targetHeight = PERSONAL_SIGNATURE_MOVES[attack.moveId ?? '']?.chainTarget
+  if (!targetHeight && !isChainAttack(attack)) return null
   const stage = STAGES[attack.moveId ?? ''] ?? (attack.kind === 'special' ? 2 : 0)
   const data = attackData(attack.kind, fighter)
   const recovery = attack.frame - data.startup - data.active
-  const progress =
-    recovery > 0 ? 1 - smooth(recovery / data.recovery) : smooth(attack.frame / data.startup)
+  const progress = chainProgress(attack.frame, data, targetHeight)
   return {
     stage,
     mode: stage === 3 ? 'healing' : 'attack',
     extension: 0.06 + progress * 0.94,
     reach: data.box.right,
     returning: recovery > 0,
+    targetHeight,
   }
+}
+
+function chainProgress(
+  frame: number,
+  data: { startup: number; active: number; recovery: number },
+  targetHeight?: ChainMotion['targetHeight'],
+) {
+  const recovery = frame - data.startup - data.active
+  if (recovery > 0) return 1 - smooth(recovery / data.recovery)
+  // The reel picks up the tether with the arm extended, then retracts during recovery.
+  if (targetHeight === 'torso') return 1
+  return smooth(frame / data.startup)
 }
 
 function isChainAttack(attack: NonNullable<ArcadeFighter['attack']>): boolean {

@@ -6,7 +6,7 @@ import { EMPTY_INPUT, type FighterId } from './types'
 
 describe('priority signature moves and contextual follow-ups', () => {
   it('uses the current replay ruleset', () => {
-    expect(REPLAY_RULESET).toBe('clash-combat-105')
+    expect(REPLAY_RULESET).toBe('clash-combat-110')
   })
 
   it.each([
@@ -226,6 +226,8 @@ describe('priority signature moves and contextual follow-ups', () => {
       'feitan:pain-stairway',
       'feitan:execution-rain',
       'feitan:shadowless-blade',
+      'feitan:scabbard-reversal-transition',
+      'feitan:scabbard-reversal',
     ])
     expect(moveById('feitan:pain-stairway')?.nameFr).toBe('Escalier de la douleur')
     expect(moveById('feitan:execution-rain')?.nameFr).toBe('Pluie du bourreau')
@@ -264,6 +266,27 @@ describe('priority signature moves and contextual follow-ups', () => {
     expect(moveForAction(airborneLauncher, 'heavy', EMPTY_INPUT)?.id).toBe('feitan:execution-rain')
   })
 
+  it('requires the opening diagonal and a clean hit to start Feitan’s new transition', () => {
+    const state = beginFight(createFight('feitan', 'hisoka', { mode: 'training' }))
+    const player = { ...state.player, facing: 1 as const }
+    const diagonal = { ...EMPTY_INPUT, down: true, left: true }
+    const forward = { ...EMPTY_INPUT, right: true }
+    const start = performMove({
+      state: { ...state, player },
+      side: 'player',
+      action: 'light',
+      input: diagonal,
+    })
+    const opener = start.player.attack!
+    expect(opener.moveId).toBe('feitan:scabbard-reversal-opening')
+    expect(moveForAction(player, 'light', { ...diagonal, left: false })?.id).toBe('feitan:lowLight')
+    expect(moveForAction(start.player, 'light', forward)?.id).toBe('feitan:forwardLight')
+    const onBlock = { ...start.player, attack: { ...opener, confirmedBlock: true } }
+    expect(moveForAction(onBlock, 'light', forward)?.id).toBe('feitan:forwardLight')
+    const onHit = { ...start.player, attack: { ...opener, confirmedHit: true } }
+    expect(moveForAction(onHit, 'light', forward)?.id).toBe('feitan:scabbard-reversal-transition')
+  })
+
   it('supports Machi on-hit and on-block follow-ups from Point invisible', () => {
     const state = beginFight(createFight('machi', 'chrollo', { mode: 'training' }))
     const baseAttack = {
@@ -281,12 +304,19 @@ describe('priority signature moves and contextual follow-ups', () => {
     }
     const onHitMachi = { ...state.player, attack: baseAttack }
     expect(moveForAction(onHitMachi, 'heavy', EMPTY_INPUT)?.id).toBe('machi:seam-cross')
+    const diagonal = { ...EMPTY_INPUT, down: true, right: true }
+    expect(moveForAction({ ...onHitMachi, facing: 1 }, 'heavy', diagonal)?.id).toBe(
+      'machi:seam-ripper',
+    )
 
     const onBlockMachi = {
       ...state.player,
       attack: { ...baseAttack, confirmedHit: false, confirmedBlock: true },
     }
     expect(moveForAction(onBlockMachi, 'heavy', EMPTY_INPUT)?.id).toBe('machi:broken-puppet')
+    expect(moveForAction({ ...onBlockMachi, facing: 1 }, 'heavy', diagonal)?.id).toBe(
+      'machi:lowHeavy',
+    )
 
     const next = performMove({
       state: { ...state, player: onBlockMachi },

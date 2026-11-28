@@ -17,6 +17,7 @@ export default defineConfig(({ isSsrBuild }) => ({
     minWorkers: 1,
     coverage: {
       provider: 'v8',
+      reportOnFailure: true,
       // Only this app's own source. Without it the report is mostly SvelteKit's
       // runtime, which nobody here can change and which drowns the number that
       // matters.

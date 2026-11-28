@@ -150,14 +150,17 @@ jobs:
             src/lib/fighting/pvp/rollback/session.long.test.ts \
             src/lib/fighting/pvp/rollback/timeSync.test.ts
 
-      # Coverage still runs and is published for the character-test backlog,
-      # but those prospective matrices do not block an otherwise validated
-      # production release. The release-critical suite above remains strict.
+      # Publish coverage even when the combat matrices report test failures.
+      # Rollback netcode and the presence of the web report are hard gates.
       - name: Collect coverage
         continue-on-error: true
         run: pnpm test:coverage
         env:
           DATABASE_URL: postgresql://${{ env.POSTGRES_USER }}:${{ env.POSTGRES_PASSWORD }}@localhost:5432/${{ env.POSTGRES_DB }}
+
+      - name: Verify web coverage report
+        if: always()
+        run: test -s apps/web/coverage/lcov.info && test -s apps/web/coverage/coverage-summary.json
 
       - name: Publish coverage
         if: always()

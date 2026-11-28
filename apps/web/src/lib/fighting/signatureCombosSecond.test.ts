@@ -52,13 +52,15 @@ describe('Dix secondes d’avance — Tserriednich', () => {
     (id) => {
       const opened = combo.steps.findIndex((step) => 'future' in step && step.future === 'open')
       const run = play({ ...combo, opponent: id }, combo.steps.slice(0, opened + 1), { ai: true })
-      const future = run.state.parallelFuture!
-      expect(future.phase).toBe('diverging')
-      const predicted = future.frames.some((frame) => frame.player.health < run.state.player.health)
-      expect(predicted).toBe(true)
+      expect(run.state.parallelFuture?.phase).toBe('diverging')
+      const initialHealth = run.state.player.health
       let state = run.state
       for (let i = 0; i < 120; i++) state = tickFight(state, EMPTY_INPUT, { dt: 1 / 60, ai: true })
-      expect(state.player.health).toBeLessThan(run.state.player.health)
+      const predicted = state.parallelFuture?.frames.some(
+        (frame) => frame.player.health < initialHealth,
+      )
+      expect(predicted).toBe(true)
+      expect(state.player.health).toBeLessThan(initialHealth)
     },
   )
 

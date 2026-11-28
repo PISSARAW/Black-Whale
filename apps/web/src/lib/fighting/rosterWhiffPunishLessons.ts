@@ -11,7 +11,7 @@ type Fighter = Exclude<RosterFighterId, 'kurapika' | 'hisoka' | 'franklin'>
 const CHROLLO_GAPS = {
   benjamin: 11.5,
   tserriednich: 10.5,
-  feitan: 10,
+  feitan: 7.75,
   saiyu: 10.5,
   theta: 11,
   biscuit: 9.75,
@@ -68,17 +68,14 @@ const WHIFF_ADVANCE: Partial<Record<Fighter, number>> = {
 function practice(fighter: Fighter): CombatWhiffPractice {
   if (fighter === 'chrollo') return { opponent: 'kurapika', gap: 11.5, advanceFrames: 9 }
   if (fighter === 'feitan')
-    return { opponent: 'chrollo', gap: CHROLLO_GAPS.feitan, advanceFrames: 3 }
+    return { opponent: 'chrollo', gap: CHROLLO_GAPS.feitan, retreatFrames: 8 }
   const advanceFrames = WHIFF_ADVANCE[fighter]
   return { opponent: 'chrollo', gap: CHROLLO_GAPS[fighter], advanceFrames }
 }
 
 function lesson(fighter: Fighter): CombatRoute {
   const whiff = practice(fighter)
-  const ender =
-    fighter === 'feitan'
-      ? ('forwardHeavy' as const)
-      : rosterPhysicalBranch(fighter, 'whiff-punish')!.slot
+  const ender = rosterPhysicalBranch(fighter, 'whiff-punish')!.slot
   return {
     id: `${fighter}:whiff-punish`,
     fighter,
@@ -113,6 +110,7 @@ function variantLesson(route: CombatRoute): CombatRoute[] {
         ? [route.moves[0], variant.via, variant.slot]
         : [route.moves[0], variant.slot],
       whiff: variant.whiff ?? route.whiff,
+      hits: variant.hits,
       setup: variant.setup,
       requirement: variant.requirement,
     },

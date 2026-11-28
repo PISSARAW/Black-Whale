@@ -5,6 +5,7 @@ import type { FighterId, MoveSlot } from './types'
 interface WhiffPunishVariant {
   slot: Extract<MoveSlot, 'neutralSpecial' | 'forwardSpecial' | 'downSpecial' | 'finisher'>
   via?: MoveSlot
+  hits?: readonly number[]
   setup?: CombatRouteSetup
   whiff?: CombatWhiffPractice
   requirement: readonly [string, string]
@@ -67,10 +68,12 @@ export const WHIFF_PUNISH_VARIANTS: Partial<Record<FighterId, WhiffPunishVariant
   },
   kalluto: {
     slot: 'forwardSpecial',
+    via: 'standingHeavy',
+    hits: [1, 1, 3],
     setup: 'paper',
     requirement: [
-      'L’exercice commence avec un fragment déjà posé au torse. La frappe exige ce fragment et 24 points d’aura.',
-      'The drill starts with a paper fragment already on the torso. The strike requires that fragment and 24 aura.',
+      'Confirme le lourd, puis enchaîne les trois frappes de papier. L’exercice prépare le fragment au torse. La technique coûte 24 points d’aura.',
+      'Confirm the heavy, then land the three paper strikes. The drill prepares the fragment on the torso. The technique costs 24 aura.',
     ],
   },
   shizuku: {

@@ -7,6 +7,8 @@ import { comboChoices } from './comboChoices'
 import { selectedGumLink } from './bungeeNetwork'
 import { setTrainingDummy } from './trainingSession'
 import { whiffPunishReady } from './combatWhiffPractice'
+import { routeHitsBefore } from './combatRouteContacts'
+import { rosterPhysicalBranch } from './rosterComboBranches'
 import {
   EMPTY_INPUT,
   type FightInput,
@@ -40,7 +42,14 @@ function move(state: FightState, slot: MoveSlot, side: FightSide = 'player') {
 
 function until(state: FightState, done: (state: FightState) => boolean, inputs?: Inputs) {
   for (let i = 0; i < 120 && !done(state); i++) state = step(state, inputs)
-  expect(done(state)).toBe(true)
+  expect(
+    done(state),
+    JSON.stringify({
+      frame: state.frame,
+      impact: state.impact,
+      gap: state.opponent.x - state.player.x,
+    }),
+  ).toBe(true)
   return state
 }
 
@@ -159,8 +168,11 @@ describe.each([1, -1] as const)('roster whiff conversions facing %s', (facing) =
   for (const route of COMBAT_ROUTES.filter(({ id }) => id.endsWith(':whiff-punish'))) {
     it(`${route.fighter} has two physical options without spending aura`, () => {
       const hit = opening(route.id, facing)
-      for (const slot of [route.moves[1], 'forwardHeavy'] as const) {
-        expect(comboChoices(hit).find(({ move }) => move.slot === slot)).toMatchObject({
+      const physical = rosterPhysicalBranch(route.fighter, 'whiff-punish')!.slot
+      for (const slot of [physical, 'forwardHeavy'] as const) {
+        expect(
+          comboChoices(hit).find(({ move }) => move.id === `${route.fighter}:${slot}`),
+        ).toMatchObject({
           opening: 'whiff-punish',
           cost: 0,
           status: 'ready',
@@ -180,7 +192,11 @@ describe.each([1, -1] as const)('roster whiff conversions facing %s', (facing) =
       for (const crouches of [true, false]) {
         const result = route.moves
           .slice(1)
-          .reduce((state, slot, index) => chain(state, slot, { hits: index + 2, crouches }), hit)
+          .reduce(
+            (state, slot, index) =>
+              chain(state, slot, { hits: routeHitsBefore(route, index + 2), crouches }),
+            hit,
+          )
         expect(result.impact?.blocked).toBe(false)
       }
     })

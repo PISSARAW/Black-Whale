@@ -89,6 +89,8 @@ export function rosterPhysicalBranch(
   id: FighterId,
   opening: ComboOpening,
 ): PhysicalBranch | undefined {
+  if (id === 'feitan' && opening === 'whiff-punish')
+    return PHYSICAL_BRANCHES.feitan?.['corner-counter']
   // The same advancing strikes that cover tip distance can bridge a retreat.
   if (opening === 'whiff-punish') return PHYSICAL_BRANCHES[id]?.tip
   return PHYSICAL_BRANCHES[id]?.[opening]

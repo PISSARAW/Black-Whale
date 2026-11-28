@@ -104,7 +104,10 @@ describe.each([1, -1] as const)('whiff punish facing %s', (facing) => {
     expect(move(hit, 'finisher').player.attack).toBe(hit.player.attack)
     expect(selectedGumLink(chain(hit, 'neutralSpecial', { hits: 2 }), 'player')).toBeDefined()
     const tethered = opening('hisoka:whiff-tether', facing)
-    expect(chain(tethered, 'finisher', { hits: 2 }).player.aura).toBeLessThan(tethered.player.aura)
+    const confirmed = chain(tethered, 'forwardHeavy', { hits: 2 })
+    expect(chain(confirmed, 'finisher', { hits: 3 }).player.aura).toBeLessThan(
+      confirmed.player.aura,
+    )
   })
 
   it('lets Franklin keep a crouching defender in the low barrage for all ten bullets', () => {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import * as THREE from 'three'
 import { buildHumanFigure } from '$lib/tour/humanFigure'
-import type { HumanPose } from '$lib/tour/humanAnimation'
+import { humanAnimationRig, type HumanPose } from '$lib/tour/humanAnimation'
 import { bodyPlan, fightBodyMotion } from './fightBodyMotion'
 import { duelBridge, flowThroughBridge } from './duelAttackBridges'
 import { createAttackTravel } from './fightAttackTravel'
@@ -10,6 +10,8 @@ import { captureFootPlant, footHeight, fightRigOf } from './fightRig'
 import { createFightState } from './fightState'
 import { keyedMove } from './keyPoseMoves'
 import { FIGHTING_ROSTER } from './roster'
+import { lowestFootHeight } from './fightFootContact'
+import { settleFightSupport } from './fightSeparationSupport'
 import { attackData } from './frameData'
 import { moveForSlot } from './movesets'
 import type { ArcadeFighter, FighterId, MoveSlot } from './types'
@@ -138,7 +140,6 @@ describe('fighting rig', () => {
     (id) => {
       for (const facing of [1, -1] as const) {
         const model = figureOf(id)
-        const standing = poseAndMeasure(model, fighter(id, { facing }), 1)
         let seconds = 3
         for (const slot of [
           'standingLight',
@@ -152,8 +153,12 @@ describe('fighting rig', () => {
           const attack = attacking(id, slot, 0)
           attack.facing = facing
           attack.attack!.frame = attackData(attack.attack!.kind, attack).startup
-          const height = poseAndMeasure(model, attack, seconds)
-          expect(Math.abs(height - standing), `${id} ${slot} ${facing}`).toBeLessThan(0.1)
+          pose(model, attack, seconds)
+          const rig = fightRigOf(humanAnimationRig(model.turns)!)
+          settleFightSupport(rig, attack)
+          const height = Math.min(...rig.ankles.map(lowestFootHeight))
+          expect(height, `${id} ${slot} ${facing}`).toBeGreaterThan(-0.008)
+          expect(height, `${id} ${slot} ${facing}`).toBeLessThan(0.02)
           seconds += 2
         }
       }

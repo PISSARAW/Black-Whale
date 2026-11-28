@@ -30,6 +30,7 @@ function command(state: FightState, slot: MoveSlot) {
 function play(id: string, initial?: FightState) {
   const route = combatRoute(id)
   let state = initial ?? createCombatRouteFight(route)
+  const initialTargetX = state.opponent.x
   let spent = 0,
     total = 0
   const commands: MoveSlot[] = []
@@ -57,7 +58,7 @@ function play(id: string, initial?: FightState) {
     spent,
     commands,
     damage: state.opponent.comboDamage,
-    distance: Math.abs(state.player.x - state.opponent.x),
+    distance: Math.abs(state.opponent.x - initialTargetX),
   }
 }
 

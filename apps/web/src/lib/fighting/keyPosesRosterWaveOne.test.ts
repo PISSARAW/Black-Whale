@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { createFightState } from './fightState'
 import { bodyPlan } from './fightBodyMotion'
-import { keyPoseSource, keyPoseTimeline } from './keyPoseMoves'
+import { keyPoseSource } from './keyPoseMoves'
 import { standingStrikeSupport } from './standingStrikeMotion'
 import { moveForSlot } from './movesets'
-import { ROSTER_WAVE_ONE_FIGHTERS, ROSTER_WAVE_ONE_SLOTS } from './keyPosesRosterWaveOne'
+import {
+  ROSTER_WAVE_ONE_FIGHTERS,
+  ROSTER_WAVE_ONE_GROUNDED_POSES,
+  ROSTER_WAVE_ONE_SLOTS,
+} from './keyPosesRosterWaveOne'
 import { fighterMotionScore } from './rosterMotionScorecard'
 
 describe('roster motion wave one grounded fundamentals', () => {
@@ -12,14 +16,17 @@ describe('roster motion wave one grounded fundamentals', () => {
     const signatures = new Set<string>()
     for (const id of ROSTER_WAVE_ONE_FIGHTERS) {
       for (const slot of ROSTER_WAVE_ONE_SLOTS) {
-        const timeline = keyPoseTimeline(id, slot)!
+        const timeline = ROSTER_WAVE_ONE_GROUNDED_POSES[id][slot]!
         expect(keyPoseSource(id, slot), `${id}:${slot}`).toBe('dedicated')
         expect(timeline, `${id}:${slot}`).toHaveLength(7)
         expect(timeline.filter(({ phase }) => phase === 'recovery')).toHaveLength(3)
         const contacts = timeline.filter(({ phase }) => phase === 'active')
         expect(contacts).toHaveLength(2)
         expect(contacts[1].pose).toEqual(contacts[0].pose)
-        expect(timeline.some(({ jointEase }) => jointEase?.pelvis)).toBe(true)
+        expect(
+          timeline.some(({ jointEase }) => jointEase?.pelvis),
+          `${id}:${slot}`,
+        ).toBe(true)
         signatures.add(JSON.stringify(timeline))
       }
     }

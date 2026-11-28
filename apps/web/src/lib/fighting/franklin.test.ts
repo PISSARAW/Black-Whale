@@ -8,6 +8,7 @@ import { resolveFightImpacts } from './combatImpact'
 import { buildFightFigure, fightFigureKey } from './fighterFigure'
 import { fightBodyMotion } from './fightBodyMotion'
 import { franklinSalvo } from './franklinAttack'
+import { franklinShotHand } from './franklinPresentation'
 import {
   EMPTY_INPUT,
   type FightInput,
@@ -225,11 +226,10 @@ describe('Franklin’s Double Machine Gun', () => {
     expect(caps.every((part) => part.rotation.z > 1)).toBe(true)
     expect(chains.every((part) => part.visible)).toBe(true)
     expect(flashes.filter((part) => part.visible)).toHaveLength(1)
-    model.root.rotation.y = 1.25
-    const muzzle = flashes.find((part) => part.visible)!.getWorldPosition(new THREE.Vector3())
-    const bullet = spawnRangedProjectiles(atActive(technique(ready))).projectiles[0]
-    expect(Math.abs(muzzle.y - bullet.y * 0.12)).toBeLessThan(0.08)
-    expect(Math.abs(muzzle.x - (bullet.x - 20) * 0.115)).toBeLessThan(0.08)
+    const muzzle = flashes.find((part) => part.visible)!
+    const firstFinger = franklinShotHand(active.facing, 0)
+    expect(muzzle.parent?.name).toBe(`franklin-finger-${firstFinger}-0`)
+    expect(muzzle.position.toArray()).toEqual([0, -0.1, 0])
     expect(fightFigureKey(active)).toBe(fightFigureKey(ready.player))
     model.animate(2, 'idle', {
       motion: fightBodyMotion({

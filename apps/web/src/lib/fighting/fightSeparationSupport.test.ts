@@ -58,21 +58,19 @@ it('keeps a supporting sole in world space through a small separation correction
 it('reaches within bone lengths and never stretches an unreachable limb', () => {
   const { rig } = setup()
   const chain = { root: rig.human.legs[0], hinge: rig.human.knees[0], end: rig.ankles[0] }
-  const distance = () => [
-    chain.root
-      .getWorldPosition(new THREE.Vector3())
-      .distanceTo(chain.hinge.getWorldPosition(new THREE.Vector3())),
-    chain.hinge
-      .getWorldPosition(new THREE.Vector3())
-      .distanceTo(chain.end.getWorldPosition(new THREE.Vector3())),
-  ]
-  const before = distance()
-  const target = chain.end
-    .getWorldPosition(new THREE.Vector3())
-    .add(new THREE.Vector3(0.04, 0.04, 0))
+  const boneTransforms = () =>
+    [chain.root, chain.hinge, chain.end].map((bone) => [
+      ...bone.position.toArray(),
+      ...bone.scale.toArray(),
+    ])
+  const before = boneTransforms()
+  const bent = chain.hinge.rotation.x
+  chain.hinge.rotation.x += 0.1
+  const target = chain.end.getWorldPosition(new THREE.Vector3())
+  chain.hinge.rotation.x = bent
   expect(reachLimb(chain, target)).toBeLessThan(0.005)
   reachLimb(chain, target.addScalar(5))
-  distance().forEach((value, i) => expect(value).toBeCloseTo(before[i], 6))
+  expect(boneTransforms()).toEqual(before)
 })
 
 it('anticipates a crowded trunk through the chest while preserving distance and immaterial exceptions', () => {

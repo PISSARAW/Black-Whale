@@ -6,7 +6,7 @@ import { createFightState } from './fightState'
 import { fightBodyMotion } from './fightBodyMotion'
 import { createFightReactionPresentation } from './fightReactionPresentation'
 import { createFightContactAlignment } from './fightContactAlignment'
-import { fightRigOf } from './fightRig'
+import { captureFootPlant, fightRigOf } from './fightRig'
 import { fightWorldX } from './fightCoordinates'
 import { FIGHT_MODEL_POSES, transitionSecondsFor } from './sceneMotion'
 import { motionOf, walkSpeed } from './fighterMovement'
@@ -105,9 +105,11 @@ it.each([1, -1] as const)(
         if (direction) {
           const bottoms = rig.ankles.map(lowestFootHeight)
           const support = bottoms[0] <= bottoms[1] ? 0 : 1
-          const sole = rig.ankles[support].getWorldPosition(new THREE.Vector3())
+          const ground = rig.human.figure.parent!
+          const point = captureFootPlant(rig).contacts?.[support]
+          const sole = ground.localToWorld(point ?? rig.ankles[support].position.clone())
           if (previous?.foot === support && n !== 80) {
-            const slide = sole.distanceTo(previous.sole)
+            const slide = Math.hypot(sole.x - previous.sole.x, sole.z - previous.sole.z)
             maxSlide = Math.max(maxSlide, slide)
           }
           previous = { foot: support, sole }

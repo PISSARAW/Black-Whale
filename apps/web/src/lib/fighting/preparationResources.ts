@@ -19,6 +19,12 @@ export const SCENARIO_RESOURCES: readonly {
     en: 'Lovely Ghostwriter · fictional participant, handwritten identity, portrait and defined month',
   },
   { id: 'corpses', fr: 'Cadavres réels à implanter', en: 'Real corpses for implantation' },
+  {
+    id: 'armed-corpses',
+    initiallySelected: false,
+    fr: 'Cadavres armés pour les fils de Machi',
+    en: 'Armed corpses for Machi’s threads',
+  },
   { id: 'hostages', fr: 'Otages déjà retenus', en: 'Already held hostages' },
   {
     id: 'sedatives',

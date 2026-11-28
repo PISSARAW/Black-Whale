@@ -30,7 +30,6 @@ const ADJACENT_ROOMS: Partial<Record<string, AdjacentRoom>> = {
     'Vestibule de la salle de banquet',
     'Banquet Hall Vestibule',
   ),
-  'vip-casino': room('tier-1-c-aft-passage', 'Traverse arrière', 'Aft Passage'),
   'observation-deck': room('tier-3-port-promenade', 'Promenade bâbord', 'Port Promenade'),
   'screening-room': room('tier-2-main-corridor', 'Couloir principal', 'Main Corridor'),
   'supreme-court': room('tier-1-b-starboard-corridor', 'Coursive tribord', 'Starboard Corridor'),

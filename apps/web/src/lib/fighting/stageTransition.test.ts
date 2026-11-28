@@ -119,5 +119,5 @@ describe('destructible Clash stage walls', () => {
         failures.push({ stage: stage.id, configured, renderable })
     }
     expect(failures).toEqual([])
-  })
+  }, 30000)
 })

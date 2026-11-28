@@ -218,4 +218,12 @@ function installLegacyProps(
       health: 60,
       arena: { width: 1, height: 3 },
     })
+  if (c.resources.has('armed-corpses'))
+    entities.push({
+      ...entity('corpse', c.side, c.x + 3),
+      id: `${c.side}:armed-corpse`,
+      health: 60,
+      arena: { width: 1, height: 3 },
+      corpseGunRounds: 12,
+    })
 }

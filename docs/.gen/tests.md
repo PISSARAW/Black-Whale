@@ -2084,10 +2084,6 @@ Fichiers : 1326
 
 - scene-only multisample antialiasing > keeps scene MSAA and HDR, resolves before post, and preserves the output chain
 
-## `apps/web/src/lib/fighting/stageShipRoom.test.ts`
-
-- 2D arena ship-room rendering > keeps the original burial model behind the widest bodies with an actual material cut
-
 ## `apps/web/src/lib/fighting/stageStaticCut.test.ts`
 
 - static room clipping prepass > removes only whole triangles already discarded by the intersection shader

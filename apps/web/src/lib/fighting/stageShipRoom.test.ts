@@ -31,10 +31,13 @@ const kit = () => {
 }
 
 describe('2D arena ship-room rendering', () => {
-  it('keeps the original burial model behind the widest bodies with an actual material cut', async () => {
+  it.each([
+    ['tier-1-princes-burial-chamber-rotunda', 'princes-burial-chamber-manga-details'],
+    ['tier-1-vip-casino', 'casino-manga-details'],
+  ])('keeps %s behind the widest bodies with an actual material cut', async (space, modelName) => {
     const owned = kit()
-    const scenery = await buildShipRoomScenery(owned.value, 'tier-1-princes-burial-chamber-rotunda')
-    const model = scenery.root.getObjectByName('princes-burial-chamber-manga-details')!
+    const scenery = await buildShipRoomScenery(owned.value, space)
+    const model = scenery.root.getObjectByName(modelName)!
     expect(model).toBeDefined()
     let materials = 0
     model.traverse((object) => {

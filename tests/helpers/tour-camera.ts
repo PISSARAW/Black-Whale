@@ -67,7 +67,10 @@ export async function walkTour(page: Page, legs: readonly TourWalkLeg[]): Promis
       const canvas = document.querySelector(`canvas[${attribute}]`)
       if (!(canvas instanceof HTMLCanvasElement))
         throw new Error('The observed tour canvas is missing')
+      let movingForward = false
       const forward = (pressed: boolean) => {
+        if (movingForward === pressed) return
+        movingForward = pressed
         canvas.dispatchEvent(
           new KeyboardEvent(pressed ? 'keydown' : 'keyup', {
             bubbles: true,
@@ -121,21 +124,42 @@ export async function walkTour(page: Page, legs: readonly TourWalkLeg[]): Promis
 
       async function approach(leg: WalkTarget) {
         const [x, z] = leg.at
-        const [startX, startZ] = capture.current!.at
         const tolerance = leg.tolerance ?? 0.18
-        if (Math.hypot(startX - x, startZ - z) <= tolerance) return
-        await aim(Math.atan2(startX - x, startZ - z), leg.label)
-        forward(true)
+        let previous = capture.current!.at
         await until(
           leg.label,
           (frame) => {
             const [dx, dz] = [frame.at[0] - x, frame.at[1] - z]
-            if (Math.hypot(dx, dz) <= tolerance) return true
+            const remaining = Math.hypot(dx, dz)
+            if (remaining <= tolerance) return true
+            const step = distanceBetween(previous, frame.at)
+            previous = frame.at
             const error = angleDifference(Math.atan2(dx, dz), frame.yaw)
-            look(Math.max(-0.055, Math.min(0.055, error)))
+            look(error)
+            // Brake close to a waypoint so a long rendered frame cannot carry
+            // the visitor through a narrow turn at full walking speed.
+            forward(Math.abs(error) < 0.15 && step <= Math.max(tolerance / 2, remaining / 3))
             return false
           },
           30_000,
+        )
+      }
+
+      function distanceBetween(a: TourCameraSample['at'], b: TourCameraSample['at']) {
+        return Math.hypot(a[0] - b[0], a[1] - b[1])
+      }
+
+      async function settle(label: string) {
+        let previous = capture.current!
+        await until(
+          `Stop after ${label}`,
+          (frame) => {
+            if (frame === previous) return false
+            const settled = distanceBetween(previous.at, frame.at) < 0.008
+            previous = frame
+            return settled
+          },
+          10_000,
         )
       }
 
@@ -152,8 +176,7 @@ export async function walkTour(page: Page, legs: readonly TourWalkLeg[]): Promis
         } finally {
           forward(false)
         }
-        // Let normal friction bring the visitor to rest before the next turn.
-        await new Promise((resolve) => setTimeout(resolve, 330))
+        await settle(leg.label)
         const wanted = 'at' in leg ? leg.spaceId : leg.destination
         if (wanted && capture.current?.spaceId !== wanted) {
           throw new Error(`${leg.label} ended in ${capture.current?.spaceId}, expected ${wanted}`)

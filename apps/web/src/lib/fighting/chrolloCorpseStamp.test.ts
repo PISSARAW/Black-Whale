@@ -4,6 +4,7 @@ import { corpseSetup, corpseEntry } from './illumiCorpseTestSetup'
 import { performArsenalCommand, arsenalOptions } from './retrospectiveArsenal'
 import { mapFrames } from './dowsingMapTestSetup'
 import { advanceHistoricalCopies } from './chrolloHistoricalObjects'
+import { createChrolloBook, toggleChrolloBookmark } from './chrolloBook'
 import { damageArenaObject } from './arenaSimulation'
 import { createPreparationScene } from './preparationScene'
 import { corpseCollider } from './preparedCorpseBody'
@@ -19,12 +20,9 @@ function setup(side: FightSide = 'player'): FightState {
     ...base,
     [side]: {
       ...base[side],
-      chrolloBook: {
-        pages: ['gallery-fake', 'order-stamp'],
-        page: 0,
-        open: false,
-        bookmark: 'gallery-fake',
-      },
+      chrolloBook: toggleChrolloBookmark(
+        createChrolloBook(['gallery-fake', 'order-stamp', 'sun-and-moon', 'black-voice']),
+      ),
     },
   }
 }

@@ -3,6 +3,7 @@ import { corpseSetup } from './illumiCorpseTestSetup'
 import { mapFrames } from './dowsingMapTestSetup'
 import { arsenalOptions, performArsenalCommand } from './retrospectiveArsenal'
 import { advanceHistoricalCopies } from './chrolloHistoricalObjects'
+import { createChrolloBook, toggleChrolloBookmark } from './chrolloBook'
 import { privatePvpState } from './pvp/view'
 import type { PreparedEntityKind } from './preparationTypes'
 import type { FightSide, FightState } from './types'
@@ -13,12 +14,9 @@ function setup(side: FightSide, kind: PreparedEntityKind): FightState {
     ...base,
     [side]: {
       ...base[side],
-      chrolloBook: {
-        pages: ['gallery-fake', 'order-stamp'],
-        page: 0,
-        open: false,
-        bookmark: 'gallery-fake',
-      },
+      chrolloBook: toggleChrolloBookmark(
+        createChrolloBook(['gallery-fake', 'order-stamp', 'sun-and-moon', 'black-voice']),
+      ),
     },
     battlefield: {
       ...base.battlefield!,

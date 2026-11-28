@@ -2,12 +2,14 @@ import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performMove, tickFight } from './engine'
 import { attackData } from './frameData'
 import { prepareCombatRoute, type CombatRouteSetup } from './combatRouteSetup'
+import { relocatePreparedPaper } from './combatRouteFight'
 import { selectedGumLink } from './bungeeNetwork'
 import { EMPTY_INPUT, type FighterId, type FightInput, type FightState } from './types'
 import { directionalComboShot } from './directionalComboCamera'
 import { fighterKeyedMove } from './fighterKeyedMove'
 import { sampleTimeline } from './keyPoseTimeline'
 import { moveById } from './movesets'
+import { followUpLaunchVelocity } from './moveFollowUpPhysics'
 import { WAKEUP_LESSONS } from './wakeupLessons'
 import { FIGHTING_ROSTER } from './roster'
 import { directionalTechnique } from './directionalTechniques'
@@ -43,6 +45,7 @@ function openingState(
   const x = corner ? wall : 50
   return {
     ...state,
+    ...relocatePreparedPaper(state, { x, facing }),
     player: {
       ...state.player,
       x: x - 6 * facing,
@@ -88,7 +91,11 @@ function finishInput(ending: DirectionalEnding, facing: 1 | -1): Partial<FightIn
 }
 
 function expectedPosition(state: FightState, ending: DirectionalEnding) {
-  if (ending === 'air') expect(state.opponent.velocityY).toBeGreaterThan(40)
+  if (ending === 'air') {
+    const calibrated = followUpLaunchVelocity(state.player)
+    if (calibrated === undefined) expect(state.opponent.velocityY).toBeGreaterThan(40)
+    else expect(state.opponent.velocityY).toBe(calibrated)
+  }
   if (ending === 'close') expect(state.opponent.knockdownFrames).toBe(0)
   if (ending === 'ground') expect(state.opponent.knockdownFrames).toBeGreaterThan(0)
 }
@@ -120,7 +127,8 @@ describe.each(FIGHTING_ROSTER.map(({ id }) => id))('%s four directional chains',
       const middle = readyForFinish(openingState(fighter, { facing: 1, corner, technique: true }))
       const started = pressLight(middle, finishInput(ending, 1))
       expect(started.player.attack?.moveId).toBe(`${fighter}:${signature}`)
-      const finished = waitForHits(started, fighter === 'franklin' ? 12 : 3)
+      const hits = { franklin: 12, kalluto: 5 } as const
+      const finished = waitForHits(started, hits[fighter as keyof typeof hits] ?? 3)
       expect(finished.player.attack?.directionalChain).toBe(ending)
       if (fighter === 'hisoka') expect(selectedGumLink(finished, 'player')).toBeUndefined()
     })

@@ -15,7 +15,8 @@ import {
 
 const CORRIDOR = 'tier-1-c-port-corridor'
 
-test.use({ viewport: { width: 860, height: 570 } })
+// Keep the cost of each rendered frame manageable on the software renderer.
+test.use({ viewport: { width: 640, height: 480 } })
 test.skip(
   ({ isMobile }) => isMobile,
   'The first-person replay uses desktop mouse and keyboard controls.',

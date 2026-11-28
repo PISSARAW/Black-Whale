@@ -78,8 +78,7 @@ export async function walkTour(page: Page, legs: readonly TourWalkLeg[]): Promis
       }
       const angleDifference = (target: number, yaw: number) =>
         Math.atan2(Math.sin(target - yaw), Math.cos(target - yaw))
-      const look = (error: number) => {
-        const turn = Math.max(-0.055, Math.min(0.055, error))
+      const look = (turn: number) => {
         canvas.dispatchEvent(
           new MouseEvent('mousemove', {
             bubbles: true,
@@ -94,17 +93,22 @@ export async function walkTour(page: Page, legs: readonly TourWalkLeg[]): Promis
         timeout: number,
       ) {
         const limit = performance.now() + timeout
+        let previous: TourCameraSample | null = null
         while (performance.now() < limit) {
-          if (capture.current && accept(capture.current)) return
+          const frame = capture.current
+          if (frame && frame !== previous && accept(frame)) return
+          previous = frame
           await new Promise(requestAnimationFrame)
         }
         const here = capture.current
-        throw new Error(`${label} stopped at ${here?.at.join(', ')} in ${here?.spaceId}`)
+        throw new Error(
+          `${label} stopped at ${here?.at.join(', ')} in ${here?.spaceId} (yaw ${here?.yaw})`,
+        )
       }
 
-      async function aim(yaw: number) {
+      async function aim(yaw: number, label: string) {
         await until(
-          'Turning',
+          `Turn toward ${label}`,
           (frame) => {
             const error = angleDifference(yaw, frame.yaw)
             if (Math.abs(error) <= 0.004) return true
@@ -120,17 +124,18 @@ export async function walkTour(page: Page, legs: readonly TourWalkLeg[]): Promis
         const [startX, startZ] = capture.current!.at
         const tolerance = leg.tolerance ?? 0.18
         if (Math.hypot(startX - x, startZ - z) <= tolerance) return
-        await aim(Math.atan2(startX - x, startZ - z))
+        await aim(Math.atan2(startX - x, startZ - z), leg.label)
         forward(true)
         await until(
           leg.label,
           (frame) => {
             const [dx, dz] = [frame.at[0] - x, frame.at[1] - z]
             if (Math.hypot(dx, dz) <= tolerance) return true
-            look(angleDifference(Math.atan2(dx, dz), frame.yaw))
+            const error = angleDifference(Math.atan2(dx, dz), frame.yaw)
+            look(Math.max(-0.055, Math.min(0.055, error)))
             return false
           },
-          19_000,
+          30_000,
         )
       }
 
@@ -138,9 +143,9 @@ export async function walkTour(page: Page, legs: readonly TourWalkLeg[]): Promis
         try {
           if ('at' in leg) await approach(leg)
           else {
-            await aim(leg.yaw)
+            await aim(leg.yaw, leg.label)
             forward(true)
-            await until(leg.label, ({ spaceId }) => spaceId === leg.destination, 36_000)
+            await until(leg.label, ({ spaceId }) => spaceId === leg.destination, 60_000)
           }
         } finally {
           forward(false)

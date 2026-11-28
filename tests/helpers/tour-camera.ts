@@ -145,7 +145,9 @@ export async function walkTour(page: Page, legs: readonly TourWalkLeg[]): Promis
           else {
             await aim(leg.yaw, leg.label)
             forward(true)
-            await until(leg.label, ({ spaceId }) => spaceId === leg.destination, 60_000)
+            // The spiral alone spans four and a half turns. Software rendering
+            // advances the walking simulation more slowly than the wall clock.
+            await until(leg.label, ({ spaceId }) => spaceId === leg.destination, 120_000)
           }
         } finally {
           forward(false)

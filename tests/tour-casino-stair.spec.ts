@@ -79,7 +79,7 @@ function expectSpiralCrossing(frames: readonly TourCameraSample[], direction: 'd
 test('walks from the casino entrance to the lower hall and back without camera jumps', async ({
   page,
 }, testInfo) => {
-  test.setTimeout(420_000)
+  test.setTimeout(600_000)
   await installTourCameraCapture(page)
   await page.goto('/fr/tour?mangaView=casino-420-gaming-floor')
   await engageTourCamera(page)

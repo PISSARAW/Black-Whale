@@ -1,9 +1,9 @@
 import { expect, test, type Page } from 'playwright/test'
-import { prepareFight, openPauseTab, resumeFight } from './helpers/fighting'
+import { prepareFight, openPauseTab, resumeFight, startPreparedFight } from './helpers/fighting'
 
 async function launch(page: Page, mode = 'Versus local') {
   await prepareFight(page, mode)
-  await page.locator('.ready-overlay button').click()
+  await startPreparedFight(page)
   await page.locator('.fight-arena').click({ position: { x: 12, y: 180 } })
 }
 async function clip(page: Page) {

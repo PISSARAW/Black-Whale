@@ -1,5 +1,6 @@
 import { expect, test, type Page } from 'playwright/test'
-import { openPauseTab } from './helpers/fighting'
+import { openPauseTab, resumeFight } from './helpers/fighting'
+import { CONTROL_KEYS } from '../apps/web/src/lib/fighting/fightInputBindings'
 
 test.beforeEach(async ({ page }) => {
   test.setTimeout(120_000)
@@ -22,8 +23,11 @@ async function advanceFight(page: Page, milliseconds: number) {
     await page.clock.fastForward(Math.min(50, remaining))
 }
 async function hatsu(page: Page, direction?: string) {
-  if (direction) await page.keyboard.down(direction)
-  await page.keyboard.press('l')
+  if (direction) {
+    await page.keyboard.down(direction)
+    await advanceFight(page, 50)
+  }
+  await page.keyboard.press(CONTROL_KEYS.playerSpecial)
   await advanceFight(page, 50)
   if (direction) await page.keyboard.up(direction)
   await advanceFight(page, 1000)
@@ -38,16 +42,16 @@ test('Ren is action-gated, pauses safely, retries, and returns to free training'
   await openPauseTab(page, 'Entraînement')
   await expect(page.getByRole('button', { name: 'Exercice suivant' })).toBeDisabled()
   await page.locator('.clash-pause-menu').focus()
-  await page.keyboard.down('Space')
+  await page.keyboard.down(CONTROL_KEYS.playerAura)
   await advanceFight(page, 1200)
   await expect(panel(page)).not.toContainText('Exercice réussi.')
-  await page.keyboard.up('Space')
-  await page.keyboard.press('p')
-  await page.keyboard.down('Space')
+  await page.keyboard.up(CONTROL_KEYS.playerAura)
+  await resumeFight(page)
+  await page.keyboard.down(CONTROL_KEYS.playerAura)
   await advanceFight(page, 1200)
   await expect(panel(page)).toContainText('Exercice réussi.', { timeout: 15000 })
   await expect(panel(page).locator('strong')).toContainText('1/1')
-  await page.keyboard.up('Space')
+  await page.keyboard.up(CONTROL_KEYS.playerAura)
   await openPauseTab(page, 'Entraînement')
   await page.getByRole('button', { name: 'Recommencer', exact: true }).click()
   await expect(panel(page)).not.toContainText('Exercice réussi.')
@@ -63,17 +67,17 @@ test('Ren is action-gated, pauses safely, retries, and returns to free training'
 test('Kurapika pays the Emperor Time cost then turns it off', async ({ page }) => {
   await lesson(page, '12. Kurapika : le prix des yeux écarlates')
   await expect(panel(page).locator('strong')).toContainText('1/2')
-  await page.keyboard.down('Space')
+  await page.keyboard.down(CONTROL_KEYS.playerAura)
   await advanceFight(page, 50)
-  await page.keyboard.press('h')
+  await page.keyboard.press(CONTROL_KEYS.playerFinisher)
   await advanceFight(page, 1000)
-  await page.keyboard.up('Space')
+  await page.keyboard.up(CONTROL_KEYS.playerAura)
   await expect(panel(page)).toContainText('2/2', { timeout: 15000 })
-  await page.keyboard.down('Space')
+  await page.keyboard.down(CONTROL_KEYS.playerAura)
   await advanceFight(page, 50)
-  await page.keyboard.press('h')
+  await page.keyboard.press(CONTROL_KEYS.playerFinisher)
   await advanceFight(page, 1000)
-  await page.keyboard.up('Space')
+  await page.keyboard.up(CONTROL_KEYS.playerAura)
   await expect(panel(page)).toContainText('Exercice réussi.')
   await expect(panel(page).locator('strong')).toContainText('2/2')
 })
@@ -82,10 +86,11 @@ test('Hisoka attaches and recalls the tether', async ({ page }) => {
   await lesson(page, '13. Hisoka : attacher et rappeler')
   await hatsu(page)
   await expect(panel(page)).toContainText('2/2', { timeout: 15000 })
+  await advanceFight(page, 1000)
+  // Clash binds the printed Q/A key to the physical left key on both layouts.
+  await page.keyboard.down('KeyA')
   await advanceFight(page, 650)
-  await page.keyboard.down('q')
-  await advanceFight(page, 650)
-  await page.keyboard.up('q')
+  await page.keyboard.up('KeyA')
   await hatsu(page, 'd')
   await expect(panel(page)).toContainText('Exercice réussi.', { timeout: 15000 })
 })
@@ -94,8 +99,8 @@ test('Chrollo bookmarks and changes the open page', async ({ page }) => {
   await lesson(page, '14. Chrollo : gérer deux pages')
   await hatsu(page, 's')
   await expect(panel(page)).toContainText('2/2', { timeout: 15000 })
-  await advanceFight(page, 650)
-  await hatsu(page, 'q')
+  await advanceFight(page, 1000)
+  await hatsu(page, 'KeyA')
   await expect(panel(page)).toContainText('Exercice réussi.', { timeout: 15000 })
 })
 

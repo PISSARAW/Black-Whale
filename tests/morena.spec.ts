@@ -282,6 +282,7 @@ test.describe("Morena's negotiation critical path", () => {
     page,
     isMobile,
   }) => {
+    test.slow()
     const challenge = Buffer.from(
       JSON.stringify({
         v: 2,

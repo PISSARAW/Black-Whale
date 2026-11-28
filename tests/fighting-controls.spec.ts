@@ -1,5 +1,5 @@
 import { expect, test, type Page } from 'playwright/test'
-import { prepareFight, openPauseTab, resumeFight } from './helpers/fighting'
+import { prepareFight, openPauseTab, resumeFight, startPreparedFight } from './helpers/fighting'
 
 function fakePad(index: number) {
   return {
@@ -57,11 +57,11 @@ test('two local gamepads support Nen, disconnection and pause/resume', async ({ 
   )
   await neutralPad(page, 0)
   await pressPad(page, 0, [9])
-  await expect(page.locator('.ready-overlay')).toHaveCount(0)
+  await expect(page.locator('.fight-introduction, .ready-overlay')).toHaveCount(0)
   await neutralPad(page, 0)
-  await pressPad(page, 0, [5])
+  await pressPad(page, 0, [7])
   await expect(page.locator('.hud .nen-status').first()).toContainText('ren', { ignoreCase: true })
-  await pressPad(page, 1, [4, 5])
+  await pressPad(page, 1, [4, 7])
   await expect
     .poll(async () => Number(await page.locator('.aura').nth(1).getAttribute('aria-valuenow')))
     .toBeLessThan(55)
@@ -81,12 +81,15 @@ test('remapped keyboard controls persist and drive the fight after leaving setti
   page,
 }) => {
   await localFight(page)
-  await page.locator('.ready-overlay button').click()
+  await startPreparedFight(page)
   await openPauseTab(page, 'Commandes')
   await expect(page.locator('.pause-overlay')).toBeVisible()
-  await page.getByRole('button', { name: 'Espace', exact: true }).click()
+  const auraBinding = page
+    .getByText('P1 · Aura', { exact: true })
+    .locator('xpath=following-sibling::button[1]')
+  await auraBinding.click()
   await page.keyboard.press('Backquote')
-  await expect(page.getByRole('button', { name: '`', exact: true })).toBeVisible()
+  await expect(auraBinding).toHaveText('`')
   await resumeFight(page)
   await page.locator('.fight-arena').click({ position: { x: 10, y: 200 } })
   await page.keyboard.down('Backquote')
@@ -94,8 +97,9 @@ test('remapped keyboard controls persist and drive the fight after leaving setti
   await page.keyboard.up('Backquote')
   await expect(page.locator('.hud .nen-status').first()).toContainText('ten', { ignoreCase: true })
   await localFight(page)
+  await startPreparedFight(page)
   await openPauseTab(page, 'Commandes')
-  await expect(page.getByRole('button', { name: '`', exact: true })).toBeVisible()
+  await expect(auraBinding).toHaveText('`')
 })
 
 test('control settings stay readable on a narrow screen and close with Escape', async ({
@@ -103,7 +107,7 @@ test('control settings stay readable on a narrow screen and close with Escape', 
 }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await localFight(page)
-  await page.locator('.ready-overlay button').click()
+  await startPreparedFight(page)
   await openPauseTab(page, 'Commandes')
   const panel = page.locator('.input-settings section')
   await expect(panel).toBeVisible()

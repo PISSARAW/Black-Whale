@@ -1,5 +1,6 @@
 import { expect, test, type Page } from 'playwright/test'
-import { openPauseTab, prepareFight, resumeFight } from './helpers/fighting'
+import { CONTROL_KEYS } from '../apps/web/src/lib/fighting/fightInputBindings'
+import { openPauseTab, prepareFight, resumeFight, startPreparedFight } from './helpers/fighting'
 
 const school = (page: Page) => page.getByRole('region', { name: 'École de combat', exact: true })
 const objective = (page: Page) => page.locator('.battle-objective').getByRole('status')
@@ -103,7 +104,7 @@ test('manual practice rejects a different starter, resets cleanly and pauses the
 
 async function localFight(page: Page) {
   await prepareFight(page)
-  await page.locator('.ready-overlay button').click()
+  await startPreparedFight(page)
   await openPauseTab(page, 'Affichage & son')
 }
 test('camera preference persists, respects reduced motion and fits a narrow screen', async ({
@@ -139,9 +140,7 @@ test('defense exercise confirms the guard and explains a missed punish opening',
     .getByRole('button', { name: 'Défense · bloquer puis punir', exact: true })
     .click()
   await openPauseTab(page, 'Entraînement')
-  const instruction = await school(page).locator('.active-exercise').innerText()
-  const guard = instruction.match(/Garde\s*:\s*(\S+)/u)![1]
-  const key = guard === 'Maj' ? 'Shift' : guard
+  const key = CONTROL_KEYS.playerGuard === ' ' ? 'Space' : CONTROL_KEYS.playerGuard
   await resumeFight(page)
   await page.keyboard.down(key)
   // Advance past the dummy's attack and the punish window while holding guard.

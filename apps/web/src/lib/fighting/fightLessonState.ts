@@ -73,7 +73,11 @@ const CHECKS: Record<LessonId, Check> = {
   ...FOUNDATION_CHECKS,
   ...ADVANCED_LESSON_CHECKS,
   ...NEN_LESSON_CHECKS,
-  ren: (s) => nenTacticalState(s.player).technique === 'ren' && s.player.aura < 90,
+  ren: (s) => {
+    const { player } = s
+    const { technique } = nenTacticalState(player)
+    return player.nen.mode === 'ren' && ['ren', 'shu'].includes(technique) && player.aura < 90
+  },
   ken: (s, p) =>
     s.player.nen.ken &&
     s.impact?.sequence !== p.lastImpact &&

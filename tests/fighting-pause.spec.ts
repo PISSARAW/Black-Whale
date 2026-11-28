@@ -1,5 +1,5 @@
 import { expect, test, type Page } from 'playwright/test'
-import { prepareFight, openPauseTab, resumeFight } from './helpers/fighting'
+import { prepareFight, openPauseTab, resumeFight, startPreparedFight } from './helpers/fighting'
 
 const stats = (page: Page) =>
   page.locator('.hud').evaluate((element) => ({
@@ -13,7 +13,7 @@ test('the match stays minimal, and the native pause menu freezes time, resources
   page,
 }) => {
   await prepareFight(page)
-  await page.locator('.ready-overlay button').click()
+  await startPreparedFight(page)
   await expect(page.locator('.fighter-resources, .fight-toolbar, .fight-manual')).toHaveCount(0)
   await expect(page.locator('.app-header')).not.toBeVisible()
   await expect(page.locator('.aura')).toHaveCount(2)
@@ -36,7 +36,7 @@ test('controls, audio and display settings are readable inside the mobile pause 
 }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await prepareFight(page)
-  await page.locator('.ready-overlay button').click()
+  await startPreparedFight(page)
   await openPauseTab(page, 'Commandes')
   const bounds = await page.locator('.clash-pause-menu').boundingBox()
   expect(bounds!.x).toBeGreaterThanOrEqual(0)

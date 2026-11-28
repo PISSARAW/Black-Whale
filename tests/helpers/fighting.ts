@@ -7,7 +7,12 @@ export async function prepareFight(page: Page, mode = 'Versus local') {
   await page.getByRole('button', { name: 'Choisir le terrain', exact: true }).click()
   await page.getByRole('button', { name: 'Règles du combat', exact: true }).click()
   await page.getByRole('button', { name: 'Entrer dans l’arène', exact: true }).click()
-  await expect(page.locator('.ready-overlay')).toBeVisible()
+  await expect(page.locator('.fight-arena .hud')).toBeVisible()
+}
+
+export async function startPreparedFight(page: Page) {
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.fight-introduction, .ready-overlay')).toHaveCount(0)
 }
 
 export async function openPauseTab(page: Page, label: string) {

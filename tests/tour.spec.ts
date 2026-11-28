@@ -87,7 +87,9 @@ test.describe('the walk', () => {
       ),
     ).toBeVisible()
 
-    await card.getByRole('button', { name: /Put it back|Reposer/ }).click()
+    const replaceEvidence = card.getByRole('button', { name: /Put it back|Reposer/ })
+    await replaceEvidence.evaluate((node) => node.scrollIntoView({ block: 'center' }))
+    await replaceEvidence.click()
     await expect(card).toBeHidden()
   })
 

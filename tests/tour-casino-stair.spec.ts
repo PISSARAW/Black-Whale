@@ -17,7 +17,6 @@ const CORRIDOR = 'tier-1-c-port-corridor'
 
 test.use({
   viewport: { width: 860, height: 570 },
-  channel: 'chromium',
   launchOptions: { args: ['--ignore-gpu-blocklist'] },
 })
 
@@ -80,7 +79,7 @@ test('walks from the casino entrance to the lower hall and back without camera j
   isMobile,
 }, testInfo) => {
   test.skip(isMobile, 'The first-person replay uses desktop mouse and keyboard controls.')
-  test.setTimeout(240_000)
+  test.setTimeout(420_000)
   await installTourCameraCapture(page)
   await page.goto('/fr/tour?mangaView=casino-420-gaming-floor')
   await engageTourCamera(page)

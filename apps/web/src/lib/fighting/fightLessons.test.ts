@@ -98,7 +98,10 @@ describe('practical Nen lessons', () => {
     const run = exercise('ryu')
     run.frames(30, { focusTorso: true })
     expect(run.progress.complete).toBe(false)
-    run.frames(30, { focusHands: true })
+    // The first four frames still transfer aura from the torso to the hands.
+    run.frames(33, { focusHands: true })
+    expect(run.progress.complete).toBe(false)
+    run.frames(1, { focusHands: true })
     expect(run.progress.complete).toBe(true)
   })
   it('lands a critical Ko by releasing Aura during heavy startup', () => {

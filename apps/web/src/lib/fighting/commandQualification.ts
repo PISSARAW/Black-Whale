@@ -4,6 +4,8 @@ import { initialReplayState, executeReplayPacket } from './fightReplayCommands'
 import { fightReplayHash } from './fightReplayHash'
 import { canStartFighterAttack } from './fighterAttacks'
 import { combatRouteAction, combatRouteInput } from './combatRouteFight'
+import { combatRouteContactId } from './combatRouteContacts'
+import { INPUT_BUFFER_FRAMES } from './fightClock'
 import { moveForSlot, canUseMovesetMove } from './movesets'
 import { performTrainingAction } from './trainingAction'
 import { EMPTY_INPUT, type FightSide, type FightState, type MoveSlot } from './types'
@@ -59,7 +61,7 @@ export function probeCommandQueue(options: QueueProbeOptions) {
   const expectedMove = `${state[options.side].id}:${slot}`
   let actualMove: string | null = null
   runtime.observeFrames((next) => {
-    actualMove ??= next[options.side].attack?.moveId ?? null
+    actualMove ??= combatRouteContactId(next[options.side].attack?.moveId) ?? null
   })
   runtime.enqueue(state, {
     kind: 'move',
@@ -91,7 +93,7 @@ export function probeCommandQueue(options: QueueProbeOptions) {
 
 function expectedQueueOutcome(options: QueueProbeOptions) {
   if (options.cancel) return 'cancelled'
-  return options.stun > 6 ? 'refused' : 'executed'
+  return options.stun > INPUT_BUFFER_FRAMES ? 'refused' : 'executed'
 }
 
 /** Samples actual timeline states on both sides of each authored cancel/recovery boundary. */
@@ -147,8 +149,8 @@ function windowAttempt(state: FightState, slot: MoveSlot) {
     admitted,
     started:
       after.player.attack !== previousAttack &&
-      after.player.attack?.moveId === move.id &&
-      after.player.attack.frame === 0,
+      combatRouteContactId(after.player.attack?.moveId) === move.id &&
+      after.player.attack?.frame === 0,
     hitstop: state.hitstop,
     confirmed: Boolean(state.player.attack?.confirmedHit),
   }

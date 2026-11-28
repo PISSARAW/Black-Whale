@@ -59,15 +59,18 @@ function hitString(fighter: FighterId, accelHeat?: AccelHeat): Played {
 
 describe('relance (special → special on hit)', () => {
   it.each([
-    ['kurapika', 'forwardSpecial'],
-    ['benjamin', 'neutralSpecial'],
+    ['kurapika', 'forwardSpecial', 'scarlet-verdict-followup'],
+    ['benjamin', 'neutralSpecial', 'absolute-command-followup'],
   ] as const)(
     '%s: the sweep relaunches into the forward heavy, never back',
-    (fighter, superSlot) => {
+    (fighter, superSlot, followup) => {
       const sweep = moveForSlot(fighter, 'lowHeavy')!
       expect(sweep.cancelInto.map(slot)).toEqual(['forwardHeavy', superSlot])
       expect(sweep.cancelOnBlockInto).toEqual([])
-      expect(moveForSlot(fighter, 'forwardHeavy')!.cancelInto.map(slot)).toEqual([superSlot])
+      expect(moveForSlot(fighter, 'forwardHeavy')!.cancelInto.map(slot)).toEqual([
+        superSlot,
+        followup,
+      ])
     },
   )
 

@@ -74,26 +74,29 @@ describe('tiered cancel grammar', () => {
   })
 
   it.each([
-    ['kurapika', 'forwardSpecial'],
-    ['benjamin', 'neutralSpecial'],
-  ] as const)('%s: normal → special → super on hit, special on block', (fighter, superSlot) => {
-    const heavy = move(fighter, 'standingHeavy')
-    expect(heavy.cancelInto.map(slot)).toEqual(['lowHeavy', 'forwardHeavy', superSlot])
-    expect(heavy.cancelOnBlockInto.map(slot)).toEqual(['lowHeavy', 'forwardHeavy'])
-    expect(move(fighter, 'standingLight').cancelOnBlockInto.map(slot)).toEqual([
-      'standingHeavy',
-      'forwardLight',
-      'lowHeavy',
-      'forwardHeavy',
-    ])
-    // The sweep also relaunches into the forward heavy (accelCancel.test.ts).
-    expect(move(fighter, 'lowHeavy').cancelInto.map(slot)).toEqual(['forwardHeavy', superSlot])
-    expect(move(fighter, 'forwardHeavy').cancelInto.map(slot)).toEqual([superSlot])
-    for (const ender of ['lowHeavy', 'forwardHeavy'] as const)
-      expect(move(fighter, ender).cancelOnBlockInto).toEqual([])
-    expect(move(fighter, superSlot).cancelInto).toEqual([])
-    expect(move(fighter, 'airLight').cancelInto.map(slot)).toEqual(['airHeavy'])
-  })
+    ['kurapika', 'forwardSpecial', 'chain-heel', 'scarlet-verdict-followup'],
+    ['benjamin', 'neutralSpecial', 'barracks-elbow', 'absolute-command-followup'],
+  ] as const)(
+    '%s: normal → special → super on hit, special on block',
+    (fighter, superSlot, signature, followup) => {
+      const heavy = move(fighter, 'standingHeavy')
+      expect(heavy.cancelInto.map(slot)).toEqual(['lowHeavy', 'forwardHeavy', superSlot, signature])
+      expect(heavy.cancelOnBlockInto.map(slot)).toEqual(['lowHeavy', 'forwardHeavy'])
+      expect(move(fighter, 'standingLight').cancelOnBlockInto.map(slot)).toEqual([
+        'standingHeavy',
+        'forwardLight',
+        'lowHeavy',
+        'forwardHeavy',
+      ])
+      // The sweep also relaunches into the forward heavy (accelCancel.test.ts).
+      expect(move(fighter, 'lowHeavy').cancelInto.map(slot)).toEqual(['forwardHeavy', superSlot])
+      expect(move(fighter, 'forwardHeavy').cancelInto.map(slot)).toEqual([superSlot, followup])
+      for (const ender of ['lowHeavy', 'forwardHeavy'] as const)
+        expect(move(fighter, ender).cancelOnBlockInto).toEqual([])
+      expect(move(fighter, superSlot).cancelInto).toEqual([])
+      expect(move(fighter, 'airLight').cancelInto.map(slot)).toEqual(['airHeavy'])
+    },
+  )
 
   it('scales damage after two full hits, with a higher floor for supers', () => {
     expect([1, 2, 3, 4, 6].map((hits) => tieredComboScale(hits, false))).toEqual([

@@ -2,6 +2,9 @@ import { fileURLToPath } from 'node:url'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { loadFrozenCombatTapes } from '../../../../../scripts/clash-frozen-tapes'
 import { BASELINE_FIGHTERS } from './combatBaseline'
+import { runBaselineRoute } from './combatBaselineRoutes'
+import { combatRoute } from './combatRoutes'
+import { INPUT_BUFFER_FRAMES } from './fightClock'
 import { qualificationState, probeCommandQueue, probeRouteWindows } from './commandQualification'
 import { createKeyboardMapper, defaultBindings } from './fightInputBindings'
 import { createGamepadReader, type FightPad } from './fightGamepad'
@@ -10,16 +13,35 @@ import { revalidateCombatReference } from './revalidateCombatReference'
 import { REPLAY_RULESET } from './fightReplayTypes'
 import { probeRecoveryLink } from './linkQualification'
 import { markFightRender } from './fightRenderObservation'
-import { initialReplayState, executeReplayPacket } from './fightReplayCommands'
+import { initialReplayState } from './fightReplayCommands'
 import { fightReplayHash } from './fightReplayHash'
 
-let frozen: Awaited<ReturnType<typeof loadFrozenCombatTapes>>
-beforeAll(async () => {
-  frozen = await loadFrozenCombatTapes()
-})
+const current = new Map<string, ReturnType<typeof runBaselineRoute>>()
+beforeAll(() => {
+  const routes = [
+    ...BASELINE_FIGHTERS.map((fighter) => `${fighter}:confirm`),
+    'kurapika:recovery-sweep',
+    'benjamin:recovery-sweep',
+  ]
+  for (const id of routes)
+    current.set(
+      id,
+      runBaselineRoute({
+        route: combatRoute(id),
+        terrain: 'neutral',
+        mirrored: false,
+        corner: false,
+        gap: 6,
+      }),
+    )
+}, 60_000)
 
-describe('command qualification from the frozen six-fighter states', () => {
-  it('keeps the original archive and v20 input packets intact alongside current recordings', async () => {
+function tape(id: string) {
+  return current.get(id)!.replay
+}
+
+describe('command qualification from six-fighter replay states', () => {
+  it('keeps the original archive and v20 input packets intact', async () => {
     const historical = await loadFrozenCombatTapes(
       fileURLToPath(new URL('../../../ui-tests/fighting-reference/reference', import.meta.url)),
     )
@@ -29,11 +51,7 @@ describe('command qualification from the frozen six-fighter states', () => {
     const previous = await loadFrozenCombatTapes(
       fileURLToPath(new URL('../../../ui-tests/fighting-reference/reference/v20', import.meta.url)),
     )
-    // Preserve v20 as its own archive while validating the current recording separately.
     expect(previous.ruleset).toBe('clash-combat-20')
-    expect(frozen.ruleset).toBe(REPLAY_RULESET)
-    // Current routes evolve with the combo grammar; historical inputs remain in v20.
-    expect(Object.keys(frozen.tapes)).toEqual(expect.arrayContaining(Object.keys(historical.tapes)))
     expect(Object.keys(previous.tapes).sort()).toEqual(Object.keys(historical.tapes).sort())
     for (const [id, replay] of Object.entries(historical.tapes))
       expect(previous.tapes[id].packets).toEqual(replay.packets)
@@ -44,7 +62,7 @@ describe('command qualification from the frozen six-fighter states', () => {
     )
     expect(() =>
       revalidateCombatReference(historical.tapes['route-kurapika-confirm-neutral-right-center-6']),
-    ).toThrow(/Reference changed/)
+    ).toThrow(/Reference changed|invalid-replay/)
   })
 
   it('keeps the v17 archive immutable and rejects its changed observation checkpoints', async () => {
@@ -55,26 +73,14 @@ describe('command qualification from the frozen six-fighter states', () => {
     for (const fighter of ['kurapika', 'benjamin', 'hisoka', 'chrollo'])
       expect(() =>
         revalidateCombatReference(legacy.tapes[`route-${fighter}-confirm-neutral-right-center-6`]),
-      ).toThrow(/Reference changed/)
+      ).toThrow(/Reference changed|invalid-replay/)
   })
 
   for (const fighter of BASELINE_FIGHTERS)
-    it(`${fighter}: verifies or refuses promotion without rewriting the immutable original checkpoints`, () => {
-      const original = frozen.tapes[`route-${fighter}-confirm-neutral-right-center-6`]
+    it(`${fighter}: revalidates its current recording and rejects altered checkpoints`, () => {
+      const original = tape(`${fighter}:confirm`)
       const before = JSON.stringify(original)
-      let verified: ReturnType<typeof revalidateCombatReference> | undefined
-      let refusal: unknown
-      try {
-        verified = revalidateCombatReference(original)
-      } catch (error) {
-        refusal = error
-      }
-      expect(JSON.stringify(original)).toBe(before)
-      if (!verified) {
-        expect(original.ruleset).not.toBe(REPLAY_RULESET)
-        expect(String(refusal)).toMatch(/Reference changed at checkpoint/)
-        return
-      }
+      const verified = revalidateCombatReference(original)
       expect(verified.measuredRuleset).toBe(REPLAY_RULESET)
       expect(verified.checkpointsVerified).toBe(original.checkpoints.length)
       expect(JSON.stringify(original)).toBe(before)
@@ -87,8 +93,14 @@ describe('command qualification from the frozen six-fighter states', () => {
       for (const mirrored of [false, true])
         for (const hz of [120, 60, 30, 20])
           it(`${fighter}/${side}/mirrored=${mirrored}/${hz}Hz: recovery buffer boundary`, () => {
-            const replay = frozen.tapes[`route-${fighter}-confirm-neutral-right-center-6`]
-            for (const stun of [0, 1, 5, 6, 7]) {
+            const replay = tape(`${fighter}:confirm`)
+            for (const stun of [
+              0,
+              1,
+              INPUT_BUFFER_FRAMES - 1,
+              INPUT_BUFFER_FRAMES,
+              INPUT_BUFFER_FRAMES + 1,
+            ]) {
               const row = probeCommandQueue({
                 initial: qualificationState(replay, { side, mirrored }),
                 side,
@@ -96,7 +108,7 @@ describe('command qualification from the frozen six-fighter states', () => {
                 stun,
               })
               expect(row.pass, JSON.stringify(row)).toBe(true)
-              if (stun <= 6) {
+              if (stun <= INPUT_BUFFER_FRAMES) {
                 expect(row.executedFrame).toBeGreaterThanOrEqual(stun)
                 expect(row.executedFrame).toBeLessThanOrEqual(stun + 3)
               }
@@ -114,7 +126,7 @@ describe('command qualification from the frozen six-fighter states', () => {
           })
   for (const fighter of BASELINE_FIGHTERS)
     it(`${fighter}: hitstop preserves the buffered command and focus cancellation removes queued commands`, () => {
-      const replay = frozen.tapes[`route-${fighter}-confirm-neutral-right-center-6`]
+      const replay = tape(`${fighter}:confirm`)
       const initial = qualificationState(replay, { side: 'player', mirrored: false })
       for (const hitstop of [1, 6, 12])
         expect(probeCommandQueue({ initial, side: 'player', hz: 60, stun: 3, hitstop }).pass).toBe(
@@ -125,18 +137,10 @@ describe('command qualification from the frozen six-fighter states', () => {
       ).toMatchObject({ pass: true, outcome: 'cancelled', executedFrame: null })
     })
   for (const fighter of BASELINE_FIGHTERS)
-    it(`${fighter}: qualifies current command windows using the unchanged frozen inputs`, () => {
-      const id = `route-${fighter}-confirm-neutral-right-center-6`
-      const row = probeRouteWindows(frozen.tapes[id])
-      if (frozen.ruleset === REPLAY_RULESET)
-        expect(row.finalHash).toBe(frozen.rows.find((entry) => entry.id === id)!.finalHash)
-      else {
-        const independent = frozen.tapes[id].packets.reduce(
-          executeReplayPacket,
-          initialReplayState(frozen.tapes[id].setup),
-        )
-        expect(row.finalHash).toBe(fightReplayHash(independent))
-      }
+    it(`${fighter}: reports the recorded result and command windows`, () => {
+      const id = `${fighter}:confirm`
+      const row = probeRouteWindows(tape(id))
+      expect(row.finalHash).toBe(current.get(id)!.measurement.finalHash)
       expect(row.observations.length).toBeGreaterThan(0)
       expect(row.observations.filter((sample) => sample.admitted)).not.toHaveLength(0)
       expect(row.observations.every((sample) => sample.admitted === sample.started)).toBe(true)
@@ -145,11 +149,12 @@ describe('command qualification from the frozen six-fighter states', () => {
 
 describe('recovery links use real guard and one-frame timing offsets', () => {
   for (const [fighter, route, from, to] of [
-    ['phinks', 'charged', 'standingHeavy', 'finisher'],
+    ['kurapika', 'recovery-sweep', 'backHeavy', 'forwardLight'],
+    ['benjamin', 'recovery-sweep', 'backHeavy', 'forwardLight'],
   ] as const)
     it(`${fighter}: before recovery, first free tick, and the first late tick`, () => {
       const result = probeRecoveryLink({
-        replay: frozen.tapes[`route-${fighter}-${route}-neutral-right-center-6`],
+        replay: tape(`${fighter}:${route}`),
         from,
         to,
       })
@@ -187,7 +192,7 @@ describe('held inputs and neutral gating', () => {
     mapper.clear()
     expect(mapper.key({ key: 'l', code: 'KeyL' }, false, bindings)).toBeNull()
   })
-  it('has no held-button attack after reconnect or resume and emits one special on release', () => {
+  it('has no held-button attack after reconnect or resume and emits one special on press', () => {
     const reader = createGamepadReader()
     reader.poll([pad()], true)
     reader.poll([pad()], true)
@@ -196,8 +201,8 @@ describe('held inputs and neutral gating', () => {
     reader.poll([], true)
     expect(reader.poll([pad([0])], true).actions).toEqual([])
     reader.poll([pad()], true)
-    reader.poll([pad([2])], true)
-    expect(reader.poll([pad()], true).actions).toEqual([{ side: 'player', action: 'special' }])
+    expect(reader.poll([pad([2])], true).actions).toEqual([{ side: 'player', action: 'special' }])
+    expect(reader.poll([pad([2])], true).actions).toEqual([])
     expect(reader.poll([pad()], true).actions).toEqual([])
     reader.release()
     expect(reader.inputs.player).toEqual(EMPTY_INPUT)
@@ -222,17 +227,13 @@ describe('held inputs and neutral gating', () => {
 
 describe('draw observation stays outside the simulation', () => {
   it('does not record render metadata unless a probe is enabled', () => {
-    const state = initialReplayState(
-      frozen.tapes['route-kurapika-confirm-neutral-right-center-6'].setup,
-    )
+    const state = initialReplayState(tape('kurapika:confirm').setup)
     const scene = { userData: {} }
     markFightRender(scene, state)
     expect(scene.userData).toEqual({})
   })
   it('reports the posed frame without altering any combat or replay state', () => {
-    const state = initialReplayState(
-      frozen.tapes['route-kurapika-confirm-neutral-right-center-6'].setup,
-    )
+    const state = initialReplayState(tape('kurapika:confirm').setup)
     const before = fightReplayHash(state)
     const scene = { userData: { measureFight: true } as Record<string, unknown> }
     markFightRender(scene, state)

@@ -5,6 +5,7 @@ import { canAct } from './fightActorState'
 import { voluntaryNenAvailable } from './nenAccess'
 import { chainAbilitySealed } from './kurapika'
 import { halkenburgRosterVariant } from './halkenburgVariant'
+import { halkenburgMode, preserveRosterSoul } from './halkenburgSoulTypes'
 import type { ArsenalInvocation, ArsenalOption } from './retrospectiveTypes'
 import type { FightSide, FightState, FighterId } from './types'
 
@@ -23,7 +24,7 @@ export function replaceHalkenburgBody(state: FightState, side: FightSide): Fight
   const body = drawn.fighter
   return {
     ...drawn.state,
-    [side]: {
+    [side]: preserveRosterSoul(actor, {
       ...body,
       x: actor.x,
       y: actor.y,
@@ -33,7 +34,7 @@ export function replaceHalkenburgBody(state: FightState, side: FightSide): Fight
       aura: Math.min(actor.aura, body.aura),
       halkenburgOrigin: actor.halkenburgOrigin ?? actor.id,
       halkenburgTransferFrame: state.frame,
-    },
+    }),
   }
 }
 
@@ -62,6 +63,8 @@ function transferBodyReady(state: FightState, side: FightSide): boolean {
   const actor = state[side]
   return (
     halkenburgRosterVariant(state) &&
+    halkenburgMode(state, side) === 'roster' &&
+    !actor.halkSoul?.linked &&
     state.phase === 'fighting' &&
     !state.catsName &&
     canAct(actor) &&

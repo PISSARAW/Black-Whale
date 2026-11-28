@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { chainShot, landChainShot, threeSoulBodies } from './halkenburgChainTestKit'
+import {
+  chainShot,
+  landChainShot,
+  positionSoulCohort,
+  threeSoulBodies,
+} from './halkenburgChainTestKit'
 import { collectSoulBodies } from './halkenburgSoulBodies'
 import { reconcileHalkenburgSouls, advanceHalkenburgSouls } from './halkenburgSouls'
 import { multiCommand } from './fourCombatTestKit'
@@ -115,7 +120,7 @@ describe('Halkenburg transfers through a connected chain of actual bodies', () =
     expect(breached.winner).toBe('player')
   })
   it('keeps the caster in the lottery after paying the last aura unit, without gathering new will at zero aura', () => {
-    const base = soulHit(soulDuel()),
+    const base = positionSoulCohort(soulHit(soulDuel()), 'player'),
       cost = moveById('halkenburg:neutralSpecial')!.auraCost
     const ready = {
       ...base,

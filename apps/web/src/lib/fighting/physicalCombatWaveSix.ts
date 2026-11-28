@@ -180,7 +180,7 @@ export const WAVE_SIX_MOVES = {
       lunge: 1.76,
       auraZone: 'hands',
     }),
-    backHeavy: physicalMove('Crochet de recul', 'Pull Counter', { recovery: 21, lunge: -0.57 }),
+    backHeavy: physicalMove('Crochet de recul', 'Pull Counter', { lunge: -0.57 }),
     throw: physicalMove('La bascule de l’épaule', 'The Shoulder Turn', {}),
   },
   hanzo: {

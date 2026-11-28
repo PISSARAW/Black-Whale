@@ -6,13 +6,27 @@ import { advanceProjectiles } from './projectiles'
 import { resolveFightImpacts } from './combatImpact'
 import { resolveRosterProjectileHits } from './rosterGuestContacts'
 import { createTeamFight, startTeamFight } from './teamMatch'
+import { COHORT_REACH } from './halkenburgCollective'
+import { entitiesFor, updateEntity } from './preparationWorld'
 import type { FightSide, FightState } from './types'
+
+export function positionSoulCohort(state: FightState, side: FightSide): FightState {
+  const archer = state[side]
+  let next = state
+  for (const supporter of entitiesFor(state, side, 'supporter')) {
+    if (Math.abs(supporter.x - archer.x) <= COHORT_REACH) continue
+    const x = Math.max(7, Math.min(93, archer.x - archer.facing * 12))
+    next = updateEntity(next, supporter.id, { x })
+  }
+  return next
+}
 
 /** Use the actual retained-bow command, committed lottery and travelling projectile. */
 export function chainShot(base: FightState, side: FightSide = 'player'): FightState {
+  const aligned = positionSoulCohort(base, side)
   for (let rng = 0; rng < 100; rng++) {
     const prepared = {
-      ...base,
+      ...aligned,
       rng,
       [side]: {
         ...base[side],
@@ -51,7 +65,8 @@ export function threeSoulBodies(): FightState {
       fighter: { ...guest.fighter, x: 85 },
     })),
   }
-  return landChainShot(chainShot(aligned))
+  const continued = landChainShot(chainShot(aligned))
+  return positionSoulCohort(continued, 'player')
 }
 export function soulTeam(side: FightSide = 'player'): FightState {
   const rosters = {

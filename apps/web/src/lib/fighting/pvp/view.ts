@@ -55,10 +55,17 @@ const SIDE_FIELDS = new Set([
   'sun',
   'moon',
 ])
+const SOUL_MIND_FIELDS = new Set(['key', 'participantMind', 'halkRosterMind', 'halkTeamMind'])
+function localSoulMindKey(key: string): string {
+  return key.replace(
+    /^mind:(player|opponent)(?=:|$)/,
+    (_, side: string) => `mind:${localSide(side)}`,
+  )
+}
+
 export function localPerspective(value: unknown, swap: boolean, field = ''): unknown {
   if (!swap) return value
-  if (field === 'sustainedKeys' && typeof value === 'string') return localSustainedKey(value)
-  if (SIDE_FIELDS.has(field) && typeof value === 'string') return localSide(value)
+  if (typeof value === 'string') return localReference(value, field)
   if (Array.isArray(value)) return value.map((entry) => localPerspective(entry, true, field))
   if (!value || typeof value !== 'object') return value
   return Object.fromEntries(
@@ -68,6 +75,12 @@ export function localPerspective(value: unknown, swap: boolean, field = ''): unk
     ]),
   )
 }
+function localReference(value: string, field: string): string {
+  if (field === 'sustainedKeys') return localSustainedKey(value)
+  if (SOUL_MIND_FIELDS.has(field)) return localSoulMindKey(value)
+  return SIDE_FIELDS.has(field) ? localSide(value) : value
+}
+
 function localSide(value: string): string {
   if (value === 'player') return 'opponent'
   return value === 'opponent' ? 'player' : value

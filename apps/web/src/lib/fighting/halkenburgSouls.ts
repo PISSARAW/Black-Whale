@@ -77,7 +77,7 @@ function soulShotAdmitted(state: FightState, hit: ProjectileHit): boolean {
   return (
     state.phase === 'fighting' &&
     hit.projectile.halkenburgArrow?.mode === 'souls' &&
-    !state.rosterProjection
+    !projectedSoulWorld(state)
   )
 }
 function targetBody(
@@ -131,13 +131,18 @@ function eligibleBody(body: ArcadeFighter): boolean {
   )
 }
 
+/** Guest contact views omit other vessels and cannot adjudicate their minds. */
+function projectedSoulWorld(state: FightState): boolean {
+  return Boolean(state.rosterProjection || state.rosterGuestContext)
+}
+
 /** The full-world referee calls this before judging an actual fatal impact. */
 export function reconcileHalkenburgSouls(state: FightState): FightState {
-  if (!state.halkSoulLinks?.length || state.rosterProjection) return state
+  if (!state.halkSoulLinks?.length || projectedSoulWorld(state)) return state
   return settleLinks(state, collectSoulBodies(state))
 }
 export function advanceHalkenburgSouls(state: FightState): FightState {
-  if (state.phase !== 'fighting' || !state.halkSoulLinks?.length || state.rosterProjection)
+  if (state.phase !== 'fighting' || !state.halkSoulLinks?.length || projectedSoulWorld(state))
     return state
   const links = state.halkSoulLinks.map((link) => ({
     ...link,

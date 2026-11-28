@@ -4,12 +4,16 @@ import { canAct } from './fightActorState'
 import { halkenburgMode } from './halkenburgSoulTypes'
 import { reconcileHalkenburgSouls } from './halkenburgSouls'
 import { performSoulBow, soulBowOptions } from './halkenburgSoulBow'
-import type { ArsenalInvocation, ArsenalOption } from './retrospectiveTypes'
+import type { ArsenalCommand, ArsenalInvocation, ArsenalOption } from './retrospectiveTypes'
 import type { FightSide, FightState } from './types'
 
 /** Explicit compressed duel clocks; the chapter's sedative result is ten hours. */
 export const SOUL_SLEEP_FRAMES = 180
 export const SOUL_SEDATIVE_FRAMES = 600
+export function isMaterialSoulCommand(command: ArsenalCommand): boolean {
+  return command.action.startsWith('halkenburg-') && command.action !== 'halkenburg-transfer'
+}
+
 export function performHalkenburgSoulCommand(options: ArsenalInvocation): FightState {
   const { state, side, command } = options
   if (command.action === 'halkenburg-mode') return selectMode(options)

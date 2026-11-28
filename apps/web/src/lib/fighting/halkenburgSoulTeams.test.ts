@@ -20,12 +20,13 @@ import { advanceCatsName } from './camillaCat'
 import { reconcileHalkenburgSouls } from './halkenburgSouls'
 import { voluntaryNenAvailable } from './nenAccess'
 
-function laterHalkenburg(fighter: FighterId = 'halkenburg') {
+function laterHalkenburg(fighter: FighterId = 'halkenburg', rosterVariant = false) {
   let s = startTeamFight(
     createTeamFight(
       { player: ['halkenburg', 'hisoka', 'theta'], opponent: ['benjamin', fighter, 'leorio'] },
       {
         preparation: { mode: 'scenario', resources: [], cohorts: ['player', 'opponent'] },
+        halkenburgRosterVariant: rosterVariant,
       },
     ),
   )
@@ -112,8 +113,8 @@ describe('Halkenburg’s material minds in three-member team sets', () => {
     expect(collectSoulBodies(s)).toHaveLength(7)
     expect(teamLiving(s.teamMatch!.seats.opponent)).toBe(2)
   })
-  it('keeps the default roster variant’s original slot and granted techniques when it enters an existing mind-transfer world', () => {
-    const before = laterHalkenburg(),
+  it('keeps the selected roster variant’s original slot and granted techniques when it enters an existing mind-transfer world', () => {
+    const before = laterHalkenburg('halkenburg', true),
       key = before.opponent.halkSoul!.key
     const prepared = {
       ...before,

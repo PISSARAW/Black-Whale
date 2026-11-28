@@ -6,7 +6,7 @@ import { EMPTY_INPUT, type FighterId } from './types'
 
 describe('priority signature moves and contextual follow-ups', () => {
   it('uses the current replay ruleset', () => {
-    expect(REPLAY_RULESET).toBe('clash-combat-112')
+    expect(REPLAY_RULESET).toBe('clash-combat-113')
   })
 
   it.each([

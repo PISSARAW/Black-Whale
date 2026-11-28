@@ -45,6 +45,7 @@ import {
 } from './halkenburgHostCommands'
 import {
   performHalkenburgSoulCommand as performHalkenburgMaterialSoulCommand,
+  isMaterialSoulCommand,
   halkenburgSoulOptions,
 } from './halkenburgSoulActions'
 import { dolphinCommandAllowed, performLoanCommand, loanCommandOptions } from './dolphinCommands'
@@ -136,7 +137,7 @@ export function performArsenalCommand(
 ): FightState {
   if (!fightAcceptsCommands(state) || !validArsenalCommand(command)) return state
   if (isHalkenburgSoulCommand(command)) return performHalkenburgSoulCommand(state, side, command)
-  if (command.action.startsWith('halkenburg-'))
+  if (isMaterialSoulCommand(command))
     return performHalkenburgMaterialSoulCommand({ state, side, command })
   if (command.action.startsWith('person-')) return performPersonDolphinCommand(state, side, command)
   if (!canUseNativeArsenal(state, side)) return state

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performMove, tickFight } from '../engine'
 import { fightReplayHash } from '../fightReplayHash'
+import { addChrolloPage, toggleChrolloBookmark } from '../chrolloBook'
 import { recordFightDeath } from '../fightDeaths'
 import { resolveFightOutcome } from '../fightOutcome'
 import { EMPTY_INPUT, type FighterId } from '../types'
@@ -50,7 +51,9 @@ function contract() {
 }
 function copy() {
   const state = duel('chrollo')
-  state.player.chrolloBook = { pages: ['melody'], page: 0, open: false, bookmark: 'melody' }
+  state.player.chrolloBook = toggleChrolloBookmark(
+    addChrolloPage(state.player.chrolloBook!, 'melody'),
+  )
   return state
 }
 function charge() {

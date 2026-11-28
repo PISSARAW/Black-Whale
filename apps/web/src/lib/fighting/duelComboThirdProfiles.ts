@@ -158,7 +158,7 @@ export const THIRD_DUEL_PROFILES = {
       },
       // This committed opening must outlast the real floor travel and rise of the remote fist.
       backHeavy: {
-        tuning: { startup: 12, recovery: 21, hitstun: 39, knockback: 1.5, reach: 12 },
+        tuning: { startup: 12, recovery: 33, hitstun: 39, knockback: 1.5, reach: 12 },
         into: ['forwardHeavy', 'lowHeavy', 'neutralSpecial'],
       },
       lowHeavy: {

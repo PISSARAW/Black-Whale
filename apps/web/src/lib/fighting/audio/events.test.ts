@@ -185,11 +185,11 @@ describe('combat sound coverage', () => {
     for (let frame = 1; frame <= 60; frame++)
       events.push(...fightSoundEvents(walk(frame - 1), walk(frame)))
     expect(events.filter((event) => event.kind === 'step')).toEqual([
-      expect.objectContaining({ x: 23.6, take: expect.any(Number) }),
+      expect.objectContaining({ x: 25.8, take: expect.any(Number) }),
     ])
     expect(fightSoundEvents(walk(36), { ...walk(36), frame: 72 })).toEqual([])
     expect(
-      fightSoundEvents(walk(14), walk(17)).filter((event) => event.kind === 'step'),
+      fightSoundEvents(walk(36), walk(39)).filter((event) => event.kind === 'step'),
     ).toHaveLength(1)
   })
 

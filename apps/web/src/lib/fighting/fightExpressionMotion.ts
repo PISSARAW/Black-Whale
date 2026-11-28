@@ -1,6 +1,7 @@
 import { fightCatalogueExpression } from './fightCatalogueExpression'
 import type { HumanMotion } from '$lib/tour/humanAnimation'
 import { humanBlink } from '$lib/tour/humanFaceMotion'
+import { HUMAN_JOINT_LIMITS, limitEuler } from '$lib/tour/humanJointLimits'
 import type { ArcadeFighter } from './types'
 import {
   FACE_CONTROLS,
@@ -60,6 +61,7 @@ export function expressiveFightMotion(
     human.head.rotation.x += pose.headPitch
     human.head.rotation.y += pose.headYaw
     human.head.rotation.z += pose.headRoll * context.fighter.facing
+    limitEuler(human.head.rotation, HUMAN_JOINT_LIMITS.head, 1)
     const breath = (1 + Math.sin(context.seconds * Math.PI * 2 * 0.8)) * 0.0012
     for (const arm of human.arms) arm.position.y += pose.shoulder + breath
   }

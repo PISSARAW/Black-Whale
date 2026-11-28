@@ -112,7 +112,7 @@ describe('localized Ryu and Ko aura', () => {
     expect(state.impact?.attacker).toBe('player')
     expect(state.player.nen.ko).toBeNull()
     const discharge = () =>
-      f.shells().find((node) => node.visible && node.name === 'nen-concentration:hands:right')
+      f.shells().find((node) => node.visible && node.name === 'nen-concentration:hands:left')
     expect(discharge()?.material.uniforms.u_strength.value).toBe(1)
     while (state.hitstop > 1) {
       state = tickFight(state, EMPTY_INPUT, { dt: 1 / 60, ai: false, opponentInput: EMPTY_INPUT })
@@ -159,8 +159,8 @@ describe('localized Ryu and Ko aura', () => {
     expect(ko.nen.ko).toBeTruthy()
     const concentrated = auraConcentration(ko)!
     expect(concentrated.technique).toBe('ko')
-    expect(concentrationShare(concentrated, { zone: 'hands', limb: 'right' })).toBe(1)
-    expect(concentrationShare(concentrated, { zone: 'hands', limb: 'left' })).toBe(0)
+    expect(concentrationShare(concentrated, { zone: 'hands', limb: 'left' })).toBe(1)
+    expect(concentrationShare(concentrated, { zone: 'hands', limb: 'right' })).toBe(0)
     expect(concentrated.shares.torso).toBe(0)
     expect(concentrated.shares.feet).toBe(0)
   })

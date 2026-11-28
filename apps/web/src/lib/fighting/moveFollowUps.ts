@@ -360,6 +360,9 @@ export function attachMoveFollowUps(moveset: FighterMoveset): FighterMoveset {
     const move: FighterMove = {
       ...base,
       id: spec.id,
+      // A contextual follow-up cannot cancel straight back into its own opener.
+      cancelInto: base.cancelInto.filter((id) => id !== source.id),
+      cancelOnBlockInto: base.cancelOnBlockInto.filter((id) => id !== source.id),
       ...(physics?.guard ? { guard: physics.guard } : {}),
       ...(physics?.tuning ? { tuning: { ...base.tuning, ...physics.tuning } } : {}),
     }

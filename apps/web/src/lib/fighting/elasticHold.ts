@@ -2,6 +2,7 @@ import { gumNetwork, ownedGumLinks, withGumNetwork } from './bungeeNetwork'
 import { hisokaUtilityMove } from './hisokaTechnique'
 import { attackData } from './frameData'
 import { FIGHT_FPS } from './fightClock'
+import { isAirPursuit } from './directionalChain'
 import type { FightSide, FightState } from './types'
 
 /**
@@ -68,6 +69,8 @@ function holdFor(state: FightState, side: FightSide): FightState {
 function holding(state: FightState, side: FightSide, targetSide: FightSide): boolean {
   const target = state[targetSide]
   if (target.hitStun === 0 && target.knockdownFrames === 0) return false
+  // A directional launcher keeps its ordinary defensive recovery during the chase.
+  if (target.airRecovery && isAirPursuit(state[side].attack?.directionalChain)) return false
   const links = ownedGumLinks(state, side)
   const tied = links.some(
     (link) => link.target.kind === 'fighter' && link.target.side === targetSide,

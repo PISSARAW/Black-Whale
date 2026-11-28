@@ -136,7 +136,10 @@ describe('guard type is independent of Nen body reinforcement', () => {
     '%s declares finite timings and defensive properties for every move',
     (id) => {
       const moveset = movesetFor(id)!
-      const ids = new Set(moveset.moves.map((move) => move.id))
+      const ids = new Set([
+        ...moveset.moves.map((move) => move.id),
+        ...(moveset.followUps?.map((entry) => entry.id) ?? []),
+      ])
       for (const move of moveset.moves) {
         expect(['mid', 'low', 'overhead', 'throw']).toContain(move.guard)
         expect(move.guard === 'throw').toBe(move.category === 'throw')

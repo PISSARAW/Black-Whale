@@ -15,6 +15,7 @@ const BODY_FIELDS = new Set([
   'kallutoPaper',
   'paperKit',
   'plantedPaper',
+  'pressureRead',
   'blackVoiceScreen',
   'stolenChainAbility',
   'blackVoiceGear',

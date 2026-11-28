@@ -154,10 +154,18 @@ describe.each(FIGHTING_ROSTER.map(({ id }) => id))('poursuite du roster, %s', (i
     })
     expect(immediate.state.player.attack?.moveId).toBe(`${id}:airLight`)
 
-    for (const choice of [launch, tap(afterActive(launch, 10), { right: true })]) {
-      const recovery = resolveRace(launch, choice)
-      expect(recovery.defended).toBe(true)
-      expect(recovery.state.impact).toMatchObject({ attacker: 'opponent', comboHits: 1 })
+    const recovery = resolveRace(launch, launch)
+    expect(recovery.defended).toBe(true)
+    expect(recovery.state.impact).toMatchObject({ attacker: 'opponent', comboHits: 1 })
+
+    const late = resolveRace(launch, tap(afterActive(launch, 10), { right: true }))
+    if (id === 'bonolenov') {
+      // Bonolenov's lower launch arc keeps this quick follow-up in reach.
+      expect(late.defended).toBe(false)
+      expect(late.state.impact).toMatchObject({ attacker: 'player', comboHits: 4, blocked: false })
+    } else {
+      expect(late.defended).toBe(true)
+      expect(late.state.impact).toMatchObject({ attacker: 'opponent', comboHits: 1 })
     }
   })
 })

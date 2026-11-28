@@ -1,4 +1,5 @@
 import { afterAll, expect, it, vi } from 'vitest'
+import { createCamillaFatalityFilm } from '../../../../demos/fighting-showcase/camillaFatalityFilm'
 import { createPhinksFatalityFilm } from '../../../../demos/fighting-showcase/phinksFatalityFilm'
 import { writeFileSync } from 'node:fs'
 import * as THREE from 'three'
@@ -73,6 +74,7 @@ it.each(cases)(
     }
     if (id === 'phinks' && target === 'kurapika')
       Object.assign(state, createPhinksFatalityFilm().state)
+    if (id === 'camilla') Object.assign(state, createCamillaFatalityFilm({ target, side }).state)
     const source = JSON.stringify(state)
     const glow = (color: number) => new THREE.MeshBasicMaterial({ color })
     const build = (fighter: FightState['player']) => {

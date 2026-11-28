@@ -7,7 +7,6 @@ import { createPhinksEffects } from './phinksEffects'
 import { createPhinksDisintegration } from './phinksDisintegration'
 import { createPhinksLook } from './phinksLook'
 import { reachVictoryHand, turnVictoryChest } from './pose'
-import { beginVictoryPose, rememberVictoryPose } from './poseContinuity'
 import { disposeVictoryObject, ease } from './resources'
 import {
   PHINKS_CONTACT,
@@ -282,8 +281,6 @@ export function createPhinksVictory(): VictoryDriver {
   return {
     update(context) {
       const { age, hero, victim, frame } = context
-      const clock = { token: frame.token, age }
-      beginVictoryPose(hero.root, clock)
       const strike = frame.phinksStrike ?? phinksVictoryStrike(context.state, frame.winner)
       const shown = Math.min(2, strike.turns)
       const rotations = turnsAt(age, shown)
@@ -291,7 +288,6 @@ export function createPhinksVictory(): VictoryDriver {
       const origin = victim.root.position.clone()
       const rival = poseRival(context, strike)
       const pose = posePhinks(context, shown, rival)
-      rememberVictoryPose(hero.root, clock)
       effects.sync({
         ...pose,
         age,

@@ -348,7 +348,9 @@ describe('live victory renderer', () => {
             expect(audit.bow).toBe(1)
             expect(audit.dead).toBe(true)
           }
-          audit.gripErrors.forEach((error: number) => expect(error).toBeLessThan(0.2))
+          audit.gripErrors.forEach((error: number, index: number) =>
+            expect(error, `${age}: ${index === 0 ? 'right' : 'left'} hand`).toBeLessThan(0.2),
+          )
           restore()
           expect(snapshot(fixture.scene)).toEqual(before)
           expect(JSON.stringify(fixture.state)).toBe(state)

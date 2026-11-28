@@ -9,12 +9,14 @@ import { nativeVictoryFall } from './nativeFall'
 
 function arms(actor: VictoryActor) {
   return (['left', 'right'] as const).map((side) =>
-    guardHand(
-      actor,
-      side,
-      localToHead(actor, new Vector3(side === 'left' ? -0.15 : 0.15, -0.5, 0.24)),
-    ),
+    guardHand(actor, side, restingHand(actor, side)),
   )
+}
+
+function restingHand(actor: VictoryActor, side: 'left' | 'right'): Vector3 {
+  const scale = Math.min(1, actor.height / 1.5)
+  const offset = new Vector3(side === 'left' ? -0.15 : 0.15, -0.5, 0.24)
+  return localToHead(actor, offset.multiplyScalar(scale))
 }
 function stride(actor: VictoryActor, age: number, moving: number) {
   for (const [i, side] of ['left', 'right'].entries()) {
@@ -51,7 +53,7 @@ export function luiniPose(context: VictoryContext) {
   if (hero.height > victim.height * 1.15 && age >= 330) lowerGuardForProp(hero, target.y + 0.1)
   const errors = [...arms(hero), ...arms(victim)]
   const opening = ease((age - 318) / 18) * (1 - ease((age - 366) / 18))
-  const rest = localToHead(victim, new Vector3(0.16, -0.5, 0.24))
+  const rest = restingHand(victim, 'right')
   if (age < 408) errors[3] = guardHand(victim, 'right', rest.lerp(handle, opening))
   const shoulder = hero.root.getObjectByName('shoulder-right')!.getWorldPosition(new Vector3())
   const direction = target.clone().sub(shoulder).normalize()

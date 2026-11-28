@@ -146,8 +146,8 @@ export function selectVictory(state: FightState): VictorySelection | null {
   const fighter = state[winner].id
   if (!hasVictoryCinematic(fighter)) return null
   const loser = winner === 'player' ? 'opponent' : 'player'
-  if (fighter === 'camilla' && !catRevivalFinished(state, winner, loser)) return null
   const curse = beyondCurseVariant(state)
+  if (fighter === 'camilla' && !curse && !catRevivalFinished(state, winner, loser)) return null
   const duration = curseAwareDuration(fighter, curse)
   const token = [
     state.environment.stageId,

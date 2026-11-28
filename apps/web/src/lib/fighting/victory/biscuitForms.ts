@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { buildFightFigure } from '../fighterFigure'
 import type { VictoryContext } from './types'
 import { victoryActor, resetVictoryActor, groundVictoryActor } from './actors'
+import { beginVictoryPose } from './poseContinuity'
 import { ease } from './resources'
 
 export const BISCUIT_REVEAL = 210
@@ -37,6 +38,7 @@ export function createBiscuitVictoryForms() {
       model.root.updateWorldMatrix(true, true)
       const current = victoryActor(model.root, 'biscuit')
       groundVictoryActor(current)
+      beginVictoryPose(model.root, { token: context.frame.token, age: context.frame.elapsed * 60 })
       context.hero = current
       context.add(model.root)
       return { large, growth }

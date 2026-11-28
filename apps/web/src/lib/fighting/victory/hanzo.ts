@@ -1,4 +1,5 @@
 import { Vector3 } from 'three'
+import { keepHumanFigure } from '$lib/tour/humanConstraints'
 import type { VictoryContext, VictoryDriver } from './types'
 import { createHanzoVictoryDouble } from './hanzoDouble'
 import { hanzoSleepingPose, hanzoDoublePose, HANZO_RELEASE, HANZO_RETURN } from './hanzoPose'
@@ -7,6 +8,7 @@ import { createHanzoPartition } from './hanzoPartition'
 import { visibleVictoryBounds } from './bodyBounds'
 import { victoryPortrait, victoryShot } from './camera'
 import { ease } from './resources'
+import { rememberVictoryPose } from './poseContinuity'
 import type { VictoryActor } from './types'
 
 function hanzoCamera(
@@ -67,6 +69,8 @@ export function createHanzoVictory(): VictoryDriver {
       const double = apparition.get(context)
       const pose = hanzoDoublePose(context, double, sleeping.body)
       double.root.visible = context.age >= 72 && context.age < HANZO_RETURN
+      keepHumanFigure(double.root)
+      rememberVictoryPose(double.root, { token: context.frame.token, age: context.age })
       const bounds = visibleVictoryBounds(double.root)
       const wallX = context.centre - 0.2
       const crossing =

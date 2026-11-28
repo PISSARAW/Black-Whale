@@ -13,6 +13,7 @@ import { createThrowSignatureScene } from './scene'
 import { fightWorldX, fightWorldY } from '../fightCoordinates'
 import { FIGHT_MODEL_POSES } from '../sceneMotion'
 import { defaultFightComfort } from '../fightComfort'
+import { toggleChrolloBookmark } from '../chrolloBook'
 import { EMPTY_INPUT, type FightSide, type FighterId } from '../types'
 
 const cases = FIGHTING_ROSTER.flatMap(({ id }) =>
@@ -44,8 +45,12 @@ function auditThrow(input: {
     player: { ...state.player, x: 46, aura: 100 },
     opponent: { ...state.opponent, x: 51, aura: 100 },
   }
+  const book = state[side].chrolloBook
+  if (book?.open)
+    state = { ...state, [side]: { ...state[side], chrolloBook: toggleChrolloBookmark(book) } }
   state = performThrow(state, side, { ...EMPTY_INPUT, aura: powered })
   const actor = state[side]
+  expect(actor.attack?.variant).toBe('throw')
   state = resolveFightImpacts(
     {
       ...state,

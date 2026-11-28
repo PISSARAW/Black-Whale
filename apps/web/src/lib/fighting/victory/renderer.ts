@@ -1,10 +1,12 @@
 import type { Object3D, PerspectiveCamera, Scene } from 'three'
+import { keepHumanFigure } from '$lib/tour/humanConstraints'
 import type { FightState } from '../types'
 import type { FightComfort } from '../fightComfort'
 import type { VictoryFrame } from './playback'
 import type { VictoryFighter } from './catalogue'
 import type { VictoryContext, VictoryDriver, VictoryModels } from './types'
 import { victoryActor, resetVictoryActor, groundVictoryActor } from './actors'
+import { beginVictoryPose, rememberVictoryPose } from './poseContinuity'
 import { victoryTransaction } from './transaction'
 import { victoryLighting } from './lighting'
 import { victoryWide } from './camera'
@@ -264,7 +266,15 @@ export function createVictoryRenderer(options: {
           },
         }
         const driver = resolveDriver(frame, drivers)
+        const clock = { token: frame.token, age: frame.elapsed * 60 }
+        beginVictoryPose(hero.root, clock)
+        beginVictoryPose(victim.root, clock)
         driver.update(context)
+        keepHumanFigure(context.hero.root)
+        keepHumanFigure(context.victim.root)
+        rememberVictoryPose(hero.root, clock)
+        rememberVictoryPose(victim.root, clock)
+        if (context.hero.root !== hero.root) rememberVictoryPose(context.hero.root, clock)
         if (comfort.camera === 0 && !ownsComfortCamera(frame))
           victoryWide(context, frame.fighter === 'feitan' ? hero.height + 2.6 : 0)
         hero.root.updateWorldMatrix(true, true)

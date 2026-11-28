@@ -40,7 +40,7 @@ export function illumiVictoryPose(context: VictoryContext) {
   const rest = localToHead(hero, new Vector3(0.22, -0.85, 0.12))
   const hand = rest.clone().lerp(rear.point.clone().addScaledVector(rear.outward, 0.08), insert)
   hand.lerp(front.point.clone().addScaledVector(front.outward, 0.08), finish)
-  const rightError = reachVictoryHand(context, { side: 'right', target: hand })
+  const rightError = reachNeedleGrip(context, hand, Math.max(insert, finish))
   const leftError = reachVictoryHand(context, {
     side: 'left',
     target: localToHead(hero, new Vector3(-0.22, -0.9, 0.02)),
@@ -49,4 +49,16 @@ export function illumiVictoryPose(context: VictoryContext) {
   const grip = hero.root.getObjectByName('hand-right')!.getWorldPosition(new Vector3())
   return { ...puppet, grip, rightError, leftError, rear, front, insert, finish }
 }
+
+function reachNeedleGrip(context: VictoryContext, target: Vector3, insertion: number): number {
+  const error = reachVictoryHand(context, { side: 'right', target })
+  if (insertion <= 0 || error <= 0.12) return error
+  const wrist = context.hero.root.getObjectByName('hand-right')!.getWorldPosition(new Vector3())
+  const step = target.clone().sub(wrist)
+  step.y = 0
+  step.clampLength(0, Math.min(0.22 * insertion, error - 0.12))
+  context.hero.root.position.add(step)
+  return reachVictoryHand(context, { side: 'right', target })
+}
+
 export type IllumiVictoryPose = ReturnType<typeof illumiVictoryPose>

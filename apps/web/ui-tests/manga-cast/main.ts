@@ -81,11 +81,19 @@ function setCharacters(ids: string[]) {
     const withSnake = requestedId.endsWith('@snake')
     const withPain = requestedId.endsWith('@pain-packer')
     const id = requestedId.split('@')[0]
+    const bonolenovDisguise = requestedId.endsWith('@as-hisoka')
+      ? ('hisoka' as const)
+      : requestedId.endsWith('@as-lynch')
+        ? ('lynch' as const)
+        : undefined
+    const plainSuit = requestedId.endsWith('@plain-suit')
     const declared = catalogue.declared.find((entry) => entry.id === id)!
     if (!declared) throw new Error(`Undeclared character: ${id}`)
     const definition =
-      FIGHTING_ROSTER.find((entry) => entry.modelId === id) ??
-      Object.values(KAMEO_CATALOGUE).find((entry) => entry.modelId === id)
+      bonolenovDisguise || plainSuit
+        ? undefined
+        : (FIGHTING_ROSTER.find((entry) => entry.modelId === id) ??
+          Object.values(KAMEO_CATALOGUE).find((entry) => entry.modelId === id))
     const label = document.createElement('p')
     label.textContent =
       (definition?.name ?? id.replaceAll('-', ' ')) +
@@ -97,7 +105,9 @@ function setCharacters(ids: string[]) {
       (axe ? ' · Hache' : '') +
       (crossGame ? ' · Cross Game' : '') +
       (withSnake ? ' · Bras-serpent' : '') +
-      (withPain ? ' · Pain Packer' : '')
+      (withPain ? ' · Pain Packer' : '') +
+      (bonolenovDisguise ? ` · En ${bonolenovDisguise}` : '') +
+      (plainSuit ? ' · Costume sombre' : '')
     labels.append(label)
     for (const row of [0, 1]) {
       let fighter = row && definition ? createFightState(definition.id, 'hisoka').player : undefined
@@ -143,6 +153,8 @@ function setCharacters(ids: string[]) {
                 identity: id,
                 pose: concert ? 'flute' : 'idle',
                 aura: 'none',
+                ...(bonolenovDisguise ? { bonolenovDisguise } : {}),
+                ...(plainSuit ? { plainSuit: true } : {}),
               },
             },
           })
@@ -206,7 +218,13 @@ function show(view: string) {
       human.root.visible = true
       human.animate(0, concert && !fighter ? 'flute' : 'idle')
       human.root.rotation.y =
-        view === 'left-face' ? -0.8 : view === 'profile' ? Math.PI / 2 : row ? -0.25 : 0
+        view === 'left-face' || view === 'three-quarter'
+          ? -0.8
+          : view === 'profile'
+            ? Math.PI / 2
+            : row
+              ? -0.25
+              : 0
       if ((view === 'combat' || concert) && fighter)
         human.animate(1, 'idle', { motion: fightBodyMotion({ fighter, seconds: 1, progress: 0 }) })
       human.root.updateMatrixWorld(true)
@@ -221,7 +239,7 @@ function show(view: string) {
         human.root.getObjectByName('face-mouth')?.parent ??
         human.root.getObjectByName('face-mouth-base')?.parent
       const target =
-        (view === 'face' || view === 'left-face') && head
+        (view === 'face' || view === 'left-face' || view === 'three-quarter') && head
           ? (snake?.getObjectByName('gel-snake-head') ?? head).getWorldPosition(new THREE.Vector3())
           : new THREE.Vector3(0, 1, 0)
       if (snake && view !== 'face') target.x = 0.4
@@ -231,7 +249,7 @@ function show(view: string) {
           ? view === 'face'
             ? 0.8
             : 1.55
-          : view === 'face' || view === 'left-face'
+          : view === 'face' || view === 'left-face' || view === 'three-quarter'
             ? 0.49
             : snake
               ? 1.65
@@ -266,6 +284,7 @@ setCharacters(['leorio-paradinight', 'shizuku-murasaki', 'machi-komacine', 'feit
 Object.assign(window, {
   mangaCastFixture: {
     ids: catalogue.declared.map((entry) => entry.id),
+    rosterIds: FIGHTING_ROSTER.map((entry) => entry.modelId),
     setCharacters,
     show,
     get models() {

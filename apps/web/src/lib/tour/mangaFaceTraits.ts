@@ -1,3 +1,5 @@
+import { addLynchHeadband } from './mangaBlackWhaleHair'
+import { addBlackWhaleFaceDetails } from './mangaBlackWhaleFaces'
 import { addBodyguardFaces } from './mangaBodyguardFaces'
 import { addTubeppaFace } from './mangaTubeppaHead'
 import { addMarayamFace } from './mangaMarayamHead'
@@ -6,6 +8,7 @@ import type { HumanHeadBuild } from './humanHead'
 import { mergeHumanDetails } from './humanDetailGeometry'
 import { addGelFace } from './mangaGel'
 import { addHeillyReferenceFace } from './mangaHeillyFaces'
+import { addQuorolleEyes, addTevelaresFace } from './mangaHeillyRaidHeads'
 import { addPadailleFace } from './mangaPadaille'
 import { addMelodySoftFeatures } from './mangaMelody'
 import { addUnderworldFaceDetails } from './mangaUnderworldFaces'
@@ -246,7 +249,10 @@ function maorAgeLines(build: HumanHeadBuild, head: Group) {
 
 const REFERENCE_FACES: Record<string, (build: HumanHeadBuild, head: Group) => void> = {
   ...NEN_CLASS_FACE_DETAILS,
+  quorolle: addQuorolleEyes,
+  tevelares: addTevelaresFace,
   kaiser: kaiserBrows,
+  'lynch-fullbokko': addLynchHeadband,
   sarahell: sarahellGuardianFace,
   maor: maorAgeLines,
   shimanu: addShimanuHeadDetails,
@@ -287,6 +293,7 @@ export function addMangaFaceTraits(build: HumanHeadBuild, head: Group): void {
   if (id === 'franklin-bordeau') franklin(build, head)
   REFERENCE_FACES[id]?.(build, head)
   addMangaFacialHair(build, head)
+  addBlackWhaleFaceDetails(build, head)
   addBenjaminDetails(build, head)
   addUnderworldFaceDetails(build, head)
   addPadailleFace(build, head)

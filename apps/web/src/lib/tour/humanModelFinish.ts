@@ -46,7 +46,8 @@ export function finishHumanModel(options: FinishOptions): void {
   const head = eye.parent as Group
   finishEyes(options)
   // Bandages and the high skull collar are physical occluders, not skin.
-  if (!['bonolenov-ndongo', 'feitan-portor'].includes(profile.likeness)) finishFace(options, head)
+  if (!['bonolenov-ndongo', 'feitan-portor', 'hisoka'].includes(profile.likeness))
+    finishFace(options, head)
 }
 
 function finishEyes({ THREE, glow, model, profile }: FinishOptions): void {

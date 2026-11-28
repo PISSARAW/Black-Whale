@@ -1,4 +1,3 @@
-import type { Mesh } from 'three'
 import type { HumanLimbs, HumanLimbsBuild } from './humanLimbs'
 import { mergeHumanDetails } from './humanDetailGeometry'
 
@@ -26,42 +25,34 @@ function hinrighSleeves(build: HumanLimbsBuild, limbs: HumanLimbs) {
   }
 }
 
-function sportShorts(build: HumanLimbsBuild, limbs: HumanLimbs) {
+function sportTrousers(build: HumanLimbsBuild, limbs: HumanLimbs) {
   const { THREE, geometry, glow, profile } = build
-  for (let i = 0; i < 2; i++) {
-    ;(limbs.legs[i].children[0].children[1] as Mesh).material = glow(profile.skin, 1)
-    ;(limbs.knees[i].children[0].children[1] as Mesh).material = glow(profile.skin, 1)
-    const shorts = new THREE.Mesh(
-      geometry(
-        THREE,
-        'manga:terebellum-sport-shorts',
-        () => new THREE.CylinderGeometry(0.095, 0.104, 0.22, 24),
+  const fabric = glow(profile.shirt, 1)
+  const stripe = geometry(THREE, 'manga:terebellum-trouser-trim', () =>
+    mergeHumanDetails([
+      new THREE.CylinderGeometry(0.078, 0.061, 0.215, 18, 1, true, 0.92, 0.56).translate(
+        0,
+        -0.19,
+        0,
       ),
-      glow(profile.trousers, 1),
-    )
-    shorts.position.y = -0.08
-    shorts.name = 'terebellum-sport-shorts'
-    limbs.legs[i].add(shorts)
-    const hem = new THREE.Mesh(
-      geometry(
-        THREE,
-        'manga:terebellum-shorts-hem',
-        () => new THREE.CylinderGeometry(0.104, 0.106, 0.024, 24),
-      ),
-      glow(profile.shirt, 1),
-    )
-    hem.position.y = -0.185
-    limbs.legs[i].add(hem)
-    const cuff = new THREE.Mesh(
-      geometry(
-        THREE,
-        'manga:terebellum-sleeve-cuff',
-        () => new THREE.CylinderGeometry(0.048, 0.046, 0.035, 24),
-      ),
-      glow(profile.shirt, 1),
-    )
+      new THREE.CylinderGeometry(0.062, 0.055, 0.037, 18).translate(0, -0.318, 0),
+    ]),
+  )
+  const sleeveCuff = geometry(
+    THREE,
+    'manga:terebellum-sleeve-cuff',
+    () => new THREE.CylinderGeometry(0.048, 0.046, 0.035, 24),
+  )
+  for (const knee of limbs.knees) {
+    const trim = new THREE.Mesh(stripe, fabric)
+    trim.rotation.y = knee === limbs.knees[0] ? Math.PI : 0
+    trim.name = 'terebellum-trouser-trim'
+    knee.add(trim)
+  }
+  for (const elbow of limbs.elbows) {
+    const cuff = new THREE.Mesh(sleeveCuff, fabric)
     cuff.position.y = -0.267
-    limbs.elbows[i].add(cuff)
+    elbow.add(cuff)
   }
 }
 
@@ -87,6 +78,11 @@ function sleevePiping(build: HumanLimbsBuild, limbs: HumanLimbs) {
 export function addUnderworldLimbClothes(build: HumanLimbsBuild, limbs: HumanLimbs) {
   const id = build.profile.likeness
   if (id === 'hinrigh-biganduffno') hinrighSleeves(build, limbs)
-  if (id === 'terebellum') sportShorts(build, limbs)
+  if (id === 'terebellum') sportTrousers(build, limbs)
   if (id === 'terebellum' || id === 'zakuro-custard') sleevePiping(build, limbs)
+  if (id === 'zakuro-custard')
+    for (const joint of [...limbs.legs, ...limbs.knees]) {
+      joint.children[0].scale.x *= 1.26
+      joint.children[0].scale.z *= 1.18
+    }
 }

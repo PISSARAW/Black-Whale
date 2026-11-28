@@ -8,21 +8,39 @@ export function addOitoFaceAndHair(build: HumanHeadBuild, head: Group): void {
   const { THREE, geometry, materials, glow } = build
   for (const side of [-1, 1]) {
     const oldEye = head.getObjectByName(side < 0 ? 'face-eye-left' : 'face-eye-right')
-    if (oldEye) oldEye.visible = false
+    oldEye?.removeFromParent()
     const eye = new THREE.Mesh(
       geometry(THREE, 'manga:oito-oval-eye', () =>
-        new THREE.CircleGeometry(1, 22).scale(0.029, 0.019, 1),
+        new THREE.CircleGeometry(1, 22).scale(0.032, 0.021, 1),
       ),
       materials.ink,
     )
-    eye.name = 'oito-oval-eye'
+    eye.name = side < 0 ? 'face-eye-left' : 'face-eye-right'
+    eye.userData.referenceFeature = 'oito-oval-eye'
     eye.position.set(side * 0.067, 0.013, 0.181)
+    const sclera = new THREE.Mesh(
+      geometry(THREE, 'manga:oito-eye-sclera', () =>
+        new THREE.CircleGeometry(1, 22).scale(0.027, 0.016, 1),
+      ),
+      glow(0xfffcf5, 1),
+    )
+    sclera.name = 'eye-sclera'
+    sclera.position.z = 0.001
+    const iris = new THREE.Mesh(
+      geometry(THREE, 'manga:oito-eye-iris', () =>
+        new THREE.CircleGeometry(1, 22).scale(0.0095, 0.0125, 1),
+      ),
+      materials.ink,
+    )
+    iris.name = 'eye-pupil'
+    iris.position.z = 0.002
     const shine = new THREE.Mesh(
       geometry(THREE, 'manga:oito-eye-shine', () => new THREE.CircleGeometry(0.0045, 10)),
       glow(0xfffcf5, 1),
     )
-    shine.position.set(side * -0.007, 0.006, 0.002)
-    eye.add(shine)
+    shine.position.set(side * -0.003, 0.0045, 0.001)
+    iris.add(shine)
+    eye.add(sclera, iris)
     head.add(eye)
   }
 

@@ -1,3 +1,4 @@
+import { disposeExpressionEffects } from './expressions/faceEffects'
 import type * as Three from 'three'
 import type { PortalRenderer } from './PortalRenderer'
 
@@ -111,6 +112,7 @@ export class ApparitionView<T extends RenderedApparition> {
   }
 
   private disposeRig(held: T): void {
+    disposeExpressionEffects(held.root)
     held.root.traverse((part) => {
       const mesh = part as Three.Mesh
       if (mesh.geometry && !mesh.geometry.userData.sharedHuman) mesh.geometry.dispose()

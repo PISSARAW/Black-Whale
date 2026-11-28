@@ -1,9 +1,11 @@
+import { declaredBlackWhaleProfile } from './blackWhaleAppearanceProfiles'
 import appearanceFile from '../../../../../data/characters/appearance.json'
 import { MARAYAM_FRAME } from './mangaMarayamProfile'
 import { ZHANG_LEI_FRAME } from './mangaZhangLeiProfile'
 import type { Apparition } from './apparitions'
 import type { TwinCostume } from './mangaTwinWardrobe'
 import type { HumanFaceFeatures } from './humanFaceFeatures'
+import { SILENT_MAJORITY_PALETTE } from './silentMajorityPalette'
 
 /**
  * What a body aboard looks like: the declaration first, the role second.
@@ -124,6 +126,7 @@ export const NEUTRAL_HUMAN_PROPORTIONS: HumanProportions = {
 export interface HumanProfile {
   /** Optional face shell only; eyes, hair, clothing and the body's rig retain their own identity. */
   faceLike?: string
+  plainSuit?: boolean
   build: 'slim' | 'average' | 'broad'
   height: number
   shoulders: number
@@ -283,17 +286,17 @@ const ROLE_PROFILES: Record<
     build: 'slim',
     height: 0.96,
     shoulders: 0.94,
-    skin: 0xf0ece4,
-    hair: 0x141414,
+    skin: SILENT_MAJORITY_PALETTE.porcelain,
+    hair: SILENT_MAJORITY_PALETTE.hair,
     // The puppet's helmet is its own shape — `silentMajorityHair` — and a cap
     // under it would only show through the opening left for the mask.
     hairStyle: 'shaved',
     face: 'narrow',
     expression: 'neutral',
-    jacket: 0x171717,
-    trousers: 0xf0ece4,
+    jacket: SILENT_MAJORITY_PALETTE.cloth,
+    trousers: SILENT_MAJORITY_PALETTE.porcelain,
     shirt: 0x171717,
-    accent: 0xf0ece4,
+    accent: SILENT_MAJORITY_PALETTE.porcelain,
     clothing: 'ritual',
     frame: 'adult',
     signatures: [],
@@ -435,7 +438,7 @@ export function humanProfile(seen: Apparition): HumanProfile {
   // The declaration first. Nothing below it runs for somebody the archive has
   // drawn: no hash, no role palette, and no wardrobe override — a face the
   // catalogue states is a face nothing else may edit.
-  const declared = LIKENESSES.get(identity)
+  const declared = declaredBlackWhaleProfile(identity, seen.human, LIKENESSES)
   if (declared) return declared
 
   const role = seen.human?.role ?? (seen.kind === 'combatant' ? 'fighter' : 'witness')

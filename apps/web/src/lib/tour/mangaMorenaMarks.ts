@@ -26,7 +26,7 @@ function addScars(build: HumanHeadBuild, head: Group) {
   const pointOnSkin = (t: number, offset: number): Point3 => {
     const [x, y] = scarPoint(t, offset)
     ray.set(new THREE.Vector3(x, y, 1), new THREE.Vector3(0, 0, -1))
-    return [x, y, (ray.intersectObject(face)[0]?.point.z ?? 0.17) + 0.0025]
+    return [x, y, (ray.intersectObject(face)[0]?.point.z ?? 0.17) + 0.0016]
   }
   for (const offset of [0, 0.021]) {
     const scar = new THREE.Mesh(

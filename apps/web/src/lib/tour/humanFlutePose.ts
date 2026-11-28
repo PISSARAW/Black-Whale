@@ -11,8 +11,10 @@ export function poseFluteArms(rig: { head: Object3D; arms: Group[]; elbows: Grou
     const direction = target.clone().sub(shoulder)
     const distance = direction.length()
     direction.normalize()
-    const upper = CANON.upperArm,
-      lower = CANON.forearm
+    // The catalogue may shorten or lengthen the whole arm at its shoulder.
+    // Solve in the figure's coordinates, where that parent scale is already visible.
+    const upper = CANON.upperArm * arm.scale.y,
+      lower = CANON.forearm * arm.scale.y
     const along = (upper * upper - lower * lower + distance * distance) / (2 * distance)
     const bend = Math.sqrt(Math.max(0, upper * upper - along * along))
     const normal = direction.clone().set(index === 0 ? -1 : 1, -1, 0)

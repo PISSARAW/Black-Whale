@@ -23,8 +23,6 @@ describe('P14 hero finish and P16 roster propagation', () => {
       'hisoka-shoulder-panel-right',
       'hisoka-wrist-cuff-left',
       'hisoka-wrist-cuff-right',
-      'hisoka-nose-bridge',
-      'hisoka-lower-lip',
     ])
       expect(model.root.getObjectByName(name), name).toBeTruthy()
     expect(model.root.getObjectByName('hisoka-waistcoat-button-3')).toBeTruthy()
@@ -57,7 +55,7 @@ describe('P14 hero finish and P16 roster propagation', () => {
     const hero = figure('hisoka')
     const heroHand = hero.root.getObjectByName('hand-left') as THREE.Mesh
     expect(heroHand.scale.x).toBe(1)
-    expect(heroHand.geometry.userData.fightExtremityScale).toBeCloseTo(1.14)
+    expect(heroHand.geometry.userData.fightExtremityScale).toBeCloseTo(1.06)
     expect(hero.root.getObjectByName('fight-hand-knuckles-left')?.parent?.name).toBe('hand-left')
     const other = figure('chrollo')
     expect(other.root.getObjectByName('fight-roster-finish')?.userData.finishTier).toBe('roster')
@@ -74,7 +72,7 @@ describe('P14 hero finish and P16 roster propagation', () => {
       model.root.traverse((node) => {
         if (
           (node as THREE.Mesh).isMesh &&
-          /^(fight-hand-knuckles|hisoka-(waistcoat-(left|right|button)|shoulder|wrist|nose|lower)|kurapika-(jacket|lower))/.test(
+          /^(fight-hand-knuckles|hisoka-(waistcoat-(left|right|button)|shoulder|wrist)|kurapika-(jacket|lower))/.test(
             node.name,
           )
         )
@@ -94,7 +92,7 @@ describe('P14 hero finish and P16 roster propagation', () => {
     expect(finish, id).toBeTruthy()
     for (const side of ['left', 'right'] as const) {
       const hand = model.root.getObjectByName(`hand-${side}`)!
-      const shoe = model.root.getObjectByName(`knee-${side}`)?.children[1]
+      const shoe = model.root.getObjectByName(`foot-${side}`)
       if (id === 'franklin')
         expect(hand.scale.x, `${id}:${side}:finger-rig-scale`).toBeGreaterThan(1)
       else {

@@ -8,11 +8,11 @@ function nobunaga(build: HumanLimbsBuild, limbs: HumanLimbs) {
     const wraps = new THREE.Mesh(
       geometry(THREE, 'manga:nobunaga-shin-wraps', () => {
         const parts: BufferGeometry[] = [
-          new THREE.CylinderGeometry(0.049, 0.046, 0.31, 20).translate(0, -0.17, 0),
+          new THREE.CylinderGeometry(0.067, 0.051, 0.31, 24).translate(0, -0.17, 0),
         ]
         for (let band = 0; band < 8; band++)
           parts.push(
-            new THREE.TorusGeometry(0.049, 0.0025, 5, 20)
+            new THREE.TorusGeometry(0.067 - band * 0.0017, 0.0033, 6, 24)
               .rotateX(Math.PI / 2)
               .translate(0, -0.032 - band * 0.038, 0),
           )
@@ -38,7 +38,7 @@ function nobunaga(build: HumanLimbsBuild, limbs: HumanLimbs) {
           new THREE.BoxGeometry(0.009, 0.012, 0.13).rotateY(-0.3).translate(0.016, 0.03, 0.034),
         ]),
       ),
-      glow(0x776e4e, 1),
+      glow(0x534a39, 1),
     )
     sandal.name = 'nobunaga-sandal-straps'
     foot.add(sandal)
@@ -123,20 +123,23 @@ function phinks(build: HumanLimbsBuild, limbs: HumanLimbs) {
   const { THREE, geometry, glow, profile } = build
   for (let i = 0; i < 2; i++) {
     const side = i ? 1 : -1
-    ;((limbs.arms[i].children[2] as import('three').Group).children[1] as Mesh).material = glow(
-      profile.shirt,
-      1,
-    )
-    const cuff = new THREE.Mesh(
-      geometry(
-        THREE,
-        'manga:phinks-cuff',
-        () => new THREE.CylinderGeometry(0.039, 0.039, 0.032, 20),
+    const sleeveStripes = geometry(THREE, 'manga:phinks-sleeve-stripes', () =>
+      mergeHumanDetails(
+        [1.26, 1.64].map((angle) =>
+          new THREE.CylinderGeometry(0.07, 0.051, 0.27, 12, 1, true, angle, 0.17).translate(
+            0,
+            -0.145,
+            0,
+          ),
+        ),
       ),
-      glow(profile.accent, 1),
     )
-    cuff.position.y = -0.258
-    limbs.elbows[i].add(cuff)
+    for (const joint of [limbs.arms[i], limbs.elbows[i]]) {
+      const stripe = new THREE.Mesh(sleeveStripes, glow(profile.trousers, 1))
+      stripe.name = 'phinks-sleeve-stripes'
+      stripe.rotation.y = i ? 0 : Math.PI
+      joint.add(stripe)
+    }
     const stripeGeometry = geometry(
       THREE,
       'manga:phinks-trouser-stripe',
@@ -161,8 +164,11 @@ function chrollo(build: HumanLimbsBuild, limbs: HumanLimbs) {
         new THREE.PlaneGeometry(0.008, 0.24).rotateZ(-0.4).translate(0, -0.15, 0.052),
       ]),
     )
-    limbs.arms[i].add(new THREE.Mesh(stripes, glow(profile.accent, 1)))
-    limbs.elbows[i].add(new THREE.Mesh(stripes, glow(profile.accent, 1)))
+    for (const joint of [limbs.arms[i], limbs.elbows[i]]) {
+      const sleeveCrosses = new THREE.Mesh(stripes, glow(profile.accent, 1))
+      sleeveCrosses.name = 'chrollo-sleeve-crosses'
+      joint.add(sleeveCrosses)
+    }
     const mark = new THREE.Mesh(
       geometry(THREE, 'manga:chrollo-shoe-cross', () =>
         mergeHumanDetails([

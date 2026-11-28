@@ -25,30 +25,28 @@ export function addDogmanMask(build: HumanHeadBuild, head: Group): void {
   const plate = outlined({
     THREE,
     geometry: geometry(THREE, 'manga:dogman-mask-plate', () =>
-      new THREE.SphereGeometry(1, 32, 20).scale(0.188, 0.238, 0.07),
+      new THREE.SphereGeometry(1, 32, 20).scale(0.183, 0.238, 0.083),
     ),
     material: glow(0xf1ede2, 1),
     ink: materials.ink,
     scale: 1.035,
   })
   plate.name = 'dogman-mask-plate'
-  plate.position.set(0, 0.005, 0.155)
+  plate.position.set(0, 0.005, 0.142)
   mask.add(plate)
 
   for (const side of [-1, 1]) {
     const ear = outlined({
       THREE,
-      geometry: geometry(
-        THREE,
-        'manga:dogman-mask-ear',
-        () => new THREE.ConeGeometry(0.068, 0.145, 3),
+      geometry: geometry(THREE, 'manga:dogman-mask-ear', () =>
+        new THREE.SphereGeometry(1, 16, 12).scale(0.033, 0.057, 0.027),
       ),
       material: glow(0xf1ede2, 1),
       ink: materials.ink,
       scale: 1.06,
     })
     ear.name = 'dogman-mask-ear'
-    ear.position.set(side * 0.177, 0.125, 0.165)
+    ear.position.set(side * 0.146, 0.159, 0.17)
     ear.rotation.z = side * -0.34
     mask.add(ear)
 
@@ -77,14 +75,14 @@ export function addDogmanMask(build: HumanHeadBuild, head: Group): void {
     const muzzle = outlined({
       THREE,
       geometry: geometry(THREE, 'manga:dogman-mask-muzzle', () =>
-        new THREE.SphereGeometry(1, 24, 14).scale(0.092, 0.057, 0.038),
+        new THREE.SphereGeometry(1, 24, 14).scale(0.085, 0.052, 0.025),
       ),
       material: glow(0xf1ede2, 1),
       ink: materials.ink,
       scale: 1.045,
     })
     muzzle.name = 'dogman-mask-muzzle'
-    muzzle.position.set(side * 0.074, -0.055, 0.229)
+    muzzle.position.set(side * 0.069, -0.055, 0.222)
     mask.add(muzzle)
   }
 
@@ -95,7 +93,7 @@ export function addDogmanMask(build: HumanHeadBuild, head: Group): void {
     materials.ink,
   )
   nose.name = 'dogman-mask-nose'
-  nose.position.set(0, -0.035, 0.272)
+  nose.position.set(0, -0.035, 0.245)
   mask.add(nose)
 
   const mouth = new THREE.Mesh(
@@ -127,7 +125,7 @@ export function addDogmanMask(build: HumanHeadBuild, head: Group): void {
               new THREE.CircleGeometry(0.003, 8).translate(
                 side * (0.046 + column * 0.019),
                 -0.052 - row * 0.018,
-                0.269,
+                0.25 - column * column * 0.002,
               ),
             )
       return mergeHumanDetails(dots)

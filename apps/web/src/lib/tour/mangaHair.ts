@@ -4,6 +4,7 @@ import { mangaFeitanHair } from './mangaFeitanHead'
 import { mangaTubeppaBowl } from './mangaTubeppaHead'
 import { mangaMarayamCrop } from './mangaMarayamHead'
 import { mangaMorenaHair } from './mangaMorenaHair'
+import { BLACK_WHALE_HAIR } from './mangaBlackWhaleHair'
 import { mangaLuzurusHair } from './mangaLuzurusHair'
 import { mangaSalesaleHair } from './mangaSalesaleHair'
 import { mangaBillFlames, mangaBashoPompadour } from './mangaBodyguardHair'
@@ -13,6 +14,7 @@ import type { BufferGeometry, Group } from 'three'
 import type { HumanHeadBuild } from './humanHead'
 import { mangaGelHair } from './mangaGel'
 import { mangaHeillyHair } from './mangaHeillyHair'
+import { mangaQuorolleHair, mangaTevelaresHair } from './mangaHeillyRaidHeads'
 import { mangaPadailleHair } from './mangaPadaille'
 import { mangaMelodyHair } from './mangaMelody'
 import { mangaBiscuitHair } from './mangaBiscuitHair'
@@ -26,12 +28,7 @@ import {
   mangaWingedPart,
   mangaFlameCrest,
 } from './mangaUnderworldHair'
-import {
-  mangaHairExtras,
-  mangaMessyCrop,
-  mangaRoyalUpdo,
-  mangaShortHair,
-} from './mangaHairExtras'
+import { mangaHairExtras, mangaMessyCrop, mangaRoyalUpdo, mangaShortHair } from './mangaHairExtras'
 import { mangaKachoHair, mangaFugetsuHair } from './mangaTwinHair'
 import { mangaShikakuBrush } from './mangaShikaku'
 export interface MangaHairKit {
@@ -395,6 +392,8 @@ function hairParts(build: HumanHeadBuild, face: BufferGeometry) {
     'luini-slick': () => mangaHeillyHair(kit, false),
     'yokotani-bob': () => mangaHeillyHair(kit, true),
     'padaille-crop': () => mangaPadailleHair(kit),
+    'quorolle-waves': () => mangaQuorolleHair(kit),
+    'tevelares-swept': () => mangaTevelaresHair(kit),
     'melody-long': () => mangaMelodyHair(kit),
     'biscuit-tails': () => mangaBiscuitHair(kit, false),
     'biscuit-braids': () => mangaBiscuitHair(kit, true),
@@ -468,10 +467,10 @@ function hairParts(build: HumanHeadBuild, face: BufferGeometry) {
   }
   const id = profile.likeness ?? ''
   const twin = TWIN_HAIR[id]
-  const make = variants[look.hair] ?? styles[style] ?? (() => mangaHairExtras(kit, build))
-  const custom = twin ?? LOWER_DECK_HAIR[id] ?? NEN_CLASS_HAIR[id]
-  if (custom) custom(kit)
-  else make()
+  const make = LOWER_DECK_HAIR[id] ?? NEN_CLASS_HAIR[id] ?? BLACK_WHALE_HAIR[look.hair]
+  if (make && !twin) make(kit)
+  else if (twin) twin(kit)
+  else (variants[look.hair] ?? styles[style] ?? (() => mangaHairExtras(kit, build)))()
   kit.face!.dispose()
   return mergeHumanDetails(parts)
 }

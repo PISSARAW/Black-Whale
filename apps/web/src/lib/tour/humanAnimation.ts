@@ -4,8 +4,18 @@ import { raiseConcertFlute } from './humanFlutePose'
 import { HUMAN_REST_POSES } from './humanRestPoses'
 import { rememberHang, stride } from './humanWalk'
 import { rememberHumanReach } from './humanReachMemory'
+import { setFrameExpression } from './expressions/expressionPlayer'
+import type { ExpressionCue } from './expressions/types'
 
 export type HumanPose = NonNullable<Apparition['human']>['pose']
+
+/** Stable joint slots shared by Tour, Clash and projected body clones. */
+export interface HumanJointSlots {
+  elbows: readonly Object3D[]
+  hands: readonly Object3D[]
+  knees: readonly Object3D[]
+  feet: readonly Object3D[]
+}
 
 interface PosedHuman {
   pose: HumanPose
@@ -26,6 +36,8 @@ export interface AnimatedHuman {
   arms: Group[]
   legs: Group[]
   knees: Group[]
+  /** New production figures provide named slots; old fixtures retain the derived fallback. */
+  joints?: HumanJointSlots
 }
 
 /** A game-specific motion layered on top of the shared body poses. */
@@ -43,7 +55,20 @@ export function registerHumanAnimationRig(rig: AnimatedHuman): void {
   ANIMATION_RIGS.set(rig.figure, rig)
 }
 
+/** Resolve the explicit production contract, with compatibility for small test rigs. */
+export function humanJointSlots(rig: AnimatedHuman): HumanJointSlots {
+  if (rig.joints) return rig.joints
+  const elbows = rig.arms.map((arm) => arm.children[1]).filter(Boolean)
+  const hands = elbows.map(
+    (elbow) => elbow.children.find((child) => child.name.startsWith('hand-')) ?? elbow,
+  )
+  const feet = rig.knees.map((knee) => knee.children[1]).filter(Boolean)
+  return { elbows, hands, knees: rig.knees, feet }
+}
+
 export interface HumanAnimationLayer {
+  /** Authored facial acting, composed without changing the simulation or body pose. */
+  expression?: ExpressionCue
   motion?: HumanMotion
   /** Final contact constraints run after all pose cross-fades and motion layers. */
   afterMotion?: HumanMotion
@@ -52,6 +77,22 @@ export interface HumanAnimationLayer {
   transitionSeconds?: number
   /** Clock that drives the walk cycle instead of wall time, so feet match ground speed. */
   strideClock?: number
+}
+
+export interface HumanAnimationFrame {
+  seconds: number
+  pose: HumanPose
+  layer?: HumanAnimationLayer
+}
+
+/** Optional authored expression, hair, jewellery or garment motion. */
+export interface HumanAnimationChannel {
+  beforeFrame?: (frame: HumanAnimationFrame) => void
+  afterFrame?: (frame: HumanAnimationFrame) => void
+}
+
+export interface HumanAnimationOptions {
+  channels?: readonly HumanAnimationChannel[]
 }
 
 interface TransformFrame {
@@ -66,16 +107,17 @@ function poseClock(pose: HumanPose, seconds: number, layer?: HumanAnimationLayer
 }
 
 function animatedParts(rig: AnimatedHuman): Object3D[] {
+  const joints = humanJointSlots(rig)
   return [
     rig.figure,
     rig.torso,
     rig.pelvis,
     rig.head,
     ...rig.arms,
-    ...rig.arms.map((arm) => arm.children[1]),
+    ...joints.elbows,
     ...rig.legs,
     ...rig.knees,
-    ...rig.knees.flatMap((knee) => (knee.children[1] ? [knee.children[1]] : [])),
+    ...joints.feet,
   ]
 }
 
@@ -190,8 +232,10 @@ export function poseHuman(rig: PosedHuman): void {
 
 export function humanAnimation(
   rig: AnimatedHuman,
+  options: HumanAnimationOptions = {},
 ): (seconds: number, pose?: HumanPose, layer?: HumanAnimationLayer) => void {
   registerHumanAnimationRig(rig)
+  const joints = humanJointSlots(rig)
   if (rig.pose === 'flute') raiseConcertFlute(rig.figure)
   const flute = rig.figure.getObjectByName('signature-flute')
   const fluteBasePosition = flute?.position.clone()
@@ -200,16 +244,17 @@ export function humanAnimation(
   const figureBaseRotation = rig.figure.rotation.clone()
   const shoulderBasePosition = rig.arms.map((arm) => arm.position.clone())
   const shoulderBase: Euler[] = rig.arms.map((arm) => arm.rotation.clone())
-  const elbowBase: Euler[] = rig.arms.map((arm) => arm.children[1].rotation.clone())
+  const elbowBase: Euler[] = joints.elbows.map((elbow) => elbow.rotation.clone())
   const hipBasePosition = rig.legs.map((leg) => leg.position.clone())
   const hipBase: Euler[] = rig.legs.map((leg) => leg.rotation.clone())
   const kneeBase: Euler[] = rig.knees.map((knee) => knee.rotation.clone())
-  const feet = rig.knees.map((knee) => knee.children[1])
+  const feet = joints.feet
   const footBase = feet.map((foot) => foot?.rotation.clone())
   const headBase = rig.head.rotation.clone()
   const torsoBaseY = rig.torso.position.y
   const pelvisBaseX = rig.pelvis.position.x
   const parts = animatedParts(rig)
+  const channels = options.channels ?? []
   let displayedPose: string = rig.pose
   let transitionFrom: TransformFrame | null = null
   let transitionStarted = 0
@@ -244,7 +289,8 @@ export function humanAnimation(
         const side = index === 0 ? -1 : 1
         arm.rotation.x = shoulderBase[index].x + breath * 0.014
         arm.rotation.z = shoulderBase[index].z + side * phrase * 0.018
-        arm.children[1].rotation.x = elbowBase[index].x + side * Math.sin(seconds * 2.1) * 0.012
+        joints.elbows[index].rotation.x =
+          elbowBase[index].x + side * Math.sin(seconds * 2.1) * 0.012
       })
       if (flute && fluteBasePosition && fluteBaseRotation) {
         flute.position.copy(fluteBasePosition)
@@ -273,7 +319,7 @@ export function humanAnimation(
         const side = index === 0 ? -1 : 1
         arm.position.set(side * 0.22, 1.31, 0.08)
         arm.rotation.set(-0.78 + side * rise, 0, side * -0.64)
-        arm.children[1].rotation.x = -1.05
+        joints.elbows[index].rotation.x = -1.05
       })
       rig.legs[0].rotation.z = -0.08
       rig.legs[1].rotation.z = 0.08
@@ -284,7 +330,7 @@ export function humanAnimation(
         const side = index === 0 ? -1 : 1
         arm.position.set(side * 0.2, 1.28, 0.12)
         arm.rotation.set(-1.05, 0, side * -0.42)
-        arm.children[1].rotation.x = -0.85
+        joints.elbows[index].rotation.x = -0.85
       })
       rig.knees.forEach((knee) => (knee.rotation.x = 0.22))
     },
@@ -294,7 +340,7 @@ export function humanAnimation(
     },
     'wipe-table': (seconds: number) =>
       wipeTable(
-        { figure: rig.figure, head: rig.head, arm: rig.arms[1], elbow: rig.arms[1].children[1] },
+        { figure: rig.figure, head: rig.head, arm: rig.arms[1], elbow: joints.elbows[1] },
         seconds,
       ),
     search: () => {
@@ -305,7 +351,7 @@ export function humanAnimation(
     attack: (seconds: number) => {
       rig.arms[1].position.set(0.18, 1.3, 0.15)
       rig.arms[1].rotation.set(-1.35 + Math.sin(seconds * 3.4) * 0.08, 0, -0.08)
-      rig.arms[1].children[1].rotation.x = -0.35
+      joints.elbows[1].rotation.x = -0.35
     },
     held: (seconds: number) => {
       rig.figure.rotation.z = -0.24
@@ -316,12 +362,15 @@ export function humanAnimation(
       rig.figure.position.y = 0.25
       rig.arms[0].rotation.z = 0.7
       rig.arms[1].rotation.z = -0.9
-      rig.arms[0].children[1].rotation.x = -0.55
+      joints.elbows[0].rotation.x = -0.55
       rig.knees[1].rotation.x = 0.65
     },
   }
 
   return (seconds: number, pose = rig.pose, layer?: HumanAnimationLayer) => {
+    setFrameExpression(rig.figure, layer)
+    const frame = { seconds, pose, ...(layer ? { layer } : {}) }
+    channels.forEach((channel) => channel.beforeFrame?.(frame))
     rig.arms.forEach(rememberHumanReach)
     rig.legs.forEach(rememberHumanReach)
     syncTransition(seconds, pose, layer)
@@ -330,7 +379,7 @@ export function humanAnimation(
     rig.arms.forEach((arm, index) => {
       arm.position.copy(shoulderBasePosition[index])
       arm.rotation.copy(shoulderBase[index])
-      arm.children[1].rotation.copy(elbowBase[index])
+      joints.elbows[index].rotation.copy(elbowBase[index])
     })
     rig.legs.forEach((leg, index) => {
       leg.position.copy(hipBasePosition[index])
@@ -353,5 +402,6 @@ export function humanAnimation(
       if (amount === 1) transitionFrom = null
     }
     layer?.afterMotion?.(rig)
+    channels.forEach((channel) => channel.afterFrame?.(frame))
   }
 }

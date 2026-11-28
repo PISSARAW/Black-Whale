@@ -50,6 +50,8 @@ export interface HairLock {
   points: readonly Point3[]
   width: number
   depth: number
+  segments?: number
+  sides?: number
 }
 
 /** A tapered solid lock; the triangular end remains a silhouette from the side. */
@@ -58,8 +60,8 @@ export function kurapikaLock(THREE: Three, lock: HairLock) {
   const positions: number[] = []
   const uv: number[] = []
   const indices: number[] = []
-  const steps = 12
-  const sides = 6
+  const steps = lock.segments ?? 12
+  const sides = lock.sides ?? 6
   for (let step = 0; step <= steps; step++) {
     const t = step / steps
     const center = curve.getPoint(t)

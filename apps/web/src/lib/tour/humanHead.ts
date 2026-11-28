@@ -3,10 +3,12 @@ import { addSilentMajorityMask } from './humanCostume'
 import { addHumanHair } from './humanHair'
 import { buildKurapikaHead } from './kurapikaHead'
 import { buildMangaHead } from './mangaHead'
+import { buildHisokaHead } from './hisokaHead'
 import { buildZhangLeiHead } from './mangaZhangLeiHead'
 import { buildMorenaHead } from './mangaMorenaHead'
 import { buildLuzurusHead } from './mangaLuzurusFace'
 import { buildSalesaleHead } from './mangaSalesaleHead'
+import { SILENT_MAJORITY_PALETTE } from './silentMajorityPalette'
 import {
   addEyeDetails,
   addFaceDetails,
@@ -45,6 +47,7 @@ export interface HumanHeadBuild {
 }
 
 export function buildHumanHead(build: HumanHeadBuild): Group {
+  if (build.profile.likeness === 'hisoka') return buildHisokaHead(build)
   if (build.profile.likeness === 'kurapika') return buildKurapikaHead(build)
   if (build.profile.likeness === 'prince-zhanglei') return buildZhangLeiHead(build)
   if (build.profile.likeness === 'morena-prudo') return buildMorenaHead(build)
@@ -57,6 +60,11 @@ export function buildHumanHead(build: HumanHeadBuild): Group {
   const morena = profile.likeness === 'morena-prudo'
   const head = new THREE.Group()
   head.position.y = CANON.headY
+  if (seen.human?.role === 'silent-majority') {
+    const brass = glow(SILENT_MAJORITY_PALETTE.brass, 1)
+    addSilentMajorityMask({ THREE, geometry, outlined, ink, pale: skin, hair: hairInk, brass, head })
+    return head
+  }
   const skull = outlined({
     THREE,
     geometry: geometry(THREE, `skull:${profile.face}`, () => humanSkullGeometry(build)),
@@ -129,6 +137,7 @@ export function buildHumanHead(build: HumanHeadBuild): Group {
     skin,
   )
   nose.rotation.x = Math.PI / 2
+  nose.name = 'face-nose'
   nose.position.set(0, -0.018, 0.195)
   if (melody) {
     nose.scale.set(1.7, 1.55, 1.45)
@@ -194,8 +203,5 @@ export function buildHumanHead(build: HumanHeadBuild): Group {
     style: profile.hairStyle,
   })
 
-  if (seen.human?.role === 'silent-majority') {
-    addSilentMajorityMask({ THREE, geometry, outlined, ink, pale: skin, head })
-  }
   return head
 }

@@ -1,4 +1,4 @@
-import type { Group } from 'three'
+import type { BufferGeometry, Group } from 'three'
 import type { HumanHeadBuild } from './humanHead'
 import type { HumanClothesBuild } from './humanClothes'
 import type { HumanLimbs, HumanLimbsBuild } from './humanLimbs'
@@ -123,7 +123,7 @@ export function addTokarineFace(build: HumanHeadBuild, head: Group): void {
 export function addTokarineStripedTop(build: HumanClothesBuild): void {
   const { THREE, geometry, figure, materials, profile } = build
   const { chest } = mangaBodyShape(profile)
-  const bands = []
+  const bands: BufferGeometry[] = []
   for (let i = 0; i < 4; i++)
     bands.push(
       new THREE.BoxGeometry(chest * 1.65, 0.055, 0.012).translate(0, 1.03 + i * 0.105, 0.175),

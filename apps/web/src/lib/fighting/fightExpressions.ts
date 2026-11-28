@@ -1,35 +1,17 @@
+import { EXPRESSION_REST, type ExpressionPose } from '$lib/tour/expressions/types'
 import { attackData } from './frameData'
 import { fightExpressionProfile } from './fightExpressionProfiles'
 import type { ArcadeFighter, FighterId } from './types'
 import { feitanWounded } from './feitanIdentity'
+import {
+  applySituationalExpression,
+  fightSituation,
+  type FightSituation,
+} from './fightSituationalExpressions'
 
-export type FightEmotion = 'concentration' | 'effort' | 'pain' | 'rest'
-export interface FightFacePose {
-  eye: number
-  brow: number
-  lift: number
-  effort: number
-  pain: number
-  smile: number
-  headPitch: number
-  headYaw: number
-  gaze: number
-  headRoll: number
-  shoulder: number
-}
-export const REST_FACE: Readonly<FightFacePose> = {
-  eye: 1,
-  brow: 0,
-  lift: 0,
-  effort: 0,
-  pain: 0,
-  smile: 0,
-  headPitch: 0,
-  headYaw: 0,
-  gaze: 0,
-  headRoll: 0,
-  shoulder: 0,
-}
+export type FightEmotion = FightSituation | 'effort' | 'pain' | 'rest'
+export type FightFacePose = ExpressionPose
+export const REST_FACE = EXPRESSION_REST
 export const FACE_CONTROLS = Object.keys(REST_FACE) as (keyof FightFacePose)[]
 export const hasFightExpression = (id: FighterId) => Boolean(fightExpressionProfile({ id }))
 const clamp = (value: number) => Math.max(0, Math.min(1, value))
@@ -44,6 +26,7 @@ export function fightExpressionTarget(fighter: ArcadeFighter, progress: number, 
     brows = profile.browResponse ?? 1,
     body = profile.bodyResponse ?? 1
   const pose: FightFacePose = {
+    ...REST_FACE,
     eye: Math.max(0.18, profile.eye - (pain * 0.53 + effort * 0.16) * eyes),
     brow: profile.brow + (effort * 0.18 - pain * 0.38) * brows,
     lift: (-0.002 - effort * 0.004 + pain * 0.009) * brows,
@@ -57,14 +40,19 @@ export function fightExpressionTarget(fighter: ArcadeFighter, progress: number, 
     headRoll: pain * 0.045 * body,
     shoulder: profile.shoulder * (0.3 + effort + pain * 0.65),
   }
-  if (feitanWounded(fighter) && stimulus.mode === 'concentration') {
+  applySituationalExpression(pose, stimulus.mode, profile)
+  applyWoundedExpression(fighter, pose, stimulus.mode)
+  return { mode: stimulus.mode, pose: constrainExpression(fighter, pose) }
+}
+
+function applyWoundedExpression(fighter: ArcadeFighter, pose: FightFacePose, mode: FightEmotion) {
+  if (feitanWounded(fighter) && ['concentration', 'determination'].includes(mode)) {
     pose.eye = Math.min(pose.eye, 0.64)
     pose.brow = Math.max(pose.brow, 0.29)
     pose.smile = 0.38
     pose.headPitch = -0.035
     pose.headRoll = -0.035
   }
-  return { mode: stimulus.mode, pose: constrainExpression(fighter, pose) }
 }
 
 function constrainExpression(fighter: ArcadeFighter, pose: FightFacePose) {
@@ -96,7 +84,7 @@ function expressionStimulus(fighter: ArcadeFighter, progress: number, activity: 
   if (fighter.attack) return { mode: 'effort' as const, pain: 0, effort: attackEffort(fighter) }
   if (fighter.blockStun > 0) return { mode: 'effort' as const, pain: 0, effort: 0.5 }
   if (activity > 0) return { mode: 'effort' as const, pain: 0, effort: activity }
-  return { mode: 'concentration' as const, pain: 0, effort: 0 }
+  return { mode: fightSituation(fighter), pain: 0, effort: 0 }
 }
 
 function attackEffort(fighter: ArcadeFighter) {

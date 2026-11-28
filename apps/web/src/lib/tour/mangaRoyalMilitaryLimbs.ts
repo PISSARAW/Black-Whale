@@ -55,7 +55,7 @@ function furykov(build: HumanLimbsBuild, limbs: HumanLimbs, fullness = 1) {
 
 export function addRoyalMilitaryLimbDetails(build: HumanLimbsBuild, limbs: HumanLimbs) {
   if (build.profile.likeness === 'prince-halkenburg') pinstripes(build, limbs)
-  if (['otocin', 'momolly', 'gipper', 'maizan'].includes(build.profile.likeness ?? ''))
+  if (['borksen', 'otocin', 'momolly', 'gipper', 'maizan'].includes(build.profile.likeness ?? ''))
     furykov(build, limbs, 0.55)
   if (['furykov', 'prince-benjamin', 'rihan'].includes(build.profile.likeness ?? ''))
     furykov(build, limbs)

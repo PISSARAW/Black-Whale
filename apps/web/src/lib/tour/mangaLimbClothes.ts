@@ -1,4 +1,5 @@
 import { addLowerDeckLimbs } from './mangaLowerDeckLimbs'
+import { shapeLynchLimbs } from './mangaXiYuClothes'
 import { addFeitanBoots } from './mangaFeitanClothes'
 import { addMarayamShorts } from './mangaMarayamClothes'
 import { addZhangLeiLimbs } from './mangaZhangLeiLimbs'
@@ -12,6 +13,7 @@ import type { HumanLimbs, HumanLimbsBuild } from './humanLimbs'
 import { shapeGelShoulders } from './mangaGel'
 import { addMizaistomCowLimbs } from './mangaMizaistomClothes'
 import { addHeillyReferenceLimbs } from './mangaHeillyClothes'
+import { addHeillyRaidBoots } from './mangaHeillyRaidClothes'
 import { shapePadailleSleeves } from './mangaPadaille'
 import { shapeMelodyLimbs } from './mangaMelody'
 import { addBiscuitLimbClothes } from './mangaBiscuitLimbs'
@@ -110,6 +112,7 @@ function finishShoes(build: HumanLimbsBuild, limbs: HumanLimbs) {
 
 const REFERENCE_LIMBS: Record<string, (build: HumanLimbsBuild, limbs: HumanLimbs) => void> = {
   'prince-salesale': addSalesaleSleevesAndBoots,
+  'lynch-fullbokko': shapeLynchLimbs,
   'prince-luzurus': addLuzurusLimbs,
   'prince-marayam': addMarayamShorts,
   'prince-zhanglei': addZhangLeiLimbs,
@@ -153,6 +156,7 @@ export function shapeMangaLimbs(build: HumanLimbsBuild, limbs: HumanLimbs): void
   shapeMelodyLimbs(build, limbs)
   shapePadailleSleeves(build, limbs)
   addHeillyReferenceLimbs(build, limbs)
+  addHeillyRaidBoots(build, limbs)
   addMizaistomCowLimbs(build, limbs)
   shapeGelShoulders(build, limbs)
   addCluckLimbCostume(build, limbs)

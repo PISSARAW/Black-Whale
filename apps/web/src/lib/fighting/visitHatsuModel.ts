@@ -1,3 +1,4 @@
+import { disposeExpressionEffects } from '$lib/tour/expressions/faceEffects'
 import { EXTRA_VISIT_MODELS } from './visitHatsuSources'
 import { CANONICAL_MODELS } from '$lib/nen/archive-models'
 import { batchNenModel } from '$lib/tour/nenModelBatch'
@@ -125,6 +126,7 @@ function retainJoints(THREE: Three, body: Group, names: readonly string[]): Map<
 
 /** Figure rebuilds release attached Hatsu, while scene-owned effects may be reparented. */
 export function disposeMountedVisitHatsu(figure: Object3D): void {
+  disposeExpressionEffects(figure)
   const disposers: Array<() => void> = []
   figure.traverse((part) => {
     const dispose = MOUNTED.get(part)

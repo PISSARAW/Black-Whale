@@ -75,6 +75,16 @@ function crossLegged(rig: RestingHuman): void {
   })
 }
 
+function kneeling({ figure, legs, knees, arms, elbows }: RestingHuman): void {
+  figure.position.y = -0.50
+  legs[0].rotation.x = -0.85
+  legs[1].rotation.x = -0.65
+  knees[0].rotation.x = 1.9
+  knees[1].rotation.x = 1.65
+  arms[1].rotation.x = -1.2
+  elbows[1].rotation.x = -1.23
+}
+
 export const HUMAN_REST_POSES: Partial<
   Record<HumanAppearance['pose'], (rig: RestingHuman) => void>
 > = {
@@ -82,6 +92,7 @@ export const HUMAN_REST_POSES: Partial<
   seated,
   reclined,
   'cross-legged': crossLegged,
+  kneeling,
 }
 
 export function legacyHumanPose(seen: Apparition): NonNullable<Apparition['human']>['pose'] {

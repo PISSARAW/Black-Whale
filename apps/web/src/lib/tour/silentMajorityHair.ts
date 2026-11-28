@@ -1,51 +1,53 @@
 import type { Group, Material } from 'three'
-import type { Geometry, Outlined, Three } from './silentMajorityParts'
+import { graded, type Geometry, type Outlined, type Three } from './silentMajorityParts'
 
 export interface HairBuild {
   THREE: Three
   geometry: Geometry
   outlined: Outlined
   ink: Material
+  hair: Material
   head: Group
 }
 
 /** Where the fringe is cut: the top of the opening the mask shows through. */
-export const FRINGE = 0.1
+export const FRINGE = 0.04
 
 const RADIUS = 0.245
-/** The fall ends above the chin and stands a little off the head there. */
-const HEM = -0.11
-const HEM_RADIUS = 0.258
-const CROWN = 0.17
+const CROWN = 0.314
 /** Half the opening left for the plate, as an angle about the head's axis. */
 const OPENING = 0.5
 
 /**
  * The puppet's hair: one black helmet, not a cap with two boards beside it.
  *
- * The drawing gives it a smooth dome, a fringe cut straight across the top of
- * the mask and sides that fall straight to a blunt hem above the chin, wider
- * than the face by half again. It is most of the head's silhouette, which is
- * why it is turned as one shape: a full crown down to the fringe, then a wall
- * round the sides and back that leaves the face open.
+ * A full crown down to the fringe, then a fall that rounds under the jaw
+ * with a raised hem beside the collar.
  *
  * Both go through `outlined` although hair and ink are the same black. The
- * inverted hull is what closes the inside of the wall: without it the far side
- * of the helmet is a back face, and the room shows through the hair.
+ * inverted hull closes the inside of the wall at oblique angles.
  */
-export function addSilentMajorityHair({ THREE, geometry, outlined, ink, head }: HairBuild): void {
+export function addSilentMajorityHair({
+  THREE,
+  geometry,
+  outlined,
+  ink,
+  hair,
+  head,
+}: HairBuild): void {
   const crown = outlined({
     THREE,
     geometry: geometry(THREE, 'silent:hair-crown', () => {
       // Bottom to top, so the faces turn outwards.
       const points = []
-      for (let i = 0; i <= 6; i += 1) {
-        const angle = (i / 6) * (Math.PI / 2)
-        points.push(new THREE.Vector2(Math.cos(angle) * RADIUS, FRINGE + Math.sin(angle) * CROWN))
+      for (let i = 0; i <= 12; i += 1) {
+        const angle = (i / 12) * (Math.PI / 2)
+        const radius = Math.cos(angle) ** 0.68 * RADIUS
+        points.push(new THREE.Vector2(radius, FRINGE + Math.sin(angle) * CROWN))
       }
-      return new THREE.LatheGeometry(points, 14)
+      return graded(THREE, new THREE.LatheGeometry(points, 32), [1, 1])
     }),
-    material: ink,
+    material: hair,
     ink,
     scale: 1.03,
   })
@@ -54,13 +56,41 @@ export function addSilentMajorityHair({ THREE, geometry, outlined, ink, head }: 
 
   const fall = outlined({
     THREE,
-    geometry: geometry(THREE, 'silent:hair-fall', () => {
-      const points = [new THREE.Vector2(HEM_RADIUS, HEM), new THREE.Vector2(RADIUS, FRINGE)]
-      return new THREE.LatheGeometry(points, 12, OPENING, Math.PI * 2 - OPENING * 2)
-    }),
-    material: ink,
+    geometry: geometry(THREE, 'silent:hair-fall', () => roundHairFall(THREE)),
+    material: hair,
     ink,
     scale: 1.03,
   })
+  fall.name = 'silent-hair-fall'
   head.add(fall)
+}
+
+function roundHairFall(THREE: Three) {
+  const profile = new THREE.SplineCurve([
+    new THREE.Vector2(0.163, -0.224),
+    new THREE.Vector2(0.215, -0.203),
+    new THREE.Vector2(0.25, -0.164),
+    new THREE.Vector2(0.264, -0.107),
+    new THREE.Vector2(0.252, -0.03),
+    new THREE.Vector2(RADIUS, FRINGE),
+  ])
+  const geometry = new THREE.LatheGeometry(
+    profile.getPoints(24),
+    36,
+    OPENING,
+    Math.PI * 2 - OPENING * 2,
+  )
+  const vertices = geometry.getAttribute('position')
+  for (let i = 0; i < vertices.count; i += 1) {
+    const x = vertices.getX(i)
+    const y = vertices.getY(i)
+    const z = vertices.getZ(i)
+    const depth = z / Math.hypot(x, z)
+    const nearCollar = THREE.MathUtils.smoothstep(Math.abs(depth), 0.45, 0.9)
+    const nape = THREE.MathUtils.smoothstep(-depth, 0.74, 1)
+    const nearHem = 1 - THREE.MathUtils.smoothstep(y, -0.224, -0.13)
+    vertices.setY(i, y + nearHem * (0.051 * nearCollar + 0.075 * nape))
+  }
+  geometry.computeVertexNormals()
+  return graded(THREE, geometry, [1, 0.93])
 }

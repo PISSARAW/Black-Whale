@@ -131,7 +131,7 @@ export function buildFightFigure(options: {
   addFighterEquipment(options, model)
   addKallutoPaper({ THREE, glow, fighter, model })
   shapeFightEyes({ root: model.root, fighter, glow })
-  registerFightExpression({ THREE, model, fighter })
+  registerFightExpression({ THREE, model, fighter, skin: finalProfile.skin })
   if (jointVolumes) {
     const animate = model.animate
     model.animate = (seconds, pose, layer) => {

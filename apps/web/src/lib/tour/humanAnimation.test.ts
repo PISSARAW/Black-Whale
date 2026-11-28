@@ -18,6 +18,22 @@ function rig() {
 }
 
 describe('humanAnimation', () => {
+  it('runs generic authored channels around the shared pose clock', () => {
+    const human = rig()
+    const order: string[] = []
+    const animate = humanAnimation(human, {
+      channels: [
+        {
+          beforeFrame: ({ pose }) => order.push(`before:${pose}`),
+          afterFrame: ({ pose }) => order.push(`after:${pose}`),
+        },
+      ],
+    })
+    animate(1, 'guard')
+    expect(order).toEqual(['before:guard', 'after:guard'])
+    expect(human.arms[0].rotation.z).toBeCloseTo(0.64)
+  })
+
   it('changes a combatant pose without rebuilding its rig', () => {
     const human = rig()
     const animate = humanAnimation(human)

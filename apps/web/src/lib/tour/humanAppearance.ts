@@ -2,6 +2,8 @@ import type { NenTechniqueState } from '@black-whale/nen-engine'
 import type { TwinCostume } from './mangaTwinWardrobe'
 import type { Pace } from './cast/pace'
 
+export type BonolenovDisguise = 'hisoka' | 'lynch'
+
 export type HumanExpression = 'neutral' | 'severe' | 'tired' | 'anxious' | 'hostile'
 
 export interface HumanAppearance {
@@ -18,14 +20,16 @@ export interface HumanAppearance {
   pose:
     | 'idle'
     | 'walk'
+    | 'wipe-table'
     | 'listen'
     | 'search'
-    | 'wipe-table'
     | 'held'
     | 'guard'
     | 'brace'
     | 'attack'
     | 'fallen'
+    | 'kneeling'
+    | 'zetsu'
     | 'seated'
     | 'reclined'
     | 'cross-legged'
@@ -48,6 +52,9 @@ export interface HumanAppearance {
   nen?: NenTechniqueState<'head' | 'torso' | 'hands' | 'feet'>
   /** Stable identity seed: named character when known, otherwise apparition id. */
   identity?: string
+  unmasked?: boolean
+  bonolenovDisguise?: BonolenovDisguise
+  plainSuit?: boolean
   alert?: boolean
   /** Presentation-only facial bearing; combat can change it without changing identity. */
   expression?: HumanExpression

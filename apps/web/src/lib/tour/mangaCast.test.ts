@@ -8,6 +8,7 @@ import { projectHanzo } from '../fighting/hanzoProjection'
 import { fightFigureKey } from '../fighting/fighterFigure'
 import { buildFightFigure } from '../fighting/fighterFigure'
 import { combatFaceGeometry } from '../fighting/fightFaceReadability'
+import { combatBodyGeometry } from '../fighting/fightBodyReadability'
 import { createFightState } from '../fighting/fightState'
 import { addBonolenovBattleArmor } from './bonolenovBattleArmor'
 import { emptyBattleCantabile } from '../fighting/battleCantabileTypes'
@@ -617,7 +618,7 @@ describe('manga cast shared by the visit and Fighting', () => {
       hairStyle: 'bob',
       clothing: 'uniform',
     })
-    expect(look).toMatchObject({ eyes: 'doll', hair: 'flick-bob' })
+    expect(look).toMatchObject({ eyes: 'doll', hair: 'borksen-flip' })
     expect(mesh(model.root, 'borksen-uniform-zipper')).toBeTruthy()
     expect(mesh(model.root, 'borksen-standing-collar')).toBeTruthy()
     const hair = model.root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh
@@ -943,7 +944,10 @@ describe('manga cast shared by the visit and Fighting', () => {
       expression: 'anxious',
     })
     expect(look).toMatchObject({ eyes: 'almond' })
-    expect(model.root.getObjectByName('oito-oval-eye')).toBeTruthy()
+    const eye = model.root.getObjectByName('face-eye-left') as THREE.Mesh
+    expect(eye.userData.referenceFeature).toBe('oito-oval-eye')
+    expect(eye.getObjectByName('eye-sclera')).toBeTruthy()
+    expect(eye.getObjectByName('eye-pupil')).toBeTruthy()
     expect(model.root.getObjectByName('oito-swept-wave-lines')).toBeTruthy()
     expect(model.root.getObjectByName('oito-low-ponytail')).toBeTruthy()
     expect(model.root.getObjectByName('attire-kimono')).toBeTruthy()
@@ -1196,7 +1200,7 @@ describe('manga cast shared by the visit and Fighting', () => {
         .children[1] as THREE.Mesh
       const fightHair = fighting.root.getObjectByName('manga-layered-hair')!
         .children[1] as THREE.Mesh
-      expect(fightHair.geometry).toBe(commonHair.geometry)
+      expect(fightHair.geometry).toBe(combatBodyGeometry(commonHair.geometry))
       for (const action of ['guard', 'light', 'heavy'] as const) {
         fighter.pose = action
         fighter.attack =
@@ -1224,7 +1228,7 @@ describe('manga cast shared by the visit and Fighting', () => {
       }
       if (id === 'terebellum') {
         expect(
-          fighting.root.getObjectByName('hip-left')!.getObjectByName('terebellum-sport-shorts'),
+          fighting.root.getObjectByName('knee-left')!.getObjectByName('terebellum-trouser-trim'),
         ).toBeTruthy()
         expect(
           fighting.root.getObjectByName('elbow-left')!.getObjectByName('sport-sleeve-piping'),
@@ -1267,7 +1271,9 @@ describe('manga cast shared by the visit and Fighting', () => {
     model.animate(0, 'idle', { motion: fightBodyMotion({ fighter, seconds: 0, progress: 0 }) })
     const hair = model.root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh
     expect(hair.geometry).toBe(
-      (common.root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh).geometry,
+      combatBodyGeometry(
+        (common.root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh).geometry,
+      ),
     )
     hair.geometry.computeBoundingBox()
     expect(hair.geometry.boundingBox!.min.y).toBeLessThan(-0.6)
@@ -1441,7 +1447,7 @@ describe('manga cast shared by the visit and Fighting', () => {
       expect(mesh(fighting.root, detail).geometry).toBe(mesh(common.root, detail).geometry)
       const hair = (root: THREE.Object3D) =>
         (root.getObjectByName('manga-layered-hair')!.children[1] as THREE.Mesh).geometry
-      expect(hair(fighting.root)).toBe(hair(common.root))
+      expect(hair(fighting.root)).toBe(combatBodyGeometry(hair(common.root)))
       expect(humanProfile(seen(id)).clothing).toBe('suit')
       for (const facing of [-1, 1] as const) {
         fighter.facing = facing

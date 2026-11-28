@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import type { Apparition } from './apparitions'
 import { humanStateKey } from './humanFigure'
-import { humanProfile } from './humanProfiles'
+import { humanProfile, humanProportions, profileFrameShape } from './humanProfiles'
+import { mangaLikeness } from './mangaLikeness'
 
 function person(identity: string, role: NonNullable<Apparition['human']>['role']): Apparition {
   return {
@@ -53,7 +54,10 @@ describe('shared human profiles', () => {
       build: 'slim',
       hairStyle: 'shaved',
       clothing: 'ritual',
-      accent: 0xf0ece4,
+      skin: 0xe8ddcb,
+      hair: 0x171417,
+      jacket: 0x243743,
+      accent: 0xe8ddcb,
     })
   })
 
@@ -118,6 +122,124 @@ describe('shared human profiles', () => {
     expect(anonymous.clothing).toBe('uniform')
     expect(anonymous.frame).toBe('adult')
     expect(anonymous.height).not.toBe(1.04)
+    expect(humanProportions(anonymous)).toEqual({
+      torso: 1,
+      limbs: 1,
+      hips: 1,
+      shoulderSlope: 0,
+      posture: 'neutral',
+    })
+  })
+
+  it('projects only explicitly authored silhouette refinements', () => {
+    const benjamin = humanProfile(person('prince-benjamin', 'fighter'))
+    const melody = humanProfile(person('melody', 'hunter'))
+    expect(humanProportions(benjamin)).toMatchObject({
+      torso: 1.04,
+      limbs: 0.98,
+      hips: 1.06,
+      posture: 'upright',
+    })
+    expect(profileFrameShape(benjamin).neck).toBeCloseTo(1.04)
+    expect(profileFrameShape(benjamin).limb).toBeCloseTo(0.98)
+    expect(profileFrameShape(melody).limb).toBeCloseTo(0.9)
+  })
+
+  it('projects panel-attested face geometry through the shared likeness', () => {
+    const benjamin = humanProfile(person('prince-benjamin', 'fighter'))
+    const melody = humanProfile(person('melody', 'hunter'))
+    expect(benjamin.faceFeatures).toMatchObject({
+      eyes: 'narrow',
+      cheek: 0.183,
+      jaw: 0.163,
+      nose: 1.8,
+    })
+    expect(mangaLikeness(benjamin)).toMatchObject({ cheek: 0.183, jaw: 0.163, nose: 1.8 })
+    expect(mangaLikeness(melody)).toMatchObject({ eyes: 'narrow', neck: 0.055 })
+  })
+
+  it('projects the Phantom Troupe face batch from the catalogue', () => {
+    const expected = {
+      'chrollo-lucilfer': { eyes: 'round', cheek: 0.145, jaw: 0.074 },
+      'feitan-portor': { eyes: 'narrow', cheek: 0.139, jaw: 0.058 },
+      'machi-komacine': { eyes: 'almond', cheek: 0.145, jaw: 0.06 },
+      'phinks-magcub': { eyes: 'narrow', jaw: 0.142, brow: 0.08 },
+      illumi: { eyes: 'doll', cheek: 0.139, mouth: 0.033 },
+      'nobunaga-hazama': { eyes: 'narrow', jaw: 0.095, nose: 1.67 },
+    } as const
+    for (const [id, face] of Object.entries(expected)) {
+      const profile = humanProfile(person(id, 'fighter'))
+      expect(profile.faceFeatures, id).toMatchObject(face)
+      expect(mangaLikeness(profile), id).toMatchObject(face)
+    }
+  })
+
+  it('projects the royal face batch without collapsing Kacho and Fugetsu', () => {
+    const expected = {
+      'queen-oito': { eyes: 'almond', cheek: 0.15, jaw: 0.065 },
+      'prince-camilla': { eyes: 'almond', cheek: 0.146, jaw: 0.06 },
+      'prince-kacho': { eyes: 'round', cheek: 0.15, jaw: 0.065 },
+      'prince-fugetsu': { eyes: 'round', cheek: 0.15, jaw: 0.065 },
+      'prince-momoze': { eyes: 'doll', cheek: 0.144, jaw: 0.061 },
+      'prince-halkenburg': { eyes: 'narrow', cheek: 0.148, jaw: 0.087 },
+    } as const
+    for (const [id, face] of Object.entries(expected)) {
+      const profile = humanProfile(person(id, 'witness'))
+      expect(profile.faceFeatures, id).toMatchObject(face)
+      expect(mangaLikeness(profile), id).toMatchObject(face)
+    }
+    const kacho = humanProfile(person('prince-kacho', 'witness'))
+    const fugetsu = humanProfile(person('prince-fugetsu', 'witness'))
+    expect(kacho.faceFeatures).toEqual(fugetsu.faceFeatures)
+    expect([kacho.hairStyle, kacho.hair]).not.toEqual([fugetsu.hairStyle, fugetsu.hair])
+  })
+
+  it('projects the second royal batch, including authored head height', () => {
+    const expected = {
+      'prince-zhanglei': { eyes: 'heavy', jaw: 0.16, headY: 1.69 },
+      'prince-marayam': { eyes: 'round', cheek: 0.198, headY: 1.73 },
+      'prince-tubeppa': { eyes: 'narrow', nose: 1.65, mouth: 0.086 },
+      'prince-salesale': { eyes: 'narrow', cheek: 0.19, mouth: 0.172 },
+      'prince-luzurus': { eyes: 'almond', jaw: 0.115, nose: 1.65 },
+      'nasubi-hui-guo-rou': { eyes: 'narrow', cheek: 0.19, neck: 0.09 },
+    } as const
+    for (const [id, face] of Object.entries(expected)) {
+      const profile = humanProfile(person(id, 'witness'))
+      expect(profile.faceFeatures, id).toMatchObject(face)
+      expect(mangaLikeness(profile), id).toMatchObject(face)
+    }
+  })
+
+  it('projects the Hunter and Zodiac face batch from the catalogue', () => {
+    const expected = {
+      tokarine: { eyes: 'round', cheek: 0.195, mouth: 0.082 },
+      'sanbica-norton': { eyes: 'doll', cheek: 0.157, nose: 0.75 },
+      'mizaistom-nana': { eyes: 'heavy', jaw: 0.145, nose: 1.35 },
+      'cheadle-yorkshire': { eyes: 'round', cheek: 0.153, jaw: 0.08 },
+      gel: { eyes: 'doll', cheek: 0.144, jaw: 0.059 },
+      cluck: { eyes: 'almond', cheek: 0.147, chin: 0.215 },
+    } as const
+    for (const [id, face] of Object.entries(expected)) {
+      const profile = humanProfile(person(id, 'hunter'))
+      expect(profile.faceFeatures, id).toMatchObject(face)
+      expect(mangaLikeness(profile), id).toMatchObject(face)
+    }
+  })
+
+  it('projects the expedition Hunter face batch from the catalogue', () => {
+    const expected = {
+      'leorio-paradinight': { eyes: 'narrow', jaw: 0.103, nose: 1.55 },
+      'beyond-netero': { eyes: 'narrow', cheek: 0.17, neck: 0.075 },
+      saiyu: { eyes: 'heavy', cheek: 0.151, chin: 0.236 },
+      'botobai-gigante': { eyes: 'heavy', jaw: 0.15, neck: 0.088 },
+      ginta: { eyes: 'heavy', cheek: 0.19, neck: 0.1 },
+      'saccho-kobayakawa': { eyes: 'narrow', chin: 0.255, nose: 1.7 },
+    } as const
+    for (const [id, face] of Object.entries(expected)) {
+      const profile = humanProfile(person(id, 'hunter'))
+      expect(profile.faceFeatures, id).toMatchObject(face)
+      expect(mangaLikeness(profile), id).toMatchObject(face)
+    }
   })
 
   it('lets a declaration overrule the costume the role would have put on', () => {

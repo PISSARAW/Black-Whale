@@ -2,6 +2,7 @@ import type { Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
 import { BONE, INK, modelKit } from './nenModelPrimitives'
 import { buildCookieFigure } from './nenCookieFigure'
+import { buildTsuchibokko } from './silentMajoritySnake'
 
 function dolphin(seen: Apparition, context: BasicApparitionContext) {
   const k = modelKit(context, seen.size)
@@ -152,56 +153,12 @@ function spider(seen: Apparition, context: BasicApparitionContext) {
   return context.root
 }
 
-function bloodSnake(seen: Apparition, context: BasicApparitionContext) {
-  const k = modelKit(context, seen.size)
-  k.tube({
-    name: 'white-snake-body',
-    points: [
-      [0, 0, -0.5],
-      [0.3, 0.08, -0.2],
-      [0, 0.15, 0],
-      [0, 0.7, 0],
-    ],
-    radius: 0.13,
-    colour: BONE,
-  })
-  k.oval({ name: 'upright-head', at: [0, 0.9, 0], radii: [0.22, 0.28, 0.16], colour: BONE })
-  for (const side of [-1, 1])
-    k.oval({
-      name: `black-eye-${side}`,
-      at: [side * 0.11, 0.99, 0.14],
-      radii: [0.055, 0.095, 0.015],
-      colour: INK,
-    })
-  for (let row = 0; row < 2; row++) {
-    const y = 0.84 - row * 0.28
-    k.oval({
-      name: `human-mouth-${row}`,
-      at: [0, y, 0.16],
-      radii: [0.15, 0.075, 0.025],
-      colour: INK,
-    })
-    for (const lip of [-1, 1])
-      k.tube({
-        name: `human-lip-${row}-${lip}`,
-        points: [
-          [-0.14, y, 0.19],
-          [0, y + lip * 0.065, 0.21],
-          [0.14, y, 0.19],
-        ],
-        radius: 0.022,
-        colour: 0xc6a7a0,
-      })
-  }
-  return context.root
-}
-
 const BUILDERS = {
   dolphin,
   cookie: buildCookieFigure,
   'predator-salesale': predator,
   'nen-spider': spider,
-  'blood-snake': bloodSnake,
+  'blood-snake': buildTsuchibokko,
 }
 export function buildSupportBeastApparition(seen: Apparition, context: BasicApparitionContext) {
   return BUILDERS[seen.kind as keyof typeof BUILDERS]?.(seen, context)

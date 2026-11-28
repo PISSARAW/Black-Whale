@@ -1,5 +1,6 @@
 import { LOWER_DECK_CLOTHES } from './mangaLowerDeckClothes'
 import { addFeitanCoat } from './mangaFeitanClothes'
+import { addQuorolleCoat, addTevelaresJacket } from './mangaHeillyRaidClothes'
 import { addTubeppaSuit } from './mangaTubeppaSuit'
 import { addMarayamTuxedo } from './mangaMarayamClothes'
 import { addZhangLeiTunic } from './mangaZhangLeiClothes'
@@ -35,6 +36,8 @@ import { addFranklinOveralls, addChrolloCrossCoat } from './mangaTroupeClothes'
 import { addMangaBodyBandages } from './mangaBandages'
 import { addMangaHoodie } from './mangaHood'
 import { addMangaWaistcoat } from './mangaWaistcoat'
+import { addFalseHisokaJacket } from './mangaBonolenovDisguise'
+import { addLynchTop, addVoconteJacket } from './mangaXiYuClothes'
 import { mergeHumanDetails } from './humanDetailGeometry'
 import { addDogmanShirt } from './mangaDogman'
 import { addShimanuMaidDress } from './mangaShimanu'
@@ -54,9 +57,9 @@ import { addBalsamilcoPrivateSoldierUniform } from './mangaBalsamilco'
 import { addBabimynaKakinUniform } from './mangaBabimyna'
 import { addVergeiBodyguardSuit } from './mangaVergei'
 import { addVincentKakinUniform } from './mangaVincent'
-import { addNenClassMaidRobe } from './mangaNenClassDetails'
 import { addKakinAnnouncerPatternedDress } from './mangaKakinAnnouncer'
 import { addCleapatroStripedUniform } from './mangaCleapatro'
+import { addNenClassMaidRobe } from './mangaNenClassDetails'
 
 function machi(build: HumanClothesBuild) {
   const { THREE, geometry, figure, materials } = build
@@ -151,50 +154,35 @@ function shizuku(build: HumanClothesBuild) {
 }
 
 function tracksuit(build: HumanClothesBuild) {
-  const { THREE, figure, geometry, materials, profile } = build
-  const phinks = profile.likeness === 'phinks-magcub'
+  const { THREE, figure, geometry, materials } = build
   mangaPanel(build, {
     name: 'tracksuit-zipper',
     points: [
-      [-0.004, 1.46],
-      [-0.004, 0.83],
-      [0.004, 0.83],
-      [0.004, 1.46],
+      [-0.024, 1.46],
+      [-0.018, 0.83],
+      [0.018, 0.83],
+      [0.024, 1.46],
     ],
-    material: phinks ? materials.dark : materials.accent,
+    material: materials.dark,
   })
-  for (const side of [-1, 1]) {
-    mangaPanel(build, {
-      name: `tracksuit-shoulder-yoke-${side}`,
-      points: [
-        [side * 0.055, 1.47],
-        [side * 0.2, 1.38],
-        [side * 0.185, 1.29],
-        [side * 0.046, 1.355],
-      ],
-      material: materials.shirt,
-    })
-    if (phinks)
-      for (let band = 0; band < 2; band++)
-        mangaPanel(build, {
-          name: `phinks-chevron-${side}-${band}`,
-          points: [
-            [side * 0.012, 1.338 - band * 0.032],
-            [side * 0.19, 1.275 - band * 0.032],
-            [side * 0.189, 1.263 - band * 0.032],
-            [side * 0.012, 1.326 - band * 0.032],
-          ],
-          material: materials.accent,
-          lift: 0.009,
-        })
-  }
+  mangaPanel(build, {
+    name: 'phinks-zip-teeth',
+    points: [
+      [-0.002, 1.46],
+      [-0.002, 0.83],
+      [0.002, 0.83],
+      [0.002, 1.46],
+    ],
+    material: materials.accent,
+    lift: 0.016,
+  })
   const collar = new THREE.Mesh(
     geometry(
       THREE,
       'manga:tracksuit-collar',
-      () => new THREE.CylinderGeometry(0.065, 0.08, 0.073, 24, 1, true),
+      () => new THREE.CylinderGeometry(0.071, 0.088, 0.095, 24, 1, true),
     ),
-    materials.cloth,
+    materials.dark,
   )
   collar.position.y = 1.465
   collar.name = 'tracksuit-standing-collar'
@@ -211,6 +199,8 @@ const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
   'biscuit-krueger': addBiscuitReferenceClothes,
   melody: addMelodySuit,
   padaille: addPadailleShirt,
+  quorolle: addQuorolleCoat,
+  tevelares: addTevelaresJacket,
   luini: addLuiniPatternedJacket,
   bill: addBodyguardReferenceSuit,
   basho: addBodyguardReferenceSuit,
@@ -238,6 +228,9 @@ const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
   'zakuro-custard': addZakuroCroppedJacket,
   rihan: addFurykovPuffer,
   hisoka: addMangaWaistcoat,
+  'bonolenov-as-hisoka': addFalseHisokaJacket,
+  'lynch-fullbokko': addLynchTop,
+  voconte: addVoconteJacket,
   'prince-tserriednich': addMangaHoodie,
   'mizaistom-nana': addMizaistomCowUniform,
   illumi: addIllumiTravelClothes,
@@ -271,6 +264,9 @@ const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
 }
 
 export function addMangaCharacterClothes(build: HumanClothesBuild): boolean {
+  if (build.profile.likeness === 'prince-tserriednich' && build.profile.clothing === 'suit') {
+    return false
+  }
   const id = build.profile.likeness ?? ''
   const custom = SPECIAL[id] ?? LOWER_DECK_CLOTHES[id]
   custom?.(build)

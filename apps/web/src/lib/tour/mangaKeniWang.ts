@@ -1,6 +1,7 @@
 import type { HumanClothesBuild } from './humanClothes'
-import { mangaBodyShape } from './mangaBody'
+import { mangaChestSurface } from './mangaBody'
 import { addMangaSuit } from './mangaTailoring'
+import { kurapikaSurfacePanel } from './kurapikaGeometry'
 import { mergeHumanDetails } from './humanDetailGeometry'
 import type { Material, MeshBasicMaterial } from 'three'
 
@@ -19,30 +20,28 @@ function keniStripeMaterial(source: Material): MeshBasicMaterial {
 
 export function addKeniStripedSuit(build: HumanClothesBuild): void {
   addMangaSuit(build)
+  if (build.profile.plainSuit) return
   const { THREE, geometry, figure, materials, frame, profile } = build
-  const { chest, depth } = mangaBodyShape(profile)
   const stripeMaterial = keniStripeMaterial(materials.shirt)
   const stripes = new THREE.Mesh(
     geometry(THREE, 'manga:keni-pinstripe-suit', () => {
       const parts = []
       for (let i = -5; i <= 5; i++) {
-        const x = i * 0.033
-        const span = Math.max(0.25, 0.58 - Math.abs(i) * 0.027)
+        if (i === 0) continue
+        const x = i * 0.027
+        const top = 1.09 + Math.abs(i) * 0.057
         parts.push(
-          new THREE.BoxGeometry(0.003, span, 0.004).translate(
-            x,
-            0.02 + Math.abs(i) * 0.004,
-            depth * 0.98,
-          ),
+          kurapikaSurfacePanel(THREE, {
+            points: [
+              [x, 0.87, 0],
+              [x + 0.0019, 0.87, 0],
+              [x + 0.0019, top, 0],
+              [x, top, 0],
+            ],
+            depth: (sx, sy) => mangaChestSurface(profile, sx, sy) + 0.0035,
+          }).translate(0, -1.12, 0),
         )
       }
-      for (const side of [-1, 1])
-        for (let i = 0; i < 4; i++)
-          parts.push(
-            new THREE.BoxGeometry(0.003, 0.29 - i * 0.025, 0.004)
-              .rotateZ(side * (0.34 + i * 0.035))
-              .translate(side * (0.065 + i * 0.026), 0.18 - i * 0.012, depth * 1.01),
-          )
       return mergeHumanDetails(parts)
     }),
     stripeMaterial,
@@ -59,7 +58,7 @@ export function addKeniStripedSuit(build: HumanClothesBuild): void {
           new THREE.CircleGeometry(0.004, 8).translate(
             (i % 2 ? 1 : -1) * 0.006,
             1.38 - i * 0.027,
-            chest * 0.89,
+            mangaChestSurface(profile, 0, 1.38 - i * 0.027) + 0.017,
           ),
         )
       return mergeHumanDetails(parts)

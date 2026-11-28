@@ -21,17 +21,30 @@ let browser
 const errors = []
 const checks = []
 try {
-  browser = await chromium.launch({ headless: true, args: ['--enable-unsafe-swiftshader'] })
+  browser = await chromium.launch({
+    executablePath:
+      process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ??
+      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    headless: true,
+    args: ['--enable-unsafe-swiftshader'],
+  })
   const page = await browser.newPage({ viewport: { width: 1440, height: 1150 } })
   page.on('pageerror', (error) => errors.push(error.message))
   page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text())
+    if (message.type() === 'error' && !message.text().includes('Failed to load resource'))
+      errors.push(message.text())
+  })
+  page.on('response', (response) => {
+    if (response.status() >= 400 && !response.url().endsWith('/favicon.ico'))
+      errors.push(`${response.status()} ${response.url()}`)
   })
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/manga-cast/`)
   await page.waitForFunction(() => window.mangaCastFixture, undefined, { timeout: 120000 })
   const ids =
     process.env.MANGA_CAST_IDS?.split(',') ??
-    (await page.evaluate(() => window.mangaCastFixture.ids))
+    (process.env.MANGA_CAST_ROSTER
+      ? await page.evaluate(() => window.mangaCastFixture.rosterIds)
+      : await page.evaluate(() => window.mangaCastFixture.ids))
   for (let i = 0; i < ids.length; i += 4) {
     const batch = ids.slice(i, i + 4)
     await page.evaluate((ids) => window.mangaCastFixture.setCharacters(ids), batch)
@@ -47,7 +60,13 @@ try {
     assert.equal(stats.length, batch.length * 2)
     for (const stat of stats)
       assert.ok(stat.meshes > 10 && stat.meshes < 300, `${stat.id}: ${stat.meshes} meshes`)
-    const views = process.env.MANGA_CAST_VIEWS?.split(',') ?? ['body', 'face', 'profile', 'combat']
+    const views = process.env.MANGA_CAST_VIEWS?.split(',') ?? [
+      'body',
+      'face',
+      'three-quarter',
+      'profile',
+      'combat',
+    ]
     for (const view of views) {
       await page.evaluate((view) => window.mangaCastFixture.show(view), view)
       await page.screenshot({

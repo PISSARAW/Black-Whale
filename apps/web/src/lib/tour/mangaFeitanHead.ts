@@ -57,7 +57,7 @@ export function mangaFeitanHair(kit: MangaHairKit) {
           [side * 0.08, 0.18, z],
           [side * 0.15, 0.12, z + 0.03],
           [side * 0.18, 0.025, z + 0.015],
-          [side * (0.19 + (i % 3) * 0.015), -0.035 - (i % 3) * 0.018, z + 0.01],
+          [side * (0.21 + (i % 3) * 0.016), -0.063 - (i % 3) * 0.025, z + 0.01],
         ],
       })
     }
@@ -101,7 +101,12 @@ export function addFeitanScarf(build: HumanHeadBuild, head: Group) {
   // collar, down to a V on the chest, and the same V again between the shoulders.
   mesh('feitan-scarf-trim', profile.accent, () =>
     mergeHumanDetails([
-      new THREE.PlaneGeometry(0.322, 0.03).translate(0, -0.054, 0.173),
+      ...Array.from({ length: 17 }, (_, i) => {
+        const x = (i - 8) * 0.018
+        return new THREE.PlaneGeometry(0.021, 0.027)
+          .rotateZ(i % 2 ? 0.13 : -0.13)
+          .translate(x, -0.056 - x * x * 0.55 + (i % 2) * 0.006, 0.178 - x * x * 0.19)
+      }),
       new THREE.PlaneGeometry(0.034, 0.24).rotateZ(0.61).translate(-0.067, -0.241, 0.204),
       new THREE.PlaneGeometry(0.034, 0.24).rotateZ(-0.61).translate(0.067, -0.241, 0.204),
       ...[-1, 1].map((side) =>

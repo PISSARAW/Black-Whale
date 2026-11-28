@@ -40,5 +40,23 @@ ses adaptations de lisibilité : visage agrandi, ombrage de la peau, sourcils ac
 et yeux de Kurapika ajustés. Les équipements et les adaptations corporelles propres
 au combat restent visibles sur la planche des silhouettes.
 
-La fixture source se trouve dans `apps/web/ui-tests/manga-cast/main.ts` ; ses vues
-`face` et `body` ont été capturées avec une rotation frontale nulle pour les deux modes.
+Le contrat partagé accepte aussi des proportions contrôlées et optionnelles : longueur
+du torse et des membres, largeur du bassin, pente des épaules et posture. Une omission
+reste strictement neutre ; seules les ressemblances appuyées par les références du
+catalogue activent ces écarts, de la même manière dans Tour et Clash.
+
+Le même principe couvre maintenant les traits fins du visage. Les yeux, joues,
+mâchoire, menton, sourcils, nez, bouche et cou peuvent être déclarés avec des bornes
+strictes dans le catalogue ; le constructeur de tête commun les projette dans les deux
+modes sans recopier une fiche faciale propre au combat.
+Trente-six personnages à forte visibilité utilisent déjà cette voie, dont six membres de la
+Brigade fantôme, douze figures royales et douze Hunters, Zodiaques ou chefs d’expédition ; les autres conservent
+leurs directions historiques jusqu’à leur migration. La hauteur de tête des gabarits
+particuliers, notamment Marayam et Zhang Lei, appartient elle aussi à cette déclaration bornée.
+Les yeux ovales d’Oito restent une pièce de portrait dédiée, mais suivent désormais le contrat
+commun `face-eye-*` et séparent contour, sclérotique, iris et reflet dans les deux modes.
+
+La fixture source se trouve dans `apps/web/ui-tests/manga-cast/main.ts`. Son contrôle
+reproductible couvre désormais cinq vues : corps frontal, visage frontal, trois-quarts,
+profil et garde de combat. Les planches historiques ci-dessus restent la référence de la
+révision indiquée ; une nouvelle capture ne les remplace qu'avec son manifeste de révision.

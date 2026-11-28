@@ -421,6 +421,24 @@ const PIECES: Record<Signature, Piece> = {
   },
 }
 
+function headMount(head: Group, add: (shape: Placed) => Object3D) {
+  if (head.name !== 'manga-head:keni-wang') return add
+  return (shape: Placed) => {
+    const mesh = add(shape)
+    if (shape.key.startsWith('sig:lens-rectangular')) {
+      mesh.position.z -= 0.017
+      mesh.rotation.y = Math.sign(mesh.position.x) * 0.13
+    }
+    if (shape.key === 'sig:rectangular-bridge') mesh.position.z -= 0.012
+    if (shape.key === 'sig:rectangular-temple') {
+      mesh.position.z -= 0.018
+      mesh.position.x *= 0.91
+      mesh.rotation.set(-0.23, -Math.sign(mesh.position.x) * 0.3, 0)
+    }
+    return mesh
+  }
+}
+
 /**
  * The two garments no role aboard could produce.
  *
@@ -456,7 +474,7 @@ export function addHumanSignatures({
 
   const hang: Hang = {
     THREE,
-    head: mount(parts.head),
+    head: headMount(parts.head, mount(parts.head)),
     body: mount(parts.figure),
     arms: (shape) => parts.arms.forEach((arm) => mount(arm)(shape)),
     hand: mount(parts.rightHand),

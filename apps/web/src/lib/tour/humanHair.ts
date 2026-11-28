@@ -68,6 +68,7 @@ const CAPS: Record<HairStyle, Cap> = {
   // A ring of hair round a bare crown: the cap would be the thing it is not.
   'bald-crown': { height: 1, y: 0, none: true },
   bun: { height: 1.02, y: 0.015 },
+  curtain: { height: 1.04, y: 0.015 },
 }
 
 /** Where a shape goes and how it is turned, so the styles read as one list. */
@@ -134,6 +135,17 @@ const STYLES: Partial<Record<HairStyle, Style>> = {
         make: () => hairLockGeometry(THREE),
         at: [side * 0.145, -0.04, -0.005],
         turn: [0, 0, side * -0.08],
+      })
+    }
+  },
+
+  curtain: ({ THREE, place }) => {
+    for (const side of [-1, 1]) {
+      place({
+        key: 'hair:curtain-side',
+        make: () => hairLockGeometry(THREE),
+        at: [side * 0.105, 0.015, 0.12],
+        turn: [0.18, side * -0.08, side * -0.2],
       })
     }
   },

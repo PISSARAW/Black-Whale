@@ -22,5 +22,15 @@ export function registerHumanClone(
     arms: rig.arms.map(copy),
     legs: rig.legs.map(copy),
     knees: rig.knees.map(copy),
+    ...(rig.joints
+      ? {
+          joints: {
+            elbows: rig.joints.elbows.map(copy),
+            hands: rig.joints.hands.map(copy),
+            knees: rig.joints.knees.map(copy),
+            feet: rig.joints.feet.map(copy),
+          },
+        }
+      : {}),
   })
 }

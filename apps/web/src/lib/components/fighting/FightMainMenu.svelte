@@ -100,6 +100,13 @@
   </button>
   <FightJukebox {language} />
   <div class="clash-menu-links">
+    <a href={$link('/expressions')}
+      ><span class="menu-link-icon" aria-hidden="true">◉</span><span
+        ><strong>{fr ? 'Expressions des personnages' : 'Character expressions'}</strong><small
+          >{fr ? 'Visages, émotions et combinaisons' : 'Faces, emotions and combinations'}</small
+        ></span
+      ><span aria-hidden="true">→</span></a
+    >
     <a href={$link('/fighting/profile')}
       ><span aria-hidden="true">◇</span><span
         ><strong>{fr ? 'Profil et saisons' : 'Profile and seasons'}</strong><small

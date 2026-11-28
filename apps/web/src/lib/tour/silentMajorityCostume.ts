@@ -9,6 +9,7 @@ import {
   type Three,
 } from './silentMajorityParts'
 import { addSilentMajoritySleeves } from './silentMajoritySleeves'
+import { addSilentMajorityBack } from './silentMajorityBack'
 
 export interface SilentMajorityBuild {
   THREE: Three
@@ -22,6 +23,9 @@ export interface SilentMajorityBuild {
   ink: Material
   accent: Material
   dark: Material
+  cloth: Material
+  sash: Material
+  brass: Material
 }
 
 /** The flat front of the bodice, and the plane its ornaments are laid on. */
@@ -44,13 +48,12 @@ export function addSilentMajorityCostume(build: SilentMajorityBuild): void {
   addSash(build)
   addTabard(build)
   addSocks(build)
-  // The sleeves take the opaque black, not the jacket's: a cloth that blends is
-  // sorted against the aura shell round the body and loses to it from the side.
-  const { THREE, geometry, outlined, arms, dark, ink, accent } = build
-  addSilentMajoritySleeves({ THREE, geometry, outlined, arms, cloth: dark, ink, pale: accent })
+  addSilentMajorityBack(build)
+  const { THREE, geometry, outlined, arms, cloth, ink, accent } = build
+  addSilentMajoritySleeves({ THREE, geometry, outlined, arms, cloth, ink, pale: accent })
 }
 
-function addTunic({ THREE, geometry, outlined, figure, accent, dark, ink }: SilentMajorityBuild) {
+function addTunic({ THREE, geometry, outlined, figure, cloth, dark, ink }: SilentMajorityBuild) {
   // Six sides with a face forward, so the ornaments lie flat on the chest and
   // the tabard hangs against a plane rather than a curve.
   const bodice = outlined({
@@ -58,9 +61,9 @@ function addTunic({ THREE, geometry, outlined, figure, accent, dark, ink }: Sile
     geometry: geometry(THREE, 'silent:bodice', () => {
       const made = new THREE.CylinderGeometry(0.235, 0.235, 0.38, 6)
       made.rotateY(Math.PI / 6)
-      return graded(THREE, made, [0.5, 0.42])
+      return graded(THREE, made, [1, 0.82])
     }),
-    material: accent,
+    material: cloth,
     ink,
     scale: 1.03,
   })
@@ -72,43 +75,49 @@ function addTunic({ THREE, geometry, outlined, figure, accent, dark, ink }: Sile
   const skirt = outlined({
     THREE,
     geometry: geometry(THREE, 'silent:skirt', () => {
-      const made = new THREE.CylinderGeometry(0.225, 0.31, 0.62, 6)
+      const made = new THREE.CylinderGeometry(0.225, 0.29, 0.59, 6)
       made.rotateY(Math.PI / 6)
-      return graded(THREE, made, [0.42, 0.07])
+      return graded(THREE, made, [0.82, 0.26])
     }),
-    material: accent,
+    material: cloth,
     ink,
     scale: 1.03,
   })
   skirt.name = 'silent-skirt'
   skirt.scale.set(0.9, 1, 0.8)
-  skirt.position.y = 0.77
+  skirt.position.y = 0.785
   figure.add(skirt)
 
-  // The neck is wrapped: nothing pale shows between the plate and the collar.
+  // Narrow at the top to leave a gap between the scarf and each curled tip.
   const scarf = new THREE.Mesh(
-    geometry(THREE, 'silent:scarf', () => new THREE.CylinderGeometry(0.095, 0.115, 0.12, 8)),
+    geometry(THREE, 'silent:scarf', () => new THREE.CylinderGeometry(0.071, 0.105, 0.12, 12)),
     dark,
   )
   scarf.position.y = 1.53
   figure.add(scarf)
 }
 
-function addCollar({ THREE, geometry, figure, accent }: SilentMajorityBuild): void {
+function addCollar({ THREE, geometry, figure, accent, ink }: SilentMajorityBuild): void {
   const kit: Kit = { THREE, geometry }
   // Two short bands crossed high, under the chin, between the shoulder studs.
   for (const side of [-1, 1]) {
-    place(kit, figure, {
+    const band = place(kit, figure, {
       key: 'silent:collar-band',
-      make: () => new THREE.PlaneGeometry(0.068, 0.2),
-      material: accent,
-      at: [side * 0.008, 1.43, ORNAMENT + 0.004 + (side + 1) * 0.001],
+      make: () => new THREE.PlaneGeometry(0.068, 0.225),
+      material: ink,
+      at: [side * 0.008, 1.45, ORNAMENT + 0.004 + (side + 1) * 0.001],
       turn: side * -0.78,
+    })
+    place(kit, band, {
+      key: 'silent:collar-inlay',
+      make: () => new THREE.PlaneGeometry(0.059, 0.216),
+      material: accent,
+      at: [0, 0, 0.001],
     })
   }
 }
 
-function addStudFrame({ THREE, geometry, figure, accent, ink }: SilentMajorityBuild): void {
+function addStudFrame({ THREE, geometry, figure, accent, brass, ink }: SilentMajorityBuild): void {
   const kit: Kit = { THREE, geometry }
   // Two straps from the shoulders to the sash, a stud at each end, and one
   // rail between the lower pair: the upper pair is joined by the collar.
@@ -117,35 +126,36 @@ function addStudFrame({ THREE, geometry, figure, accent, ink }: SilentMajorityBu
   place(kit, figure, {
     key: 'silent:frame-rail',
     make: () => new THREE.PlaneGeometry(half * 2, 0.016),
-    material: accent,
+    material: brass,
     at: [0, rows[1], ORNAMENT],
   })
   for (const side of [-1, 1]) {
     place(kit, figure, {
       key: 'silent:frame-post',
       make: () => new THREE.PlaneGeometry(0.016, rows[0] - rows[1]),
-      material: accent,
+      material: brass,
       at: [side * half, (rows[0] + rows[1]) / 2, ORNAMENT],
     })
-    for (const y of rows) addStud(kit, { figure, accent, ink, at: [side * half, y] })
+    for (const y of rows) addStud(kit, { figure, accent, brass, ink, at: [side * half, y] })
   }
 }
 
 interface Stud {
   figure: Group
   accent: Material
+  brass: Material
   ink: Material
   at: [x: number, y: number]
 }
 
 /** A dark cabochon in a pale setting, with the two glints the panels give it. */
-function addStud(kit: Kit, { figure, accent, ink, at }: Stud): void {
+function addStud(kit: Kit, { figure, accent, brass, ink, at }: Stud): void {
   const disc = () => new kit.THREE.CircleGeometry(0.5, 14)
   const [x, y] = at
   place(kit, figure, {
     key: 'silent:stud',
     make: disc,
-    material: accent,
+    material: brass,
     at: [x, y, ORNAMENT + 0.002],
     scale: [0.066, 0.044],
   })
@@ -167,50 +177,59 @@ function addStud(kit: Kit, { figure, accent, ink, at }: Stud): void {
   }
 }
 
-function addSash({ THREE, geometry, outlined, figure, accent, ink }: SilentMajorityBuild): void {
+function addSash({
+  THREE,
+  geometry,
+  outlined,
+  figure,
+  sash: burgundy,
+  ink,
+}: SilentMajorityBuild): void {
   const kit: Kit = { THREE, geometry }
-  const sash = outlined({
-    THREE,
-    geometry: geometry(THREE, 'silent:sash', () => {
-      const made = new THREE.CylinderGeometry(0.25, 0.25, 0.16, 6)
-      made.rotateY(Math.PI / 6)
-      return graded(THREE, made, [1, 0.9])
-    }),
-    material: accent,
-    ink,
-    scale: 1.03,
-  })
+  const sash = new THREE.Group()
   sash.name = 'silent-sash'
-  sash.scale.set(0.9, 1, 0.95)
-  sash.position.y = 1.155
-  figure.add(sash)
-  const front = 0.25 * Math.cos(Math.PI / 6) * 0.95 + 0.004
-
-  // The gathered upper edge: a row of beads, which is what a ruffle is once it
-  // is two values and a contour.
-  for (let i = -3; i <= 3; i += 1) {
-    // Large enough to scallop the edge: seven lobes across the flat of the sash.
-    const bead = outlined({
+  for (const y of [1.115, 1.2]) {
+    const band = outlined({
       THREE,
-      geometry: geometry(THREE, 'silent:sash-ruffle', () => new THREE.SphereGeometry(0.027, 8, 5)),
-      material: accent,
+      geometry: geometry(THREE, 'silent:sash-band', () => {
+        const made = new THREE.CylinderGeometry(0.248, 0.248, 0.082, 6)
+        made.rotateY(Math.PI / 6)
+        return graded(THREE, made, [1, 0.72])
+      }),
+      material: burgundy,
       ink,
-      scale: 1.1,
+      scale: 1.04,
     })
-    bead.position.set(i * 0.035, 1.244, front - 0.014)
-    figure.add(bead)
+    band.scale.set(0.9, 1, 0.95)
+    band.position.y = y
+    sash.add(band)
+    addSashFolds(kit, { band: sash, ink, y })
   }
-  // Its folds are drawn as waves, one under the other.
-  for (const y of [1.2, 1.16, 1.12]) {
-    place(kit, figure, {
-      key: 'silent:sash-fold',
-      make: () => {
-        const made = waveGeometry(THREE, { length: 0.2, sway: 0.009, periods: 3, thickness: 0.004 })
-        made.rotateZ(Math.PI / 2)
-        return made
-      },
+  figure.add(sash)
+}
+
+function addSashFolds(kit: Kit, { band, ink, y }: { band: Group; ink: Material; y: number }) {
+  const { THREE } = kit
+  const front = 0.248 * Math.cos(Math.PI / 6) * 0.95 + 0.008
+  for (const edge of [-1, 1]) {
+    place(kit, band, {
+      key: 'silent:sash-gathered-edge',
+      make: () =>
+        waveGeometry(THREE, { length: 0.23, sway: 0.0045, periods: 6, thickness: 0.0026 }).rotateZ(
+          Math.PI / 2,
+        ),
       material: ink,
-      at: [-0.1, y, front],
+      at: [-0.115, y + edge * 0.027, front],
+    })
+  }
+  for (let index = -3; index <= 3; index += 1) {
+    place(kit, band, {
+      key: 'silent:sash-fold',
+      make: () =>
+        waveGeometry(THREE, { length: 0.039, sway: 0.0045, periods: 0.7, thickness: 0.0025 }),
+      material: ink,
+      at: [index * 0.032, y + 0.02, front],
+      turn: index * 0.12,
     })
   }
 }
@@ -253,7 +272,7 @@ function addTabard({ THREE, geometry, figure, accent, ink }: SilentMajorityBuild
         waveGeometry(THREE, {
           length: 0.34,
           sway: 0.024,
-          periods: 5.25,
+          periods: 2.85,
           thickness: 0.0065,
           mirrored: side > 0,
         }),
@@ -281,11 +300,11 @@ function addSocks({ THREE, geometry, knees, dark }: SilentMajorityBuild): void {
   // stays bare, which is the pale gap the drawing leaves below the hem.
   for (const knee of knees) {
     const sock = new THREE.Mesh(
-      geometry(THREE, 'silent:sock', () => new THREE.CapsuleGeometry(0.066, 0.33, 3, 8)),
+      geometry(THREE, 'silent:sock', () => new THREE.CylinderGeometry(0.065, 0.05, 0.481, 14)),
       dark,
     )
     sock.name = 'silent-sock'
-    sock.position.y = -0.21
+    sock.position.y = -0.182
     knee.add(sock)
   }
 }

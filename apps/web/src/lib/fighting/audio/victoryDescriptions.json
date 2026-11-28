@@ -91,7 +91,7 @@
       "His allies line up behind Halkenburg. He raises his bow."
     ],
     [
-      347,
+      349,
       "La flèche traverse la salle vers l’adversaire.",
       "The arrow crosses the room toward his opponent."
     ]
@@ -99,7 +99,7 @@
   "camilla": [
     [120, "Un chat de Nen apparaît auprès de Camilla.", "A Nen cat appears beside Camilla."],
     [
-      414,
+      408,
       "La créature se penche vers Camilla. Elle reprend son souffle.",
       "The creature bends over Camilla. She draws breath again."
     ]
@@ -307,6 +307,12 @@
   "basho": [
     [72, "Basho écrit un poème sur une feuille.", "Basho writes a poem on a sheet of paper."],
     [386, "Des flammes jaillissent au fil de ses frappes.", "Flames erupt as he lands his strikes."]
+  ],
+  "sayird": [
+    [12, "Sayird repère un cafard.", "Sayird spots a cockroach."],
+    [138, "Le regard du cafard.", "Through the roach’s eyes."],
+    [235, "Il esquive et enchaîne les coups.", "He dodges and lands a series of blows."],
+    [420, "Son adversaire s’effondre.", "His opponent collapses."]
   ],
   "kurapika-judgment": [
     [

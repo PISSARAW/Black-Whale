@@ -24,12 +24,21 @@ export function nenActionAllowed(options: NenAction): boolean {
   const move = moveById(options.moveId)
   if (move && (move.id.split(':')[0] !== fighter.id || move.kind !== options.kind)) return false
   if (passiveNenCommand(options, fighter)) return true
-  const allowVoluntaryZetsu =
-    options.state.parallelFuture?.owner === options.side && fighter.parallelEyesClosed === true
+  const allowVoluntaryZetsu = futureZetsuCommand(options, fighter)
   return (
     voluntaryNenAvailable(fighter, { allowVoluntaryZetsu }) &&
     !chainAbilitySealed(fighter, nenMoveId(fighter, options)) &&
     nenCognitiveAllows(options.state, options.side, options)
+  )
+}
+
+function futureZetsuCommand(options: NenAction, fighter: ArcadeFighter): boolean {
+  if (options.state.parallelFuture?.owner === options.side && fighter.parallelEyesClosed)
+    return true
+  return Boolean(
+    fighter.futureIllusionActive &&
+    options.kind === 'special' &&
+    options.moveId === 'tserriednich:neutralSpecial',
   )
 }
 

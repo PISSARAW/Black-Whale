@@ -61,16 +61,17 @@ export function createFightingNen() {
 }
 
 /** One held Aura input, interpreted from the physical context. */
-function forcedAuraContext(fighter: ArcadeFighter): ArcadeFighter | undefined {
+function forcedAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter | undefined {
   if ((fighter.burstZetsuFrames ?? 0) > 0) return forceZetsu(fighter)
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
-  if (fighter.moonlightZetsu) return forceZetsu(fighter)
+  if (fighter.moonlightZetsu || (fighter.futureIllusionActive && !input.aura))
+    return forceZetsu(fighter)
 }
 
 export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
   input = applyIllumiMotorParasite(fighter, input)
   if (!illumiBodyFree(fighter)) return fighter
-  const forced = forcedAuraContext(fighter)
+  const forced = forcedAuraContext(fighter, input)
   if (forced) return forced
   const restricted = restrictedChainAura(fighter, input)
   if (restricted) return restricted

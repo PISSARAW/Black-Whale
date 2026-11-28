@@ -18,6 +18,7 @@ import { CAMILLA_PISTOL, camillaCanFire, spendCamillaRound } from './camillaWeap
 import { firearmCanShoot, spendFirearmRound } from './nenPillars'
 import { hinrighCanThrow, spendHinrighKnife, hinrighRangedBody } from './hinrighKnives'
 import { spendBiohazardGunRound } from './biohazardGun'
+import { hasPrinceSidearm, princeCanFire, princeSidearmId, spendPrinceRound } from './princeSidearm'
 import { thetaShotAim } from './thetaFirearm'
 import { hasMoveResources, moveForSlot } from './movesets'
 import { remotePunchCanHit, spawnRemotePunch } from './remotePunch'
@@ -225,7 +226,7 @@ function projectile(options: ProjectileOptions): ProjectileProfile {
 }
 
 export function projectileProfile(id: FighterId): ProjectileProfile {
-  if (id === 'camilla') return CAMILLA_PISTOL
+  if (id === 'camilla' || princeSidearmId(id)) return CAMILLA_PISTOL
   return CANONICAL_PROJECTILES[id] ?? (hasBodyguardFirearm(id) ? BODYGUARD_PISTOL : THROWN_STONE)
 }
 
@@ -241,6 +242,7 @@ function physicalRangedUnavailable(fighter: ArcadeFighter): boolean {
   return (
     !firearmCanShoot(fighter) ||
     !camillaCanFire(fighter) ||
+    !princeCanFire(fighter) ||
     !hinrighCanThrow(fighter) ||
     fighter.biohazardGunRounds === 0 ||
     Boolean(fighter.biohazardGun) ||
@@ -259,7 +261,7 @@ function standardRangedAvailable(fighter: ArcadeFighter): boolean {
 }
 
 export function rangedAuraCost(id: FighterId): number {
-  if (hasBodyguardFirearm(id)) return 0
+  if (hasBodyguardFirearm(id) || princeSidearmId(id)) return 0
   if (id === 'bonolenov') return 55
   if (id === 'machi') return moveForSlot(id, 'forwardSpecial')!.auraCost
   if (['benjamin', 'theta', 'camilla', 'hinrigh', 'musse'].includes(id)) return 0
@@ -310,6 +312,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     colour: profile.colour,
     ...rangedMaterial(fighter, profile),
     concealed: fighter.attack.concealed,
+    illusionHarmless: fighter.futureIllusionActive,
     age: 0,
     lifetime: 120,
   }
@@ -398,6 +401,7 @@ function projectileCollision(
   defender: ArcadeFighter,
 ): { x: number; y: number } | null {
   if (
+    projectile.illusionHarmless ||
     !gumProjectileCanHit(projectile) ||
     !remotePunchCanHit(projectile) ||
     !canReceiveCombatHit(defender, projectile.canHitDowned)
@@ -428,6 +432,7 @@ function projectileCollision(
 function ordinaryRangedReady(fighter: ArcadeFighter): boolean {
   return (
     ['benjamin', 'theta', 'camilla', 'hinrigh'].includes(fighter.id) ||
+    hasPrinceSidearm(fighter) ||
     (fighter.aura >= RANGED_AURA_COST && fighter.nen.mode !== 'zetsu')
   )
 }
@@ -446,6 +451,6 @@ function advanceProjectileMotion(
 
 function spendRangedObject(fighter: ArcadeFighter): ArcadeFighter {
   fighter = hinrighRangedBody(fighter)
-  const spent = spendFirearmRound(spendHinrighKnife(spendCamillaRound(fighter)))
+  const spent = spendPrinceRound(spendFirearmRound(spendHinrighKnife(spendCamillaRound(fighter))))
   return (fighter.nenOwner ?? fighter.id) === 'camilla' ? spent : spendBiohazardGunRound(spent)
 }

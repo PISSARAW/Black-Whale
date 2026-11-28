@@ -10,7 +10,8 @@ export function interceptProjectileWorld(
   state: FightState,
   c: { projectile: FightProjectile; previousX: number },
 ) {
-  if (ignoresWorldObstacles(c.projectile)) return { state, intercepted: false, terrain: false }
+  if (c.projectile.illusionHarmless || ignoresWorldObstacles(c.projectile))
+    return { state, intercepted: false, terrain: false }
   const terrain = gumProjectileCanHit(c.projectile)
     ? interceptArenaProjectile(state, c.projectile, c.previousX)
     : { state, intercepted: false }

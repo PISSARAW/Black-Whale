@@ -2,6 +2,21 @@ import { ContinuousDirector } from './continuousDirector'
 import type { FighterId, FightSide } from '../../src/lib/fighting/types'
 import type { FightStageId } from '../../src/lib/fighting/stages'
 
+function prepareTarget(f: ContinuousDirector, side: FightSide, loser: FightSide) {
+  for (let attempt = 0; f.state[loser].health > 55 && attempt < 30; attempt++) {
+    f.until(() => f.free(side) && f.free(loser))
+    f.close(side, 4.5)
+    f.hit(side, 'standingHeavy')
+  }
+  f.until(() => f.free(side) && f.free(loser))
+  f.held[side] = f.direction(side, true)
+  f.held[loser] = f.direction(loser)
+  f.until(() => Math.abs(f.state[loser].x - 50) <= 5)
+  f.held[side] = {}
+  f.held[loser] = {}
+  f.close(side, 4.5)
+}
+
 /** Needle People does not itself deal damage: the native verdict remains a physical knockout. */
 export function createIllumiFatalityFilm(
   options: { target?: FighterId; stageId?: FightStageId; side?: FightSide } = {},
@@ -22,6 +37,7 @@ export function createIllumiFatalityFilm(
     ren: false,
   })
   f.advance()
+  prepareTarget(f, side, loser)
   const health = f.state[loser].health
   f.hit(side, 'neutralSpecial')
   const implanted =
@@ -41,8 +57,8 @@ export function createIllumiFatalityFilm(
   f.hit(side, 'neutralSpecial')
   const stayed = f.state[loser].needlePuppet?.order === 'stay'
   for (let i = 0; f.state.phase === 'fighting' && i < 65; i++) {
-    f.until(() => f.free(side) && f.free(loser))
-    f.close(side, 4)
+    f.ready(side)
+    f.close(side, 4.5)
     f.hit(side, 'standingHeavy')
   }
   if (
@@ -51,10 +67,12 @@ export function createIllumiFatalityFilm(
     !retreat ||
     !approach ||
     !stayed ||
-    f.state.winner !== side
+    f.state.winner !== side ||
+    f.state.finishReason !== 'knockout' ||
+    f.state[loser].health !== 0
   )
     throw new Error(
-      `Illumi requires native skull implantation and orders: ${JSON.stringify({ implanted, implantDamage, retreat, approach, stayed, winner: f.state.winner })}`,
+      `Illumi requires native skull implantation and a physical knockout: ${JSON.stringify({ implanted, implantDamage, retreat, approach, stayed, winner: f.state.winner, verdict: f.state.finishReason, health: f.state[loser].health, trace: f.audit.slice(-5) })}`,
     )
   return {
     state: f.state,

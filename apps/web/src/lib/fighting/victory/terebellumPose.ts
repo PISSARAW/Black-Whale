@@ -54,7 +54,8 @@ export function terebellumVictoryPose(context: VictoryContext) {
   hero.root.updateWorldMatrix(true, true)
   const heroBox = new Box3().setFromObject(hero.root.getObjectByName('torso')!)
   const victimBox = new Box3().setFromObject(victim.root.getObjectByName('torso')!)
-  victim.root.position.x -= Math.max(0, victimBox.min.x - heroBox.max.x - 0.07) * blend(age, 36, 84)
+  victim.root.position.x -=
+    Math.max(0, victimBox.min.x - heroBox.max.x - 0.045) * blend(age, 36, 84)
   victim.root.updateWorldMatrix(true, true)
   const heroHead = localToHead(hero, new Vector3(0, 0.025, 0.13))
   const recipient = torsoContact(victim.root, 'left')

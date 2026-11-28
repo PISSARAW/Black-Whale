@@ -16,6 +16,10 @@ function bend(actor: VictoryActor, amount: number) {
   }
   groundVictoryActor(actor)
 }
+function stockSwing(age: number) {
+  return ease((age - 228) / 24) * (1 - ease((age - 252) / 24))
+}
+
 function stageTheta(context: VictoryContext) {
   const { hero, victim, age, centre } = context
   const rush = ease((age - 108) / 66),
@@ -25,6 +29,16 @@ function stageTheta(context: VictoryContext) {
   hero.root.position.x +=
     (centre - (compact ? 0.28 : 0.38) - hero.root.position.x) * ease((age - 150) / 84)
   hero.root.position.z = (compact ? 0.4 : 0.48) * dodge
+  const stepIn = new Vector3(
+    victim.root.position.x - hero.root.position.x,
+    0,
+    -hero.root.position.z,
+  )
+  const heightGap = Math.max(0, victim.height - hero.height)
+  hero.root.position.addScaledVector(
+    stepIn.normalize(),
+    (0.31 + Math.min(0.22, heightGap * 0.4)) * stockSwing(age),
+  )
   const walk = Math.sin((age - 108) * 0.13) * Math.sin(Math.PI * rush) * 0.28
   hero.root.rotation.y = Math.atan2(
     victim.root.position.x - hero.root.position.x,
@@ -35,7 +49,7 @@ function stageTheta(context: VictoryContext) {
     hero.root.position.z,
   )
   const kneel = ease((age - 204) / 60)
-  bend(victim, Math.min(2.35, 1.1 + Math.max(0, victim.height - hero.height) * 0.8) * kneel)
+  bend(victim, Math.min(2.35, 1.1 + heightGap * 0.8) * kneel + heightGap * stockSwing(age) * 0.55)
   for (const side of ['left', 'right']) {
     const sign = side === 'left' ? 1 : -1
     victim.root.getObjectByName(`hip-${side}`)!.rotation.x += walk * sign * (1 - kneel)
@@ -83,7 +97,7 @@ export function thetaVictoryPose(context: VictoryContext) {
       direction,
       Math.min(hero.height * 0.24, Math.max(0.34, target.distanceTo(shoulder) - 0.34)),
     )
-  const stock = ease((age - 228) / 24) * (1 - ease((age - 252) / 24))
+  const stock = stockSwing(age)
   const firing = ease((age - 288) / 54) * (1 - ease((age - 444) / 42))
   const right = rest.clone().lerp(aim, firing)
   const contact = target.clone().add(new Vector3(-0.06, 0.06, 0.02))

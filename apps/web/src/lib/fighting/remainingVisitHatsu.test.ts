@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import { describe, expect, it, vi } from 'vitest'
 import { createFightState } from './fightState'
+import { performAttack, tickFight } from './engine'
+import { cinematicDuel } from './cinematicFixtures'
 import { createVisitHatsuModel, type VisitHatsuKind } from './visitHatsuModel'
 import { createBlackVoiceGear } from './blackVoiceTypes'
 import { createBlackVoiceScene } from './blackVoiceScene'
@@ -245,23 +247,29 @@ describe('remaining visit models in fighting', () => {
     expect(forward.x * facing).toBeGreaterThan(0.9)
     effects.dispose()
   })
-  it('animates Halkenburg’s existing strike, without introducing a second projectile or impact', () => {
-    const { state, options } = setup('halkenburg')
-    state.player.attack = attack('halkenburg')
-    state.player.hatsuEffects.arrowNocked = 1
+  it('hands Halkenburg’s held arrow over to the real projectile at release', () => {
+    const { options } = setup('halkenburg')
+    const ready = cinematicDuel('halkenburg')
+    ready.opponent.x = ready.player.x + 20
+    let state = performAttack(ready, 'player', 'special')
     const effects = createHalkenburgArrowScene(options)
     effects.sync(state, 0)
-    const arrow = options.scene.getObjectByName('halkenburg-arrow:player')!
-    const origin = arrow.position.x
-    const data = attackData('special', state.player)
-    state.player.attack.frame = data.startup
+    const held = options.scene.getObjectByName('halkenburg-arrow:player')!
+    expect(held.visible).toBe(true)
+    expect(state.projectiles).toHaveLength(0)
+    const startup = attackData('special', state.player).startup
+    for (let frame = 0; frame <= startup && !state.projectiles.length; frame++)
+      state = tickFight(state, EMPTY_INPUT, { dt: 1 / 60, opponentInput: EMPTY_INPUT })
+    expect(state.projectiles).toHaveLength(1)
+    const [shot] = state.projectiles
+    expect(shot.halkenburgArrow).toBeDefined()
     const before = structuredClone(state)
     effects.sync(state, 0)
-    expect(arrow.position.x).toBeGreaterThan(origin)
+    expect(held.visible).toBe(false)
+    const released = options.scene.getObjectByName(`halkenburg-shot:${shot.id}`)!
+    expect(released.visible).toBe(true)
+    expect(released.position.x).toBe(options.worldX(shot.x))
     expect(state).toEqual(before)
-    state.player.attack.frame = data.startup + data.active
-    effects.sync(state, 0)
-    expect(arrow.visible).toBe(false)
     effects.dispose()
   })
 

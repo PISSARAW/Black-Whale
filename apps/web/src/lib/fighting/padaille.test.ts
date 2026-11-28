@@ -13,7 +13,7 @@ import {
 import { attackData, activeHitbox } from './frameData'
 import { hatsuDamageFactor } from './hatsu'
 import { hatsuFor } from './hatsu/registry'
-import { finisherReady, moveForSlot, movesetFor } from './movesets'
+import { finisherReady, moveById, moveForSlot, movesetFor } from './movesets'
 import { animatePadailleWeapon } from './padailleFigure'
 import { padailleKeyedMove } from './padaillePoses'
 import { padaillePresentation } from './padaillePresentation'
@@ -231,7 +231,7 @@ describe('Padaille — three chosen right-hand tools', () => {
     expect(moveset.moves.map((move) => move.nameFr).join(' ')).not.toMatch(
       /Faux|jambe|Lance|Canon|Bouclier|souterraine|blindée|Étau|ultime|mort/,
     )
-    expect(moveset.combos.flat().every((id) => moveset.moves.some((move) => move.id === id))).toBe(
+    expect(moveset.combos.flat().every((id) => id.startsWith('padaille:') && moveById(id))).toBe(
       true,
     )
     expect(padaillePresentation(ready(), 'fr').hint).toContain('L marteau')

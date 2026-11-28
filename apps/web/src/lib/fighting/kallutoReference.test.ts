@@ -40,7 +40,9 @@ describe('Kalluto · episode 96 reference', () => {
     (zone) => {
       let s = selectPaperTarget(duel(), 'opponent', zone)
       s = followPlan(s)
-      expect(s.player.plantedPaper).toContainEqual({ owner: 'opponent', zone })
+      expect(s.player.plantedPaper).toContainEqual(
+        expect.objectContaining({ owner: 'opponent', zone }),
+      )
       expect(paperState(s.opponent).doll).toBeUndefined()
       expect(kallutoAiSlots({ state: s, gap: 20, roll: 0.5 })[0]).toBe('forwardSpecial')
       const health = s.player.health

@@ -18,7 +18,7 @@ import {
   triggerHatsu,
 } from './hatsu'
 import { billHatsu } from './hatsu/bill'
-import { canUseMovesetMove, finisherReady, moveForSlot, movesetFor } from './movesets'
+import { canUseMovesetMove, finisherReady, moveById, moveForSlot, movesetFor } from './movesets'
 import { applyAuraContext } from './nen'
 import { fightSpecialPresentation } from './fightSpecialPresentation'
 import { createKurapika } from './kurapika'
@@ -70,7 +70,8 @@ describe('Bill’s physical combat and support-only Erigeron', () => {
     expect(
       moveset.combos
         .flat()
-        .every((id) => moveset.moves.some((move) => move.id === id && move.category !== 'special')),
+        .map(moveById)
+        .every((move) => move?.id.startsWith('bill:') && move.category !== 'special'),
     ).toBe(true)
     for (const slot of ['forwardSpecial', 'downSpecial', 'backSpecial', 'finisher'] as const)
       expect(moveForSlot('bill', slot)).toBeNull()

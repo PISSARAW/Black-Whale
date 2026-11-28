@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { createChrolloBook, toggleChrolloBookmark } from './chrolloBook'
 import { beginFight, createFight, performAuraAttack, performMove } from './engine'
 import { createFightMatchRuntime } from './fightMatchRuntime'
 import { createReplayPlayer } from './fightReplayPlayer'
@@ -137,7 +138,9 @@ describe('complete Clash replay coverage', () => {
   })
   it('does not give a copied page equipment when its command was refused', async () => {
     const initial = duel('chrollo')
-    initial.player.chrolloBook = { pages: ['melody'], page: 0, open: false, bookmark: 'melody' }
+    initial.player.chrolloBook = toggleChrolloBookmark(
+      createChrolloBook(['melody', 'sun-and-moon', 'black-voice', 'order-stamp']),
+    )
     const run = recording(initial)
     run.runtime.enqueue(run.state, { kind: 'move', side: 'player', action: 'special', input: 0 })
     run.advance(1)

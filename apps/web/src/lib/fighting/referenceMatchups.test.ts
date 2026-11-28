@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, tickFight } from './engine'
 import { performTrainingAction } from './trainingAction'
+import { toggleChrolloBookmark } from './chrolloBook'
 import { attackData } from './frameData'
 import { FIXED_STEP } from './fightClock'
 import { REPLAY_FIGHTERS, type ReplayFighter } from './fightReplayTypes'
@@ -50,9 +51,17 @@ describe.each(REPLAY_FIGHTERS)('%s reference confrontation situations', (id) => 
     expect(result.impact?.antiAir).toBe(true)
   })
   it('resolves simultaneous close throws as a tech without damage', () => {
-    const state = duel(id)
+    let state = duel(id)
+    state = { ...state, player: { ...state.player, x: 46 } }
+    for (const side of ['player', 'opponent'] as const) {
+      const book = state[side].chrolloBook
+      if (book?.open)
+        state = { ...state, [side]: { ...state[side], chrolloBook: toggleChrolloBookmark(book) } }
+    }
     const first = strike(state, 'throw')
     const both = performTrainingAction({ state: first, side: 'opponent', action: 'throw' })
+    expect(both.player.attack?.variant).toBe('throw')
+    expect(both.opponent.attack?.variant).toBe('throw')
     const result = frames(both, 9)
     expect(result.throwTech).toBeDefined()
     expect(result.player.health).toBe(state.player.health)

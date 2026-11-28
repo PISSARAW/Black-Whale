@@ -1,6 +1,7 @@
 import { expect, it } from 'vitest'
 import { createFightPoseContinuity } from './fightPoseContinuity'
 import { bodyPlan } from './fightBodyMotion'
+import { contactPostureFrom, withContactPosture } from './fightContactPosture'
 import { createFightState } from './fightState'
 import { performAttack } from './engine'
 import { attackData } from './frameData'
@@ -35,7 +36,8 @@ it.each(FIGHTING_ROSTER.map((f) => f.id))(
     )
     expect(middle).not.toEqual(before)
     expect(Object.values(middle).flat().every(Number.isFinite)).toBe(true)
-    expect(continuity(contact, 0.1)).toEqual(contact.pose)
+    const expectedContact = withContactPosture(contact, contactPostureFrom(before, incoming))
+    expect(continuity(contact, 0.1)).toEqual(expectedContact.pose)
   },
 )
 

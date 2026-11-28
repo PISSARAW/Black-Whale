@@ -277,7 +277,8 @@ describe('Nen techniques in an actual 2D duel', () => {
   })
 
   it('Ken absorbs ordinary guarded strikes, drains aura on contact and can be overwhelmed', () => {
-    const state = duel('phinks', 'phinks')
+    const initial = duel('phinks', 'phinks')
+    const state = { ...initial, player: { ...initial.player, x: 44 } }
     const defender = {
       ...aura(state.opponent, { aura: true, guard: true }),
       blocking: true,
@@ -303,6 +304,7 @@ describe('Nen techniques in an actual 2D duel', () => {
     expect(damage(10)).toBe(0)
     expect(damage(500)).toBeGreaterThan(0)
     const struck = impact(performAttack({ ...state, opponent: defender }, 'player', 'light'))
+    expect(struck.impact).toMatchObject({ attacker: 'player', blocked: true })
     expect(struck.opponent.aura).toBeLessThan(defender.aura)
   })
 

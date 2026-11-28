@@ -19,6 +19,12 @@ function advance(state: ReturnType<typeof createFight>, seconds: number, input =
   return next
 }
 
+function advanceAgainst(state: ReturnType<typeof createFight>, opponentInput: typeof EMPTY_INPUT) {
+  for (let frame = 0; frame < 24 && !state.impact; frame++)
+    state = tickFight(state, EMPTY_INPUT, { dt: 1 / 60, ai: false, opponentInput })
+  return state
+}
+
 describe('fighting engine', () => {
   it('starts a duel with the selected Black Whale fighters', () => {
     const state = createFight('kurapika', 'hisoka')
@@ -43,9 +49,12 @@ describe('fighting engine', () => {
     state = {
       ...state,
       player: { ...state.player, x: 46 },
-      opponent: { ...state.opponent, x: 52, blocking: true },
+      opponent: { ...state.opponent, x: 52 },
     }
-    const struck = advance(performAttack(state, 'player', 'heavy'), 0.24)
+    const struck = advanceAgainst(performAttack(state, 'player', 'heavy'), {
+      ...EMPTY_INPUT,
+      guard: true,
+    })
     expect(struck.impact?.blocked).toBe(true)
     expect(struck.impact?.damage).toBeLessThan(12)
   })
@@ -131,16 +140,9 @@ describe('fighting engine', () => {
       player: { ...exposed.player, x: 46 },
       opponent: { ...exposed.opponent, x: 52 },
     }
-    const guarded = {
-      ...exposed,
-      opponent: applyAuraContext(exposed.opponent, {
-        ...EMPTY_INPUT,
-        aura: true,
-        guard: true,
-      }),
-    }
-    const exposedHit = advance(performAttack(exposed, 'player', 'heavy'), 0.24)
-    const guardedHit = advance(performAttack(guarded, 'player', 'heavy'), 0.24)
+    const attack = performAttack(exposed, 'player', 'heavy')
+    const exposedHit = advanceAgainst(attack, { ...EMPTY_INPUT, guard: true })
+    const guardedHit = advanceAgainst(attack, { ...EMPTY_INPUT, aura: true, guard: true })
     expect(guardedHit.impact!.damage).toBe(0)
     expect(guardedHit.impact!.damage).toBeLessThan(exposedHit.impact!.damage)
   })

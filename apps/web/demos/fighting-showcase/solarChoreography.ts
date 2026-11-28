@@ -46,7 +46,7 @@ export function createSolarShowcase() {
   )
   f.hit('player', 'neutralSpecial')
   f.ready('player')
-  for (let i = 0; Math.abs(f.state.player.x - f.state.opponent.x) < 36.5 && i < 120; i++)
+  for (let i = 0; Math.abs(f.state.player.x - f.state.opponent.x) < 32 && i < 120; i++)
     f.retreat('opponent', 2)
   f.ready('opponent')
   f.beat(

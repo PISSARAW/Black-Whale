@@ -1,5 +1,5 @@
 import { hasCancelGrammar } from './duelComboProfiles'
-import { KNOCKDOWN_KNOCKBACK } from './towerJudging'
+import { KNOCKDOWN_KNOCKBACK } from './knockdownRules'
 import type { ArcadeFighter } from './types'
 
 /**

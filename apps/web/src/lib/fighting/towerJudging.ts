@@ -1,4 +1,5 @@
 import { fightFormat } from './formats'
+import { groundedImpactFinishes } from './groundedImpactFinish'
 import type { ArcadeFighter, FightFinishReason, FightSide, FightState } from './types'
 
 interface ImpactJudgment {
@@ -24,15 +25,12 @@ interface KnockdownJudgment {
   critical: boolean
 }
 
-/** A clean hit with at least this knockback puts the defender on the ground. */
-export const KNOCKDOWN_KNOCKBACK = 3
-
 export function isJudgedKnockdown(judgment: KnockdownJudgment): boolean {
   if (judgment.blocked || judgment.avoided) return false
   return (
     judgment.critical ||
     judgment.attacker.attack?.variant === 'throw' ||
-    judgment.knockback >= KNOCKDOWN_KNOCKBACK
+    groundedImpactFinishes(judgment.attacker, judgment.knockback)
   )
 }
 

@@ -8,11 +8,19 @@ import { movesetFor } from '../movesets'
 describe('roster support boundaries', () => {
   it.each(COMBAT_FIGHTERS)('%s: support lessons preserve the native combo catalogue', (fighter) => {
     const native = combatRoutesFor(fighter)
-    const combos = movesetFor(fighter)!.combos
+    const { combos, signatureOpening, followUps } = movesetFor(fighter)!
     expect(native.every((route) => !route.kameo)).toBe(true)
     const nativeSequences = new Set(
       native.map((route) => route.moves.map((slot) => `${fighter}:${slot}`).join(',')),
     )
+    const opening = signatureOpening?.id
+    const transition = followUps?.find((move) => move.sourceMoveId === opening)?.id
+    const finisher = followUps?.find((move) => move.sourceMoveId === transition)?.id
+    if (opening) {
+      expect(transition).toBeDefined()
+      expect(finisher).toBeDefined()
+      nativeSequences.add([opening, transition, finisher].join(','))
+    }
     expect(combos.map((route) => route.join(','))).toEqual([...nativeSequences])
     expect(new Set(combos.map((route) => route.join(':'))).size).toBe(combos.length)
     expect(combatLessonsFor(fighter).filter((route) => route.kameo)).toHaveLength(6)

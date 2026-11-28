@@ -25,6 +25,8 @@ import { fightStance } from './fightStance'
 import type { MoveTimeline } from './keyPoseTimeline'
 import {
   ROSTER_CHOREOGRAPHY,
+  ROSTER_NORMAL_SLOTS,
+  rosterBaseStrikeShape,
   type RosterFighterId,
   type RosterChoreography,
   type StrikeLibrary,
@@ -59,17 +61,6 @@ const STRIKES: StrikeLibrary = {
   backhand: BACK_WHIP,
   charge: CHARGE,
 }
-const NORMALS: readonly MoveSlot[] = [
-  'standingLight',
-  'standingHeavy',
-  'lowLight',
-  'lowHeavy',
-  'airLight',
-  'airHeavy',
-  'forwardLight',
-  'forwardHeavy',
-  'backHeavy',
-]
 const SPECIALS: readonly MoveSlot[] = [
   'neutralSpecial',
   'forwardSpecial',
@@ -83,10 +74,6 @@ export function rosterStrikeShape(id: FighterId, slot: MoveSlot): StrikeShape | 
     physicalStrikeShape(authoredStrikeDirection(id, slot) ?? physicalStrikeDirection(id, slot)) ??
     rosterBaseStrikeShape(id, slot)
   )
-}
-
-export function rosterBaseStrikeShape(id: FighterId, slot: MoveSlot): StrikeShape | undefined {
-  return ROSTER_CHOREOGRAPHY[id as RosterFighterId]?.strikes[NORMALS.indexOf(slot)]
 }
 
 const CACHE = new Map<FighterId, Record<MoveSlot, MoveTimeline>>()
@@ -181,7 +168,7 @@ export function rosterKeyPoses(fighterId: FighterId): Partial<Record<MoveSlot, M
   const held = CACHE.get(id)
   if (held) return held
   const direction = ROSTER_CHOREOGRAPHY[id]
-  const entries: Array<[MoveSlot, MoveTimeline]> = NORMALS.map((slot, index) => {
+  const entries: Array<[MoveSlot, MoveTimeline]> = ROSTER_NORMAL_SLOTS.map((slot, index) => {
     const personal = physicalStrikeDirection(id, slot)
     const shape = physicalStrikeShape(personal) ?? direction.strikes[index]
     const gesture =

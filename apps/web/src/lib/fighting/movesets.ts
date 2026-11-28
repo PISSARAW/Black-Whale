@@ -75,6 +75,8 @@ import { hatsuSealedByOn } from './onTechnique'
 import { moveId } from './movesetFactory'
 import type { FighterMove, FighterMoveset } from './movesetTypes'
 import { canonicalTechniqueAllowed } from './techniqueContracts'
+import { nenFollowupReadiness } from './nenComboReadiness'
+import { capGroundedLinkLoops } from './duelComboDerivedGrammar'
 import { WAVE_FOUR_MOVESETS_A } from './movesetWaveFourA'
 import { WAVE_FOUR_MOVESETS_B } from './movesetWaveFourB'
 import { ROSTER_FINAL_MOVESETS } from './movesetRosterFinal'
@@ -137,6 +139,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     // Reference routes are authored globally and may still contain the old
     // finisher links. Re-apply Cyclotron's canon boundary after that pass.
     .map(tunePhinksMoveset)
+    .map(capGroundedLinkLoops)
     .map(attachMoveFollowUps)
     .map(attachAlternateSignature)
     .map((moveset) => [moveset.fighterId, moveset]),
@@ -208,6 +211,17 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 }
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
+  return (
+    nenFollowupReadiness(state[side], move) === 'ready' &&
+    meetsMovesetRequirements(state, side, move)
+  )
+}
+
+export function meetsMovesetRequirements(
+  state: FightState,
+  side: FightSide,
+  move: FighterMove,
+): boolean {
   const intent = { state, side, kind: move.kind, moveId: move.id }
   if (!nenActionAllowed(intent) || !sunMoonStrikeAllowed(intent)) return false
   return contextualMoveAllowed(state, side, move)

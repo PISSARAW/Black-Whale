@@ -1,4 +1,4 @@
-import { KNOCKDOWN_KNOCKBACK } from './towerJudging'
+import { moveFinishesGroundedImpact } from './knockdownRules'
 import type { FighterMove } from './movesetTypes'
 
 /**
@@ -34,7 +34,7 @@ export function moveFrameAdvantage(move: FighterMove): MoveFrameAdvantage | null
     startup,
     active,
     recovery,
-    onHit: knockback >= KNOCKDOWN_KNOCKBACK ? 'knockdown' : hitstun - busy,
+    onHit: moveFinishesGroundedImpact(move, knockback) ? 'knockdown' : hitstun - busy,
     onBlock: blockstun - busy,
   }
 }

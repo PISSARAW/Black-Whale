@@ -1,4 +1,5 @@
-import { KNOCKDOWN_KNOCKBACK } from './towerJudging'
+import { KNOCKDOWN_KNOCKBACK } from './knockdownRules'
+import { linkWindow, moveFrameAdvantage } from './moveFrameAdvantage'
 import type { ComboMove, DuelComboProfile } from './duelComboTypes'
 import type { FighterMove, FighterMoveset, MoveTuning } from './movesetTypes'
 import type { MoveSlot } from './types'
@@ -75,6 +76,43 @@ function reaches(graph: ChainGraph, from: MoveSlot, target: MoveSlot): boolean {
     stack.push(...(graph.get(slot) ?? []))
   }
   return false
+}
+
+/** Physical tuning can change startup and recovery after the cancel graph was authored. */
+export function capGroundedLinkLoops(moveset: FighterMoveset): FighterMoveset {
+  const normals = moveset.moves.filter((move) => moveFrameAdvantage(move) !== null)
+  const byId = new Map(normals.map((move) => [move.id, move.slot]))
+  const graph: ChainGraph = new Map(
+    normals.map((move) => [
+      move.slot,
+      move.cancelInto.flatMap((id) => {
+        const slot = byId.get(id)
+        return slot ? [slot] : []
+      }),
+    ]),
+  )
+  return {
+    ...moveset,
+    moves: moveset.moves.map((move) => capLoopingAdvantage(move, normals, graph)),
+  }
+}
+
+function capLoopingAdvantage(
+  move: FighterMove,
+  normals: readonly FighterMove[],
+  graph: ChainGraph,
+): FighterMove {
+  const advantage = moveFrameAdvantage(move)
+  if (!advantage) return move
+  const excess = Math.max(
+    0,
+    ...normals
+      .filter((next) => reaches(graph, next.slot, move.slot))
+      .map((next) => linkWindow(advantage, next.tuning)),
+  )
+  return excess
+    ? { ...move, tuning: { ...move.tuning, hitstun: move.tuning.hitstun - excess } }
+    : move
 }
 
 /**

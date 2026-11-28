@@ -10,7 +10,7 @@ import {
 import { attackAuraCost } from './fightAttackCost'
 import { attackData } from './frameData'
 import { canStartFighterAttack } from './fighterAttacks'
-import { canUseMovesetMove, moveById } from './movesets'
+import { meetsMovesetRequirements, moveById } from './movesets'
 import type { FighterMove } from './movesetTypes'
 import type { ArcadeFighter, FightState, FightSide } from './types'
 
@@ -67,7 +67,7 @@ function choiceStatus(options: {
   const attack = fighter.attack!
   // A recovery link may require a free body (Cyclotron); preview that state only for guidance.
   const readiness = link ? { ...state, [side]: { ...fighter, attack: null } } : state
-  if (!canUseMovesetMove(readiness, side, move)) return 'unavailable'
+  if (!meetsMovesetRequirements(readiness, side, move)) return 'unavailable'
   if (waitingForAura(readiness[side], move)) return 'wait'
   if (attack.confirmedBlock && !current.cancelOnBlockInto.includes(move.id)) return 'blocked'
   const target = state[side === 'player' ? 'opponent' : 'player']

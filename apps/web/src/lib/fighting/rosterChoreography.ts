@@ -1,5 +1,6 @@
 import type { Gesture } from './fightGestures'
 import type { FightPose } from './fightPose'
+import type { FighterId, MoveSlot } from './types'
 import { FIRST_ROSTER_CHOREOGRAPHY } from './rosterChoreographyFirst'
 import { SECOND_ROSTER_CHOREOGRAPHY } from './rosterChoreographySecond'
 
@@ -54,3 +55,19 @@ export const ROSTER_CHOREOGRAPHY = {
 export type RosterFighterId = keyof typeof ROSTER_CHOREOGRAPHY
 
 export type StrikeLibrary = Record<StrikeShape, Gesture>
+
+export const ROSTER_NORMAL_SLOTS: readonly MoveSlot[] = [
+  'standingLight',
+  'standingHeavy',
+  'lowLight',
+  'lowHeavy',
+  'airLight',
+  'airHeavy',
+  'forwardLight',
+  'forwardHeavy',
+  'backHeavy',
+]
+
+export function rosterBaseStrikeShape(id: FighterId, slot: MoveSlot): StrikeShape | undefined {
+  return ROSTER_CHOREOGRAPHY[id as RosterFighterId]?.strikes[ROSTER_NORMAL_SLOTS.indexOf(slot)]
+}

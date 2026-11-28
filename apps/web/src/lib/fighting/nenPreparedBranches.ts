@@ -50,7 +50,14 @@ export function preparedNenDestinations(fighter: ArcadeFighter): string[] {
   const attack = fighter.attack
   if (!preparedWindow(fighter)) return []
   const branch = rosterPhysicalBranch(fighter.id, 'tip')
-  const physical = [branch?.slot, 'forwardLight', 'lowHeavy', 'standingHeavy'] as const
+  const physical = [
+    branch?.slot,
+    'forwardLight',
+    'lowHeavy',
+    'standingHeavy',
+    'backHeavy',
+    'forwardHeavy',
+  ] as const
   const own = fighter.nenTactics?.slots ?? []
   const candidates = [...physical, ...own].flatMap((slot) => {
     const move = slot && moveForSlot(fighter.id, slot)

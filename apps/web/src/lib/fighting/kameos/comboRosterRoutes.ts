@@ -53,8 +53,9 @@ export const KAMEO_ROSTER_ROUTES: Record<CombatFighter, ComboRoutes> = {
     preCall: true,
   },
   phinks: {
-    ground: ['standingLight', 'standingHeavy', 'forwardLight'],
-    support: ['standingLight', 'forwardLight', 'forwardLight'],
+    ground: ['standingLight', 'forwardLight', 'standingHeavy', 'standingLight'],
+    support: ['standingLight', 'forwardLight', 'standingHeavy', 'lowHeavy'],
+    preCall: true,
   },
   franklin: {
     ground: ['standingLight', 'standingHeavy', 'forwardLight'],
@@ -74,8 +75,10 @@ export const KAMEO_ROSTER_ROUTES: Record<CombatFighter, ComboRoutes> = {
     support: ['standingLight', 'standingHeavy', 'forwardLight', 'backHeavy', 'forwardHeavy'],
   },
   bonolenov: {
-    ground: ['standingLight', 'standingHeavy', 'forwardLight'],
-    support: ['standingLight', 'standingHeavy', 'standingHeavy'],
+    ground: ['standingHeavy', 'backHeavy', 'forwardLight'],
+    support: ['standingLight', 'forwardLight', 'standingHeavy', 'lowHeavy'],
+    preCall: true,
+    align: true,
   },
   shizuku: {
     ground: ['standingLight', 'standingHeavy', 'forwardLight'],
@@ -128,7 +131,7 @@ export const KAMEO_ROSTER_ROUTES: Record<CombatFighter, ComboRoutes> = {
     preCall: true,
   },
   lynch: {
-    ground: ['standingLight', 'standingHeavy', 'forwardLight'],
+    ground: ['standingLight', 'forwardLight', 'standingHeavy', 'standingLight'],
     support: ['standingLight', 'forwardLight', 'standingHeavy', 'backHeavy', 'forwardHeavy'],
   },
   luini: {
@@ -162,10 +165,12 @@ export const KAMEO_ROSTER_ROUTES: Record<CombatFighter, ComboRoutes> = {
   },
   padaille: {
     ground: ['standingLight', 'standingHeavy', 'forwardLight'],
-    support: ['standingLight', 'standingHeavy', 'standingHeavy'],
+    support: ['standingLight', 'standingHeavy', 'forwardLight'],
+    preCall: true,
+    align: true,
   },
   sayird: {
-    ground: ['standingLight', 'standingHeavy', 'forwardLight'],
+    ground: ['standingLight', 'forwardLight', 'standingHeavy', 'standingLight'],
     support: ['standingLight', 'forwardLight', 'standingHeavy', 'backHeavy', 'forwardHeavy'],
   },
   terebellum: {
@@ -173,7 +178,7 @@ export const KAMEO_ROSTER_ROUTES: Record<CombatFighter, ComboRoutes> = {
     support: ['standingLight', 'standingHeavy', 'backHeavy', 'forwardHeavy'],
   },
   voconte: {
-    ground: ['standingLight', 'standingHeavy', 'forwardLight'],
+    ground: ['standingLight', 'forwardLight', 'standingHeavy', 'standingLight'],
     support: ['standingLight', 'forwardLight', 'standingHeavy', 'backHeavy', 'forwardHeavy'],
   },
   yokotani: {

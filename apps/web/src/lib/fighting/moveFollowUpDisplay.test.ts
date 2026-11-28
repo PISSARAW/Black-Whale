@@ -31,6 +31,22 @@ describe('moveFollowUpDisplay', () => {
         condition: 'Après traversée',
         tags: ['Traversant', 'Bas'],
       },
+      {
+        id: 'feitan:scabbard-reversal-transition',
+        name: 'Taille sous la garde',
+        sourceName: 'Pointe du fourreau',
+        input: '→ + J',
+        condition: 'Sur touche',
+        tags: [],
+      },
+      {
+        id: 'feitan:scabbard-reversal',
+        name: 'Retour du fourreau',
+        sourceName: 'Taille sous la garde',
+        input: '↓ + → + K',
+        condition: 'Sur touche',
+        tags: [],
+      },
     ])
 
     const enRow = formatFollowUpRow(followUps[2], 'en')

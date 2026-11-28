@@ -1,16 +1,16 @@
 import type { HumanClothesBuild } from './humanClothes'
 import { mangaBodyShape, mangaClothesKey, mangaPanel } from './mangaBody'
 
-export function addMangaDress(build: HumanClothesBuild): void {
+export function addMangaDress(build: HumanClothesBuild, hem?: number): void {
   const { THREE, geometry, figure, frame, materials, profile } = build
   const child = profile.frame === 'child'
   const biscuit = profile.likeness === 'biscuit-krueger'
   const { chest, waist } = mangaBodyShape(profile)
-  const bottom = biscuit ? 0.24 : -0.15
+  const bottom = hem ?? (biscuit ? 0.24 : -0.15)
   const skirt = new THREE.Mesh(
     geometry(
       THREE,
-      `manga:dress:${mangaClothesKey(profile)}`,
+      `manga:dress:${mangaClothesKey(profile)}:${bottom}`,
       () =>
         new THREE.LatheGeometry(
           [
@@ -65,12 +65,22 @@ export function addMangaKimono(build: HumanClothesBuild): void {
   const shortKimono = profile.likeness === 'nobunaga-hazama'
   const skirt = new THREE.Mesh(
     geometry(THREE, `manga:robe:${mangaClothesKey(profile)}`, () =>
-      new THREE.CylinderGeometry(
-        waist * 1.35,
-        waist * 1.85,
-        (shortKimono ? 0.66 : 1.17) * frame.neck,
-        32,
-      ).scale(1, 1, 0.78),
+      shortKimono
+        ? new THREE.LatheGeometry(
+            [
+              [1.69, -0.33],
+              [1.72, -0.25],
+              [1.55, -0.04],
+              [1.38, 0.19],
+              [1.18, 0.33],
+            ].map(([r, y]) => new THREE.Vector2(r * waist, y * frame.neck)),
+            32,
+          ).scale(1, 1, 0.78)
+        : new THREE.CylinderGeometry(waist * 1.35, waist * 1.85, 1.17 * frame.neck, 32).scale(
+            1,
+            1,
+            0.78,
+          ),
     ),
     materials.cloth,
   )

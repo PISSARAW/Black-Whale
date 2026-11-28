@@ -19,11 +19,15 @@ describe('the chapter 394 Heil-Ly disposal room', () => {
     expect(names).not.toContain('dryer')
   })
 
-  it('frames Bille, Tassi’s tray and the rear control wall from the entrance', () => {
+  it('frames the disposal crew, Tassi’s tray and the rear control wall from the entrance', () => {
     const view = MANGA_HEILLY_VIEWS.find(({ id }) => id === 'heilly-laundry-disposal')!
 
     expect(view.chapter).toBe(394)
-    expect(view.staging?.map(({ characterId }) => characterId)).toEqual(['bille'])
+    expect(view.staging?.map(({ characterId }) => characterId)).toEqual([
+      'terebellum',
+      'montblanc-toto',
+      'chiffon-toto',
+    ])
     expect(view.at[1]).toBeLessThan(1)
     expect(Math.abs(view.heading)).toBe(Math.PI)
   })

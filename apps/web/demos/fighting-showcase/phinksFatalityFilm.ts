@@ -1,7 +1,23 @@
 import { ContinuousDirector } from './continuousDirector'
 import { CYCLOTRON_ROTATION_FRAMES } from '../../src/lib/fighting/phinksCyclotron'
+import {
+  PHINKS_CONTACT,
+  PHINKS_DEBRIS_HIT,
+  PHINKS_PARRY,
+  PHINKS_PLANT,
+  PHINKS_FLOOR_CRACK,
+  PHINKS_DEBRIS_SETTLE,
+  PHINKS_DISINTEGRATED,
+  PHINKS_FRACTURE,
+  PHINKS_FRAGMENT_BURST,
+  PHINKS_VERDICT,
+  PHINKS_VICTORY_DURATION,
+  PHINKS_VICTORY_FRAMES,
+  PHINKS_WIDE_SHOT,
+  PHINKS_WINDUP_END,
+} from '../../src/lib/fighting/victory/phinksTiming'
 
-/** A real six-turn Cyclotron ends the same duel; the export keeps its finishing ten seconds. */
+/** A real six-turn Cyclotron ends the same duel; the production renderer stages its decisive contact. */
 export function createPhinksFatalityFilm() {
   const f = new ContinuousDirector()
   f.cut({
@@ -38,26 +54,17 @@ export function createPhinksFatalityFilm() {
     throw new Error(
       JSON.stringify({ turns, health: f.state.opponent.health, audit: f.audit.slice(-5) }),
     )
-  f.advance(70)
-  const end = f.states.length - 1
-  const sourceAt = (age: number) => {
-    if (age < 36) return start
-    if (age < 228) return start + Math.floor(((release - start) * (age - 36)) / 192)
-    if (age < 270) return release + Math.floor(((impact - release) * (age - 228)) / 42)
-    return impact + Math.floor((end - impact) * Math.min(1, (age - 270) / 80))
-  }
-  const sources = Array.from({ length: 600 }, (_, age) => sourceAt(age))
   const finalImpacts = f.audit.filter(
     (e) => e.kind === 'impact' && Number(e.second) >= release / 60,
   )
   if (finalImpacts.length !== 1)
     throw new Error('Cyclotron must defeat the target with one contact')
   return {
-    states: sources.map((i) => f.states[i]),
+    state: f.state,
     report: {
       ...f.report(),
-      duration: 10,
-      frameCount: 600,
+      duration: PHINKS_VICTORY_DURATION,
+      frameCount: PHINKS_VICTORY_FRAMES,
       character: 'Phinks',
       opponent: 'Kurapika',
       nativeTurns: turns,
@@ -67,17 +74,25 @@ export function createPhinksFatalityFilm() {
       finalPunch: finalImpacts[0],
       winner: f.state.winner,
       source:
-        'One production duel: real preparatory damage, six paid right-arm turns, one native Cyclotron K.-O.; cinematic poses, fragmentation and edit are presentation effects.',
+        'One production duel: real preparatory damage, six paid right-arm turns, one native Cyclotron K.-O.; the production victory shows the final two turns.',
       victory: {
         startFrame: 0,
         startSecond: 0,
-        duration: 10,
-        frameCount: 600,
-        rotationsStartFrame: 36,
-        rotationsEndFrame: 228,
-        impactFrame: 270,
-        pulverizationFrame: 282,
-        announcementFrame: 420,
+        duration: PHINKS_VICTORY_DURATION,
+        frameCount: PHINKS_VICTORY_FRAMES,
+        rotationsStartFrame: 0,
+        rotationsEndFrame: PHINKS_WINDUP_END,
+        parryFrame: PHINKS_PARRY,
+        stepPlantFrame: PHINKS_PLANT,
+        impactFrame: PHINKS_CONTACT,
+        floorCrackFrame: PHINKS_FLOOR_CRACK,
+        wideShotFrame: PHINKS_WIDE_SHOT,
+        fractureFrame: PHINKS_FRACTURE,
+        fragmentBurstFrame: PHINKS_FRAGMENT_BURST,
+        disintegratedFrame: PHINKS_DISINTEGRATED,
+        debrisHitFrame: PHINKS_DEBRIS_HIT,
+        debrisSettleFrame: PHINKS_DEBRIS_SETTLE,
+        verdictFrame: PHINKS_VERDICT,
       },
     },
   }

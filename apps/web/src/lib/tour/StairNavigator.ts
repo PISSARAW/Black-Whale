@@ -1,4 +1,7 @@
 import { floorOf, type Ship } from './blueprint'
+import { DINING_VISIT_SPACES } from './diningVisit'
+import { CASINO_APPROACH } from './casinoLayout'
+import { isCasinoSpiralLink } from './casinoSpiralLayout'
 import type { Link, Structure, Vec2 } from './types'
 
 export interface JumpArrival {
@@ -80,11 +83,22 @@ function entersLanding(end: StairEnd, movement: { from: Vec2; at: Vec2 }): boole
 /** Crossing an actual stair landing changes levels; spawning on it never bounces back. */
 export class StairNavigator {
   readonly ends: readonly StairEnd[]
+  private returnLanding: StairEnd | undefined
 
   constructor(ship: Ship) {
     this.ends = ship.links
-      .filter(({ kind, retractable }) => kind === 'stair' && !retractable)
+      .filter((link) => link.kind === 'stair' && !link.retractable && !isCasinoSpiralLink(link))
       .flatMap((link) => endsOf(ship, link))
+  }
+
+  /** Give a visitor room to turn across the marked landing after changing decks. */
+  arrived(from: string, to: string): void {
+    const { passage, landing } = DINING_VISIT_SPACES
+    if ((from === passage && to === landing) || (from === landing && to === passage)) {
+      this.returnLanding = this.ends.find((end) => end.spaceId === to && end.to === from)
+    } else {
+      this.returnLanding = undefined
+    }
   }
 
   cross(request: {
@@ -94,13 +108,35 @@ export class StairNavigator {
     height: number
     enabled: boolean
   }): { spaceId: string; arrival: JumpArrival } | null {
+    if (
+      this.returnLanding &&
+      (request.spaceId !== this.returnLanding.spaceId ||
+        distance(request.at, this.returnLanding.at) > 2)
+    )
+      this.returnLanding = undefined
     if (!request.enabled) return null
     const end = this.ends.find(
       (candidate) =>
+        candidate !== this.returnLanding &&
         candidate.spaceId === request.spaceId &&
         entersLanding(candidate, request) &&
         (candidate.height === undefined || Math.abs(candidate.height - request.height) < 0.27),
     )
     return end ? { spaceId: end.to, arrival: end.arrival } : null
   }
+}
+
+/** The walking route leaves a visitor at the same landing when they use the interaction. */
+export function stairInteractionArrival(
+  crossing: { link: Link; to: string },
+  view: Pick<JumpArrival, 'facing' | 'looking'>,
+): JumpArrival | undefined {
+  const { link, to } = crossing
+  if (link.kind === 'door' && link.from === CASINO_APPROACH) {
+    return { at: to === link.to ? link.atTo : link.at, facing: Math.PI / 2, looking: 0 }
+  }
+  const dining =
+    link.from === DINING_VISIT_SPACES.passage && link.to === DINING_VISIT_SPACES.landing
+  if (link.kind !== 'stair' || !dining) return undefined
+  return { at: to === link.to ? (link.atTo ?? link.at) : link.at, ...view }
 }

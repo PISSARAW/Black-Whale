@@ -2,6 +2,7 @@ import { isAirPursuit } from './directionalChain'
 import type { CinematicDirection } from './cinematicTypes'
 import type { FightSide, FightState } from './types'
 import { fightImpactPunctuation } from './fightImpactPunctuation'
+import { FEITAN_FINAL_REVERSAL } from './feitanSignatureImpact'
 
 export interface CombatCameraAccent {
   push: number
@@ -41,16 +42,35 @@ export function strikeCameraAccent(state: FightState, side: FightSide): CombatCa
       side,
     }
   }
+  return groundedAccent(state, side, attack)
+}
+
+const STRIKE_PUSH = { light: 0.2, heavy: 0.46, special: 0.6, ranged: 0.6 }
+const REST_CONTACT = { cameraPushLimit: 0.7, cameraPush: 0, cameraLook: 0, cameraTilt: 0 }
+
+function groundedAccent(
+  state: FightState,
+  side: FightSide,
+  attack: NonNullable<FightState['player']['attack']>,
+): CombatCameraAccent {
   const confirmed = attack.confirmedHit ? 1 : 0.55
-  const push = attack.kind === 'light' ? 0.2 : attack.kind === 'heavy' ? 0.46 : 0.6
-  const impact = state.impact?.attacker === side ? fightImpactPunctuation(state.impact) : null
+  const push =
+    attack.moveId === FEITAN_FINAL_REVERSAL && !attack.impacted
+      ? 0.67
+      : STRIKE_PUSH[attack.kind] * confirmed
+  const impact =
+    currentContact(state, side, attack.confirmedHit ? attack.moveId : undefined) ?? REST_CONTACT
   return {
     ...REST_CAMERA_ACCENT,
-    push: Math.min(0.7, push * confirmed + (impact?.cameraPush ?? 0)),
-    look: impact?.cameraLook ?? 0,
-    tilt: impact?.cameraTilt ?? 0,
+    push: Math.min(impact.cameraPushLimit ?? 0.7, push + impact.cameraPush),
+    look: impact.cameraLook,
+    tilt: impact.cameraTilt,
     side,
   }
+}
+
+function currentContact(state: FightState, side: FightSide, moveId?: string) {
+  return state.impact?.attacker === side ? fightImpactPunctuation(state.impact, moveId) : null
 }
 
 /** Personal technique details can own the lens; ordinary aura changes never add a second push. */

@@ -29,7 +29,12 @@ export function formatFollowUpRow(entry: MoveFollowUp, language: 'fr' | 'en'): F
   const fr = language === 'fr'
   const source = moveById(entry.sourceMoveId)
   const key = INPUT_KEYS[entry.input]
-  const input = entry.condition === 'crossed' ? `← + ${key}` : key
+  const input =
+    entry.move.signatureDirection !== undefined
+      ? entry.move.input
+      : entry.condition === 'crossed'
+        ? `← + ${key}`
+        : key
   return {
     id: entry.id,
     name: fr ? entry.move.nameFr : entry.move.nameEn,

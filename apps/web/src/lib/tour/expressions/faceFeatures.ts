@@ -42,6 +42,7 @@ const NATIVE_MOUTHS = new Set([
   'gel-lipstick',
   'saiyu-gritted-mouth',
   'luini-toothed-grin',
+  'luini-grin-cavity',
   'yokotani-wide-smile',
   'yokotani-smile-teeth',
 ])

@@ -51,14 +51,14 @@ export function mangaMorenaHair(kit: MangaHairKit) {
           [side * 0.095, 0.105, z * 0.7],
           [side * 0.17, -0.04, z - 0.025],
           [side * 0.205, -0.72, z - 0.035],
-          [side * (0.19 + (i % 3) * 0.008), -1.14 + (i % 3) * 0.015, z - 0.02],
+          [side * (0.19 + (i % 3) * 0.008), -1.14 + (i % 3) * 0.019 + side * 0.014, z - 0.02],
         ],
       })
     }
     for (let i = 0; i < 3; i++) {
-      const length = 0.34 + i * 0.11
+      const length = (side < 0 ? 0.34 : 0.39) + i * 0.105
       kit.lock({
-        width: 0.036,
+        width: 0.027 + i * 0.002,
         depth: 0.01,
         points: [
           [side * (0.018 + i * 0.024), 0.226 - i * 0.012, 0.026 - i * 0.006],

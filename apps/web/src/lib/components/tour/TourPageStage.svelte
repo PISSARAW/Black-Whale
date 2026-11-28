@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { ComponentProps, Snippet } from 'svelte'
   import type { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
+  import type { GangwayPresentation } from '$lib/tour/gangwayLockdownView'
+  import { routeCheckpoint, type TserriednichRouteStep } from '$lib/tour/tserriednichRoute'
   import TourScene from './TourScene.svelte'
   import TourSceneOverlay from './TourSceneOverlay.svelte'
   import TourExamineCard from './TourExamineCard.svelte'
@@ -15,7 +17,10 @@
   type ExamineProps = ComponentProps<typeof TourExamineCard>
   type AddressProps = ComponentProps<typeof TourAddressCard>
   type DialogueProps = ComponentProps<typeof TourDialogueCard>
-  type RouteProps = ComponentProps<typeof TourRouteGuide>
+  type RouteProps = Omit<
+    ComponentProps<typeof TourRouteGuide>,
+    'heading' | 'pitch' | 'gangways' | 'onVisitStep' | 'onLockdownChange'
+  >
 
   interface Props {
     immersive: boolean
@@ -32,6 +37,10 @@
       | 'jumpEyeHeight'
       | 'jumpCameraDistance'
       | 'jumpVisibleSpaceIds'
+      | 'retractableGangwayOpen'
+      | 'gangwayLockdown'
+      | 'gangwayPresentation'
+      | 'guidedRoute'
       | 'engaged'
       | 'touch'
       | 'position'
@@ -76,6 +85,17 @@
     route = null,
   }: Props = $props()
   const { reserve, ...sceneProps } = $derived(scene)
+  let routeLockdown = $state(false)
+  let gangways = $state<GangwayPresentation>('open')
+
+  function visitRouteStep(step: TserriednichRouteStep) {
+    const checkpoint = routeCheckpoint(step)
+    const space = scene.ship.spaces.get(checkpoint.spaceId)
+    if (!space) return
+    navigation.jumpHeading = checkpoint.heading
+    navigation.jumpPitch = checkpoint.pitch
+    navigation.goToSpace(space, checkpoint.at)
+  }
 </script>
 
 <section id="tour-stage-container" class="tour-stage" class:immersive>
@@ -101,13 +121,34 @@
     bind:takeScreenshot
     {gyoMode}
     {...sceneProps}
+    retractableGangwayOpen={!route || !routeLockdown}
+    gangwayLockdown={Boolean(route && routeLockdown)}
+    guidedRoute={Boolean(route)}
+    bind:gangwayPresentation={gangways}
   />
-  {#if reserve !== undefined}<TourAuraReserve {reserve} french={scene.french ?? false} />{/if}
-  <TourSceneOverlay {...overlay} tools={concertPanel} />
-  {#if route}<TourRouteGuide {...route} />{/if}
-  <TourExamineCard {...examine} />
-  <TourDialogueCard {...dialogue} />
-  <TourAddressCard {...address} />
+  {#if gangways === 'cutaway'}
+    <p class="lockdown-status" role="status">
+      {route?.french
+        ? 'Confinement · Rétraction des trois passerelles'
+        : 'Lockdown · Retracting the three gangways'}
+    </p>
+  {:else}
+    {#if reserve !== undefined}<TourAuraReserve {reserve} french={scene.french ?? false} />{/if}
+    <TourSceneOverlay {...overlay} tools={concertPanel} />
+    <TourExamineCard {...examine} />
+    <TourDialogueCard {...dialogue} />
+    <TourAddressCard {...address} />
+  {/if}
+  {#if route}
+    <TourRouteGuide
+      {...route}
+      heading={navigation.heading}
+      pitch={navigation.lookPitch}
+      {gangways}
+      onVisitStep={visitRouteStep}
+      onLockdownChange={(active) => (routeLockdown = active)}
+    />
+  {/if}
   <!--
     The cost of the frame the other four are drawn over. Unconditional, and it
     costs nothing to mount: without `?frames` nothing measures and this renders
@@ -133,5 +174,18 @@
     min-height: 0;
     border: 0;
     border-radius: 0;
+  }
+  .lockdown-status {
+    position: absolute;
+    inset: 0.75rem 0.75rem auto;
+    width: fit-content;
+    max-width: calc(100% - 1.5rem);
+    margin: 0 auto;
+    padding: 0.4rem 0.65rem;
+    background: #050505;
+    color: #f2d58b;
+    font-size: 0.8rem;
+    text-align: center;
+    pointer-events: none;
   }
 </style>

@@ -157,7 +157,7 @@ export const room1014Case: InvestigationCase = {
     {
       id: 'belerainte',
       name: 'Belerainte',
-      role: 'Garde de Tubeppa',
+      role: 'Hunter et garde de Marayam',
       status: 'Utilisateur de Nen déclaré · coopératif',
       color: 0x7db8da,
       posOffset: [1.6, -1.6],
@@ -224,6 +224,7 @@ export const room1014Case: InvestigationCase = {
     },
     {
       id: 'body',
+      characterId: 'barrigen',
       name: 'Corps de Barrigen',
       role: 'Victime',
       status: 'À examiner',

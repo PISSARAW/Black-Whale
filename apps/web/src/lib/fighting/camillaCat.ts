@@ -1,6 +1,7 @@
 import { guestProjection, mergeGuestProjection } from './rosterGuests'
 import { finishFight } from './combatVerdict'
 import { wakeHanzoBody } from './hanzoProjection'
+import type { FightDeathCause } from './fightDeaths'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export const CAT_SUMMON_END = 24
@@ -16,6 +17,14 @@ export interface CatsNameSequence {
   frame: number
 }
 
+export interface CatsNameFatality {
+  victimSide: FightSide
+  killerSide: FightSide
+  cause: FightDeathCause
+  zetsu: boolean
+  ten?: true
+}
+
 export function catsNamePhase(frame: number): CatsNamePhase {
   if (frame < CAT_SUMMON_END) return 'summon'
   if (frame < CAT_CAPTURE_END) return 'capture'
@@ -27,13 +36,35 @@ export function beginCatsName(
   state: FightState,
   victimSide: FightSide,
   killerSide: FightSide,
+  cause = state.deaths?.find(
+    (death) => death.victimSide === victimSide && death.killerSide === killerSide,
+  )?.cause,
 ): FightState {
   if (state.catsName || state[victimSide].health > 0) return state
   if (victimSide === killerSide || state[killerSide].health <= 0) return state
+  const victim = state[victimSide]
+  const { nen } = victim
+  const ten =
+    nen.mode === 'ten' &&
+    !nen.ken &&
+    !nen.ko &&
+    !nen.on &&
+    !nen.in &&
+    !victim.auraExhausted &&
+    victim.aura > 0
   return {
     ...state,
     catsName: { victimSide, killerSide, frame: 0 },
     catsNameConsumed: undefined,
+    catsNameFatality: cause
+      ? {
+          victimSide,
+          killerSide,
+          cause,
+          zetsu: nen.mode === 'zetsu',
+          ...(ten ? { ten: true } : {}),
+        }
+      : undefined,
     deaths: undefined,
     hitstop: 0,
     player: freezeBody(state.player),
@@ -95,6 +126,10 @@ function finishCatsName(state: FightState): FightState {
   const restored = {
     ...state,
     catsName: undefined,
+    catsNameFatality:
+      state.mode !== 'training' && !cat.killerBody && !cat.victimBody
+        ? state.catsNameFatality
+        : undefined,
     deaths: undefined,
     player: releaseBody(state.player),
     opponent: releaseBody(state.opponent),

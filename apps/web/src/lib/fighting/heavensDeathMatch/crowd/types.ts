@@ -31,6 +31,7 @@ export type PuppetOrder =
   | 'surround-hisoka'
   | 'explode-near-hisoka'
   | 'charge'
+  | 'trip-hisoka'
   | 'shield-chrollo'
   /** Black Voice carrier bringing the Moon to the linked Sun-marked torso. */
   | 'touch-sun'

@@ -11,8 +11,16 @@
   import { isBeyondCurse } from '$lib/fighting/victory/beyondCurseSelection'
   import FightHinrighVictory from './FightHinrighVictory.svelte'
   import FightSaiyuVictory from './FightSaiyuVictory.svelte'
+  import FightPhinksVerdict from './FightPhinksVerdict.svelte'
   import FightFutureVictory from './FightFutureVictory.svelte'
+  import {
+    CAMILLA_CONTACT,
+    CAMILLA_PAW_LANDS,
+    CAMILLA_RETURN,
+    CAMILLA_VERDICT,
+  } from '$lib/fighting/victory/camillaTiming'
   import { VICTORY_TITLES } from '$lib/fighting/victory/catalogue'
+  import { FUTURE_VERDICT } from '$lib/fighting/victory/tserriednichTiming'
   import { fighterDefinition } from '$lib/fighting/roster'
   import type { VictoryFrame } from '$lib/fighting/victory/playback'
   import type { FightState } from '$lib/fighting/types'
@@ -23,11 +31,20 @@
   $: fr = language === 'fr'
   $: fatality = Boolean(frame)
   $: curse = isBeyondCurse(frame?.variant)
+  $: twoTruths = !curse && frame?.fighter === 'tserriednich'
+  $: camillaAge = frame?.fighter === 'camilla' ? frame.elapsed * 60 : -1
+  $: camillaNen =
+    camillaAge >= 0 && camillaAge < CAMILLA_CONTACT && state.catsNameFatality?.zetsu
+      ? 'Zetsu'
+      : camillaAge >= CAMILLA_PAW_LANDS && camillaAge < CAMILLA_RETURN
+        ? fr ? 'Cat’s Name · Nen post-mortem' : 'Cat’s Name · Post-mortem Nen'
+        : null
 </script>
 
 {#if frame?.active}
   <div
     class="victory-cinematic"
+    class:two-truths={twoTruths}
     role="region"
     aria-label={fr ? 'Cinématique de victoire' : 'Victory cinematic'}
     data-victory-cinematic
@@ -60,17 +77,22 @@
         {language}
       />{/if}
     {#if frame.fighter === 'sayird'}<FightSayirdVictory elapsed={frame.elapsed} />{/if}
-    {#if !curse && frame.fighter === 'tserriednich'}<FightFutureVictory
+    {#if twoTruths}<FightFutureVictory
         elapsed={frame.elapsed}
         {language}
       />{/if}
     {#if frame.fighter === 'hinrigh'}<FightHinrighVictory elapsed={frame.elapsed} />{/if}
     {#if frame.fighter === 'saiyu'}<FightSaiyuVictory elapsed={frame.elapsed} {language} />{/if}
-    <p class="cinematic-match" aria-live="polite">
-      {fighterDefinition(frame.fighter).name}
-      <span>{fr ? 'remporte le combat' : 'wins the fight'}</span>
-    </p>
-    {#if frame.variant === 'chrollo-sun-moon' && frame.elapsed >= 2.35}
+    {#if frame.fighter !== 'camilla' && (!twoTruths || frame.elapsed >= FUTURE_VERDICT)}
+      <p class="cinematic-match" aria-live="polite">
+        {fighterDefinition(frame.fighter).name}
+        <span>{fr ? 'remporte le combat' : 'wins the fight'}</span>
+      </p>
+    {/if}
+    {#if camillaNen}<p class="camilla-nen">{camillaNen}</p>{/if}
+    {#if frame.fighter === 'phinks'}
+      <FightPhinksVerdict elapsed={frame.elapsed} {language} />
+    {:else if frame.variant === 'chrollo-sun-moon' && frame.elapsed >= 2.35}
       <div class="cinematic-verdict">
         <strong>{fr ? 'VICTOIRE' : 'VICTORY'}</strong><b>Sun and Moon</b>
         <span>{fr ? 'Détonation décisive' : 'Decisive detonation'}</span>
@@ -84,7 +106,7 @@
             : 'Post-mortem Nen'}</span
         >
       </div>
-    {:else if !curse && !(frame.fighter === 'camilla' && frame.elapsed >= 8.5) && frame.elapsed >= (frame.fighter === 'kurapika' || ['hisoka', 'tserriednich', 'chrollo', 'leorio', 'halkenburg', 'camilla', 'kalluto', 'machi', 'shizuku', 'bonolenov', 'illumi', 'biscuit', 'saiyu', 'hanzo', 'bill', 'melody', 'hinrigh', 'terebellum', 'voconte', 'longhi', 'furykov', 'theta', 'mizaistom', 'rihan', 'zakuro', 'lynch', 'luini', 'basho', 'sayird'].includes(frame.fighter) ? 8 : 7)}
+    {:else if !curse && !twoTruths && (frame.fighter !== 'camilla' || camillaAge >= CAMILLA_VERDICT) && frame.elapsed >= (frame.fighter === 'kurapika' || ['hisoka', 'chrollo', 'leorio', 'halkenburg', 'camilla', 'kalluto', 'machi', 'shizuku', 'bonolenov', 'illumi', 'biscuit', 'saiyu', 'hanzo', 'bill', 'melody', 'hinrigh', 'terebellum', 'voconte', 'longhi', 'furykov', 'theta', 'mizaistom', 'rihan', 'zakuro', 'lynch', 'luini', 'basho', 'sayird'].includes(frame.fighter) ? 8 : 7)}
       <div class="cinematic-verdict">
         <strong
           >{frame.fighter === 'melody'
@@ -142,6 +164,9 @@
     color: #f5eee6;
     font-family: var(--font-display, sans-serif);
   }
+  .two-truths {
+    container-type: size;
+  }
   .cinema-top,
   .cinema-bottom {
     position: absolute;
@@ -155,6 +180,14 @@
   }
   .cinema-bottom {
     bottom: 0;
+  }
+  .camilla-nen {
+    position: absolute;
+    top: 1.5%;
+    right: 3%;
+    margin: 0;
+    color: #e0c68b;
+    font-size: clamp(10px, 1.4vw, 16px);
   }
   .cinematic-match {
     position: absolute;

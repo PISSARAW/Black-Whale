@@ -46,7 +46,8 @@ export function finishHumanModel(options: FinishOptions): void {
   const head = eye.parent as Group
   finishEyes(options)
   // Bandages and the high skull collar are physical occluders, not skin.
-  if (!['bonolenov-ndongo', 'feitan-portor'].includes(profile.likeness)) finishFace(options, head)
+  if (!['bonolenov-ndongo', 'feitan-portor', 'hisoka'].includes(profile.likeness))
+    finishFace(options, head)
 }
 
 function finishEyes({ THREE, glow, model, profile }: FinishOptions): void {
@@ -54,7 +55,8 @@ function finishEyes({ THREE, glow, model, profile }: FinishOptions): void {
   const h = EYE_HEIGHT[look.eyes]
   for (const side of ['left', 'right']) {
     const eye = model.root.getObjectByName(`face-eye-${side}`)
-    if (!eye) continue
+    // The twins already have authored lash shapes and solid black irises.
+    if (!eye || eye.getObjectByName('eye-upper-lashes')) continue
     const lid = new THREE.Mesh(
       geometry(THREE, `clash:eyelids:${look.eyes}`, () => {
         const curves = [
@@ -121,6 +123,7 @@ function finishEyes({ THREE, glow, model, profile }: FinishOptions): void {
 }
 
 function finishFace(options: FinishOptions, head: Group): void {
+  if (head.getObjectByName('clash-face-contours')) return
   const { THREE, glow, profile } = options
   const look = mangaLikeness(profile)
   const key = `${profile.likeness}:${profile.frame}`

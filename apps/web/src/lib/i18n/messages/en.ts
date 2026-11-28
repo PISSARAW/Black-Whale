@@ -506,6 +506,7 @@ export const en = {
      * has a size at which it can actually be read.
      */
     plan: {
+      toggle: 'Map',
       open: 'Full-screen plan',
       close: 'Close',
       crossingUp: (destination: string) => `Up to ${destination}`,
@@ -1948,9 +1949,9 @@ export const en = {
 
       reach: {
         hint: 'Look at a card and click it.',
-        cast: (effect: string) => `F — ${effect}`,
+        cast: (effect: string) => `L — ${effect}`,
         /** The book's other page, on the walk's own second key. */
-        castSecond: (effect: string) => `R — ${effect}`,
+        castSecond: (effect: string) => `⇧ L — ${effect}`,
         ask: (question: string) => `Ask — ${question}`,
         kiss: (card: string) => `Kiss her, and take the ${card} back`,
         decline: 'Refuse the kiss, and play the hand you have',
@@ -2763,7 +2764,7 @@ export const en = {
     controls: {
       walk: 'WASD — walk',
       look: 'Mouse — look',
-      sweep: 'F — sweep with En (15)',
+      sweep: 'N — sweep with En (15)',
       zetsu: 'X — Zetsu: unseen, and unwarned',
       lay: 'V — lay an entrave (25)',
       take: 'R — take one back',

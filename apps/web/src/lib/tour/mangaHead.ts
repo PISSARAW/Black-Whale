@@ -11,7 +11,9 @@ import { kurapikaPanel } from './kurapikaGeometry'
 
 export function buildMangaHead(build: HumanHeadBuild): Group {
   const { THREE, geometry, outlined, materials, profile } = build
-  const faceProfile = profile.faceLike ? { ...profile, likeness: profile.faceLike } : profile
+  const faceProfile = profile.faceLike
+    ? { ...profile, likeness: profile.faceLike, faceFeatures: undefined }
+    : profile
   const look = mangaLikeness(faceProfile)
   const head = new THREE.Group()
   head.name = `manga-head:${profile.likeness}`
@@ -106,7 +108,16 @@ export function buildMangaHead(build: HumanHeadBuild): Group {
     ear.position.set(side * (look.cheek + 0.006), -0.025, 0)
     head.add(ear)
   }
-  if (profile.likeness === 'prince-tserriednich') addMangaHood(build, head)
+  if (profile.likeness === 'prince-tserriednich' && build.seen.human?.unmasked) {
+    addMangaHair(
+      {
+        ...build,
+        profile: { ...profile, hairStyle: 'long' },
+        materials: { ...materials, hairInk: build.glow(0xb6a47d, 1) },
+      },
+      head,
+    )
+  } else if (profile.likeness === 'prince-tserriednich') addMangaHood(build, head)
   else addMangaHair(build, head)
   addMangaFaceTraits({ ...build, profile: faceProfile }, head)
   addMangaHeadwear(build, head)

@@ -16,8 +16,12 @@ function beard(THREE: Three, options: { full: boolean; long: boolean }) {
         middle: options.long ? -0.55 : -0.24,
         end: options.long ? -0.85 : -0.32,
       }
-    : { step: 0.008, width: 0.012, top: -0.175, next: -0.205, middle: -0.21, end: -0.245 }
+    : { step: 0.008, width: 0.012, top: -0.145, next: -0.19, middle: -0.22, end: -0.255 }
   const parts: BufferGeometry[] = []
+  if (options.full)
+    parts.push(
+      new THREE.SphereGeometry(1, 12, 8).scale(0.075, 0.06, 0.015).translate(0, -0.145, 0.19),
+    )
   for (let i = -6; i <= 6; i++) {
     const x = i * shape.step
     parts.push(
@@ -66,7 +70,7 @@ function hairParts(THREE: Three, signatures: readonly string[], long: boolean) {
 }
 export function addMangaFacialHair(build: HumanHeadBuild, head: Group) {
   const { THREE, profile, geometry, materials } = build
-  if (profile.likeness === 'basho') return
+  if (profile.likeness === 'basho' || profile.likeness === 'keeney') return
   const supported = new Set(['beard-full', 'moustache', 'mutton-chops', 'goatee'])
   const signatures = profile.signatures.filter((piece) => supported.has(piece))
   if (!signatures.length) return

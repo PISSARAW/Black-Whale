@@ -32,6 +32,7 @@ import {
   type Visitor,
 } from '$lib/tour/cast'
 import { stagePostsForMangaView } from '$lib/tour/cast/mangaStage'
+import { dressBlackWhaleCast } from '$lib/tour/cast/blackWhaleWardrobe'
 import { stageBeastsForMangaView } from '$lib/tour/cast/mangaBeastStage'
 import { pacedPosts } from '$lib/tour/cast/pace'
 import { residueApparitions } from '$lib/tour/cast/residue'
@@ -40,7 +41,6 @@ import { concertCast, type ConcertPerformance } from './melodyConcert'
 
 /** What the page knows that the distribution needs. */
 interface CastContext {
-  cast: CastPayload
   world: TourWorld
   /** The deck being walked: bodies on the others are not built. */
   tierId: string
@@ -77,6 +77,7 @@ interface BodiesContext {
 
 interface CastViewOptions {
   ship: Ship
+  readCast: () => CastPayload
   read: () => CastContext
   /** What is being done to the people, from the body view. See above. */
   readBodies: () => BodiesContext
@@ -114,22 +115,33 @@ export class TourCastView {
   /** The same posts, each pacing body where its beat has taken it. See `cast/pace.ts`. */
   walking = $derived.by<Post[]>(() => pacedPosts(this.options.ship, this.posts, this.clock))
 
+  /** The archive fixes each post for the entire ship, independent of the visitor's deck. */
+  private distributed = $derived.by(() =>
+    distribute(this.options.ship, this.options.readCast().members),
+  )
+
   /** Where everyone on this deck stands, at the event the server selected. */
-  posts = $derived.by<Post[]>(() => {
-    const { cast, tierId, mangaView, concert } = this.options.read()
-    const all = distribute(this.options.ship, cast.members)
+  posts = $derived.by<Post[]>(() => this.postsOn(this.options.read().tierId))
+
+  private postsOn(tierId: string): Post[] {
+    const { mangaView, concert } = this.options.read()
+    const all = dressBlackWhaleCast(this.distributed, this.options.readCast())
     const posts = concert
-      ? concertCast(all, { ship: this.options.ship, performance: concert, cap: cast.spoilerLimit })
+      ? concertCast(all, {
+          ship: this.options.ship,
+          performance: concert,
+          cap: this.options.readCast().spoilerLimit,
+        })
       : all
     if (concert?.ensemble === 'clash' || !mangaView?.staging) {
       return posts.filter((post) => post.tierId === tierId)
     }
     const viewTierId = this.options.ship.spaces.get(mangaView.spaceId)?.tierId
-    if (!viewTierId) return distribute(this.options.ship, cast.members, { tierId })
+    if (!viewTierId) return all.filter((post) => post.tierId === tierId)
     return stagePostsForMangaView(posts, mangaView, viewTierId).filter(
       (post) => post.tierId === tierId,
     )
-  })
+  }
 
   /** Named canonical bodies by reconstructed room, for non-visual crowd pressure. */
   occupancy = $derived.by<Record<string, number>>(() => {
@@ -200,10 +212,15 @@ export class TourCastView {
    * separate passes.
    */
   apparitions = $derived.by<Apparition[]>(() => {
-    const { cast, world, tierId, mangaView, concert } = this.options.read()
+    const { world, tierId, mangaView, concert } = this.options.read()
+    const cast = this.options.readCast()
     if (concert?.ensemble === 'clash') return castApparitions(this.options.ship, this.posts)
     return [
-      ...castApparitions(this.options.ship, this.posts, auraReader(this.situation)),
+      ...castApparitions(
+        this.options.ship,
+        this.posts,
+        mangaView?.hideCastAura ? undefined : auraReader(this.situation),
+      ),
       // Aura left where a technique forced a seam: hidden, so only Gyo draws it.
       ...residueApparitions({
         ship: this.options.ship,
@@ -227,6 +244,15 @@ export class TourCastView {
       ...secretApparitions(this.options.ship, this.posts),
     ]
   })
+
+  landingActors = (tierId: string, spaceId: string): Apparition[] => {
+    const { mangaView, concert } = this.options.read()
+    const look =
+      mangaView?.hideCastAura || concert?.ensemble === 'clash'
+        ? undefined
+        : auraReader({ ...this.situation, visitorIn: spaceId, sensedBy: {}, sweptBy: [] })
+    return castApparitions(this.options.ship, this.postsOn(tierId), look)
+  }
 
   /** Hostile raised aura sharing the visitor's room, for pre-awakening pressure. */
   pressureAtVisitor = $derived.by<'none' | 'ren'>(() => {
@@ -262,7 +288,7 @@ export class TourCastView {
 
   /** The beast under an apparition the reticle has taken hold of, if any. */
   beastAt = (id: string): CastBeast | null =>
-    beastBehind(id, this.posts, this.options.read().cast.beasts)
+    beastBehind(id, this.posts, this.options.readCast().beasts)
 
   /**
    * The beast standing with one person, by character id.
@@ -309,7 +335,8 @@ export class TourCastView {
    */
   step = (tick: number) => {
     this.clock = performance.now() / 1000
-    const { cast, world, visitorIn } = this.options.read()
+    const { world, visitorIn } = this.options.read()
+    const cast = this.options.readCast()
     if (!visitorIn || cast.chapterNumber === null) return
     const intents = intentsFor(this.posts, {
       tick,

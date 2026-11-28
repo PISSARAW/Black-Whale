@@ -1,5 +1,8 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte'
+  import ModeCommand from '$lib/components/game/ModeCommand.svelte'
+  import { modeShortcut, runModeCommand } from '$lib/components/game/modeKeyboard'
+  import ModeHudGauge from '$lib/components/game/ModeHudGauge.svelte'
+  import { onMount } from 'svelte'
   import type { Location, Presence } from '@black-whale/domain'
   import { entityForCharacter } from '$lib/strategy/selectors'
   import type { PageData } from './$types'
@@ -160,16 +163,24 @@
   let objective = $derived(simStore.objective)
 
   function handleKeydown(event: KeyboardEvent) {
-    if (event.key === '?' || event.key === 'h' || event.key === 'H') {
-      if (ready && playerFactionId) {
-        manualOpen = !manualOpen
-        event.preventDefault()
-      }
-    }
+    if (!ready || !playerFactionId) return
+    const code = modeShortcut(event)
+    if (code === '?' || code === 'KeyH')
+      return runModeCommand(event, () => (manualOpen = !manualOpen))
+    if (manualOpen || simStore.gameOver) return
+    if (code === 'KeyF' && orderReady) runModeCommand(event, queueOrder)
+    if (code === 'Shift+Enter' && !document.pointerLockElement) runModeCommand(event, handleEndTurn)
   }
 
+  const orderReady = $derived(
+    !!selectedCharacterId &&
+      (selectedOrderType === 'GUARD'
+        ? !!currentLocationId(selectedCharacterId)
+        : !!selectedLocationId) &&
+      (selectedOrderType !== 'HATSU' || !!selectedAbilityId),
+  )
+
   onMount(() => {
-    window.addEventListener('keydown', handleKeydown)
     if (data.baseState) {
       simStore.init({
         baseState: data.baseState,
@@ -198,12 +209,6 @@
         saved.scenarioId === data.scenario?.id
       )
         availableSave = saved
-    }
-  })
-
-  onDestroy(() => {
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('keydown', handleKeydown)
     }
   })
 
@@ -369,6 +374,8 @@
   }
 </script>
 
+<svelte:window onkeydown={handleKeydown} />
+
 <main class="strategy-shell min-h-[calc(100vh-4rem)] bg-[#020617] text-sky-50 font-sans">
   {#if data.error}
     <section
@@ -410,21 +417,23 @@
       class="grid min-h-[calc(100vh-4rem)] grid-cols-1 md:grid-cols-[minmax(22rem,28rem)_minmax(0,1fr)]"
     >
       <TourModeFullscreen />
-      <aside class="flex flex-col border-r border-sky-900/40 bg-[#0a0f1c]/95">
-        <header class="border-b border-sky-900/50 bg-[#060b14]/50 p-6">
+      <aside class="mode-hud flex flex-col border-r border-sky-900/40 bg-[#0a0f1c]/95">
+        <header class="mode-hud-surface p-6">
           <button
-            class="mb-4 text-[10px] font-bold uppercase tracking-widest text-sky-500/50 transition-colors hover:text-sky-300"
+            class="mode-hud-button mb-4"
             type="button"
             onclick={() => (playerFactionId = null)}>← {$t.strategy.ui.backToFactions}</button
           >
-          <p class="text-[10px] font-bold uppercase tracking-normal text-sky-400">
+          <p class="mode-hud-label">
             {$t.strategy.ui.tacticalNetwork}
           </p>
-          <h1 class="mt-1 font-black text-3xl text-white">{playerFaction?.name}</h1>
-          <span class="mt-2 block text-[10px] font-bold uppercase tracking-widest text-sky-200/50"
+          <h1 class="mode-hud-title mt-1">{playerFaction?.name}</h1>
+          <span class="mode-hud-label mt-2 block"
             >{$t.strategy.ui.turn}
-            {Math.min(simStore.currentTurn, data.scenario?.maxTurns ?? 8)} / {data.scenario
-              ?.maxTurns ?? 8}</span
+            <strong class="mode-hud-value"
+              >{Math.min(simStore.currentTurn, data.scenario?.maxTurns ?? 8)} / {data.scenario
+                ?.maxTurns ?? 8}</strong
+            ></span
           >
         </header>
 
@@ -445,38 +454,34 @@
             </section>
           {/if}
           <section class="mb-8">
-            <div
-              class="rounded-sm border border-sky-900/40 bg-gradient-to-br from-[#101827] to-[#0a0f1c] p-5 {objective?.complete
-                ? 'border-emerald-500/50'
-                : ''}"
-            >
-              <span class="text-[9px] font-bold uppercase tracking-widest text-sky-500/60"
-                >{$t.strategy.ui.currentObjective}</span
-              >
-              <strong class="mt-1 block font-black text-sm text-sky-100"
-                >{objective?.title ?? $t.strategy.ui.objectiveUnavailable}</strong
-              >
-              <p class="mt-2 text-xs leading-relaxed text-sky-200/50">
-                {objective?.description ?? $t.strategy.ui.tacticalAnalysis}
-              </p>
-              <div class="mt-4 h-1 w-full overflow-hidden rounded-full bg-sky-950/50">
-                <i
-                  class="block h-full bg-sky-400 transition-all duration-500"
-                  style={`width:${objective ? Math.min(100, (objective.current / objective.target) * 100) : 0}%`}
-                ></i>
+            <div class="mode-hud-surface grid gap-3 p-4">
+              <div>
+                <p class="mode-hud-label">{$t.strategy.ui.currentObjective}</p>
+                <strong class="mt-1 block text-sm text-white">
+                  {objective?.title ?? $t.strategy.ui.objectiveUnavailable}
+                </strong>
+                <p class="mt-1 text-xs text-slate-300">
+                  {objective?.description ?? $t.strategy.ui.tacticalAnalysis}
+                </p>
               </div>
-              <div
-                class="mt-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-sky-200/50"
-              >
-                <span
-                  >{objective?.current ?? 0} / {objective?.target ?? 0}
-                  {objective?.complete ? `· ${$t.strategy.ui.completed}` : ''}</span
-                >
-                <span class="text-sky-400 {simStore.gameWon ? 'text-emerald-400' : ''}"
-                  >{$t.strategy.ui.influence}
-                  {simStore.victoryPoints} / {VICTORY_POINTS_TARGET}</span
-                >
-              </div>
+              {#if objective && objective.target > 0}
+                <ModeHudGauge
+                  label={objective.complete
+                    ? $t.strategy.ui.completed
+                    : $t.strategy.ui.currentObjective}
+                  value={objective.current}
+                  max={objective.target}
+                  tone={objective.complete ? 'success' : undefined}
+                  kind="progressbar"
+                />
+              {/if}
+              <ModeHudGauge
+                label={$t.strategy.ui.influence}
+                value={simStore.victoryPoints}
+                max={VICTORY_POINTS_TARGET}
+                tone={simStore.gameWon ? 'success' : undefined}
+                kind="progressbar"
+              />
             </div>
           </section>
 
@@ -485,8 +490,7 @@
               <h2 class="text-xs font-black uppercase tracking-widest text-white">
                 {$t.strategy.ui.newOrder}
               </h2>
-              <span
-                class="rounded bg-sky-900/40 px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-sky-300"
+              <span class="mode-hud-value"
                 >{remainingCommandPoints} / {COMMAND_POINTS_PER_TURN} PC</span
               >
             </div>
@@ -585,14 +589,14 @@
                 </select>
               </label>
             {/if}
-            <button
-              class="mt-6 w-full rounded-sm border border-sky-400/50 bg-sky-900/40 px-5 py-3 text-xs font-bold uppercase tracking-widest text-sky-300 transition-all enabled:hover:bg-sky-400/30 disabled:cursor-not-allowed disabled:opacity-40"
-              type="button"
-              disabled={!selectedCharacterId ||
-                (selectedOrderType !== 'GUARD' && !selectedLocationId) ||
-                (selectedOrderType === 'HATSU' && !selectedAbilityId)}
-              onclick={queueOrder}>{$t.strategy.ui.addToPlan}</button
-            >
+            <div class="mt-6 grid">
+              <ModeCommand
+                label={$t.strategy.ui.addToPlan}
+                shortcut="F"
+                disabled={!orderReady || simStore.gameOver}
+                onclick={queueOrder}
+              />
+            </div>
           </section>
 
           <StrategyDiplomacyPanel
@@ -674,17 +678,20 @@
             >
               {errorMessage}
             </p>{/if}
-          <button
-            class="w-full rounded-sm bg-sky-400 px-5 py-3.5 text-xs font-black uppercase tracking-normal text-[#020617] transition-all enabled:hover:bg-sky-300 disabled:cursor-not-allowed disabled:opacity-40"
-            type="button"
-            disabled={simStore.gameOver}
-            onclick={handleEndTurn}
-            >{simStore.gameWon
-              ? $t.strategy.ui.strategicVictory
-              : simStore.gameLost
-                ? $t.strategy.ui.operationEnded
-                : $t.strategy.ui.executeTurn(spentCommandPoints)}</button
-          >
+          <div class="grid">
+            <ModeCommand
+              label={simStore.gameWon
+                ? $t.strategy.ui.strategicVictory
+                : simStore.gameLost
+                  ? $t.strategy.ui.operationEnded
+                  : $t.strategy.ui.executeTurn(spentCommandPoints)}
+              shortcut="Shift+Enter"
+              keyLabel={$locale === 'fr' ? '⇧ Entrée' : '⇧ Enter'}
+              primary
+              disabled={simStore.gameOver}
+              onclick={handleEndTurn}
+            />
+          </div>
         </footer>
       </aside>
 
@@ -714,7 +721,7 @@
             <h2 class="mt-1 font-black text-3xl text-white">Black Whale</h2>
           </div>
         </div>
-        <StrategyBattlefield {markers} hatsuCues={simStore.hatsuCues} />
+        <StrategyBattlefield {markers} hatsuCues={simStore.hatsuCues} inputDisabled={manualOpen} />
         <p
           class="mt-4 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-sky-200/50"
         >
@@ -745,7 +752,18 @@
         descriptionFr: 'Sélectionner unités et zones / Sélectionner ordres',
       },
       {
-        keys: ['H'],
+        keys: ['F'],
+        description: 'Queue the prepared order',
+        descriptionFr: 'Ajouter l’ordre préparé au plan',
+      },
+      {
+        keys: ['M'],
+        description: 'Switch between map and 3D',
+        descriptionFr: 'Basculer carte tactique / 3D',
+      },
+      { keys: ['Shift+Enter'], description: 'Execute the turn', descriptionFr: 'Exécuter le tour' },
+      {
+        keys: ['?', 'H'],
         description: 'Open Instruction Manual',
         descriptionFr: "Ouvrir le mode d'emploi",
       },

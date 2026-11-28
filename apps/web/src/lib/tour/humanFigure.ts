@@ -1,19 +1,23 @@
-import { humanFaceMotion } from './humanFaceMotion'
-import { humanSecondaryMotionChannels } from './humanSecondaryMotion'
-import { humanExpressionChannel } from './expressions/humanExpressionChannel'
-import { registerExpressionOwner } from './expressions/expressionPlayer'
+import { twinWardrobe } from './mangaTwinWardrobe'
 import type { BufferGeometry, Group, Material, MeshBasicMaterial, Object3D } from 'three'
 import type { Apparition } from './apparitions'
-import { humanAnimation, poseHuman } from './humanAnimation'
+import { humanAnimation, poseHuman, type HumanJointSlots } from './humanAnimation'
 import { legacyHumanPose as legacyPose } from './humanRestPoses'
 import { addPrisonBook } from './humanPrisonProps'
 import { addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
+import { SILENT_MAJORITY_PALETTE } from './silentMajorityPalette'
 import { addMorenaSkirt } from './mangaMorenaClothes'
-import { frameShape, hasLikeness, humanProfile, isMorena, type HumanProfile } from './humanProfiles'
+import {
+  hasLikeness,
+  humanProfile,
+  isMorena,
+  profileFrameShape,
+  type HumanProfile,
+} from './humanProfiles'
 import { finishHumanModel } from './humanModelFinish'
 import { buildHumanHead } from './humanHead'
 import { buildHumanLimbs } from './humanLimbs'
-import { CANON, stance } from './humanProportions'
+import { applyHumanPosture, CANON, stance } from './humanProportions'
 import { buildHumanTrunk } from './humanTrunk'
 import { addHumanClothes } from './humanClothes'
 import { contactShadow } from './contactShadow'
@@ -22,6 +26,21 @@ import { buildHumanAura, nenState, type Glass } from './humanAura'
 import { animateHumanAura } from './humanAuraAnimation'
 import { auraLayersFor, type AuraSight } from './auraSight'
 import { firstPersonArms } from './humanFirstPerson'
+import { humanSecondaryMotionChannels } from './humanSecondaryMotion'
+import { humanFaceMotion } from './humanFaceMotion'
+import { humanExpressionChannel } from './expressions/humanExpressionChannel'
+import { registerExpressionOwner } from './expressions/expressionPlayer'
+import { buildHumanFarLod } from './humanFarLod'
+import { ensureHumanExtremityAnchors } from './humanExtremityAnchors'
+import { addHumanHandRigs } from './humanHandRig'
+import { addHumanFootRigs } from './humanFootRig'
+import {
+  addWobleSwaddle,
+  finishSwaddledWoble,
+  WOBLE_HELD_SCALE,
+  wobleSwaddleProfile,
+} from './wobleSwaddle'
+import { poseSilentMajority } from './silentMajorityPose'
 type Three = typeof import('three')
 export type HumanLook = Apparition & { kind: 'avatar' | 'combatant' }
 export interface HumanFigureBuild {
@@ -41,6 +60,7 @@ export interface HumanFigure {
   root: Group
   turns: Object3D
   lod: { near: Group; far: Group }
+  joints: HumanJointSlots
   animate: ReturnType<typeof humanAnimation>
 }
 
@@ -189,18 +209,33 @@ export function buildHumanFigure({
   observerSight = 'sight',
   auraStyle = 'human',
 }: HumanFigureBuild): HumanFigure {
-  const baseProfile = suppliedProfile ?? humanProfile(seen)
+  const pose = legacyPose(seen)
+  const declared = suppliedProfile ?? humanProfile(seen)
+  const swaddled = wobleSwaddleProfile(declared, pose, seen)
+  const baseProfile = twinWardrobe(swaddled ?? declared, seen.human)
   const profile = seen.human?.expression
     ? { ...baseProfile, expression: seen.human.expression }
     : baseProfile
   const root = new THREE.Group()
   const figure = new THREE.Group()
-  const far = new THREE.Group()
   // A child is not a small man and a baby is not a small child — ADR-005 §4-P2.
-  const frame = frameShape(profile.frame, profile.likeness)
+  const frame = profileFrameShape(profile)
   const { lift, stature } = stance(frame)
-  const unit = (seen.kind === 'avatar' ? seen.size / 0.42 : seen.size) * profile.height * stature
+  const size = seen.kind === 'avatar' ? seen.size / 0.42 : seen.size
+  const unit = size * profile.height * stature * (swaddled ? WOBLE_HELD_SCALE : 1)
   figure.scale.setScalar(unit)
+  const far = buildHumanFarLod({
+    THREE,
+    geometry,
+    profile,
+    frame,
+    unit,
+    materials: {
+      cloth: glow(profile.jacket, 1),
+      skin: glow(profile.skin || SKIN, 1),
+      hair: glow(profile.hair, 1),
+    },
+  })
   root.add(figure)
   root.add(far)
   far.visible = false
@@ -213,7 +248,6 @@ export function buildHumanFigure({
   const dark = glow(BOOTS, 1)
   const hairInk = glow(profile.hair, 1)
   const accent = glow(profile.accent, 1)
-  const pose = legacyPose(seen)
   const { pelvis, torso, width, shoulder } = buildHumanTrunk({
     THREE,
     geometry,
@@ -239,10 +273,15 @@ export function buildHumanFigure({
     seen,
     materials: { ink, skin, hairInk },
   })
+  const marionette = seen.human?.role === 'silent-majority'
   head.scale.setScalar(frame.head * CANON.headScale)
   if (profile.likeness === 'kurapika') head.scale.x *= 1.12
   if (profile.likeness === 'melody') head.scale.multiplyScalar(1.2)
   head.position.y *= frame.neck
+  if (marionette) {
+    head.scale.multiplyScalar(0.8)
+    head.position.y -= 0.032
+  }
   head.visible = !seen.human?.firstPerson
   figure.add(head)
 
@@ -289,15 +328,44 @@ export function buildHumanFigure({
     shoulder,
     materials: { ink, skin, dark },
   })
+  const joints: HumanJointSlots = {
+    elbows,
+    hands: elbows.map(
+      (elbow, index) => elbow.getObjectByName(index === 0 ? 'hand-left' : 'hand-right') ?? elbow,
+    ),
+    knees,
+    feet: knees
+      .map(
+        (knee, index) =>
+          knee.getObjectByName(index === 0 ? 'foot-left' : 'foot-right') ?? knee.children[1],
+      )
+      .filter(Boolean),
+  }
   if (profile.clothing === 'ritual') {
-    const worn = { figure, arms, knees, ink, accent, dark }
-    addSilentMajorityCostume({ THREE, geometry, outlined, ...worn })
+    const sash = glow(SILENT_MAJORITY_PALETTE.sash, 1)
+    const brass = glow(SILENT_MAJORITY_PALETTE.brass, 1)
+    addSilentMajorityCostume({
+      THREE,
+      geometry,
+      outlined,
+      figure,
+      arms,
+      knees,
+      ink,
+      accent,
+      dark,
+      cloth,
+      sash,
+      brass,
+    })
   }
 
   // Standing bodies are raised by what their legs gained; a pose that puts the
   // body somewhere else — a chair, a cushion, the floor — says so itself.
   figure.position.y = lift * unit
   poseHuman({ pose, figure, head, arms, legs, elbows, knees })
+  applyHumanPosture({ figure, head, posture: profile.proportions?.posture })
+  if (marionette && pose === 'idle') poseSilentMajority({ head, arms, legs }, 0)
 
   // Annexe B, last, because §2.2 says so: the gabarit, the hair and the palette
   // have already named this person at walking distance, and a diadem or a pair
@@ -309,7 +377,7 @@ export function buildHumanFigure({
       figure,
       head,
       arms,
-      rightHand: elbows[1].getObjectByName('hand-right') ?? elbows[1],
+      rightHand: joints.hands[1],
     },
     materials: { ink, skin, accent, cloth, dark },
     worn: {
@@ -352,24 +420,22 @@ export function buildHumanFigure({
     root,
   })
 
-  // Three shapes past twenty-four metres, listed rather than spelled out: at
-  // that distance a body is a mass, a face and a hair colour, and the loop is
-  // the honest length of that statement.
-  const farHair = () => new THREE.SphereGeometry(0.136, 6, 3, 0, Math.PI * 2, 0, 1.2)
-  const FAR: ReadonlyArray<readonly [string, () => BufferGeometry, Material, number]> = [
-    ['far:body', () => new THREE.CylinderGeometry(0.19, 0.12, 1.5, 5), cloth, 0.6],
-    ['far:head', () => new THREE.SphereGeometry(0.13, 6, 4), skin, CANON.headY],
-    ['far:hair', farHair, hairInk, CANON.headY + 0.015],
-  ]
-  for (const [key, make, material, y] of FAR) {
-    const shape = new THREE.Mesh(geometry(THREE, key, make), material)
-    shape.position.y = y * frame.neck
-    far.add(shape)
-  }
-  far.scale.setScalar(unit)
   far.position.copy(figure.position)
   far.rotation.copy(figure.rotation)
-  const animationRig = { pose, figure, torso, pelvis, head, arms, legs, knees }
+  const poseSwaddle = swaddled
+    ? addWobleSwaddle({ THREE, geometry, figure, far, head, limbs: [...arms, ...legs] })
+    : undefined
+  const animationRig = {
+    pose,
+    figure,
+    torso,
+    pelvis,
+    head,
+    arms,
+    legs,
+    knees,
+    joints,
+  }
   registerExpressionOwner(root, figure)
   const animateHuman = humanAnimation(animationRig, {
     channels: [
@@ -384,15 +450,23 @@ export function buildHumanFigure({
   const firstPerson = seen.human?.firstPerson === true
   const animate: ReturnType<typeof humanAnimation> = (seconds, nextPose, layer) => {
     animateHuman(seconds, nextPose, layer)
+    if (marionette && (nextPose ?? pose) === 'idle' && !layer?.motion)
+      poseSilentMajority({ head, arms, legs }, seconds)
+    poseSwaddle?.((nextPose ?? pose) === 'held')
     if (firstPerson) firstPersonArms({ root, arms }, nextPose ?? pose)
     animateAura(seconds)
   }
   finishHumanModel({ THREE, glow, model: { root }, profile })
+  ensureHumanExtremityAnchors(root)
+  addHumanHandRigs({ THREE, root, profile })
+  addHumanFootRigs({ THREE, root, profile })
   if (pose === 'zetsu') {
     for (const name of ['face-eye-left', 'face-eye-right']) {
       const eye = root.getObjectByName(name)
       if (eye) eye.scale.y = 0.06
     }
   }
-  return { root, turns: figure, lod: { near: figure, far }, animate }
+  const model = { root, turns: figure, lod: { near: figure, far }, joints, animate }
+  if (swaddled) finishSwaddledWoble(model, profile)
+  return model
 }

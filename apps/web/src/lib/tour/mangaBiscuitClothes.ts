@@ -1,11 +1,28 @@
 import type { HumanClothesBuild } from './humanClothes'
-import { mangaBodyShape, mangaPanel, mangaChestSurface } from './mangaBody'
-import { kurapikaSurfacePanel } from './kurapikaGeometry'
+import { mangaPanel, mangaChestSurface } from './mangaBody'
 import { mergeHumanDetails } from './humanDetailGeometry'
+import { addMangaSuit } from './mangaTailoring'
 
 export function addBiscuitReferenceClothes(build: HumanClothesBuild) {
   if (build.profile.frame === 'adult') addBiscuitAdultJacket(build)
-  else addBiscuitOrnateDress(build)
+  else addBiscuitRoyalBodyguardSuit(build)
+}
+
+function addBiscuitRoyalBodyguardSuit(build: HumanClothesBuild) {
+  addMangaSuit(build)
+  const { THREE, geometry, figure, materials } = build
+  const jacketClosure = new THREE.Mesh(
+    geometry(THREE, 'manga:biscuit-bodyguard-jacket-closure', () =>
+      mergeHumanDetails([
+        new THREE.SphereGeometry(0.006, 8, 6).scale(1, 1, 0.45).translate(0, 0.035, 0),
+        new THREE.SphereGeometry(0.006, 8, 6).scale(1, 1, 0.45).translate(0, -0.035, 0),
+      ]),
+    ),
+    materials.dark,
+  )
+  jacketClosure.position.set(0, 1.16, 0.135)
+  jacketClosure.name = 'biscuit-royal-bodyguard-suit'
+  figure.add(jacketClosure)
 }
 
 function addBiscuitAdultJacket(build: HumanClothesBuild) {
@@ -73,98 +90,4 @@ function addBiscuitAdultJacket(build: HumanClothesBuild) {
   abs.position.y = 1.12
   abs.name = 'biscuit-true-form-muscle-lines'
   figure.add(abs)
-}
-
-function addBiscuitOrnateDress(build: HumanClothesBuild) {
-  const { THREE, geometry, figure, frame, materials, profile } = build
-  const { waist } = mangaBodyShape(profile)
-  const skirt = new THREE.Mesh(
-    geometry(
-      THREE,
-      'manga:biscuit-petal-skirt',
-      () =>
-        new THREE.LatheGeometry(
-          [
-            new THREE.Vector2(0, 0.16),
-            new THREE.Vector2(waist * 2.8, 0.16),
-            new THREE.Vector2(waist * 2.7, 0.28),
-            new THREE.Vector2(waist * 1.7, 0.65),
-            new THREE.Vector2(waist, 0.98),
-          ],
-          40,
-        ),
-    ),
-    materials.cloth,
-  )
-  skirt.position.y = 0
-  skirt.name = 'biscuit-petal-skirt'
-  figure.add(skirt)
-  for (const side of [-1, 1]) {
-    mangaPanel(build, {
-      name: `biscuit-ornate-bolero-${side}`,
-      points: [
-        [side * 0.065, 1.47],
-        [side * 0.18, 1.38],
-        [side * 0.12, 1.13],
-        [side * 0.01, 1.1],
-        [side * 0.03, 1.33],
-      ],
-      material: materials.dark,
-      lift: 0.02,
-    })
-    mangaPanel(build, {
-      name: `biscuit-pale-lapel-${side}`,
-      points: [
-        [side * 0.05, 1.47],
-        [side * 0.13, 1.39],
-        [side * 0.07, 1.2],
-        [0, 1.37],
-      ],
-      material: materials.shirt,
-      lift: 0.035,
-    })
-  }
-  const petals = new THREE.Mesh(
-    geometry(THREE, 'manga:biscuit-dress-petals', () => {
-      const parts = []
-      for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * Math.PI * 2
-        const shape = new THREE.Shape()
-        shape.moveTo(0, 0.94)
-        shape.quadraticCurveTo(-0.13, 0.65, -0.11, 0.26)
-        shape.quadraticCurveTo(0, 0.13, 0.11, 0.26)
-        shape.quadraticCurveTo(0.13, 0.65, 0, 0.94)
-        const petal = kurapikaSurfacePanel(THREE, {
-          points: shape.getPoints(6).map((point) => [point.x, point.y, 0] as const),
-          depth: (x, y) => {
-            const radius = waist * (1 + (Math.max(0, 0.98 - y) / 0.82) * 1.8)
-            return Math.sqrt(Math.max(0, radius ** 2 - x ** 2)) + 0.012
-          },
-        })
-        parts.push(petal.rotateY(a))
-      }
-      return mergeHumanDetails(parts)
-    }),
-    materials.shirt,
-  )
-  petals.name = 'biscuit-dress-petals'
-  figure.add(petals)
-  const collar = new THREE.Mesh(
-    geometry(THREE, 'manga:biscuit-frill-collar', () => {
-      const parts = []
-      for (let i = 0; i < 12; i++) {
-        const a = (i / 12) * Math.PI * 2
-        parts.push(
-          new THREE.SphereGeometry(1, 10, 8)
-            .scale(0.027, 0.013, 0.036)
-            .translate(Math.cos(a) * 0.073, 0, Math.sin(a) * 0.065),
-        )
-      }
-      return mergeHumanDetails(parts)
-    }),
-    materials.dark,
-  )
-  collar.position.y = 1.45 * frame.neck
-  collar.name = 'biscuit-frill-collar'
-  figure.add(collar)
 }

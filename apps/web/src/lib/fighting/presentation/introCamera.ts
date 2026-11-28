@@ -32,9 +32,21 @@ function entranceCamera(options: CameraOptions): boolean {
   })
 }
 
+/** Follow Hisoka through the height and depth that the ordinary duel framing projects out. */
+function historicalCamera({ camera, state, combatReady }: CameraOptions): boolean {
+  const world = state.deathMatch
+  if (!combatReady || !world?.scenario.done.includes('first-explosion')) return false
+  const { x, y, z } = world.hisoka.at
+  const distance = Math.max(7.5, 9 / Math.max(0.75, camera.aspect))
+  camera.position.set(x, y + 2.6, z + distance)
+  camera.lookAt(x, y + 1.4, z)
+  return true
+}
+
 /** Authored films keep their existing framing; entrances may focus on one actor. */
 export function applyPresentationCamera(options: CameraOptions): boolean {
   options.camera.userData.throwCinematic = null
+  if (!options.authored && !options.intro && historicalCamera(options)) return true
   if (options.reduced) return false
   if (!options.authored) return entranceCamera(options) || throwCamera(options)
   const pose = fitCinematicView(options.authored, options.state, options.camera.aspect)

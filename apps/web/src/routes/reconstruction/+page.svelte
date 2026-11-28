@@ -604,6 +604,7 @@
               bind:aimedAt
               bind:aimedSolidAt
               onCast={hatsuCasting.castOn}
+              modeKeyboard
               onHatsu={hatsuCasting.castOn}
               nen={hatsuSession.nen}
               onNenChange={hatsuSession.useNen}
@@ -616,7 +617,7 @@
               unsupportedLabel={$t.tour.unsupported}
             />
             {#if hatsuReport}
-              <output class="scene-hatsu-report" aria-live="polite">
+              <output class="scene-hatsu-report mode-hud mode-hud-surface" aria-live="polite">
                 <strong>{activeTechnique?.name ?? $t.reconstruction.hatsuLens}</strong>
                 <span>{$t.reconstruction.hatsuApplied}</span>
               </output>
@@ -715,8 +716,8 @@
     display: grid;
     gap: 0.25rem;
     padding: 0.6rem 0.8rem;
-    border: 1px solid #6faeb2;
-    background: #0c161dee;
+    max-width: calc(100% - 1.5rem);
+    pointer-events: none;
     font-size: 0.8rem;
   }
   .scene-hatsu-report span {

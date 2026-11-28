@@ -1,0 +1,24 @@
+{
+  "armor": 12,
+  "form": 204,
+  "wide": 236,
+  "chase": 258,
+  "rivalShot": 374,
+  "lastStep": 386,
+  "impactShot": 389,
+  "impact": 396,
+  "sink": 403,
+  "floorShot": 408,
+  "dust": 414,
+  "dissolve": 456,
+  "clear": 502,
+  "bow": 520,
+  "phrases": [
+    { "frame": 27, "source": "low", "pan": -0.36, "pitch": 204 },
+    { "frame": 66, "source": "torso", "pan": 0.08, "pitch": 296 },
+    { "frame": 106, "source": "left", "pan": 0.53, "pitch": 390 },
+    { "frame": 148, "source": "right", "pan": -0.52, "pitch": 327 },
+    { "frame": 193, "source": "torso", "pan": -0.12, "pitch": 470 },
+    { "frame": 559, "source": "torso", "pan": 0.05, "pitch": 231 }
+  ]
+}

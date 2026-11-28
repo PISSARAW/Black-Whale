@@ -37,8 +37,8 @@ export function mangaLongCurls(kit: MangaHairKit) {
           new THREE.Vector3(
             side *
               (0.12 + Math.sin(t * Math.PI) * 0.08 + Math.sin(t * Math.PI * 6 + strand) * 0.028),
-            0.18 - t * 0.84,
-            0.02 - strand * 0.035 + Math.cos(t * Math.PI * 6 + strand) * 0.022,
+            0.18 - t * (0.94 + strand * 0.041),
+            0.02 - strand * 0.035 - t * 0.065 + Math.cos(t * Math.PI * 6 + strand) * 0.03,
           ),
         )
       }
@@ -68,7 +68,7 @@ export function mangaWingedPart(kit: MangaHairKit) {
           [side * 0.013, 0.2, 0.02 - i * 0.033],
           [side * 0.12, 0.12, 0.17 - i * 0.04],
           [side * 0.25, 0.06 - i * 0.013, 0.17 - i * 0.04],
-          [side * (0.32 + (i % 2) * 0.035), 0.12 - i * 0.012, 0.13 - i * 0.04],
+          [side * (0.235 + (i % 2) * 0.02), 0.095 - i * 0.016, 0.13 - i * 0.04],
         ],
       })
     }
@@ -87,8 +87,8 @@ export function mangaFlameCrest(kit: MangaHairKit) {
         [x, 0.11, z],
         [x * 1.4, 0.22, z * 1.4],
         [x * 1.65 + 0.025, 0.27 + (i % 3) * 0.03, z * 1.5],
-        [x * 1.1 - 0.016, 0.36 + (i % 4) * 0.025, z * 1.2],
-        [x * 1.35 + 0.02, 0.44 + (i % 3) * 0.025, z * 1.45],
+        [x * 1.1 - 0.016, 0.289 + (i % 4) * 0.02, z * 1.2],
+        [x * 1.35 + 0.02, 0.34 + (i % 3) * 0.018, z * 1.45],
       ],
     })
   }

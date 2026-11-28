@@ -34,11 +34,17 @@ export const APPEARANCE_FRAMES = ['adult', 'child', 'infant'] as const
 /** The three the figure builder already carries. */
 export const APPEARANCE_BUILDS = ['slim', 'average', 'broad'] as const
 
+/** Authored resting carriage; movement layers remain owned by each game mode. */
+export const APPEARANCE_POSTURES = ['upright', 'neutral', 'relaxed', 'stooped'] as const
+
 /** The three skull shapes `humanHead.ts` squashes its sphere into. */
 export const APPEARANCE_FACES = ['narrow', 'round', 'square'] as const
 
 /** The five expressions the eyes and brows are already drawn in. */
 export const APPEARANCE_EXPRESSIONS = ['neutral', 'severe', 'tired', 'anxious', 'hostile'] as const
+
+/** Eye contours supported by the shared manga head. */
+export const APPEARANCE_EYE_SHAPES = ['almond', 'round', 'narrow', 'doll', 'heavy'] as const
 
 /**
  * Every hairstyle the walk can draw, closed.
@@ -72,6 +78,7 @@ export const APPEARANCE_HAIR_STYLES = [
   'wild',
   'bald-crown',
   'bun',
+  'curtain',
 ] as const
 
 /**
@@ -104,6 +111,7 @@ export const APPEARANCE_ATTIRE = [
 export const APPEARANCE_SIGNATURES = [
   'glasses-round',
   'glasses-thin',
+  'glasses-rectangular',
   'tiara',
   'crown',
   'beard-full',
@@ -176,6 +184,17 @@ const bodySchema = z
      * with extra steps.
      */
     shoulders: z.number().min(0.8).max(1.4).optional(),
+    /** Optional silhouette refinements. Omission is the unchanged canonical body. */
+    proportions: z
+      .object({
+        torso: z.number().min(0.88).max(1.12).optional(),
+        limbs: z.number().min(0.88).max(1.12).optional(),
+        hips: z.number().min(0.84).max(1.18).optional(),
+        shoulderSlope: z.number().min(-0.08).max(0.12).optional(),
+        posture: z.enum(APPEARANCE_POSTURES).optional(),
+      })
+      .strict()
+      .optional(),
   })
   .strict()
 
@@ -184,6 +203,21 @@ const headSchema = z
     face: z.enum(APPEARANCE_FACES),
     hairStyle: z.enum(APPEARANCE_HAIR_STYLES),
     expression: z.enum(APPEARANCE_EXPRESSIONS),
+    /** Optional panel-attested geometry; omission keeps the coarse face defaults. */
+    features: z
+      .object({
+        eyes: z.enum(APPEARANCE_EYE_SHAPES).optional(),
+        cheek: z.number().min(0.12).max(0.22).optional(),
+        jaw: z.number().min(0.045).max(0.19).optional(),
+        chin: z.number().min(0.16).max(0.28).optional(),
+        brow: z.number().min(0).max(3).optional(),
+        nose: z.number().min(0.5).max(2).optional(),
+        mouth: z.number().min(0.025).max(0.18).optional(),
+        neck: z.number().min(0.035).max(0.12).optional(),
+        headY: z.number().min(1.55).max(1.85).optional(),
+      })
+      .strict()
+      .optional(),
   })
   .strict()
 
@@ -240,6 +274,8 @@ export const appearanceFileSchema = z
 export type Appearance = z.infer<typeof appearanceSchema>
 export type AppearanceFile = z.infer<typeof appearanceFileSchema>
 export type AppearanceFrame = (typeof APPEARANCE_FRAMES)[number]
+export type AppearancePosture = (typeof APPEARANCE_POSTURES)[number]
+export type AppearanceEyeShape = (typeof APPEARANCE_EYE_SHAPES)[number]
 export type AppearanceHairStyle = (typeof APPEARANCE_HAIR_STYLES)[number]
 export type AppearanceAttire = (typeof APPEARANCE_ATTIRE)[number]
 export type AppearanceSignature = (typeof APPEARANCE_SIGNATURES)[number]

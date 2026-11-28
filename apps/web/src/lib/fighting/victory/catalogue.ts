@@ -2,6 +2,10 @@ import type { FightSide, FightState, FighterId } from '../types'
 import { troupeMember } from '../troupeMembership'
 import { rihanPlan } from './rihanPlan'
 import { beyondCurseVariant, type BeyondCurseVariant } from './beyondCurseSelection'
+import { PHINKS_VICTORY_DURATION } from './phinksTiming'
+import { phinksVictoryStrike } from './phinksStrike'
+import { SHIZUKU_VICTORY_DURATION } from './shizukuTiming'
+import { TSERRIEDNICH_VICTORY_DURATION } from './tserriednichTiming'
 
 export const VICTORY_DURATION = 10
 export const VICTORY_FIGHTERS = [
@@ -49,10 +53,10 @@ export const VICTORY_TITLES: Record<VictoryFighter, readonly [string, string]> =
   phinks: ['Le dernier tour', 'The last revolution'],
   franklin: ['Le silence après la rafale', 'Silence after the barrage'],
   benjamin: ['Le dernier ordre', 'The final order'],
-  tserriednich: ['Tu arrives trop tard', 'You are already too late'],
+  tserriednich: ['Deux vérités', 'Two Truths'],
   leorio: ['L’étage supérieur', 'The next floor'],
   halkenburg: ['Une seule volonté', 'One shared will'],
-  camilla: ['Le souffle', 'The breath'],
+  camilla: ['Le chat qui revient', 'The cat that returns'],
   kalluto: ['La dernière danse du papier', 'The final paper dance'],
   machi: ['Le dernier point', 'The final stitch'],
   shizuku: ['Rien à signaler', 'Nothing to report'],
@@ -80,6 +84,12 @@ export const VICTORY_TITLES: Record<VictoryFighter, readonly [string, string]> =
 export function hasVictoryCinematic(id: FighterId): id is VictoryFighter {
   return (VICTORY_FIGHTERS as readonly string[]).includes(id)
 }
+const VICTORY_DURATIONS: Partial<Record<VictoryFighter, number>> = {
+  phinks: PHINKS_VICTORY_DURATION,
+  shizuku: SHIZUKU_VICTORY_DURATION,
+  tserriednich: TSERRIEDNICH_VICTORY_DURATION,
+}
+
 export interface VictorySelection {
   token: string
   variant?:
@@ -89,6 +99,8 @@ export interface VictorySelection {
     | 'rihan-physical'
     | BeyondCurseVariant
   duration?: number
+  finishingShot?: number
+  phinksStrike?: ReturnType<typeof phinksVictoryStrike>
   fighter: VictoryFighter
   winner: FightSide
   loser: FightSide
@@ -100,7 +112,17 @@ export function selectVictory(state: FightState): VictorySelection | null {
     fighter = state[winner].id
   if (!hasVictoryCinematic(fighter)) return null
   const loser = winner === 'player' ? 'opponent' : 'player'
+  if (
+    fighter === 'camilla' &&
+    (state.catsNameFatality?.victimSide !== winner ||
+      state.catsNameFatality.killerSide !== loser ||
+      state.catsNameConsumed !== loser ||
+      state[winner].health <= 0 ||
+      state[loser].health > 0)
+  )
+    return null
   const curse = beyondCurseVariant(state)
+  const duration = fighter === 'tserriednich' && curse ? undefined : VICTORY_DURATIONS[fighter]
   const token = [
     state.environment.stageId,
     state.roundNumber,
@@ -114,6 +136,11 @@ export function selectVictory(state: FightState): VictorySelection | null {
     fighter,
     winner,
     loser,
+    ...(duration === undefined ? {} : { duration }),
+    ...(!curse && fighter === 'tserriednich' && state.finishReason === 'knockout' && state.finishingShot !== undefined
+      ? { finishingShot: state.finishingShot }
+      : {}),
+    ...(fighter === 'phinks' ? { phinksStrike: phinksVictoryStrike(state, winner) } : {}),
     ...(curse ? { variant: curse } : victoryVariant(fighter, state[loser].id)),
   }
 }

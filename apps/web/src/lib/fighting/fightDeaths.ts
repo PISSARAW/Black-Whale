@@ -17,6 +17,7 @@ export interface FightDeath {
   victimSide: FightSide
   killerSide: FightSide | null
   cause: FightDeathCause
+  shotId?: number
   fatalCondition?: boolean
 }
 

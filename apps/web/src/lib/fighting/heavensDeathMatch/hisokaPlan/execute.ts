@@ -1,6 +1,6 @@
 import { attachGum, pullGum } from '../crowd/actions'
 import { updateSpectator } from '../crowd/create'
-import { decapitate, launchHead, tieHead } from '../crowd/heads'
+import { decapitate, launchHead, replaceTiedHead, tieHead } from '../crowd/heads'
 import { DT } from '../crowd/step'
 import type { CrowdState } from '../crowd/types'
 import type { Vec3 } from '../stands/geometry'
@@ -68,8 +68,10 @@ const APPLY: Partial<Record<HisokaIntent['kind'], Applier>> = {
   cut: (world, intent: { target: string }) => withCrowd(world, kill(world.crowd, intent.target)),
   decapitate: (world, intent: { target: string }) =>
     withCrowd(world, decapitate(world.crowd, intent.target)),
-  'tie-head': (world, intent: { head: string; limb: Parameters<typeof tieHead>[2] }) =>
-    withCrowd(world, tieHead(world.crowd, intent.head, intent.limb)),
+  'tie-head': (world, intent: Extract<HisokaIntent, { kind: 'tie-head' }>) => {
+    const attach = intent.replace ? replaceTiedHead : tieHead
+    return withCrowd(world, attach(world.crowd, intent.head, intent.limb))
+  },
   'launch-head': (world, intent: { head: string; at: Vec3 }) => ({
     ...withCrowd(world, launchHead(world.crowd, intent.head, intent.at)),
     hisoka: { ...world.hisoka, ...swung(world) },
@@ -115,18 +117,12 @@ export interface HisokaOutcome {
 }
 
 /**
- * One frame of Hisoka's composite moves. `leads` says whether the plan also moves his body
- * (CPU or scripted replay); otherwise only his gaze follows, and the player moves him.
+ * One frame of a composite move, requested by the player or by the scripted reconstruction.
  */
-export function executeHisoka(
-  world: DeathMatchWorld,
-  decision: HisokaDecision,
-  leads: boolean,
-): HisokaOutcome {
+export function executeHisoka(world: DeathMatchWorld, decision: HisokaDecision): HisokaOutcome {
   const { intent } = decision
   const facing = hisokaGaze(world)
   const looked = withHisoka(world, { facing })
-  if (intent.kind === 'move' && !leads) return { world: looked, intent: { kind: 'hold' } }
   const apply = APPLY[intent.kind] as
     ((world: DeathMatchWorld, intent: HisokaIntent) => DeathMatchWorld) | undefined
   return { world: apply ? apply(looked, intent) : looked, intent }

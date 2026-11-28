@@ -14,7 +14,7 @@ import {
 } from './signatureCombos'
 import { isLotStep } from './signatureLotSteps'
 import { isLot2Step } from './signatureLot2Steps'
-import { createSignatureFight } from './signatureComboRunner'
+import { createSignatureFight, signatureAttackCommand } from './signatureComboRunner'
 import {
   dashTapReady,
   motionDemoCommand,
@@ -44,8 +44,8 @@ export interface SignatureProgress extends CombatProgress {
  */
 export const ACADEMY_SIGNATURES: readonly SignatureCombo[] = SIGNATURE_COMBOS.filter(
   (combo) =>
-    combo.fighter !== 'illumi' &&
-    combo.fighter !== 'lynch' &&
+    combo.id !== 'illumi:implanted-order' &&
+    combo.id !== 'lynch:body-and-soul' &&
     combo.steps.every(
       (step) =>
         !('future' in step) && !('riposte' in step) && !isLotStep(step) && !isLot2Step(step),
@@ -69,7 +69,10 @@ export function startSignatureLesson(id: string, demo: boolean) {
     demo,
     stepHits: 0,
   }
-  return { progress, state: createSignatureFight(combo, { mirrored: false, gap: 5 }) }
+  return {
+    progress,
+    state: createSignatureFight(combo, { mirrored: false, gap: combo.initialGap ?? 5 }),
+  }
 }
 
 export function observeSignatureLesson(progress: SignatureProgress, state: FightState) {
@@ -112,22 +115,26 @@ function advanceSteps(combo: SignatureCombo, progress: SignatureProgress, state:
 function stepDone(step: SignatureStep, state: FightState): boolean {
   const motion = motionLessonDone(step, state)
   if (motion !== null) return motion
-  if ('move' in step || 'ranged' in step)
-    return startedNow(state) && attackMatches(state, 'move' in step ? step.move : 'ranged')
+  const attack = stepAttackId(step, state.player.id)
+  if (attack) return startedNow(state) && attackMatches(state, attack)
   if ('dash' in step) return dashing(state, step.dash)
   return Boolean(state.gumNetwork?.pending.player) || ceilingLinked(state)
 }
 
-const moveId = (state: FightState, slot: MoveSlot | 'ranged') => `${state.player.id}:${slot}`
+function stepAttackId(step: SignatureStep, fighter: FightState['player']['id']): string | null {
+  if ('signatureAttack' in step) return step.signatureAttack
+  if ('move' in step) return `${fighter}:${step.move}`
+  return 'ranged' in step ? `${fighter}:ranged` : null
+}
 
 /**
  * Whether the player's attack is the one a step names: a `ranged` step accepts any ranged
  * attack (a burst has no move of its own); a move step needs that move, shot moves included.
  */
-const attackMatches = (state: FightState, slot: MoveSlot | 'ranged') =>
-  slot === 'ranged'
+const attackMatches = (state: FightState, id: string) =>
+  id === `${state.player.id}:ranged`
     ? state.player.attack?.kind === 'ranged'
-    : state.player.attack?.moveId === moveId(state, slot)
+    : state.player.attack?.moveId === id
 
 /** An attack is new on its first simulated frames. */
 const startedNow = (state: FightState) => (state.player.attack?.frame ?? 99) <= 1
@@ -154,7 +161,7 @@ function startsWrongAttack(combo: SignatureCombo, progress: SignatureProgress, s
   if (!attack || !startedNow(state)) return false
   const expected = combo.steps
     .slice(0, progress.step)
-    .flatMap((step) => ('move' in step ? [step.move] : 'ranged' in step ? ['ranged' as const] : []))
+    .flatMap((step) => stepAttackId(step, combo.fighter) ?? [])
     .at(-1)
   return !expected || !attackMatches(state, expected)
 }
@@ -166,13 +173,14 @@ function startsWrongAttack(combo: SignatureCombo, progress: SignatureProgress, s
 function contactMatches(
   lesson: { combo: SignatureCombo; progress: SignatureProgress },
   state: FightState,
-  expected: MoveSlot | 'ranged',
+  expected: string,
 ): boolean {
   if (attackMatches(state, expected)) return true
   if (state.impact?.projectileId === undefined) return false
-  const moves = lesson.combo.steps
-    .slice(0, lesson.progress.step)
-    .flatMap((step) => ('move' in step ? [step.move] : []))
+  const moves = lesson.combo.steps.slice(0, lesson.progress.step).flatMap((step) => {
+    if ('signatureAttack' in step) return [step.signatureAttack]
+    return 'move' in step ? [`${lesson.combo.fighter}:${step.move}`] : []
+  })
   return moves.at(-2) === expected
 }
 
@@ -201,6 +209,17 @@ export function signatureDemoCommand(
   const step = demoStep(progress)
   if (!step) return null
   if ('ranged' in step) return rangedReady(state) ? RANGED_COMMAND : null
+  if ('signatureAttack' in step) {
+    const command = signatureAttackCommand(state, step.signatureAttack)
+    return command
+      ? {
+          kind: 'move',
+          side: 'player',
+          action: command.action,
+          input: packReplayInput(command.input),
+        }
+      : null
+  }
   if (!('move' in step)) return motionDemoCommand(step, state)
   if (!moveReady(state, step.move)) return null
   return {

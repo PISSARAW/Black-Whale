@@ -5,13 +5,10 @@ import {
   Group,
   Mesh,
   MeshBasicMaterial,
-  Quaternion,
   SphereGeometry,
   Vector3,
 } from 'three'
 import type { Object3D } from 'three'
-import type { VictoryContext } from './types'
-import { FUTURE_EXECUTION_SHOTS } from './tserriednichPose'
 import { disposeVictoryObject } from './resources'
 
 export function createFuturePistol() {
@@ -61,32 +58,39 @@ export function createFutureExecution() {
   root.add(gun, fire, tracer, impact)
   return {
     root,
-    sync(options: { context: VictoryContext; wrist: Object3D; aim: Vector3 }) {
-      const { context, wrist, aim } = options,
-        { age } = context
-      gun.visible = age >= 66
+    sync({
+      wrist,
+      aim,
+      shotAge,
+      raise,
+    }: {
+      wrist: Object3D
+      aim: Vector3
+      shotAge: number
+      raise: number
+    }) {
       gun.position.copy(wrist.getWorldPosition(new Vector3()))
-      gun.quaternion
-        .copy(wrist.getWorldQuaternion(new Quaternion()))
-        .multiply(new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), Math.PI / 2))
+      const direction = aim.clone().sub(gun.position)
+      const barrelDirection = new Vector3(0, -1, -0.08).lerp(direction.clone().normalize(), raise)
+      gun.quaternion.setFromUnitVectors(new Vector3(0, 0, 1), barrelDirection.normalize())
       gun.updateWorldMatrix(true, true)
       const muzzle = gun.localToWorld(new Vector3(0, 0.048, 0.18))
-      const since = Math.min(
-        ...FUTURE_EXECUTION_SHOTS.filter((shot) => age >= shot).map((shot) => age - shot),
-      )
+      const since = shotAge * 60
       const flash = since >= 0 && since < 2
       fire.visible = flash
       fire.position.copy(muzzle)
-      fire.scale.setScalar(Math.max(0, 1 - since * 0.3))
-      impact.visible = age >= 438 && since >= 0 && since < 4
+      const flame = Math.max(0, 1 - Math.max(0, since) * 0.4)
+      fire.quaternion.copy(gun.quaternion)
+      fire.scale.set(0.78 * flame, 0.78 * flame, 1.85 * flame)
+      impact.visible = since >= 0 && since < 4
       impact.position.copy(aim)
-      impact.scale.setScalar(Math.max(0, 1 - since * 0.18))
+      impact.scale.setScalar(Math.max(0, 1 - Math.max(0, since) * 0.18))
       tracer.visible = since >= 0 && since < 2
-      const direction = aim.clone().sub(muzzle)
+      direction.copy(aim).sub(muzzle)
       tracer.position.copy(muzzle).lerp(aim, 0.5)
       tracer.quaternion.setFromUnitVectors(new Vector3(0, 1, 0), direction.clone().normalize())
       tracer.scale.y = direction.length()
-      const recoil = Math.max(0, 1 - since / 5) * 0.012
+      const recoil = since >= 0 ? Math.max(0, 1 - since / 5) * 0.012 : 0
       gun.position.addScaledVector(direction.normalize(), -recoil)
     },
     dispose() {

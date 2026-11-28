@@ -8,6 +8,8 @@
  */
 import { EPSILON, closestPointOnSegment } from './geometry'
 import type { Link, Tier, Vec2, WallSegment } from './types'
+import { isCasinoSpiralLink } from './casinoSpiralLayout'
+import { CASINO_APPROACH } from './casinoLayout'
 
 /** Shoulder width of the visitor, in metres. */
 export const VISITOR_RADIUS = 0.4
@@ -296,6 +298,17 @@ export function walkInput(
   }
 }
 
+function linksAtSpace(link: Link, spaceId: string): boolean {
+  return (link.from === spaceId || link.to === spaceId) && !isCasinoSpiralLink(link)
+}
+
+function withinLinkReach(link: Link, spaceId: string, point: Vec2): boolean {
+  const isCasinoPassage = link.from === CASINO_APPROACH
+  if (link.kind === 'door' && !isCasinoPassage) return true
+  const here = link.from === spaceId ? link.at : (link.atTo ?? link.at)
+  return len(sub(point, here)) <= (isCasinoPassage ? 1.8 : LINK_REACH)
+}
+
 /**
  * The vertical link the visitor is standing on, if any, together with the space
  * it leads to from where they are.
@@ -308,17 +321,14 @@ export function linkUnderfoot(
   if (!spaceId) return null
 
   for (const link of links) {
-    if (link.from !== spaceId && link.to !== spaceId) continue
+    if (!linksAtSpace(link, spaceId)) continue
     // Measure against the end the visitor is actually standing on: the two
     // ends of a door into an interior are in different coordinate spaces.
     // A door into a room's interior is offered from anywhere in that room:
     // the whole space is the threshold, and hunting for a spot on the floor of
     // a sixty-metre block would be a puzzle, not a tour. A stairwell still has
     // to be stood on.
-    if (link.kind !== 'door') {
-      const here = link.from === spaceId ? link.at : (link.atTo ?? link.at)
-      if (len(sub(point, here)) > LINK_REACH) continue
-    }
+    if (!withinLinkReach(link, spaceId, point)) continue
     return { link, to: link.from === spaceId ? link.to : link.from }
   }
   return null

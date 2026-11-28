@@ -3,10 +3,10 @@ import type { PuppetOrder, Spectator } from '../crowd/types'
 import { living } from '../crowd/types'
 import { puppetCensus } from '../puppets/census'
 import { headsOf } from '../crowd/heads'
-import { FULL_SUN_CHARGE, isBomb } from '../puppets/pipeline'
+import { FULL_SUN_CHARGE, isBomb, isMobileBomb } from '../puppets/pipeline'
 import type { Vec3 } from '../stands/geometry'
 import { arenaGraph } from '../stands/navigation'
-import { chrolloPhase, inCrowdPhase, type ChrolloPhase } from './phases'
+import { frontierBeat, chrolloPhase, inCrowdPhase, type ChrolloPhase } from './phases'
 import {
   COMMENTATOR_BOOTH,
   REFEREE_ID,
@@ -138,11 +138,14 @@ function buildArmy(world: DeathMatchWorld): ChrolloIntent {
 
 /** The body whose head hangs from Hisoka's gum, if it bears the Sun. */
 export function linkedBody(world: DeathMatchWorld): Spectator | undefined {
-  const head = headsOf(world.crowd).find((entry) => !entry.spent && entry.tiedTo)
-  if (!head) return undefined
-  return world.crowd.spectators.find(
-    (spectator) => spectator.id === head.bodyId && spectator.marks.sun,
-  )
+  const heads = headsOf(world.crowd).filter((entry) => !entry.spent && entry.tiedTo)
+  if (frontierBeat(world.scenario) !== 'hand-destroyed') {
+    return world.crowd.spectators.find((body) => body.id === heads[0]?.bodyId && body.marks.sun)
+  }
+  const marked = (id: string) =>
+    world.crowd.spectators.find((body) => body.id === id && body.marks.sun)
+  const hand = heads.find(({ tiedTo }) => tiedTo === 'left-hand')
+  return (hand && marked(hand.bodyId)) ?? heads.map(({ bodyId }) => marked(bodyId)).find(Boolean)
 }
 
 function chargeBomb(world: DeathMatchWorld): ChrolloIntent {
@@ -255,6 +258,21 @@ function legBlast(world: DeathMatchWorld): ChrolloIntent | null {
     : { kind: 'charge-sun', targets: [bomb.id] }
 }
 
+function legTrap(world: DeathMatchWorld): ChrolloIntent | null {
+  if (world.hisoka.wounds.rightLowerLeg) return null
+  const armed = world.crowd.spectators.find(
+    (body) => isMobileBomb(body) && body.order === 'trip-hisoka',
+  )
+  if (!armed) {
+    const bomb = nearestTo(world, world.hisoka.at, isMobileBomb)
+    return bomb ? { kind: 'order-one', target: bomb.id, order: 'trip-hisoka' } : null
+  }
+  if (armed.marks.sunCharge < FULL_SUN_CHARGE) return { kind: 'charge-sun', targets: [armed.id] }
+  return distance(armed.at, world.hisoka.at) < 0.48
+    ? { kind: 'detonate', target: armed.id }
+    : { kind: 'hold' }
+}
+
 function nearestTo(
   world: DeathMatchWorld,
   from: Vec3,
@@ -271,7 +289,8 @@ function nearestTo(
 }
 
 function encircle(world: DeathMatchWorld): ChrolloIntent {
-  const step = throwAcrossGum(world) ?? legBlast(world) ?? arm(world)
+  const trap = frontierBeat(world.scenario) === 'leg-destroyed' ? legTrap : legBlast
+  const step = throwAcrossGum(world) ?? trap(world) ?? arm(world)
   if (step) return step
   const census = puppetCensus(world.crowd)
   if (census.copies >= ASSAULT_ARMY && census.bombs >= FINAL_BOMBS)

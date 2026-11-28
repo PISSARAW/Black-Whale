@@ -12,8 +12,15 @@ function result(
   target: FighterId = 'chrollo',
   side: FightSide = 'player',
 ): FightState {
+  const state = createFight(side === 'player' ? winner : target, side === 'player' ? target : winner)
+  if (winner === 'camilla') {
+    const loser = side === 'player' ? 'opponent' : 'player'
+    state[loser].health = 0
+    state.catsNameConsumed = loser
+    state.catsNameFatality = { victimSide: side, killerSide: loser, cause: 'strike', zetsu: true }
+  }
   return {
-    ...createFight(side === 'player' ? winner : target, side === 'player' ? target : winner),
+    ...state,
     phase: 'finished',
     winner: side,
     frame: 666,
@@ -48,6 +55,16 @@ describe('victory selection', () => {
           }
         }
   })
+  it('only selects Camilla after the attributed death and completed Cat’s Name revival', () => {
+    const state = result('camilla', 'benjamin', 'opponent')
+    expect(selectVictory(state)?.fighter).toBe('camilla')
+    expect(selectVictory({ ...state, catsNameFatality: undefined })).toBeNull()
+    expect(selectVictory({ ...state, catsNameConsumed: undefined })).toBeNull()
+    expect(selectVictory({ ...state, opponent: { ...state.opponent, health: 0 } })).toBeNull()
+    const win = { ...createFight('camilla', 'benjamin'), phase: 'finished', winner: 'player' } as const
+    expect(selectVictory(win)).toBeNull()
+  })
+
   it('rejects pending fights, draws, unsupported winners, training and speculative outcomes', () => {
     const state = result()
     expect(selectVictory({ ...state, phase: 'ready' })).toBeNull()
@@ -59,6 +76,15 @@ describe('victory selection', () => {
   })
 })
 describe('victory playback', () => {
+  it('ends the Phinks presentation at eight seconds', () => {
+    const playback = createVictoryPlayback()
+    playback.observe(result('phinks'))
+    playback.sceneReady()
+    playback.advance(7.99)
+    expect(get(playback)?.active).toBe(true)
+    playback.advance(0.01)
+    expect(get(playback)).toMatchObject({ elapsed: 8, active: false })
+  })
   it('keeps real ten-second timing when rendering drops below ten frames per second', () => {
     const playback = createVictoryPlayback()
     playback.observe(result())

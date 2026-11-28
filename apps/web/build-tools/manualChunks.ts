@@ -12,6 +12,7 @@ let cycleChunks = new Map<string, string>()
 export function manualChunks(id: string, graph?: ChunkGraph): string | undefined {
   const fragment = fragmentChunkName(id)
   if (fragment) return fragment
+  if (id.endsWith('/data/characters/appearance.json')) return 'data-character-appearances'
   if (/\/i18n\/messages\/(en|fr)\.ts$/.test(id))
     return `interface-${id.endsWith('/fr.ts') ? 'fr' : 'en'}`
   if (graph) {

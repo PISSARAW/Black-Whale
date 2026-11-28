@@ -268,6 +268,7 @@ const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
           identity: 'prince-kacho',
           pose: seen.human?.pose ?? 'idle',
           aura: 'none',
+          royalCostume: 'twins-banquet',
         },
       },
       context,

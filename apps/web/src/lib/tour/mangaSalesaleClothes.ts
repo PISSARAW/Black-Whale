@@ -3,18 +3,19 @@ import { mangaPanel, mangaBodyShape } from './mangaBody'
 import { mergeHumanDetails } from './humanDetailGeometry'
 
 function addRobeSkirt(build: HumanClothesBuild) {
-  const { THREE, geometry, figure, materials } = build
+  const { THREE, geometry, figure, materials, profile } = build
+  const { depth, chest } = mangaBodyShape(profile)
   const skirt = new THREE.Mesh(
     geometry(THREE, 'manga:salesale-long-light-robe', () =>
       new THREE.LatheGeometry(
         [
-          [0.284, 0.29],
-          [0.292, 0.34],
-          [0.277, 0.65],
-          [0.266, 0.91],
+          [0.337, 0.29],
+          [0.345, 0.34],
+          [0.311, 0.65],
+          [0.36, 0.91],
         ].map(([r, y]) => new THREE.Vector2(r, y - 0.75)),
         40,
-      ).scale(1, 1, 0.79),
+      ).scale(1, 1, depth / chest),
     ),
     materials.cloth,
   )
@@ -23,7 +24,7 @@ function addRobeSkirt(build: HumanClothesBuild) {
   figure.add(skirt)
   const hem = new THREE.Mesh(
     geometry(THREE, 'manga:salesale-robe-hem', () =>
-      new THREE.TorusGeometry(0.286, 0.002, 5, 40).rotateX(Math.PI / 2).scale(1, 1, 0.79),
+      new THREE.TorusGeometry(0.339, 0.002, 5, 40).rotateX(Math.PI / 2).scale(1, 1, depth / chest),
     ),
     materials.accent,
   )
@@ -37,7 +38,7 @@ function addBelt(build: HumanClothesBuild) {
   const { depth, chest } = mangaBodyShape(profile)
   const belt = new THREE.Mesh(
     geometry(THREE, 'manga:salesale-cloth-belt', () =>
-      new THREE.CylinderGeometry(0.282, 0.277, 0.073, 40).scale(1, 1, depth / chest),
+      new THREE.CylinderGeometry(0.391, 0.382, 0.073, 40).scale(1, 1, depth / chest),
     ),
     materials.shirt,
   )
@@ -55,7 +56,7 @@ function addBelt(build: HumanClothesBuild) {
     materials.shirt,
   )
   knot.name = 'salesale-belt-knot'
-  knot.position.set(0.08, 1.014, 0.22)
+  knot.position.set(0.08, 1.014, 0.362)
   figure.add(knot)
 }
 

@@ -1,3 +1,5 @@
+import { addLowerDeckLimbs } from './mangaLowerDeckLimbs'
+import { shapeLynchLimbs } from './mangaXiYuClothes'
 import { addFeitanBoots } from './mangaFeitanClothes'
 import { addMarayamShorts } from './mangaMarayamClothes'
 import { addZhangLeiLimbs } from './mangaZhangLeiLimbs'
@@ -11,6 +13,7 @@ import type { HumanLimbs, HumanLimbsBuild } from './humanLimbs'
 import { shapeGelShoulders } from './mangaGel'
 import { addMizaistomCowLimbs } from './mangaMizaistomClothes'
 import { addHeillyReferenceLimbs } from './mangaHeillyClothes'
+import { addHeillyRaidBoots } from './mangaHeillyRaidClothes'
 import { shapePadailleSleeves } from './mangaPadaille'
 import { shapeMelodyLimbs } from './mangaMelody'
 import { addBiscuitLimbClothes } from './mangaBiscuitLimbs'
@@ -20,6 +23,16 @@ import { addZoldyckLimbClothes } from './mangaZoldyckLimbs'
 import { addMangaReferenceLimbs } from './mangaReferenceLimbs'
 import { addCamillaSleeves } from './mangaCamillaSleeves'
 import { kurapikaShoeGeometry } from './kurapikaGeometry'
+import { shapeDogmanLimbs } from './mangaDogman'
+import { addShikakuCombatBoots } from './mangaShikaku'
+import { addSanbicaMedicalGloves } from './mangaSanbica'
+import { addTokarineSleeveStripes } from './mangaTokarine'
+import { addBabimynaCombatBoots } from './mangaBabimyna'
+import { addVincentCombatBoots } from './mangaVincent'
+import { addOrauCombatBoots } from './mangaOrau'
+import { addKanjidolCombatBoots } from './mangaKanjidol'
+import { addKakinAnnouncerBraceletsAndShoes } from './mangaKakinAnnouncer'
+import { addCleapatroSleeveStripes } from './mangaCleapatro'
 
 function machi(build: HumanLimbsBuild, limbs: HumanLimbs) {
   const { THREE, geometry, profile, glow } = build
@@ -99,10 +112,20 @@ function finishShoes(build: HumanLimbsBuild, limbs: HumanLimbs) {
 
 const REFERENCE_LIMBS: Record<string, (build: HumanLimbsBuild, limbs: HumanLimbs) => void> = {
   'prince-salesale': addSalesaleSleevesAndBoots,
+  'lynch-fullbokko': shapeLynchLimbs,
   'prince-luzurus': addLuzurusLimbs,
   'prince-marayam': addMarayamShorts,
   'prince-zhanglei': addZhangLeiLimbs,
   'morena-prudo': addMorenaSleevesAndBoots,
+  shikaku: addShikakuCombatBoots,
+  'sanbica-norton': addSanbicaMedicalGloves,
+  tokarine: addTokarineSleeveStripes,
+  babimyna: addBabimynaCombatBoots,
+  vincent: addVincentCombatBoots,
+  orau: addOrauCombatBoots,
+  kanjidol: addKanjidolCombatBoots,
+  'kakin-announcer': addKakinAnnouncerBraceletsAndShoes,
+  cleapatro: addCleapatroSleeveStripes,
 }
 
 export function shapeMangaLimbs(build: HumanLimbsBuild, limbs: HumanLimbs): void {
@@ -124,6 +147,7 @@ export function shapeMangaLimbs(build: HumanLimbsBuild, limbs: HumanLimbs): void
   colourShoes(build, limbs)
   hoodieSilhouette(build, limbs)
   addMangaReferenceLimbs(build, limbs)
+  addLowerDeckLimbs(build, limbs)
   addZoldyckLimbClothes(build, limbs)
   addRoyalMilitaryLimbDetails(build, limbs)
   addCamillaSleeves(build, limbs)
@@ -132,11 +156,13 @@ export function shapeMangaLimbs(build: HumanLimbsBuild, limbs: HumanLimbs): void
   shapeMelodyLimbs(build, limbs)
   shapePadailleSleeves(build, limbs)
   addHeillyReferenceLimbs(build, limbs)
+  addHeillyRaidBoots(build, limbs)
   addMizaistomCowLimbs(build, limbs)
   shapeGelShoulders(build, limbs)
   addCluckLimbCostume(build, limbs)
   addSaiyuLimbs(build, limbs)
   addFeitanBoots(build, limbs)
+  if (profile.likeness === 'dogman') shapeDogmanLimbs(build, limbs)
   REFERENCE_LIMBS[profile.likeness]?.(build, limbs)
 }
 

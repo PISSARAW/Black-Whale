@@ -10,6 +10,10 @@ export interface MangaCastStaging {
   at: Vec2
   heading?: number
   pose?: NonNullable<Apparition['human']>['pose']
+  /** A separately visible projection of the same character. */
+  projection?: boolean
+  unmasked?: boolean
+  bonolenovDisguise?: NonNullable<Apparition['human']>['bonolenovDisguise']
 }
 
 export interface MangaView {
@@ -45,6 +49,8 @@ export interface MangaView {
   labelFr: string
   /** Explicit blocking; an empty array keeps the viewed level free of inferred bodies, including adjoining rooms. */
   staging?: readonly MangaCastStaging[]
+  /** Panel lighting can omit the Tour's aura envelopes. */
+  hideCastAura?: boolean
   /** A panel may locate a guardian more precisely than its default corner of the room. */
   beastStaging?: readonly { ownerId: string; at?: Vec2; heading?: number; omit?: boolean }[]
   /** Other zones of the same continuous room from which this view is offered. */

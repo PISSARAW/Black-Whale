@@ -1,7 +1,11 @@
+import { declaredBlackWhaleProfile } from './blackWhaleAppearanceProfiles'
 import appearanceFile from '../../../../../data/characters/appearance.json'
 import { MARAYAM_FRAME } from './mangaMarayamProfile'
 import { ZHANG_LEI_FRAME } from './mangaZhangLeiProfile'
 import type { Apparition } from './apparitions'
+import type { TwinCostume } from './mangaTwinWardrobe'
+import type { HumanFaceFeatures } from './humanFaceFeatures'
+import { SILENT_MAJORITY_PALETTE } from './silentMajorityPalette'
 
 /**
  * What a body aboard looks like: the declaration first, the role second.
@@ -24,8 +28,7 @@ import type { Apparition } from './apparitions'
  */
 
 /**
- * The three vocabularies below are `packages/contracts`' — written out again
- * rather than imported.
+ * The vocabularies below are `packages/contracts`' — written out rather than imported.
  *
  * The contracts are a lint tool run over `data/`, not a runtime dependency of
  * the site: importing them here would ship zod and a schema to every visitor so
@@ -54,6 +57,7 @@ export const HAIR_STYLES = [
   'wild',
   'bald-crown',
   'bun',
+  'curtain',
 ] as const
 
 export const ATTIRE = [
@@ -71,6 +75,7 @@ export const ATTIRE = [
 export const SIGNATURES = [
   'glasses-round',
   'glasses-thin',
+  'glasses-rectangular',
   'tiara',
   'crown',
   'beard-full',
@@ -94,46 +99,56 @@ export const SIGNATURES = [
 ] as const
 
 export const FRAMES = ['adult', 'child', 'infant'] as const
+export const POSTURES = ['upright', 'neutral', 'relaxed', 'stooped'] as const
 
 export type HairStyle = (typeof HAIR_STYLES)[number]
 export type Attire = (typeof ATTIRE)[number]
 export type Signature = (typeof SIGNATURES)[number]
 export type Frame = (typeof FRAMES)[number]
+export type HumanPosture = (typeof POSTURES)[number]
+
+export interface HumanProportions {
+  torso: number
+  limbs: number
+  hips: number
+  shoulderSlope: number
+  posture: HumanPosture
+}
+
+export const NEUTRAL_HUMAN_PROPORTIONS: HumanProportions = {
+  torso: 1,
+  limbs: 1,
+  hips: 1,
+  shoulderSlope: 0,
+  posture: 'neutral',
+}
 
 export interface HumanProfile {
   /** Optional face shell only; eyes, hair, clothing and the body's rig retain their own identity. */
   faceLike?: string
+  plainSuit?: boolean
   build: 'slim' | 'average' | 'broad'
   height: number
   shoulders: number
+  /** Optional catalogue refinements; absent profiles retain the canonical silhouette. */
+  proportions?: Partial<HumanProportions>
   skin: number
   hair: number
   hairStyle: HairStyle
   face: 'narrow' | 'round' | 'square'
+  faceFeatures?: Partial<HumanFaceFeatures>
   expression: 'neutral' | 'severe' | 'tired' | 'anxious' | 'hostile'
   jacket: number
   trousers: number
   shirt: number
   accent: number
   clothing: Attire
-  /**
-   * The body plan the figure is built on.
-   *
-   * `adult` for everyone the role profiles ever produced, so nothing that was
-   * not declared can change shape. The other two exist because Marayam and
-   * Woble had no gabarit at all: a child is not a small man, and a baby is not
-   * a small child.
-   */
+  royalCostume?: TwinCostume
+  /** Body plan; undeclared role profiles remain adults. */
   frame: Frame
   /** Annexe B pieces this body wears. Empty for everyone undeclared. */
   signatures: readonly Signature[]
-  /**
-   * The catalogue id this face was declared under, or `null`.
-   *
-   * Load-bearing rather than informational: it is how the figure builder tells
-   * a person the archive has drawn from a person it has only dressed, which is
-   * the difference between adding Morena's scars and adding somebody else's.
-   */
+  /** Catalogue id for authored likeness geometry, or `null`. */
   likeness: string | null
 }
 
@@ -271,17 +286,17 @@ const ROLE_PROFILES: Record<
     build: 'slim',
     height: 0.96,
     shoulders: 0.94,
-    skin: 0xf0ece4,
-    hair: 0x141414,
+    skin: SILENT_MAJORITY_PALETTE.porcelain,
+    hair: SILENT_MAJORITY_PALETTE.hair,
     // The puppet's helmet is its own shape — `silentMajorityHair` — and a cap
     // under it would only show through the opening left for the mask.
     hairStyle: 'shaved',
     face: 'narrow',
     expression: 'neutral',
-    jacket: 0x171717,
-    trousers: 0xf0ece4,
+    jacket: SILENT_MAJORITY_PALETTE.cloth,
+    trousers: SILENT_MAJORITY_PALETTE.porcelain,
     shirt: 0x171717,
-    accent: 0xf0ece4,
+    accent: SILENT_MAJORITY_PALETTE.porcelain,
     clothing: 'ritual',
     frame: 'adult',
     signatures: [],
@@ -304,10 +319,12 @@ const LIKENESSES: ReadonlyMap<string, HumanProfile> = new Map(
       build: entry.body.build,
       height: entry.body.height,
       shoulders: entry.body.shoulders ?? 1,
+      proportions: entry.body.proportions,
       skin: Number(entry.colours.skin),
       hair: Number(entry.colours.hair),
       hairStyle: entry.head.hairStyle,
       face: entry.head.face,
+      faceFeatures: entry.head.features,
       expression: entry.head.expression,
       jacket: Number(entry.colours.attire.jacket),
       trousers: Number(entry.colours.attire.trousers),
@@ -324,8 +341,19 @@ const LIKENESSES: ReadonlyMap<string, HumanProfile> = new Map(
 /** The subset of an `appearance.json` entry the walk actually draws. */
 interface DeclaredLikeness {
   id: string
-  body: { build: HumanProfile['build']; height: number; frame: Frame; shoulders?: number }
-  head: { face: HumanProfile['face']; hairStyle: HairStyle; expression: HumanProfile['expression'] }
+  body: {
+    build: HumanProfile['build']
+    height: number
+    frame: Frame
+    shoulders?: number
+    proportions?: Partial<HumanProportions>
+  }
+  head: {
+    face: HumanProfile['face']
+    hairStyle: HairStyle
+    expression: HumanProfile['expression']
+    features?: Partial<HumanFaceFeatures>
+  }
   colours: {
     skin: string
     hair: string
@@ -335,14 +363,6 @@ interface DeclaredLikeness {
   signatures: Signature[]
 }
 
-/**
- * Morena's own catalogue id, which the walk reaches through a role.
- *
- * Her look used to be a tenth entry in the table above — a face written in
- * TypeScript, which is exactly the thing ADR-005 says a face is not. The entry
- * carries the same values field for field, so the projection renders what the
- * hard-coded profile rendered; what changed is which of the two is the fact.
- */
 const MORENA = 'morena-prudo'
 
 /** Whether this body is the one the walk draws Morena's own marks on. */
@@ -392,6 +412,21 @@ export function frameShape(frame: Frame, likeness?: string | null): FrameShape {
   return FRAME_SHAPES[frame]
 }
 
+export function humanProportions(profile: HumanProfile): HumanProportions {
+  return { ...NEUTRAL_HUMAN_PROPORTIONS, ...profile.proportions }
+}
+
+/** Combine the age/body plan with opt-in catalogue proportions. */
+export function profileFrameShape(profile: HumanProfile): FrameShape {
+  const frame = frameShape(profile.frame, profile.likeness)
+  const proportions = humanProportions(profile)
+  return {
+    ...frame,
+    neck: frame.neck * proportions.torso,
+    limb: frame.limb * proportions.limbs,
+  }
+}
+
 function identityHash(value: string): number {
   let hash = 2166136261
   for (const char of value) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619)
@@ -403,7 +438,7 @@ export function humanProfile(seen: Apparition): HumanProfile {
   // The declaration first. Nothing below it runs for somebody the archive has
   // drawn: no hash, no role palette, and no wardrobe override — a face the
   // catalogue states is a face nothing else may edit.
-  const declared = LIKENESSES.get(identity)
+  const declared = declaredBlackWhaleProfile(identity, seen.human, LIKENESSES)
   if (declared) return declared
 
   const role = seen.human?.role ?? (seen.kind === 'combatant' ? 'fighter' : 'witness')

@@ -1,7 +1,8 @@
 import { constrainCombatJoint, constrainFightRig } from './fightAnatomy'
 import { applyProceduralClavicles } from './fightClavicle'
 import type { Euler, Group, Object3D, Vector3 } from 'three'
-import type { AnimatedHuman } from '$lib/tour/humanAnimation'
+import { humanJointSlots, type AnimatedHuman } from '$lib/tour/humanAnimation'
+import { humanFootContactPoint } from '$lib/tour/humanFootContact'
 import type { FightPose, Turn } from './fightPose'
 import { humanChestTurn, keepHumanJoint, keepHumanJoints } from './fightJointLimits'
 
@@ -36,6 +37,7 @@ export interface FightRig {
 
 export interface FootPlantAnchor {
   positions: readonly [Vector3, Vector3]
+  contacts?: readonly [Vector3, Vector3]
 }
 
 export interface PlantFeetOptions {
@@ -56,6 +58,7 @@ const UPPER_BODY_ABOVE_HIP = 0.1
 /** The chest pivots at the belt, not at the feet. */
 const WAIST_ABOVE_HIP = 0.08
 const MAX_ANKLE = 0.9
+const MAX_SOLE_LIFT = 0.075
 
 const RIGS = new WeakMap<Object3D, FightRig>()
 
@@ -89,10 +92,10 @@ export function borrowFightRig(human: AnimatedHuman): { rig: FightRig; restore: 
 
 function buildFightRig(human: AnimatedHuman): FightRig {
   const hip = human.legs[0].position.y
-  const elbows = human.arms.map((arm) => arm.children[1])
-  const wrists = elbows.map(handOf)
-  // A knee holds its shin first and its foot second (`tour/humanLimbs.ts`).
-  const ankles = human.knees.map((knee) => knee.children[1])
+  const joints = humanJointSlots(human)
+  const elbows = joints.elbows
+  const wrists = joints.hands
+  const ankles = joints.feet
   return {
     human,
     chest: liftChest(human.figure, hip + UPPER_BODY_ABOVE_HIP),
@@ -105,10 +108,6 @@ function buildFightRig(human: AnimatedHuman): FightRig {
     restAnkles: ankles.map((ankle) => ankle.rotation.clone()),
     probe: human.figure.position.clone(),
   }
-}
-
-function handOf(elbow: Object3D): Object3D {
-  return elbow.children.find((child) => child.name.startsWith('hand-')) ?? elbow
 }
 
 function liftChest(figure: Group, above: number): Group {
@@ -261,7 +260,10 @@ export function captureFootPlant(rig: FightRig): FootPlantAnchor {
   const positions = rig.ankles.map((ankle) =>
     ground.worldToLocal(ankle.getWorldPosition(rig.probe)).clone(),
   ) as [Vector3, Vector3]
-  return { positions }
+  const contacts = rig.ankles.map((ankle) =>
+    humanFootContactPoint(ankle, ground, rig.probe),
+  ) as [Vector3, Vector3]
+  return { positions, contacts }
 }
 
 /**
@@ -303,6 +305,17 @@ export function plantFeet(rig: FightRig, options: PlantFeetOptions): void {
   }
   if (options.horizontal === false) correction.x = correction.z = 0
   human.figure.position.add(correction)
+  // Semantic contact correction follows the legacy ankle constraint.
+  liftPenetratingSole(rig, options, support)
+}
+
+function liftPenetratingSole(rig: FightRig, options: PlantFeetOptions, support: number): void {
+  const target = options.anchor.contacts?.[support]
+  if (!target) return
+  const ground = rig.human.figure.parent ?? rig.human.figure
+  const current = humanFootContactPoint(rig.ankles[support], ground, rig.probe)
+  const lift = target.y + (options.root?.[1] ?? 0) - current.y
+  if (lift > 0.002) rig.human.figure.position.y += Math.min(MAX_SOLE_LIFT, lift)
 }
 
 function biasPursuitSupport(

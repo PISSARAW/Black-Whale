@@ -36,19 +36,21 @@ try {
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text())
   })
-  await page.clock.install()
+  page.setDefaultTimeout(120000)
+  const paint = () =>
+    page.evaluate(
+      () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+    )
   const base = `http://127.0.0.1:${server.httpServer.address().port}`
   for (const options of [
     { target: 'franklin', stage: 'heavens-arena', side: 'opponent' },
     { target: 'biscuit', stage: 'screening-room', side: 'player' },
     { target: 'bonolenov', stage: 'whale-hold', side: 'opponent', reduced: '1' },
   ]) {
-    await page.clock.resume()
     await page.goto(
       `${base}/demos/fighting-showcase/bonolenov-fatality.html?${new URLSearchParams(options)}`,
     )
     await page.waitForFunction(() => window.fightingShowcase?.ready())
-    await page.clock.pauseAt(new Date(await page.evaluate(() => Date.now() + 10000)))
     const report = await page.evaluate(() => window.fightingShowcase.report())
     assert.equal(report.failed, false)
     assert.equal(report.winner, options.side)
@@ -58,9 +60,9 @@ try {
     assert.equal(report.spear, true)
     assert.ok(report.prepared >= 89)
     assert.equal(report.jupiterDeath, true)
-    for (const age of [72, 132, 168, 270, 324, 396, 420, 540]) {
+    for (const age of [27, 148, 228, 324, 382, 395, 396, 402, 412, 424, 476, 559]) {
       await page.evaluate((age) => window.fightingShowcase.seek(age), age)
-      await page.clock.runFor(50)
+      await paint()
       assert.equal(
         await page.evaluate(() => window.fightingShowcase.report().nativeState),
         report.nativeState,
@@ -69,8 +71,8 @@ try {
     }
     if (options.target === 'biscuit') {
       await page.setViewportSize({ width: 390, height: 844 })
-      await page.evaluate(() => window.fightingShowcase.seek(324))
-      await page.clock.runFor(50)
+      await page.evaluate(() => window.fightingShowcase.seek(396))
+      await paint()
       await page.screenshot({ path: path.join(output, 'mobile-short-target.png') })
       await page.setViewportSize({ width: 1280, height: 800 })
     }
@@ -79,7 +81,6 @@ try {
       `Verified Bonolenov: ${options.target}, ${options.stage}, ${options.side}\n`,
     )
   }
-  await page.clock.resume()
   await page.goto(`${base}/ui-tests/fighting-victory/`)
   await page.waitForFunction(() => window.victoryFixture)
   await page.evaluate(async () => {

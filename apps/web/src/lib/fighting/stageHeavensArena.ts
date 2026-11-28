@@ -75,13 +75,21 @@ const LIVE_CROWD_CAPACITY = 640
  * in any other duel, a seated crowd that never moves.
  */
 function addCrowd(kit: SceneryKit, root: Three.Group, context: StageBackgroundContext) {
-  const live = () => context.fight?.().deathMatch?.crowd
-  const scene = buildCrowdScene(kit, live() ? LIVE_CROWD_CAPACITY : DUEL_CROWD)
+  const live = () => context.fight?.().deathMatch
+  const initial = live()
+  const scene = buildCrowdScene(kit, initial ? LIVE_CROWD_CAPACITY : DUEL_CROWD)
   root.add(scene.root)
-  scene.sync(live() ?? createCrowd({ count: DUEL_CROWD }))
+  scene.sync(
+    initial?.crowd ?? createCrowd({ count: DUEL_CROWD }),
+    undefined,
+    initial?.hisoka.at ?? { x: 0, y: 0, z: 0 },
+  )
+  let lastCrowd = initial?.crowd
   return () => {
-    const crowd = live()
-    if (crowd) scene.sync(crowd)
+    const world = live()
+    if (!world || world.crowd === lastCrowd) return
+    scene.sync(world.crowd, undefined, world.hisoka.at)
+    lastCrowd = world.crowd
   }
 }
 

@@ -4,6 +4,7 @@ import { theShip, floorOf } from './blueprint'
 import { buildGangwayView, PRINCE_VIEW_SPACE } from './gangwayView'
 import { mangaViewById, viewsForSpace } from './mangaViews'
 import { distanceToBoundary, pointInPolygon } from './geometry'
+import { TSERRIEDNICH_EXTERIOR } from './tserriednichRoute'
 
 const ship = theShip()
 
@@ -63,6 +64,52 @@ describe('royal liner exterior', () => {
     expect(view.root.visible).toBe(true)
     view.setLocation(null, true)
     expect(view.root.visible).toBe(false)
+    view.dispose()
+  })
+
+  it('animates the three crossings together and keeps them closed while moving', () => {
+    const view = buildGangwayView(THREE, ship)!
+    const spans = view.root.children
+      .filter(({ name }) => name.startsWith('retractable-gangway:'))
+      .map((bridge) => bridge.children[0])
+    expect(spans).toHaveLength(3)
+    view.advance({ extended: false, cutaway: true, delta: 1.1 })
+    expect(view.showingLockdown).toBe(true)
+    expect(view.passable).toBe(false)
+    for (const span of spans) expect(span.scale.z).toBeCloseTo(0.54)
+    view.advance({ extended: false, cutaway: true, delta: 1.1 })
+    for (const span of spans) expect(span.scale.z).toBeCloseTo(0.08)
+    view.advance({ extended: false, cutaway: true, delta: 0.7 })
+    expect(view.showingLockdown).toBe(false)
+    view.advance({ extended: true, cutaway: false, delta: 1.1 })
+    expect(view.passable).toBe(false)
+    view.advance({ extended: true, cutaway: false, delta: 1.1 })
+    expect(view.passable).toBe(true)
+    view.dispose()
+  })
+
+  it('shows the siege at quay level from the ordinary terrace view', () => {
+    const view = buildGangwayView(THREE, ship)!
+    const patrol = view.root.getObjectByName('chapter-420-deck-patrol')!
+    view.setLocation(TSERRIEDNICH_EXTERIOR, false)
+    expect(patrol.visible).toBe(true)
+    expect(patrol.position.y).toBe(ship.plans.get('tier-2')!.tier.elevation)
+    expect(view.root.getObjectByName('royal-quay-light-beams')?.visible).toBe(true)
+    expect(view.root.getObjectByName('royal-quay-floodlights')?.visible).toBe(true)
+    view.setLocation(PRINCE_VIEW_SPACE, true)
+    expect(patrol.visible).toBe(false)
+    view.dispose()
+  })
+
+  it('sets the result without a camera cut in the step-by-step route', () => {
+    const view = buildGangwayView(THREE, ship)!
+    view.advance({ extended: false, cutaway: true, delta: 0, instant: true })
+    expect(view.presentation).toBe('closed')
+    expect(view.showingLockdown).toBe(false)
+    expect(view.passable).toBe(false)
+    view.advance({ extended: true, cutaway: false, delta: 0, instant: true })
+    expect(view.presentation).toBe('open')
+    expect(view.passable).toBe(true)
     view.dispose()
   })
 

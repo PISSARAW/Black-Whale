@@ -205,7 +205,16 @@ export const HEADROOM = 2.1
  * therefore drawn and not collided with — you walk under it, as you would.
  */
 export function blocksTheFloor(structure: Structure): boolean {
-  return structure.base < HEADROOM
+  // Floor cushions are soft dressing rather than partitions. Treating their
+  // 12–28 cm outlines as full-height collision walls sealed Beyond's watch
+  // post even though chapter 359 shows the Zodiacs using that space. Keep this
+  // exception deliberately narrow: low tables, platforms and Nen-altered
+  // solids still have physical walls.
+  const floorCushion =
+    structure.kind === 'seat' &&
+    structure.height <= 0.28 &&
+    /(?:floor-)?cushion/.test(`${structure.id} ${structure.name}`.toLowerCase())
+  return structure.base < HEADROOM && !floorCushion
 }
 
 /** The four corners of a lantern, in the level's own frame. */

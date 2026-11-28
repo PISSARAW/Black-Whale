@@ -194,24 +194,23 @@ visage.
   pantalon avec grand plastron pectoral à écailles et ceinture médaillon
   (ch. 358). Signatures : `crown`. Attire : `kakin-robe`. Coiffure : `shaved`
   (sous la couronne). Couleurs : chosen.
-- **`unma-hui-guo-rou`** — Première épouse : âgée, port massif et droit,
-  visage lourd et immobile, chignon strict. Robe de cour _(coiffure exacte à
-  confirmer)_.
-- **`duazul-hui-guo-rou`** — Mère de quatre prétendants sérieux : mûre,
-  altière, longs cheveux sombres, regard dur de stratège _(à confirmer)_.
-- **`tang-zhao-li-hui-guo-rou`** — Réservée, chignon serré, tenue
-  traditionnelle sobre ; la mère effacée d'un fils calme _(à confirmer)_.
-- **`katrono-hui-guo-rou`** — **différée** : pas de planche exploitable
-  recensée — à statuer en phase 0.
-- **`swinko-swinko-hui-guo-rou`** — **différée** : idem.
-- **`seiko-hui-guo-rou`** — **différée** : idem.
+- **`unma-hui-guo-rou`** — Cheveux clairs courts peignés vers l’arrière,
+  visage rectangulaire et robe de cour à volants (ch. 403).
+- **`duazul-hui-guo-rou`** — Cheveux clairs relevés et ondulés, visage
+  étroit et tenue formelle à col haut (ch. 366 et 374).
+- **`tang-zhao-li-hui-guo-rou`** — Peau foncée, grands yeux, boucles
+  courtes et claires. Tenue de cour reconstruite (portrait du ch. 374).
+- **`katrono-hui-guo-rou`** — Visage rond et cheveux foncés qui
+  encadrent les joues. Robe reconstruite (silhouette du ch. 349 et portrait du ch. 374).
+- **`swinko-swinko-hui-guo-rou`** — Visage rectangulaire, nez marqué et
+  cheveux clairs courts. Tenue de cour reconstruite (ch. 362 et 374).
+- **`seiko-hui-guo-rou`** — Cheveux clairs et courts, boucles vers les côtés.
+  Tenue de cour reconstruite (ch. 374 et 381).
 - **`sevanti-hui-guo-rou`** — Ronde, sourcils froncés en permanence, cheveux
   courts bouclés serrés ; l'autorité domestique faite reine (scènes avec
   Momoze et Marayam).
-- **`queen-oito`** — La huitième et la plus jeune : fine, jolie, cheveux
-  sombres mi-longs et raides, frange, grands yeux inquiets ; robe simple, loin
-  du faste des aînées ; Woble contre elle — les deux silhouettes vont
-  ensemble.
+- **`queen-oito`** — Silhouette fine, cheveux sombres tirés en arrière et
+  kimono clair. Le nourrisson porté utilise le lange beige du film des 14 princes.
 
 ### A.2 Les quatorze princes
 

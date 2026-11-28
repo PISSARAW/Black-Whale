@@ -8,7 +8,7 @@
   import { V3_OPPONENTS } from '$lib/arena/adaptation'
   import type { ArenaOpponentId } from '$lib/arena/experience'
   import { link, locale, t } from '$lib/i18n'
-  import { ARENA_CAMPAIGN, missionStatus } from '$lib/arena/campaign'
+  import { ARENA_CAMPAIGN, arenaMissionSearch, missionStatus } from '$lib/arena/campaign'
   import { freshArenaProfile, loadArenaProfile } from '$lib/arena/profile'
 
   interface Props {
@@ -117,9 +117,7 @@
         <a
           class:locked={status === 'locked'}
           aria-disabled={status === 'locked'}
-          href={status === 'locked'
-            ? undefined
-            : `?terrain=${mission.terrainId}&challenge=${mission.challengeId}&doctrine=${mission.doctrine}&difficulty=${mission.difficulty}&format=${mission.formatId}&opponent=${mission.opponentId}&mission=${mission.id}`}
+          href={status === 'locked' ? undefined : `?${arenaMissionSearch(mission)}`}
           data-sveltekit-reload
         >
           <small>CH. {mission.chapter}</small>

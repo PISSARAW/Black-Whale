@@ -38,7 +38,7 @@ export function mangaPadailleHair(kit: MangaHairKit) {
           [side * 0.018, 0.235, -0.01 - i * 0.011],
           [side * 0.08, 0.2, 0.14 - i * 0.018],
           [side * 0.14, 0.12, 0.18 - i * 0.018],
-          [side * (0.035 + i * 0.022), 0.025 - (i % 3) * 0.016, 0.183 - i * 0.018],
+          [side * (0.035 + i * 0.022), 0.003 - (i % 3) * 0.021, 0.183 - i * 0.018],
         ],
       })
 }
@@ -85,7 +85,7 @@ export function addPadailleShirt(build: HumanClothesBuild) {
   const { chest } = mangaBodyShape(profile)
   const neckline = new THREE.Mesh(
     geometry(THREE, 'manga:padaille-crew-neck', () =>
-      new THREE.TorusGeometry(0.073, 0.009, 8, 36).rotateX(Math.PI / 2).scale(1.25, 1, 1),
+      new THREE.TorusGeometry(0.078, 0.011, 8, 36).rotateX(Math.PI / 2).scale(1.25, 1, 1),
     ),
     materials.shirt,
   )
@@ -136,9 +136,9 @@ export function shapePadailleSleeves(build: HumanLimbsBuild, limbs: HumanLimbs) 
   if (build.profile.likeness !== 'padaille') return
   const { THREE, geometry, glow, profile } = build
   for (let i = 0; i < 2; i++) {
-    limbs.arms[i].children[0].scale.x *= 1.28
+    limbs.arms[i].children[0].scale.x *= 1.39
     limbs.arms[i].children[0].scale.z *= 1.28
-    limbs.elbows[i].children[0].scale.x *= 1.25
+    limbs.elbows[i].children[0].scale.x *= 1.36
     limbs.elbows[i].children[0].scale.z *= 1.25
     const cuff = new THREE.Mesh(
       geometry(

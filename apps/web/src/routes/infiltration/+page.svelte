@@ -1,4 +1,7 @@
 <script lang="ts">
+  import ModeCommand from '$lib/components/game/ModeCommand.svelte'
+  import { modeNumberSlot, modeShortcut, runModeCommand } from '$lib/components/game/modeKeyboard'
+  import ModeHudGauge from '$lib/components/game/ModeHudGauge.svelte'
   import { onDestroy, onMount, untrack } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
@@ -11,7 +14,6 @@
     transitionNen,
     type NenTechniqueAction,
   } from '@black-whale/nen-engine'
-  import { isNenControlCode } from '$lib/nen/controls'
   import { buildNavGraph } from '$lib/hunt/navmesh'
   import { floorOf, theShip, crossingsOn } from '$lib/tour/blueprint'
   import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
@@ -283,39 +285,24 @@
   }
 
   function onKeyDown(event: KeyboardEvent) {
-    if (finished || event.repeat) return
-    if (event.key === '?') {
-      if (!briefing) {
-        manualOpen = !manualOpen
-        event.preventDefault()
-      }
+    if (finished) return
+    const code = modeShortcut(event)
+    if (code === '?' && !briefing) return runModeCommand(event, () => (manualOpen = !manualOpen))
+    if (!code || manualOpen) return
+    const slot = modeNumberSlot(code)
+    if (game.challenge) {
+      const option = challengeDialogue[slot]
+      if (option?.available)
+        runModeCommand(event, () => send({ type: 'ANSWER', answer: option.answer }))
       return
     }
-    if (manualOpen) return // Block game inputs while manual is open
-    if (game.challenge && event.code === 'Digit1') {
-      const option = challengeDialogue[0]
-      if (option?.available) send({ type: 'ANSWER', answer: option.answer })
-      event.preventDefault()
+    if (briefing) {
+      const ability = INFILTRATION_HATSU[slot]
+      if (ability) runModeCommand(event, () => send({ type: 'SELECT_HATSU', id: ability.id }))
+      if (code === 'Enter') runModeCommand(event, () => (briefing = false))
       return
-    } else if (game.challenge && event.code === 'Digit2') {
-      const option = challengeDialogue[1]
-      if (option?.available) send({ type: 'ANSWER', answer: option.answer })
-      event.preventDefault()
-      return
-    } else if (briefing && ['Digit1', 'Digit2', 'Digit3'].includes(event.code)) {
-      const ability = INFILTRATION_HATSU[Number(event.code.at(-1)) - 1]
-      if (ability) send({ type: 'SELECT_HATSU', id: ability.id })
-      event.preventDefault()
-      return
-    } else if (briefing && event.code === 'Enter') {
-      briefing = false
-      event.preventDefault()
-      return
-    } else if (briefing) return
-    if (isNenControlCode(event.code)) return
-    if (event.code === 'KeyV') send({ type: 'DIVERT' })
-    else return
-    event.preventDefault()
+    }
+    if (code === 'KeyV') runModeCommand(event, () => send({ type: 'DIVERT' }))
   }
 
   function tick(now: number) {
@@ -427,9 +414,12 @@
   ])}
 />
 
-<div class="relative h-[100dvh] w-full overflow-hidden bg-black text-white">
-  <TourModeFullscreen />
+<div
+  class="relative h-[calc(100dvh-var(--header-height))] w-full overflow-hidden bg-black text-white"
+>
+  <TourModeFullscreen shiftShortcut />
   <TourMinimapPanel
+    compact
     {plan}
     {position}
     {heading}
@@ -455,6 +445,8 @@
     world={EMPTY_WORLD}
     nen={modeNen.value}
     showNenControls={true}
+    inputDisabled={briefing || finished || manualOpen || !!game.challenge}
+    modeKeyboard
     onNenChange={useStandardNen}
     onPhysicalNenAction={act}
     onHatsu={() => send({ type: 'CAST_HATSU' })}
@@ -467,41 +459,35 @@
 
   {#if !briefing && !finished}
     <section
-      class="pointer-events-none absolute left-4 top-16 w-[min(24rem,calc(100%-2rem))] rounded border border-white/15 bg-black/85 p-4"
+      class="mode-hud mode-hud-surface infiltration-readout absolute right-3 top-14 grid gap-2 p-3"
+      data-tone="gold"
+      aria-label={$t.infiltration.cover}
     >
-      <p class="text-[10px] uppercase tracking-normal text-amber-300">{$t.infiltration.cover}</p>
-      <h1 class="mt-1 text-lg font-bold">{$t.infiltration.title}</h1>
-      <p class="mt-2 text-sm text-white/65">{roomName(currentSpace)}</p>
-      <div class="mt-4 grid grid-cols-2 gap-3 text-xs">
-        <div>
-          <span class="text-white/45">{$t.infiltration.integrity}</span><strong
-            class="block text-lg">{Math.round(game.coverIntegrity)}%</strong
-          >
+      <div class="flex items-start justify-between gap-2">
+        <div class="min-w-0">
+          <h1 class="mode-hud-title">{$t.infiltration.title}</h1>
+          <p class="mt-1 text-xs text-slate-300">{roomName(currentSpace)}</p>
         </div>
-        <div>
-          <span class="text-white/45">{$t.infiltration.alert}</span><strong class="block text-lg"
-            >{Math.round(game.alert)}%</strong
-          >
-        </div>
+        <span class="mode-hud-label border border-white/20 px-1.5 py-1">
+          {game.player.nen === 'zetsu' ? 'Zetsu' : 'Ten'}
+        </span>
       </div>
-      <div class="mt-3 h-1 overflow-hidden rounded bg-white/10">
-        <div class="h-full bg-amber-300" style:width={`${game.coverIntegrity}%`}></div>
+      <div class="grid grid-cols-2 gap-3">
+        <ModeHudGauge label={$t.infiltration.integrity} value={game.coverIntegrity} percent />
+        <ModeHudGauge label={$t.infiltration.alert} value={game.alert} percent tone="danger" />
       </div>
-      <p class="mt-4 text-xs text-white/65">
-        {$t.infiltration.objective}:
+      <p class="border-t border-white/15 pt-2 text-xs">
+        <span class="mode-hud-label">{$t.infiltration.objective}</span>
         <strong class={game.documentCopied ? 'text-emerald-300' : 'text-white'}
           >{game.documentCopied ? $t.infiltration.copied : roomName(objective)}</strong
         >
       </p>
-      <p class="mt-1 text-xs text-white/45">
-        {game.alertLevel.toUpperCase()} · {game.mission.variantId} · seed {game.mission.seed}
+      <p class="mode-hud-label">
+        {game.alertLevel} · {game.mission.variantId} · seed {game.mission.seed}
       </p>
       {#if game.security.verifyDocuments}
         <p class="mt-1 text-xs text-red-300">{$t.infiltration.v3.documentChecks}</p>
       {/if}
-      <p class="mt-1 text-xs text-white/65">
-        Nen: <strong>{game.player.nen === 'zetsu' ? 'Zetsu' : 'Ten'}</strong>
-      </p>
       {#if game.hatsu.effect}
         <p class="mt-1 text-xs text-fuchsia-200">
           {game.hatsu.effect.kind}{game.hatsu.effect.witnessId
@@ -521,67 +507,59 @@
     </section>
 
     <div
-      class="pointer-events-auto absolute bottom-8 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-sm border border-cyan-900/50 bg-slate-950/85 p-3"
+      class="mode-hud mode-hud-surface mode-hud-actions infiltration-actions absolute right-3 justify-end overflow-y-auto p-2"
+      data-tone="gold"
     >
       {#if needsHatsuTarget}
         {#each nearbyHatsuTargets as target (target.id)}
           <button
+            type="button"
             onclick={() => send({ type: 'TARGET_HATSU', witnessId: target.id })}
             aria-pressed={game.hatsu.targetWitnessId === target.id}
-            class="rounded-sm border border-red-500/30 bg-red-950/40 px-4 py-2 text-xs font-semibold text-red-200 transition-all hover:border-red-500 hover:bg-red-900/60 aria-pressed:border-red-400 aria-pressed:bg-red-500/20"
-            >{$t.infiltration.witnesses[target.id]}</button
+            class="mode-hud-button">{$t.infiltration.witnesses[target.id]}</button
           >
         {/each}
       {/if}
       {#if game.hatsu.scout?.active}
         {#each scoutDestinations as destination (destination.id)}
-          <button
-            onclick={() => moveScoutTo(destination)}
-            class="rounded-sm border border-fuchsia-400/40 bg-fuchsia-950/40 px-4 py-2 text-xs font-semibold text-fuchsia-200 transition-colors hover:border-fuchsia-400 hover:bg-fuchsia-900/60"
-          >
+          <button type="button" onclick={() => moveScoutTo(destination)} class="mode-hud-button">
             Eye → {roomName(destination)}
           </button>
         {/each}
-        <button
-          onclick={() => send({ type: 'SCOUT_RECALL' })}
-          class="rounded-sm border border-fuchsia-500/30 bg-black/60 px-4 py-2 text-xs font-semibold text-fuchsia-200 transition-colors hover:border-fuchsia-500 hover:bg-fuchsia-900/40"
+        <button type="button" onclick={() => send({ type: 'SCOUT_RECALL' })} class="mode-hud-button"
           >{$t.infiltration.hatsuInteractive.recall}</button
         >
       {/if}
-      {#if missionAction || canExtract}<button
-          onclick={act}
-          class="rounded-sm border border-amber-400/50 bg-amber-950/50 px-5 py-2.5 text-xs font-bold tracking-wide text-amber-300 transition-all hover:border-amber-400 hover:bg-amber-900/70"
-          >F · {missionActionLabel(missionAction)}</button
-        >{/if}
-      <button
+      {#if missionAction || canExtract}
+        <ModeCommand label={missionActionLabel(missionAction)} shortcut="F" primary onclick={act} />
+      {/if}
+      <ModeCommand
+        label={game.player.nen === 'zetsu' ? 'Ten' : 'Zetsu'}
+        shortcut={game.player.nen === 'zetsu' ? 'T' : 'X'}
         onclick={() => useStandardNen({ type: game.player.nen === 'zetsu' ? 'TEN' : 'ZETSU' })}
-        aria-keyshortcuts="X"
-        class="rounded-sm border border-cyan-500/30 bg-cyan-950/30 px-4 py-2.5 text-xs font-semibold text-cyan-100 transition-all hover:border-cyan-400 hover:bg-cyan-900/50"
-        >X · Ten/Zetsu</button
-      >
-      <button
-        onclick={() => send({ type: 'DIVERT' })}
-        aria-keyshortcuts="V"
+      />
+      <ModeCommand
+        label={$t.infiltration.divert}
+        shortcut="V"
         disabled={!!game.diversion}
-        class="rounded-sm border border-cyan-500/30 bg-cyan-950/30 px-4 py-2.5 text-xs font-semibold text-cyan-100 transition-all hover:border-cyan-400 hover:bg-cyan-900/50 disabled:opacity-30 disabled:hover:border-cyan-500/30 disabled:hover:bg-cyan-950/30"
-        >V · {$t.infiltration.divert}</button
-      >
-      <button
-        onclick={() => send({ type: 'CAST_HATSU' })}
-        aria-keyshortcuts="H"
+        onclick={() => send({ type: 'DIVERT' })}
+      />
+      <ModeCommand
+        label={$t.infiltration.castHatsu}
+        shortcut="L H"
+        keyLabel="L"
         disabled={!hatsuPlan.available}
         title={hatsuPlan.conditions
           .filter((condition) => !condition.met)
           .map((condition) => $t.infiltration.hatsuConditions[condition.id])
           .join(' · ')}
-        class="rounded-sm border border-fuchsia-400/50 bg-fuchsia-950/40 px-4 py-2.5 text-xs font-bold tracking-wide text-fuchsia-200 transition-all hover:border-fuchsia-400 hover:bg-fuchsia-900/60 disabled:opacity-30"
-        >H · {$t.infiltration.castHatsu}</button
-      >
+        onclick={() => send({ type: 'CAST_HATSU' })}
+      />
     </div>
 
     {#if game.challenge}
       <div
-        class="absolute inset-0 grid place-items-center bg-red-950/80 p-6"
+        class="absolute inset-0 z-[70] grid place-items-center bg-red-950/80 p-6"
         role="dialog"
         aria-modal="true"
         aria-labelledby="cover-check-title"
@@ -612,7 +590,7 @@
             <div class="mt-8 grid gap-3">
               {#each challengeDialogue as option, index (option.id)}
                 <button
-                  aria-keyshortcuts={index < 2 ? String(index + 1) : undefined}
+                  aria-keyshortcuts={index < 9 ? String(index + 1) : undefined}
                   disabled={!option.available}
                   onclick={() => send({ type: 'ANSWER', answer: option.answer })}
                   class="group relative overflow-hidden rounded-sm border border-red-500/30 bg-red-950/40 px-5 py-4 text-left text-sm font-semibold transition-all enabled:hover:border-red-400 enabled:hover:bg-red-900/60 disabled:cursor-not-allowed disabled:opacity-35"
@@ -620,7 +598,11 @@
                   <span
                     class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 transition-opacity group-hover:opacity-100"
                   ></span>
-                  <span class="text-red-100">{option.label[$locale]}</span>
+                  <span class="text-red-100"
+                    >{#if index < 9}<kbd class="mr-2 text-red-300" aria-hidden="true"
+                        >{index + 1}</kbd
+                      >{/if}{option.label[$locale]}</span
+                  >
                 </button>
               {/each}
             </div>
@@ -640,13 +622,13 @@
 
   {#if briefing}
     <div
-      class="absolute inset-0 grid place-items-center bg-slate-950/95 p-6"
+      class="absolute inset-0 z-[70] flex items-center justify-center bg-slate-950/95 p-4 sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="mission-title"
     >
       <article
-        class="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-sm border border-slate-700 bg-[#0a0f16]"
+        class="relative max-h-full w-full max-w-4xl overflow-y-auto rounded-sm border border-slate-700 bg-[#0a0f16]"
       >
         <div class="sticky top-0 z-10 border-b border-slate-800 bg-[#0a0f16]/95 px-8 py-5">
           <p
@@ -730,10 +712,11 @@
           </div>
 
           <div class="grid gap-3 sm:grid-cols-3">
-            {#each INFILTRATION_HATSU as ability (ability.id)}
+            {#each INFILTRATION_HATSU as ability, index (ability.id)}
               <button
                 onclick={() => send({ type: 'SELECT_HATSU', id: ability.id })}
                 aria-pressed={game.hatsu.id === ability.id}
+                aria-keyshortcuts={index < 9 ? String(index + 1) : undefined}
                 class="group relative overflow-hidden rounded-sm border p-4 text-left text-xs transition-all {game
                   .hatsu.id === ability.id
                   ? 'border-fuchsia-400 bg-fuchsia-400/10'
@@ -744,7 +727,9 @@
                 {/if}
                 <strong
                   class="block text-sm font-bold text-white transition-colors group-hover:text-fuchsia-300"
-                  >{ability.name}</strong
+                  >{#if index < 9}<kbd class="mr-2 text-fuchsia-300" aria-hidden="true"
+                      >{index + 1}</kbd
+                    >{/if}{ability.name}</strong
                 >
                 <span class="mt-1.5 block font-mono text-[10px] text-fuchsia-300/70 uppercase"
                   >{$t.infiltration.hatsuRoles[ability.role]}</span
@@ -806,7 +791,7 @@
   {/if}
 
   {#if finished}
-    <div class="absolute inset-0 overflow-y-auto bg-slate-950/95 p-6">
+    <div class="absolute inset-0 z-[70] overflow-y-auto bg-slate-950/95 p-6">
       <article class="mx-auto max-w-4xl py-10">
         <div class="relative overflow-hidden rounded-sm border border-slate-700 bg-[#0a0f16]">
           <div class="border-b border-slate-800 bg-[#0a0f16]/95 px-10 py-8">
@@ -990,16 +975,44 @@
         description: 'Move to location',
         descriptionFr: 'Se déplacer vers un lieu',
       },
-      { keys: ['X'], description: 'Toggle Ten/Zetsu', descriptionFr: 'Basculer Ten/Zetsu' },
+      { keys: ['T', 'X'], description: 'Ten / Zetsu', descriptionFr: 'Ten / Zetsu' },
       { keys: ['V'], description: 'Create Diversion', descriptionFr: 'Créer une diversion' },
-      { keys: ['H'], description: 'Cast Hatsu', descriptionFr: 'Lancer Hatsu' },
+      { keys: ['L', 'H'], description: 'Cast Hatsu', descriptionFr: 'Lancer Hatsu' },
       {
         keys: ['F'],
         description: 'Interact (Copy / Verify / Extract)',
         descriptionFr: 'Interagir (Copier / Vérifier / Extraire)',
       },
-      { keys: ['1', '2'], description: 'Answer Challenges', descriptionFr: 'Répondre aux défis' },
+      {
+        keys: ['1–9'],
+        description: 'Pick a numbered option',
+        descriptionFr: 'Choisir une option numérotée',
+      },
+      { keys: ['Shift+V'], description: 'Full screen', descriptionFr: 'Plein écran' },
     ]}
     onClose={() => (manualOpen = false)}
   />
 </div>
+
+<style>
+  .infiltration-readout {
+    width: min(23rem, calc(100% - 1.5rem));
+    pointer-events: none;
+  }
+  .infiltration-actions {
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+    width: max-content;
+    max-width: min(32rem, calc(100% - 1.5rem));
+    max-height: 7.5rem;
+  }
+  @media (max-width: 640px) {
+    .infiltration-readout {
+      max-width: calc(100% - 5.5rem);
+    }
+  }
+  @media (pointer: coarse) {
+    .infiltration-actions {
+      bottom: calc(11.25rem + env(safe-area-inset-bottom));
+    }
+  }
+</style>

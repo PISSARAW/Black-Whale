@@ -1,10 +1,11 @@
 import { retainSoundContacts } from './audio/impactHistory'
 import { nativeRecoveryCounter } from './recoveryCounterAction'
+import { historicalSequenceFinished } from './heavensDeathMatch/library'
+import { deathMatchAftermath } from './heavensDeathMatch/aftermath'
 import { stepDeathMatchFight } from './heavensDeathMatch/fightBridge'
 import { movesetFor } from './movesets'
 import { nativeNenCombo } from './nativeNenCombo'
 import { reservingAura } from './combatIntentPolicy'
-import { performArsenalAction } from './arsenalExecution'
 import { priorityBusyAi } from './priorityArsenalAi'
 import { judgmentActionBreach } from './judgmentAction'
 import { retrospectiveAiAction, hisokaInterceptionAi } from './retrospectiveAi'
@@ -35,14 +36,13 @@ import { crossGameBusy } from './crossGame'
 import { planOpponentNen } from './opponentNenPlan'
 import { projectileDefenceHolds } from './projectileDefence'
 import { cyclotronAiAction } from './phinksAction'
-import { stepPostMortemOrFuture } from './camillaFrame'
+import { fightSimulationFrame } from './fightSimulationFrame'
 import { performMelodyAction } from './melodyAction'
 import { reconcileMelodySound, stopMelodyMusic } from './melodyChannel'
 import { MELODY_MUSIC_RANGE, soundDistance } from './melodyRules'
 import { fightStyleSpecialReady } from './fightStyleSpecial'
 import { thetaFirearmOptions } from './thetaFirearm'
 import { fightAcceptsCommands, fightResolutionPending } from './fightOutcome'
-import { stepParallelFuture } from './parallelFuture'
 import { futureAcceptsMove } from './parallelFutureAbility'
 import { performFuturePerceptionAction } from './futurePerception'
 import type { FutureControls } from './parallelFutureTypes'
@@ -116,45 +116,25 @@ export function tickFight(
 ): FightState {
   const settings = typeof options === 'number' ? { dt: options } : options
   const { dt, opponentInput } = settings
-  if (state.phase !== 'fighting') return state
+  if (state.phase !== 'fighting' || historicalSequenceFinished(state.deathMatch)) return state
   const remainingFrames = Math.min(state.remainingFrames, Math.ceil(state.time * FIGHT_FPS))
   let next = {
     ...state,
     remainingFrames,
     frameAccumulator: state.frameAccumulator + Math.min(dt, 0.1),
   }
-  while (next.frameAccumulator >= FIXED_STEP && next.phase === 'fighting') {
+  while (
+    next.frameAccumulator >= FIXED_STEP &&
+    next.phase === 'fighting' &&
+    !historicalSequenceFinished(next.deathMatch)
+  ) {
     const beforeFrame = next
     const accumulator = next.frameAccumulator - FIXED_STEP
-    const previousPositions = capturePositions(next)
-    // A detached vision pauses simulation; its owner must still be able to open their eyes.
-    next = readArenaInputs(next, { player: input, opponent: opponentInput }, (current, side) =>
-      performArenaAction(current, side, performAuraAttack),
+    next = advanceFightFrame(
+      next,
+      { player: input, opponent: opponentInput, ai: settings.ai ?? false },
+      accumulator,
     )
-    next = {
-      ...stepPostMortemOrFuture(next, () =>
-        stepParallelFuture(
-          next,
-          { player: input, opponent: opponentInput, ai: settings.ai ?? false },
-          {
-            simulate: simulateFightFrame,
-            replay: (current, command) =>
-              command.arsenal
-                ? performArsenalAction(
-                    { state: current, side: 'opponent', command: command.arsenal },
-                    performAuraAttack,
-                  )
-                : performAuraAttack({
-                    state: current,
-                    side: 'opponent',
-                    ...command,
-                  }),
-          },
-        ),
-      ),
-      frameAccumulator: accumulator,
-    }
-    next = stepDeathMatchFight({ ...next, previousPositions }, performAttack)
     if (next.phase === 'finished') {
       next = reconcileBattleCantabile(reconcileMelodySound(next))
       next = { ...next, player: wakeHanzoBody(next.player), opponent: wakeHanzoBody(next.opponent) }
@@ -163,6 +143,28 @@ export function tickFight(
     settings.onFrame?.(beforeFrame, next)
   }
   return advanceEasterEggs(next, false)
+}
+
+function advanceFightFrame(
+  state: FightState,
+  controls: FutureControls,
+  accumulator: number,
+): FightState {
+  const aftermath = deathMatchAftermath(state)
+  if (aftermath) return { ...aftermath, frameAccumulator: accumulator }
+  // A detached vision pauses simulation; its owner must still be able to open their eyes.
+  const prepared = readArenaInputs(state, controls, (current, side) =>
+    performArenaAction(current, side, performAuraAttack),
+  )
+  const next = fightSimulationFrame(prepared, controls, {
+    simulate: simulateFightFrame,
+    auraAttack: performAuraAttack,
+  })
+  return stepDeathMatchFight(
+    { ...next, frameAccumulator: accumulator, previousPositions: capturePositions(state) },
+    performAttack,
+    controls,
+  )
 }
 
 function simulateFightFrame(state: FightState, controls: FutureControls): FightState {

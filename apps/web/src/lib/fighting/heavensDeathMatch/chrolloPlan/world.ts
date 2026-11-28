@@ -1,3 +1,4 @@
+import type { DeathMatchBeat } from '../acts'
 import type { ChrolloBookState } from '../../chrolloBook'
 import { createCrowd, type CrowdOptions } from '../crowd/create'
 import { NO_MARKS, living, type CrowdState, type Spectator } from '../crowd/types'
@@ -46,12 +47,14 @@ export interface HisokaBody {
 /** Everything the canonical plan reads and changes, apart from the fighters' own engine. */
 export interface DeathMatchWorld {
   scenario: DeathMatchState
+  sequenceEnd?: DeathMatchBeat
   crowd: CrowdState
   damage: StandsDamage
   chrollo: ChrolloBody
   hisoka: HisokaBody
 }
 
+export const STARTING_DEPTH = 0.3
 export const REFEREE_ID = 'referee'
 export const COMMENTATOR_BOOTH: Vec3 = { x: -21, y: 2.0, z: -12 }
 
@@ -90,14 +93,14 @@ export function createDeathMatchWorld(options: WorldOptions = {}): DeathMatchWor
     crowd: { ...crowd, spectators: [referee(), ...crowd.spectators] },
     damage: NO_DAMAGE,
     chrollo: {
-      at: { x: 3, y: 0, z: 0.3 },
+      at: { x: 3, y: 0, z: STARTING_DEPTH },
       book: createDeathMatchChrolloBook(),
       disguisedAs: null,
       microphone: false,
       withdrawal: 0,
     },
     hisoka: {
-      at: { x: -3, y: 0, z: 0.3 },
+      at: { x: -3, y: 0, z: STARTING_DEPTH },
       facing: { x: 1, z: 0 },
       gumAnchors: [],
       busy: false,

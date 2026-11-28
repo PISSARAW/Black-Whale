@@ -2,8 +2,21 @@
   "declared": [
     {
       "id": "nasubi-hui-guo-rou",
-      "body": { "build": "broad", "height": 1.04, "frame": "adult", "shoulders": 1.18 },
-      "head": { "face": "round", "hairStyle": "shaved", "expression": "neutral" },
+      "body": { "build": "broad", "height": 1.02, "frame": "adult", "shoulders": 1.22 },
+      "head": {
+        "face": "round",
+        "hairStyle": "chonmage",
+        "expression": "neutral",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.19,
+          "jaw": 0.15,
+          "chin": 0.175,
+          "brow": 1.4,
+          "mouth": 0.08,
+          "neck": 0.09
+        }
+      },
       "colours": {
         "basis": "chosen",
         "source": "planches n&b ch. 349, 358 ; pourpre et or comme couleurs de cour kakine, tenues stables sur toute la famille royale",
@@ -18,18 +31,18 @@
       },
       "attire": "kakin-robe",
       "signatures": ["crown"],
-      "verified": { "chapterIds": ["ch-349", "ch-358"], "status": "confirmed" },
-      "note": "Fidélisation ch. 358 : roi glabre au visage rond et double menton, casque/couronne bulbeuse kakine ornée de cabochons, manteau impérial ouvert sur pantalon et grand plastron pectoral cérémoniel."
+      "verified": { "chapterIds": ["ch-340", "ch-349", "ch-358"], "status": "confirmed" },
+      "note": "Références fournies : roi obèse au visage rond et au double menton, petits yeux étroits soulignés de longs cils, sourcils arqués, moustache aux pointes recourbées et chonmage sombre. Sa tenue traditionnelle est volontairement surchargée : coiffe royale à cabochons, manteau ouvert serti de joyaux, grand plastron à rangs de plumes, collier et bracelets d'apparat."
     },
     {
       "id": "unma-hui-guo-rou",
-      "body": { "build": "broad", "height": 0.98, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "bun", "expression": "severe" },
+      "body": { "build": "broad", "height": 1.01, "frame": "adult", "shoulders": 1.08 },
+      "head": { "face": "square", "hairStyle": "bob", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 374 ; palette de cour assombrie pour l'aînée",
-        "skin": "0xd0a98d",
-        "hair": "0x2c2724",
+        "source": "Portrait ch. 374 et apparition physique ch. 403 ; cheveux blonds et peau claire canoniques, palette de robe choisie pour les planches monochromes.",
+        "skin": "0xe4c7aa",
+        "hair": "0xd8c38f",
         "attire": {
           "jacket": "0x3c3550",
           "shirt": "0xe6e0d4",
@@ -39,18 +52,18 @@
       },
       "attire": "gown",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-374"], "status": "partial" },
-      "note": "Première épouse : le port est massif et droit, le visage lourd et immobile. La coiffure exacte reste à confirmer ; le chignon strict est ce que les planches recensées laissent lire."
+      "verified": { "chapterIds": ["ch-374", "ch-403"], "status": "confirmed" },
+      "note": "Le modèle suit l'apparence physique définitive du ch. 403 plutôt que la silhouette préliminaire du ch. 349 : cheveux blonds peignés vers l'arrière, coupés en bob près des épaules, visage rectangulaire, nez large et plat, peau claire et robe de cour à grands volants superposés."
     },
     {
       "id": "duazul-hui-guo-rou",
       "body": { "build": "average", "height": 1.0, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "long", "expression": "severe" },
+      "head": { "face": "narrow", "hairStyle": "bun", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 366, 374 ; bleu de cour, choix éditorial stable",
-        "skin": "0xd8b49a",
-        "hair": "0x241f26",
+        "source": "Références manga ch. 366 et description fournie le 2026-11-24 ; cheveux clairs canoniques, bleu de cour conservé comme choix éditorial.",
+        "skin": "0xe1c2a7",
+        "hair": "0xd7c39a",
         "attire": {
           "jacket": "0x27364e",
           "shirt": "0xe8e4da",
@@ -60,18 +73,18 @@
       },
       "attire": "gown",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-366", "ch-374"], "status": "partial" },
-      "note": "Mère de quatre prétendants sérieux : mûre, altière, le regard dur d'une stratège. Les détails sous la silhouette restent à confirmer."
+      "verified": { "chapterIds": ["ch-366", "ch-374"], "status": "confirmed" },
+      "note": "Références fournies : reine aux cheveux clairs et ondulés, relevés au sommet et déployés en mèches souples de chaque côté du visage. Son visage étroit garde une expression constamment douce. Elle porte une tenue formelle de cour à col haut, dans le même registre que ses enfants."
     },
     {
       "id": "tang-zhao-li-hui-guo-rou",
-      "body": { "build": "slim", "height": 0.97, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "bun", "expression": "neutral" },
+      "body": { "build": "slim", "height": 0.98, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "curly", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 374 ; tenue traditionnelle sobre, palette éteinte",
-        "skin": "0xdfbb9b",
-        "hair": "0x231e1c",
+        "source": "Portrait canonique ch. 374 et description fournie le 2026-11-24 ; peau foncée et cheveux blonds explicitement établis, tenue de cour choisie faute d'apparition physique.",
+        "skin": "0x7a4c38",
+        "hair": "0xe2c879",
         "attire": {
           "jacket": "0x3f4740",
           "shirt": "0xe9e3d5",
@@ -81,8 +94,76 @@
       },
       "attire": "gown",
       "signatures": [],
+      "verified": { "chapterIds": ["ch-374"], "status": "confirmed" },
+      "note": "Le modèle suit le portrait du ch. 374 plutôt que la silhouette préliminaire du ch. 349 : peau foncée, grands yeux sombres, nez long et fin, cheveux blonds courts formant une couronne de boucles souples. La robe reste une reconstruction sobre, aucune apparition physique ne montrant encore sa tenue complète."
+    },
+    {
+      "id": "katrono-hui-guo-rou",
+      "body": { "build": "average", "height": 0.96, "frame": "adult", "shoulders": 0.98 },
+      "head": {
+        "face": "round",
+        "hairStyle": "hime",
+        "expression": "neutral",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.187,
+          "jaw": 0.116,
+          "chin": 0.184,
+          "brow": 1.18,
+          "nose": 0.87,
+          "mouth": 0.065
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Silhouette ch. 349 et portrait monochrome ch. 374. Palette de cour choisie.",
+        "skin": "0xe0b99f",
+        "hair": "0x251e24",
+        "attire": {
+          "jacket": "0x4b414f",
+          "shirt": "0xe5dacc",
+          "trousers": "0x423748",
+          "accent": "0x9e8667"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
       "verified": { "chapterIds": ["ch-349", "ch-374"], "status": "partial" },
-      "note": "Réservée, chignon serré : la mère effacée d'un fils calme. À confirmer sous la silhouette."
+      "note": "Portrait au visage rond, aux petits yeux et aux cheveux foncés lisses qui encadrent le visage jusqu’aux épaules. La robe est une reconstruction à partir de la silhouette."
+    },
+    {
+      "id": "swinko-swinko-hui-guo-rou",
+      "body": { "build": "average", "height": 1.01, "frame": "adult", "shoulders": 0.96 },
+      "head": {
+        "face": "square",
+        "hairStyle": "curtain",
+        "expression": "tired",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.163,
+          "jaw": 0.13,
+          "chin": 0.237,
+          "brow": 0.95,
+          "nose": 1.52,
+          "mouth": 0.078
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Portrait monochrome ch. 374 et apparition ch. 362. Palette de cour choisie.",
+        "skin": "0xe3bea3",
+        "hair": "0xc8b397",
+        "attire": {
+          "jacket": "0x566166",
+          "shirt": "0xe3ded5",
+          "trousers": "0x475054",
+          "accent": "0xb4a48c"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-362", "ch-374"], "status": "partial" },
+      "note": "Visage rectangulaire, nez marqué et cheveux courts clairs séparés près du milieu. Les détails du vêtement de cour sont reconstruits."
     },
     {
       "id": "sevanti-hui-guo-rou",
@@ -107,24 +188,32 @@
     },
     {
       "id": "queen-oito",
-      "body": { "build": "slim", "height": 0.95, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "hime", "expression": "anxious" },
+      "body": { "build": "slim", "height": 1.07, "frame": "adult", "shoulders": 0.92 },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "slicked-back",
+        "expression": "anxious",
+        "features": { "eyes": "almond", "cheek": 0.15, "jaw": 0.065, "brow": 0.6 }
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 358, 359, 361 ; robe simple et claire, loin du faste des aînées",
-        "skin": "0xf0dfc9",
-        "hair": "0x2a2530",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-24 ; cheveux noirs canoniques et kimono bleu clair décrit, avec palette choisie pour les planches monochromes.",
+        "skin": "0xe8cdb7",
+        "hair": "0x1c1d24",
         "attire": {
-          "jacket": "0x9aa6b2",
-          "shirt": "0xf2eee5",
-          "trousers": "0x6e7987",
-          "accent": "0xb9c4cd"
+          "jacket": "0xa9c7d7",
+          "shirt": "0xe9f1f2",
+          "trousers": "0x8daebe",
+          "accent": "0x738fa2"
         }
       },
-      "attire": "gown",
+      "attire": "kimono",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-361"], "status": "confirmed" },
-      "note": "La huitième et la plus jeune : fine, cheveux sombres mi-longs et raides, frange, grands yeux inquiets. Woble contre elle — les deux silhouettes vont ensemble, ce qui est la raison du gabarit `infant`."
+      "verified": {
+        "chapterIds": ["ch-348", "ch-349", "ch-358", "ch-361"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : femme grande et mince au visage allongé, aux yeux noirs ovales et à l'expression inquiète. Ses cheveux noirs ondulés sont tirés derrière les oreilles et rassemblés bas dans le dos ; elle les porte parfois en chignon ou en queue-de-cheval, variantes non représentées séparément. Son apparence principale utilise un kimono bleu clair à motifs discrets et large obi."
     },
     {
       "id": "prince-benjamin",
@@ -132,12 +221,29 @@
         "build": "broad",
         "height": 1.12,
         "frame": "adult",
-        "shoulders": 1.3
+        "shoulders": 1.3,
+        "proportions": {
+          "torso": 1.04,
+          "limbs": 0.98,
+          "hips": 1.06,
+          "shoulderSlope": -0.02,
+          "posture": "upright"
+        }
       },
       "head": {
         "face": "square",
         "hairStyle": "spiked",
-        "expression": "hostile"
+        "expression": "hostile",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.183,
+          "jaw": 0.163,
+          "chin": 0.24,
+          "brow": 2.8,
+          "nose": 1.8,
+          "mouth": 0.09,
+          "neck": 0.105
+        }
       },
       "colours": {
         "basis": "chosen",
@@ -169,7 +275,8 @@
       "head": {
         "face": "narrow",
         "hairStyle": "bun",
-        "expression": "hostile"
+        "expression": "hostile",
+        "features": { "eyes": "almond", "cheek": 0.146, "jaw": 0.06, "brow": 0.55 }
       },
       "colours": {
         "basis": "chosen",
@@ -194,7 +301,22 @@
     {
       "id": "prince-zhanglei",
       "body": { "build": "broad", "height": 0.88, "frame": "adult", "shoulders": 1.06 },
-      "head": { "face": "square", "hairStyle": "shaved", "expression": "tired" },
+      "head": {
+        "face": "square",
+        "hairStyle": "shaved",
+        "expression": "tired",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.185,
+          "jaw": 0.16,
+          "chin": 0.23,
+          "brow": 0,
+          "nose": 1.1,
+          "mouth": 0.078,
+          "neck": 0.075,
+          "headY": 1.69
+        }
+      },
       "colours": {
         "basis": "chosen",
         "source": "Références manga et description fournies par le mainteneur le 2026-11-18 : homme petit, chauve et à la peau foncée ; tunique chinoise claire à plastron sombre et motifs de nœuds, pantalon ample. Brun de peau et teintes ivoire / charbon choisis à partir de la planche monochrome et de la description.",
@@ -217,12 +339,26 @@
       "body": {
         "build": "slim",
         "height": 1.06,
-        "frame": "adult"
+        "frame": "adult",
+        "proportions": {
+          "torso": 1.04,
+          "limbs": 1.04,
+          "hips": 0.92,
+          "shoulderSlope": 0.01,
+          "posture": "relaxed"
+        }
       },
       "head": {
         "face": "narrow",
-        "hairStyle": "slicked-back",
-        "expression": "neutral"
+        "hairStyle": "curtain",
+        "expression": "neutral",
+        "features": {
+          "eyes": "narrow",
+          "chin": 0.23,
+          "brow": 0.7,
+          "nose": 1.4,
+          "mouth": 0.07
+        }
       },
       "colours": {
         "basis": "chosen",
@@ -247,7 +383,21 @@
     {
       "id": "prince-tubeppa",
       "body": { "build": "average", "height": 1.04, "frame": "adult", "shoulders": 1.02 },
-      "head": { "face": "square", "hairStyle": "bowl", "expression": "severe" },
+      "head": {
+        "face": "square",
+        "hairStyle": "bowl",
+        "expression": "severe",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.163,
+          "jaw": 0.115,
+          "chin": 0.235,
+          "brow": 0.75,
+          "nose": 1.65,
+          "mouth": 0.086,
+          "neck": 0.054
+        }
+      },
       "colours": {
         "basis": "chosen",
         "source": "Référence manga de la réception du départ et description fournies par le mainteneur le 2026-11-18 : coupe blonde en bol, lunettes, boucles d'oreilles et costume sombre à liserés clairs. Blond demandé explicitement ; teintes du costume choisies à partir de la planche monochrome.",
@@ -292,7 +442,21 @@
     {
       "id": "prince-luzurus",
       "body": { "build": "slim", "height": 1.06, "frame": "adult", "shoulders": 0.97 },
-      "head": { "face": "square", "hairStyle": "swept", "expression": "tired" },
+      "head": {
+        "face": "square",
+        "hairStyle": "swept",
+        "expression": "tired",
+        "features": {
+          "eyes": "almond",
+          "cheek": 0.157,
+          "jaw": 0.115,
+          "chin": 0.225,
+          "brow": 1,
+          "nose": 1.65,
+          "mouth": 0.077,
+          "neck": 0.049
+        }
+      },
       "colours": {
         "basis": "chosen",
         "source": "Références manga fournies par le mainteneur : cheveux foncés des apparitions récentes ; palette sable choisie pour la tenue claire en noir et blanc.",
@@ -313,7 +477,21 @@
     {
       "id": "prince-salesale",
       "body": { "build": "broad", "height": 1.1, "frame": "adult", "shoulders": 1.02 },
-      "head": { "face": "round", "hairStyle": "swept", "expression": "neutral" },
+      "head": {
+        "face": "round",
+        "hairStyle": "swept",
+        "expression": "neutral",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.19,
+          "jaw": 0.16,
+          "chin": 0.22,
+          "brow": 1.35,
+          "nose": 1.3,
+          "mouth": 0.172,
+          "neck": 0.075
+        }
+      },
       "colours": {
         "basis": "chosen",
         "source": "Portrait et planche manga fournis par le mainteneur : cheveux blonds selon la description ; palette ivoire choisie pour les robes claires et les bottes sombres.",
@@ -341,7 +519,8 @@
       "head": {
         "face": "narrow",
         "hairStyle": "bob",
-        "expression": "severe"
+        "expression": "severe",
+        "features": { "eyes": "narrow", "cheek": 0.148, "jaw": 0.087, "brow": 0.85 }
       },
       "colours": {
         "basis": "chosen",
@@ -366,10 +545,15 @@
     {
       "id": "prince-kacho",
       "body": { "build": "slim", "height": 0.96, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "hime", "expression": "neutral" },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "hime",
+        "expression": "neutral",
+        "features": { "eyes": "round", "cheek": 0.15, "jaw": 0.065, "brow": 0.6 }
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches ch. 349, 350, 359 et couleurs officielles ; cheveux blonds aux épaules, tenue glamour",
+        "source": "Portrait fourni et planches ch. 349, 358–359, 383 ; palette de la robe choisie pour les planches en noir et blanc.",
         "skin": "0xf2e0ca",
         "hair": "0xe1c36e",
         "attire": {
@@ -381,55 +565,83 @@
       },
       "attire": "gown",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-350", "ch-359"], "status": "confirmed" },
-      "note": "Les cheveux blonds aux épaules et la tenue glamour la distinguent immédiatement de Fugetsu. L'expression publique reste un masque : la scène la charge, pas la fiche."
+      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-359", "ch-383"], "status": "confirmed" },
+      "note": "Mèche blonde balayée sur le côté, pointes relevées sur la nuque, grands yeux noirs bordés de cils. Robe d’embarquement à grand nœud et collier. Without You reprend ses traits avec la tenue du banquet dans sa manifestation du chapitre 383."
     },
     {
       "id": "prince-fugetsu",
       "body": { "build": "slim", "height": 0.96, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "bob", "expression": "anxious" },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "bob",
+        "expression": "anxious",
+        "features": { "eyes": "round", "cheek": 0.15, "jaw": 0.065, "brow": 0.6 }
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches ch. 349, 358, 359 ; cheveux foncés au menton et tenue plus simple que celle de Kacho",
+        "source": "Portrait fourni et planches ch. 349, 358–359, 374–375, 383 ; couleurs des tissus choisies.",
         "skin": "0xf2e0ca",
         "hair": "0x231f28",
         "attire": {
-          "jacket": "0x8c3a52",
+          "jacket": "0x35333d",
           "shirt": "0xf4efe6",
-          "trousers": "0x5f2739",
-          "accent": "0xd8a2b4"
+          "trousers": "0x2b2933",
+          "accent": "0x575361"
         }
       },
-      "attire": "gown",
+      "attire": "suit",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-359"], "status": "confirmed" },
-      "note": "Jumelle de Kacho par les traits, mais pas par la coiffure : Fugetsu porte un carré foncé au menton. Son expression anxieuse et sa tenue simple renforcent cette différence visible."
+      "verified": {
+        "chapterIds": ["ch-349", "ch-358", "ch-359", "ch-374", "ch-375", "ch-383"],
+        "status": "confirmed"
+      },
+      "note": "Carré foncé au menton, mèche latérale et grands yeux noirs. À bord, chemise claire, gilet court, cravate et pantalon. Le pyjama clair correspond à la première apparition de Magical Worm."
     },
     {
       "id": "prince-momoze",
-      "body": { "build": "slim", "height": 0.9, "frame": "adult" },
-      "head": { "face": "round", "hairStyle": "ponytail", "expression": "anxious" },
+      "body": { "build": "slim", "height": 0.88, "frame": "adult", "shoulders": 0.9 },
+      "head": {
+        "face": "round",
+        "hairStyle": "bun",
+        "expression": "neutral",
+        "features": { "eyes": "doll", "cheek": 0.144, "jaw": 0.061, "brow": 0.6 }
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches ch. 349, 350, 359 et couleurs officielles ; longs cheveux orange en queue-de-cheval",
+        "source": "Références manga ch. 358-359 et description fournie le 2026-11-24 ; cheveux clairs canoniques, palette pêche choisie pour restituer leur luminosité.",
         "skin": "0xf0dfcb",
-        "hair": "0xd87a3f",
+        "hair": "0xe3b77d",
         "attire": {
-          "jacket": "0xa8b0b8",
-          "shirt": "0xf4f0e7",
-          "trousers": "0x77808a",
-          "accent": "0xc7ced4"
+          "jacket": "0xe6d9d0",
+          "shirt": "0x30303a",
+          "trousers": "0xcbbdb7",
+          "accent": "0xd4b96e"
         }
       },
       "attire": "gown",
-      "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-350", "ch-359"], "status": "partial" },
-      "note": "Menue, avec de longs cheveux orange attachés en queue-de-cheval. `adult` avec une hauteur basse plutôt que `child` : une adolescente n'a pas les proportions d'un enfant."
+      "signatures": ["tiara"],
+      "verified": { "chapterIds": ["ch-358", "ch-359"], "status": "confirmed" },
+      "note": "Références fournies : jeune femme petite aux traits délicats, grands yeux noirs et longs cheveux clairs brillants. La coiffure associe une frange arrondie, deux longues anglaises devant les épaules et une queue-de-cheval très volumineuse en cascade. Le modèle combine la robe trapèze raffinée du festival avec la tiare, le collier et les manches Juliette du banquet royal."
     },
     {
       "id": "prince-marayam",
       "body": { "build": "broad", "height": 0.62, "frame": "child", "shoulders": 0.94 },
-      "head": { "face": "round", "hairStyle": "spiked", "expression": "neutral" },
+      "head": {
+        "face": "round",
+        "hairStyle": "spiked",
+        "expression": "neutral",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.198,
+          "jaw": 0.135,
+          "chin": 0.175,
+          "brow": 0.55,
+          "nose": 0.6,
+          "mouth": 0.052,
+          "neck": 0.047,
+          "headY": 1.73
+        }
+      },
       "colours": {
         "basis": "chosen",
         "source": "Références manga et description fournies par le mainteneur le 2026-11-18 : petit garçon aux cheveux turquoise courts et hérissés, yeux noirs écartés ; smoking sombre croisé, nœud papillon et short pour les apparitions publiques. Teintes de la tenue choisies d'après la planche monochrome.",
@@ -466,7 +678,7 @@
       "attire": "civilian",
       "signatures": [],
       "verified": { "chapterIds": ["ch-358"], "status": "confirmed" },
-      "note": "Nourrisson : dans les bras d'Oito, jamais une silhouette debout. Le gabarit `infant` est ce qui rend cette phrase vraie dans le rendu au lieu de la laisser dans une note."
+      "note": "Le nourrisson porté reprend le gabarit, le lange beige et l’inclinaison du dernier plan du film des 14 princes de Kakin. Cette présentation est aussi utilisée pour le neveu d’Oito dans les scènes où il est porté."
     },
     {
       "id": "kurapika",
@@ -499,7 +711,8 @@
       "head": {
         "face": "narrow",
         "hairStyle": "military",
-        "expression": "neutral"
+        "expression": "neutral",
+        "features": { "eyes": "narrow", "jaw": 0.103, "chin": 0.235, "nose": 1.55 }
       },
       "colours": {
         "basis": "chosen",
@@ -524,7 +737,12 @@
     {
       "id": "cheadle-yorkshire",
       "body": { "build": "slim", "height": 0.9, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "bob", "expression": "tired" },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "bob",
+        "expression": "tired",
+        "features": { "eyes": "round", "cheek": 0.153, "jaw": 0.08, "brow": 0.6 }
+      },
       "colours": {
         "basis": "attested",
         "source": "anime 2011 ; cheveux verts constants sur tout le matériel officiel",
@@ -552,7 +770,14 @@
       "head": {
         "face": "square",
         "hairStyle": "short",
-        "expression": "severe"
+        "expression": "severe",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.175,
+          "jaw": 0.145,
+          "chin": 0.22,
+          "nose": 1.35
+        }
       },
       "colours": {
         "basis": "attested",
@@ -577,7 +802,12 @@
     {
       "id": "botobai-gigante",
       "body": { "build": "broad", "height": 1.12, "frame": "adult", "shoulders": 1.22 },
-      "head": { "face": "square", "hairStyle": "short", "expression": "severe" },
+      "head": {
+        "face": "square",
+        "hairStyle": "short",
+        "expression": "severe",
+        "features": { "eyes": "heavy", "cheek": 0.18, "jaw": 0.15, "neck": 0.088 }
+      },
       "colours": {
         "basis": "chosen",
         "source": "planches n&b ch. 340, 345 ; costume sombre de sexagénaire monumental",
@@ -626,7 +856,15 @@
       "head": {
         "face": "narrow",
         "hairStyle": "short",
-        "expression": "tired"
+        "expression": "tired",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.151,
+          "jaw": 0.087,
+          "chin": 0.236,
+          "brow": 1.2,
+          "nose": 1.4
+        }
       },
       "colours": {
         "basis": "attested",
@@ -651,7 +889,12 @@
     {
       "id": "saccho-kobayakawa",
       "body": { "build": "broad", "height": 1.06, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "short", "expression": "neutral" },
+      "head": {
+        "face": "square",
+        "hairStyle": "short",
+        "expression": "neutral",
+        "features": { "eyes": "narrow", "cheek": 0.154, "jaw": 0.11, "chin": 0.255, "nose": 1.7 }
+      },
       "colours": {
         "basis": "chosen",
         "source": "planches n&b ch. 340, 345 ; costume, carrure posée",
@@ -679,7 +922,14 @@
       "head": {
         "face": "narrow",
         "hairStyle": "swept",
-        "expression": "severe"
+        "expression": "severe",
+        "features": {
+          "eyes": "almond",
+          "cheek": 0.147,
+          "jaw": 0.07,
+          "chin": 0.215,
+          "brow": 0.7
+        }
       },
       "colours": {
         "basis": "attested",
@@ -704,7 +954,12 @@
     {
       "id": "ginta",
       "body": { "build": "broad", "height": 1.1, "frame": "adult", "shoulders": 1.24 },
-      "head": { "face": "square", "hairStyle": "afro", "expression": "hostile" },
+      "head": {
+        "face": "square",
+        "hairStyle": "afro",
+        "expression": "hostile",
+        "features": { "eyes": "heavy", "cheek": 0.19, "jaw": 0.16, "neck": 0.1 }
+      },
       "colours": {
         "basis": "chosen",
         "source": "planches ch. 340, 345 ; colosse à afro noir et moustache épaisse",
@@ -727,12 +982,20 @@
       "body": {
         "build": "slim",
         "height": 1.02,
-        "frame": "adult"
+        "frame": "adult",
+        "shoulders": 0.96
       },
       "head": {
         "face": "narrow",
         "hairStyle": "long",
-        "expression": "severe"
+        "expression": "severe",
+        "features": {
+          "eyes": "doll",
+          "cheek": 0.144,
+          "jaw": 0.059,
+          "chin": 0.21,
+          "brow": 0.6
+        }
       },
       "colours": {
         "basis": "attested",
@@ -765,11 +1028,19 @@
       "head": {
         "face": "square",
         "hairStyle": "chonmage",
-        "expression": "neutral"
+        "expression": "neutral",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.17,
+          "jaw": 0.14,
+          "nose": 1.6,
+          "mouth": 0.08,
+          "neck": 0.075
+        }
       },
       "colours": {
         "basis": "chosen",
-        "source": "Référence manga fournie par le mainteneur le 2026-11-16 ; palette neutre choisie pour le noir et blanc.",
+        "source": "Référence manga et description fournies par le mainteneur le 2026-11-24 ; cheveux clairs et costume noir canoniques, palette choisie pour les planches monochromes.",
         "skin": "0xc99473",
         "hair": "0x211f1d",
         "attire": {
@@ -820,16 +1091,54 @@
       "note": "Références fournies : cheveux en flammes à implantation anguleuse, visage allongé, yeux mi-clos cernés de plusieurs plis, sourcils froncés et costume sombre avec chemise, cravate et insigne H. La couleur des cheveux reste un choix de palette pour une référence manga en noir et blanc."
     },
     {
+      "id": "kurton",
+      "body": { "build": "average", "height": 1.01, "frame": "adult", "shoulders": 1.04 },
+      "head": { "face": "narrow", "hairStyle": "military", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga et description fournies le 2026-11-24 ; costume noir canonique, palette choisie pour les planches monochromes.",
+        "skin": "0xd8b49a",
+        "hair": "0x242329",
+        "attire": {
+          "jacket": "0x1d2026",
+          "shirt": "0xf0eee8",
+          "trousers": "0x17191e",
+          "accent": "0x343842"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-359", "ch-360"], "status": "confirmed" },
+      "note": "Références fournies : garde royal aux cheveux courts fortement hérissés, sourcils très épais et anguleux, yeux étroits et nez long. Il porte le costume noir, la chemise claire et la cravate sombre standards de la garde royale."
+    },
+    {
       "id": "melody",
       "body": {
         "build": "average",
         "height": 0.72,
-        "frame": "adult"
+        "frame": "adult",
+        "proportions": {
+          "torso": 0.94,
+          "limbs": 0.9,
+          "hips": 1.08,
+          "shoulderSlope": 0.04,
+          "posture": "upright"
+        }
       },
       "head": {
         "face": "round",
         "hairStyle": "bald-crown",
-        "expression": "neutral"
+        "expression": "neutral",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.195,
+          "jaw": 0.145,
+          "chin": 0.175,
+          "brow": 0.45,
+          "nose": 1.1,
+          "mouth": 0.06,
+          "neck": 0.055
+        }
       },
       "colours": {
         "basis": "chosen",
@@ -856,32 +1165,46 @@
       "body": {
         "build": "slim",
         "height": 0.62,
-        "frame": "child"
+        "frame": "child",
+        "proportions": {
+          "torso": 0.94,
+          "limbs": 0.9,
+          "hips": 1.04,
+          "shoulderSlope": 0.02,
+          "posture": "upright"
+        }
       },
       "head": {
         "face": "round",
-        "hairStyle": "ponytail",
-        "expression": "neutral"
+        "hairStyle": "bun",
+        "expression": "neutral",
+        "features": {
+          "eyes": "doll",
+          "cheek": 0.163,
+          "jaw": 0.073,
+          "chin": 0.175,
+          "brow": 0.6
+        }
       },
       "colours": {
         "basis": "chosen",
-        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; palette choisie pour les tenues des planches en noir et blanc.",
+        "source": "Références manga fournies par le mainteneur le 2026-11-25, notamment le chapitre 366 ; cheveux clairs et costume sombre de garde royal interprétés depuis les planches monochromes.",
         "skin": "0xf3e2ce",
         "hair": "0xe6c96a",
         "attire": {
-          "jacket": "0xbc6c90",
+          "jacket": "0x292a31",
           "shirt": "0xf4ebdc",
-          "trousers": "0x5c3049",
-          "accent": "0x532c42"
+          "trousers": "0x292a31",
+          "accent": "0x202127"
         }
       },
-      "attire": "gown",
+      "attire": "suit",
       "signatures": [],
       "verified": {
         "chapterIds": ["ch-350", "ch-366"],
         "status": "confirmed"
       },
-      "note": "Référence fournie pour la forme compacte : frange droite, deux longues couettes et nœuds sombres, col et manches à volants, boléro contrasté et jupe à pans ornés. La vraie forme demeure réservée à la transformation explicite ; sa tenue et ses tresses suivent la référence fournie sans changer l’apparence compacte par défaut."
+      "note": "Références fournies pour la forme compacte à bord du Black Whale : petite silhouette et traits juvéniles, frange arrondie, cheveux relevés en un chignon lacé avec une longue mèche bouclée devant l’oreille, costume sombre de garde royal, chemise claire et cravate. La vraie forme musclée demeure réservée à la transformation explicite."
     },
     {
       "id": "hanzo",
@@ -1011,14 +1334,679 @@
       "note": "Mince, cheveux plaqués à raie nette. À confirmer."
     },
     {
-      "id": "babimyna",
-      "body": { "build": "broad", "height": 1.02, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "short", "expression": "severe" },
+      "id": "borksen",
+      "body": {
+        "build": "average",
+        "height": 0.98,
+        "frame": "adult",
+        "shoulders": 0.92,
+        "proportions": { "shoulderSlope": 0.09 }
+      },
+      "head": { "face": "round", "hairStyle": "bob", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 363, 415 ; uniforme de l'armée royale kakine",
-        "skin": "0xc08160",
-        "hair": "0x1e1b19",
+        "source": "Référence manga fournie par le mainteneur le 2026-11-24 ; palette claire choisie pour la planche en noir et blanc.",
+        "skin": "0xe8cdb1",
+        "hair": "0xd7c7a6",
+        "attire": {
+          "jacket": "0x3f4856",
+          "shirt": "0xe9e5da",
+          "trousers": "0x303844",
+          "accent": "0xa9a58f"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-394", "ch-407", "ch-408", "ch-409", "ch-410"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : grands yeux sombres, cheveux clairs sous les épaules avec les pointes recourbées vers l’extérieur, frange souple et uniforme standard de soldat kakin à col montant zippé."
+    },
+    {
+      "id": "kaiser",
+      "body": { "build": "average", "height": 1.05, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; costume sombre et palette neutre choisis pour les planches en noir et blanc.",
+        "skin": "0xd8b49a",
+        "hair": "0x17191d",
+        "attire": {
+          "jacket": "0x242830",
+          "shirt": "0xeeeae1",
+          "trousers": "0x20242b",
+          "accent": "0x17191d"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["glasses-rectangular"],
+      "verified": {
+        "chapterIds": ["ch-372", "ch-381", "ch-400"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : homme légèrement plus grand que la moyenne, gabarit moyen, cheveux sombres plaqués en arrière avec raie latérale, sourcils arqués, lunettes rectangulaires à monture complète, costume-cravate du Bureau de la Justice et expression volontairement impassible."
+    },
+    {
+      "id": "sarahell",
+      "body": { "build": "broad", "height": 1.08, "frame": "adult", "shoulders": 1.15 },
+      "head": { "face": "square", "hairStyle": "spiked", "expression": "hostile" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux clairs et uniforme sombre interprétés depuis les planches en noir et blanc.",
+        "skin": "0xd8b095",
+        "hair": "0xcdbd98",
+        "attire": {
+          "jacket": "0x343942",
+          "shirt": "0xe5e1d8",
+          "trousers": "0x292e36",
+          "accent": "0x9d895d"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-389", "ch-411"],
+        "status": "confirmed"
+      },
+      "note": "Apparence principale : persona de garde imposante, cheveux clairs courts hérissés vers sa gauche, eyeliner aux coins supérieurs des yeux et plis nasogéniens accentués par la tension volontaire du visage, avec l’uniforme des gardes personnels de Camilla. Le visage véritable, jeune, doux et androgyne, ainsi que la perruque claire ondulée, les lentilles sombres, le maquillage et l’uniforme de domestique noir à tablier blanc sont des variantes de scène de l’infiltration de la chambre 1014."
+    },
+    {
+      "id": "maor",
+      "body": { "build": "slim", "height": 1.12, "frame": "adult", "shoulders": 0.95 },
+      "head": { "face": "square", "hairStyle": "bowl", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; peau claire, cheveux grisonnants clairs et costume noir interprétés depuis les planches monochromes.",
+        "skin": "0xe1c4a8",
+        "hair": "0xb8ae9c",
+        "attire": {
+          "jacket": "0x202229",
+          "shirt": "0xeee9df",
+          "trousers": "0x1c1e24",
+          "accent": "0x17191e"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-363"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : garde royal âgé, grand et mince, peau claire, menton carré, coupe au bol courte séparée au centre, front et contour des yeux fortement ridés, joues creusées, costume noir, chemise claire et cravate sombre."
+    },
+    {
+      "id": "dogman",
+      "body": {
+        "build": "broad",
+        "height": 1.15,
+        "frame": "adult",
+        "shoulders": 1.28,
+        "proportions": {
+          "torso": 1.06,
+          "limbs": 1.02,
+          "hips": 1.08,
+          "shoulderSlope": -0.025,
+          "posture": "upright"
+        }
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "long",
+        "expression": "neutral",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.176,
+          "jaw": 0.145,
+          "chin": 0.225,
+          "brow": 0.9,
+          "nose": 1.1,
+          "mouth": 0.07,
+          "neck": 0.105
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; masque et chemise blancs, cheveux, bracelets, pantalon et chaussures noirs établis par les planches monochromes.",
+        "skin": "0xc98f69",
+        "hair": "0x17191d",
+        "attire": {
+          "jacket": "0xeeeae1",
+          "shirt": "0xeeeae1",
+          "trousers": "0x202229",
+          "accent": "0x17191d"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-378", "ch-394"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : homme très grand et extrêmement musclé, longs cheveux noirs, masque blanc de chien à oreilles pointues, grands yeux ronds, museau ponctué, truffe noire, dents triangulaires et kanji 犬 sur le front. Il porte un tee-shirt blanc à manches courtes, des bracelets noirs, un pantalon noir et des chaussures de sport."
+    },
+    {
+      "id": "shimanu",
+      "body": { "build": "average", "height": 0.96, "frame": "adult", "shoulders": 1.02 },
+      "head": { "face": "round", "hairStyle": "ponytail", "expression": "tired" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux sombres, robe de domestique sombre et col, bandeau et tablier clairs interprétés depuis les planches monochromes.",
+        "skin": "0xc99776",
+        "hair": "0x1b1b20",
+        "attire": {
+          "jacket": "0x25272e",
+          "shirt": "0xe8e2d7",
+          "trousers": "0x202229",
+          "accent": "0xd7cdbd"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-360"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : tête ovale aux joues pleines, paupières légèrement lourdes, nez large, longs cheveux sombres entièrement tirés en arrière et attachés en queue-de-cheval basse par un bandeau clair. Elle porte la robe sombre standard des domestiques de la famille royale, avec col, ceinture et tablier clairs."
+    },
+    {
+      "id": "keni-wang",
+      "body": { "build": "slim", "height": 1.11, "frame": "adult", "shoulders": 0.98 },
+      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux sombres, chemise blanche et costume à fines rayures interprétés depuis les planches monochromes.",
+        "skin": "0xd2aa8e",
+        "hair": "0x181a1f",
+        "attire": {
+          "jacket": "0x343740",
+          "shirt": "0xeeeae1",
+          "trousers": "0x292c34",
+          "accent": "0x1d2027"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["glasses-rectangular"],
+      "verified": {
+        "chapterIds": ["ch-378", "ch-379", "ch-392", "ch-395"],
+        "status": "confirmed"
+      },
+      "note": "Apparence principale : homme grand et mince, mâchoire aiguë, yeux sombres et fins, lunettes rectangulaires et cheveux sombres soigneusement peignés avec raie latérale. Sa première tenue est un costume droit à rayures, chemise blanche et cravate sombre à pois. Lors de la confrontation avec la Brigade Fantôme, il porte un costume et une cravate sombres assortis, variante projetée dans Tour aux chapitres 392 à 399."
+    },
+    {
+      "id": "sakata",
+      "body": { "build": "average", "height": 1.0, "frame": "adult", "shoulders": 1.06 },
+      "head": { "face": "square", "hairStyle": "swept", "expression": "tired" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux sombres, chemise blanche et costume noir établis par les planches monochromes.",
+        "skin": "0xd2a480",
+        "hair": "0x1b1c21",
+        "attire": {
+          "jacket": "0x22252c",
+          "shirt": "0xeeeae1",
+          "trousers": "0x1d2026",
+          "accent": "0x17191e"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-365", "ch-366"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : visage et yeux carrés, petits yeux bas aux paupières lourdes, sourcils sombres très courts et épais, nez écrasé, bouche large et cheveux sombres volumineux soigneusement balayés sur le côté. En tant que garde royal, il porte un costume noir, une chemise blanche et une cravate sombre."
+    },
+    {
+      "id": "saquelle",
+      "body": { "build": "average", "height": 1.08, "frame": "adult", "shoulders": 1.08 },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "short",
+        "expression": "neutral",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.135,
+          "jaw": 0.09,
+          "chin": 0.245,
+          "brow": 1.05,
+          "nose": 1.35,
+          "mouth": 0.095,
+          "neck": 0.085
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Référence manga et description fournies par le mainteneur le 2026-11-25 ; cheveux clairs et tenue militaire interprétés depuis les planches monochromes.",
+        "skin": "0xd6ad8d",
+        "hair": "0xc7b586",
+        "attire": {
+          "jacket": "0x45505c",
+          "shirt": "0xe5e1d8",
+          "trousers": "0x303843",
+          "accent": "0x1e252d"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-358", "ch-363"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : homme grand au cou épais et au visage très allongé, avec des cheveux clairs coupés court. Ses petits yeux ronds, ses pommettes très saillantes, ses lèvres épaisses, la barbe courte concentrée sur le menton et les veines constamment visibles sur les tempes constituent ses principaux signes distinctifs. En tant que soldat privé de Benjamin affecté à Marayam, il porte une tenue militaire à veste matelassée et col montant."
+    },
+    {
+      "id": "orau",
+      "body": { "build": "broad", "height": 1.04, "frame": "adult", "shoulders": 1.12 },
+      "head": {
+        "face": "square",
+        "hairStyle": "bald-crown",
+        "expression": "severe",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.17,
+          "jaw": 0.15,
+          "chin": 0.235,
+          "brow": 1.25,
+          "nose": 1.65,
+          "mouth": 0.07,
+          "neck": 0.09
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Référence manga et description fournies par le mainteneur le 2026-11-25 ; uniforme militaire et cheveux sombres interprétés depuis la planche monochrome.",
+        "skin": "0xd2a785",
+        "hair": "0x252429",
+        "attire": {
+          "jacket": "0x48525e",
+          "shirt": "0xe4e0d7",
+          "trousers": "0x303841",
+          "accent": "0x1c2229"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-358", "ch-415"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : soldat massif au visage lourd, au nez proéminent et à la mâchoire large. Son front et le sommet de son crâne sont chauves, avec une couronne de cheveux sombres sur les côtés et à l'arrière. Il porte une oreillette à l'oreille gauche ainsi que l'uniforme militaire standard de Kakin : veste matelassée zippée à col montant, pantalon et bottes de combat sombres."
+    },
+    {
+      "id": "kanjidol",
+      "body": { "build": "broad", "height": 1.01, "frame": "adult", "shoulders": 1.14 },
+      "head": {
+        "face": "round",
+        "hairStyle": "short",
+        "expression": "severe",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.198,
+          "jaw": 0.15,
+          "chin": 0.18,
+          "brow": 0.75,
+          "nose": 1.05,
+          "mouth": 0.072,
+          "neck": 0.095
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Référence manga et description fournies par le mainteneur le 2026-11-25 ; cheveux, moustache et barbe sombres ainsi qu'uniforme militaire interprétés depuis la planche monochrome.",
+        "skin": "0xd5aa87",
+        "hair": "0x202126",
+        "attire": {
+          "jacket": "0x47515d",
+          "shirt": "0xe3dfd6",
+          "trousers": "0x303740",
+          "accent": "0x1b2027"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-363", "ch-415"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : homme corpulent au visage très rond et aux joues pleines. Il a de petits yeux, deux sourcils sombres courts et arrondis, une moustache sombre séparée et une courte barbe concentrée sous le menton. Il porte l'uniforme militaire standard de Kakin : veste matelassée zippée à col montant, pantalon et bottes de combat sombres."
+    },
+    {
+      "id": "kakin-announcer",
+      "body": { "build": "slim", "height": 1.02, "frame": "adult", "shoulders": 0.92 },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "long",
+        "expression": "neutral",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.148,
+          "jaw": 0.065,
+          "chin": 0.2,
+          "brow": 0.55,
+          "nose": 0.9,
+          "mouth": 0.068,
+          "neck": 0.042
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Référence manga et description fournies par le mainteneur le 2026-11-25 ; cheveux et motifs sombres interprétés depuis la planche monochrome.",
+        "skin": "0xd9ae8e",
+        "hair": "0x24242b",
+        "attire": {
+          "jacket": "0x2b2c34",
+          "shirt": "0xf0e8d9",
+          "trousers": "0x25262e",
+          "accent": "0xc6a46a"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-359"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : jeune femme élancée aux cheveux sombres tombant jusqu'aux épaules, avec des oreilles félines au sommet de la tête et de grands yeux de chat aux pupilles verticales. Elle porte une longue robe ajustée sans manches couverte de motifs tourbillonnants, des chaussures décorées du même type de motifs et un bracelet à chacun de ses poignets."
+    },
+    {
+      "id": "cleapatro",
+      "body": { "build": "slim", "height": 1.05, "frame": "adult", "shoulders": 0.94 },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "hime",
+        "expression": "severe",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.145,
+          "jaw": 0.062,
+          "chin": 0.225,
+          "brow": 0.45,
+          "nose": 1.25,
+          "mouth": 0.056,
+          "neck": 0.044
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-25 ; uniforme clair à bandes noires canonique, teinte claire de la coiffure choisie depuis les planches monochromes.",
+        "skin": "0xd7ae8e",
+        "hair": "0xcbb98a",
+        "attire": {
+          "jacket": "0xe4dfd4",
+          "shirt": "0xf1ede5",
+          "trousers": "0x24262d",
+          "accent": "0x17191e"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-376", "ch-412"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : femme élancée aux traits délicats, aux yeux étroits et aux sourcils très longs et fins. Sa coiffure ou coiffe géométrique rappelle celles de l'Égypte antique, avec une frange horizontale droite, un bandeau strié et deux panneaux rigides encadrant le visage. Elle porte un uniforme clair à col montant, décoré de larges bandes noires sur le torse et les manches."
+    },
+    {
+      "id": "peuckert",
+      "body": { "build": "broad", "height": 0.98, "frame": "adult", "shoulders": 1.1 },
+      "head": {
+        "face": "round",
+        "hairStyle": "swept",
+        "expression": "tired",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.192,
+          "jaw": 0.142,
+          "chin": 0.19,
+          "brow": 0.8,
+          "nose": 1.35,
+          "mouth": 0.09,
+          "neck": 0.078
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-25 ; tenue de service, cheveux sombres et chemise claire interprétés depuis les planches monochromes.",
+        "skin": "0xd5aa88",
+        "hair": "0x343038",
+        "attire": {
+          "jacket": "0x51545c",
+          "shirt": "0xeeeae1",
+          "trousers": "0x3d4048",
+          "accent": "0x292c33"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-359", "ch-389"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : homme trapu au visage rond, aux petits yeux, aux lèvres épaisses et au nez irrégulier et large. De nombreuses taches de rousseur couvrent son nez et ses joues. Ses cheveux sont soigneusement peignés avec une raie à gauche. Le modèle principal reprend sa tenue de service — costume, cravate, chemise et pantalon habillé — tandis que sa variante hors service se limite à une chemise unie et un pantalon."
+    },
+    {
+      "id": "steiner",
+      "body": { "build": "slim", "height": 1.12, "frame": "adult", "shoulders": 0.98 },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "swept",
+        "expression": "neutral",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.148,
+          "jaw": 0.074,
+          "chin": 0.23,
+          "brow": 0.8,
+          "nose": 1.55,
+          "mouth": 0.06,
+          "neck": 0.05
+        }
+      },
+      "colours": {
+        "basis": "attested",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-25 ; cheveux brun clair et yeux noisette explicitement décrits, palette du costume choisie depuis les planches monochromes.",
+        "skin": "0xd5ad90",
+        "hair": "0xa9825e",
+        "attire": {
+          "jacket": "0x555861",
+          "shirt": "0xeeeae1",
+          "trousers": "0x3f424a",
+          "accent": "0x343039"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["glasses-rectangular"],
+      "verified": {
+        "chapterIds": ["ch-341", "ch-389"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : homme grand et mince au visage allongé, portant des lunettes rectangulaires. Ses cheveux brun clair sont soigneusement peignés avec une raie latérale et ses yeux sont noisette. Pour ses fonctions officielles, il porte un costume ajusté, une chemise claire et une cravate."
+    },
+    {
+      "id": "worio-bay",
+      "body": { "build": "broad", "height": 1.04, "frame": "adult", "shoulders": 1.14 },
+      "head": {
+        "face": "square",
+        "hairStyle": "swept",
+        "expression": "severe",
+        "features": {
+          "eyes": "almond",
+          "cheek": 0.178,
+          "jaw": 0.17,
+          "chin": 0.245,
+          "brow": 1.8,
+          "nose": 1.75,
+          "mouth": 0.068,
+          "neck": 0.082
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-25 ; cheveux épais et costume interprétés depuis les planches monochromes du chapitre 403.",
+        "skin": "0xd3a887",
+        "hair": "0x4a3c35",
+        "attire": {
+          "jacket": "0x55565d",
+          "shirt": "0xeeeae1",
+          "trousers": "0x3e4047",
+          "accent": "0x282b31"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-403"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : homme robuste à la très large mâchoire carrée, au grand nez anguleux et aux sourcils épais et saillants. Sa chevelure dense et volumineuse est soigneusement peignée avec une raie sur sa droite. Il porte un costume, une chemise claire et une cravate."
+    },
+    {
+      "id": "keeney",
+      "body": { "build": "average", "height": 0.72, "frame": "adult", "shoulders": 0.94 },
+      "head": { "face": "round", "hairStyle": "bald-crown", "expression": "tired" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux clairs, chemise blanche et costume noir interprétés depuis les planches monochromes.",
+        "skin": "0xd8b395",
+        "hair": "0xb8a27b",
+        "attire": {
+          "jacket": "0x24262d",
+          "shirt": "0xeeeae1",
+          "trousers": "0x202229",
+          "accent": "0x17191e"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["moustache"],
+      "verified": {
+        "chapterIds": ["ch-374", "ch-377"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : homme de petite taille, comparable à Melody, au visage arrondi et âgé. Il a une implantation très reculée, de rares cheveux clairs rabattus sur le sommet, de grandes oreilles saillantes, des paupières tombantes, des sourcils sombres et fins, des rides marquées au front et sous les yeux, ainsi qu'une fine moustache au crayon. En tant que garde du corps de Kacho, il porte un costume noir."
+    },
+    {
+      "id": "shikaku",
+      "body": { "build": "broad", "height": 1.06, "frame": "adult", "shoulders": 1.13 },
+      "head": { "face": "square", "hairStyle": "military", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux clairs et uniforme militaire kakinois interprétés depuis les planches monochromes.",
+        "skin": "0xc89270",
+        "hair": "0xbda77d",
+        "attire": {
+          "jacket": "0x555a4d",
+          "shirt": "0xd8d6ca",
+          "trousers": "0x4a4e44",
+          "accent": "0x24282a"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-363", "ch-382"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : garde militaire grand et massif au visage extrêmement carré, aux yeux étroits et aux sourcils inclinés. Ses cheveux clairs sont brossés vers le haut, avec une seule longue mèche retombant au centre du front. Il porte l'uniforme standard de l'armée kakinoise : veste zippée à col montant, pantalon et bottes de combat sombres. Une oreillette est placée dans son oreille gauche."
+    },
+    {
+      "id": "sanbica-norton",
+      "body": { "build": "slim", "height": 0.8, "frame": "adult", "shoulders": 0.9 },
+      "head": {
+        "face": "round",
+        "hairStyle": "bob",
+        "expression": "neutral",
+        "features": { "eyes": "doll", "cheek": 0.157, "jaw": 0.074, "brow": 0.45, "nose": 0.75 }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Référence animée fournie par le mainteneur le 2026-11-24 ; palette médicale claire et cheveux rose pâle retenus comme choix de rendu, l'apparence canonique restant largement dissimulée.",
+        "skin": "0xd8b094",
+        "hair": "0xd8b8c2",
+        "attire": {
+          "jacket": "0xe5ebe7",
+          "shirt": "0xf2f3ee",
+          "trousers": "0xd8dfdb",
+          "accent": "0x8eb79b"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-326"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : femme de petite taille dont le visage et le corps sont presque entièrement dissimulés par une tenue médicale. Seuls ses très grands yeux sombres sont nettement visibles. Elle porte une blouse ample, des gants, un masque chirurgical et une coiffe médicale claire ; les cheveux et couleurs visibles sur l'adaptation animée servent uniquement de palette choisie."
+    },
+    {
+      "id": "tokarine",
+      "body": { "build": "broad", "height": 0.93, "frame": "adult", "shoulders": 1.16 },
+      "head": {
+        "face": "round",
+        "hairStyle": "bob",
+        "expression": "neutral",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.195,
+          "jaw": 0.154,
+          "brow": 0.58,
+          "nose": 0.72,
+          "mouth": 0.082
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Référence manga fournie par le mainteneur le 2026-11-24 ; cheveux foncés, sommet plus clair et vêtement rayé interprétés depuis la planche monochrome.",
+        "skin": "0xd0a07f",
+        "hair": "0x25242a",
+        "attire": {
+          "jacket": "0xd5d2c9",
+          "shirt": "0xe8e3d8",
+          "trousers": "0x3c3c43",
+          "accent": "0x27272d"
+        }
+      },
+      "attire": "civilian",
+      "signatures": ["earrings"],
+      "verified": {
+        "chapterIds": ["ch-359"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : femme ronde et corpulente au visage plein, petits yeux en perles, nez retroussé et bouche aux lèvres épaisses. Ses cheveux foncés forment un carré à frange droite avec deux mèches pointant vers les côtés ; le sommet est teint d'une couleur plus claire. Chaque oreille porte un bijou et un piercing. Elle porte un haut clair à larges rayures sombres et grand motif central."
+    },
+    {
+      "id": "oito-nephew-fake-woble",
+      "body": { "build": "broad", "height": 0.44, "frame": "infant", "shoulders": 0.96 },
+      "head": { "face": "round", "hairStyle": "military", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-24 ; cheveux courts et clairs, peau et vêtement clair interprétés depuis les planches monochromes.",
+        "skin": "0xe8c8ae",
+        "hair": "0xd1b98c",
+        "attire": {
+          "jacket": "0xe8e5dc",
+          "shirt": "0xf4f0e7",
+          "trousers": "0xdad7cf",
+          "accent": "0xc5bcae"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-358", "ch-414", "ch-415"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : nourrisson potelé au visage très rond, aux joues pleines, aux grands yeux noirs circulaires et aux cheveux clairs coupés très court. Il porte un vêtement de bébé clair à manches longues. Ce modèle appartient au neveu d'Oito publiquement présenté comme Woble, et non à la véritable princesse Woble dont l'apparence actuelle reste inconnue."
+    },
+    {
+      "id": "babimyna",
+      "body": { "build": "average", "height": 1.03, "frame": "adult", "shoulders": 1.04 },
+      "head": { "face": "narrow", "hairStyle": "military", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-25 ; cheveux clairs et uniforme militaire Kakin canoniques, palette choisie pour les planches monochromes.",
+        "skin": "0xd6b094",
+        "hair": "0xd7c28f",
         "attire": {
           "jacket": "0x474835",
           "shirt": "0xdad6c6",
@@ -1029,17 +2017,17 @@
       "attire": "uniform",
       "signatures": [],
       "verified": { "chapterIds": ["ch-363", "ch-415"], "status": "confirmed" },
-      "note": "Trapu, paupières lourdes : le regard qui pèse. `severe` porte les paupières, ce qui est le seul endroit du visage où ce personnage se lit."
+      "note": "Références fournies : jeune homme élancé aux cheveux clairs et bouclés, concentrés en volume arrondi sur le dessus tandis que les côtés sont coupés en dégradé très court. Il porte une oreillette à l'oreille gauche et l'uniforme militaire standard de Kakin : veste zippée à col montant, pantalon et bottes de combat sombres."
     },
     {
       "id": "balsamilco-might",
-      "body": { "build": "slim", "height": 0.98, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "bald-crown", "expression": "severe" },
+      "body": { "build": "broad", "height": 0.98, "frame": "adult", "shoulders": 1.18 },
+      "head": { "face": "square", "hairStyle": "shaved", "expression": "severe" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 358, 363 ; état-major de Benjamin, palette d'uniforme assombrie",
-        "skin": "0xd0a98d",
-        "hair": "0x8d8880",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-25 ; peau foncée et uniforme matelassé canoniques, palette choisie pour les planches monochromes.",
+        "skin": "0x76503e",
+        "hair": "0x302925",
         "attire": {
           "jacket": "0x3d4034",
           "shirt": "0xe4e0d2",
@@ -1050,17 +2038,17 @@
       "attire": "uniform",
       "signatures": ["moustache"],
       "verified": { "chapterIds": ["ch-358", "ch-363"], "status": "confirmed" },
-      "note": "Sec, âgé, crâne dégarni : l'état-major de Benjamin tient dans ce visage. Ce que Cross Game fait plus tard de ce corps est un fait d'ability et de dossier ; l'apparence reste celle de l'homme."
+      "note": "Références fournies : homme trapu à la peau foncée, entièrement chauve, au visage large et marqué par l'âge. Une grande cicatrice irrégulière descend de sa tempe gauche jusqu'à la joue. Comme les soldats privés de Benjamin, il porte une veste matelassée zippée à grand col, un pantalon tactique ample et de hautes bottes de combat sombres."
     },
     {
       "id": "vincent",
-      "body": { "build": "average", "height": 1.04, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "short", "expression": "hostile" },
+      "body": { "build": "broad", "height": 1.04, "frame": "adult", "shoulders": 1.15 },
+      "head": { "face": "square", "hairStyle": "shaved", "expression": "hostile" },
       "colours": {
         "basis": "chosen",
-        "source": "planche n&b ch. 358 ; uniforme de garde, palette sombre",
-        "skin": "0xc08160",
-        "hair": "0x1f1c1a",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-25 ; crâne rasé et uniforme militaire Kakin canoniques, palette choisie pour les planches monochromes.",
+        "skin": "0xc79272",
+        "hair": "0x4a3a32",
         "attire": {
           "jacket": "0x39404b",
           "shirt": "0xdfe1e0",
@@ -1071,7 +2059,7 @@
       "attire": "uniform",
       "signatures": [],
       "verified": { "chapterIds": ["ch-358"], "status": "confirmed" },
-      "note": "Carrure sèche, mâchoire serrée : l'exécuteur. Mort tôt dans l'arc — l'apparence sert la timeline d'avant, ce qui est la seule raison pour laquelle elle existe."
+      "note": "Références fournies : soldat Kakin massif au crâne entièrement rasé, au visage carré, au nez très long et au sourire marqué. Il porte une oreillette à l'oreille gauche et l'uniforme militaire standard : veste zippée et rembourrée à col haut, pantalon et bottes de combat sombres."
     },
     {
       "id": "furykov",
@@ -1181,24 +2169,24 @@
     },
     {
       "id": "vergei",
-      "body": { "build": "broad", "height": 1.0, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "bald-crown", "expression": "hostile" },
+      "body": { "build": "slim", "height": 1.02, "frame": "adult", "shoulders": 0.98 },
+      "head": { "face": "narrow", "hairStyle": "short", "expression": "severe" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 361, 415 ; uniforme du poste de Marayam",
-        "skin": "0xc99473",
-        "hair": "0x4a453f",
+        "source": "Références manga et description fournies par le mainteneur le 2026-11-25 ; cheveux sombres et costume noir canoniques, palette choisie pour les planches monochromes.",
+        "skin": "0xd5ad91",
+        "hair": "0x29282b",
         "attire": {
-          "jacket": "0x444c3c",
-          "shirt": "0xe2ded0",
-          "trousers": "0x30362b",
-          "accent": "0xa89044"
+          "jacket": "0x1d2026",
+          "shirt": "0xf0eee8",
+          "trousers": "0x17191e",
+          "accent": "0x343842"
         }
       },
-      "attire": "uniform",
-      "signatures": ["moustache"],
+      "attire": "suit",
+      "signatures": [],
       "verified": { "chapterIds": ["ch-361", "ch-415"], "status": "confirmed" },
-      "note": "Chauve à couronne de cheveux et grosse moustache : la colère bureaucratique du poste de Marayam a un visage, et c'est celui-là."
+      "note": "Références fournies : garde du corps élancé aux cheveux foncés, courts et soigneusement coiffés, avec une implantation haute qui dégage un grand front. Son visage étroit et anguleux est dominé par des pommettes très saillantes et des joues creuses. Il porte un costume noir ajusté, une chemise claire et une cravate noire."
     },
     {
       "id": "sayird",
@@ -1231,7 +2219,14 @@
       "head": {
         "face": "narrow",
         "hairStyle": "spiked",
-        "expression": "neutral"
+        "expression": "neutral",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.145,
+          "jaw": 0.074,
+          "brow": 0.7,
+          "neck": 0.043
+        }
       },
       "colours": {
         "basis": "chosen",
@@ -1263,7 +2258,16 @@
       "head": {
         "face": "square",
         "hairStyle": "chonmage",
-        "expression": "hostile"
+        "expression": "hostile",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.146,
+          "jaw": 0.095,
+          "chin": 0.225,
+          "brow": 0.8,
+          "nose": 1.67,
+          "neck": 0.043
+        }
       },
       "colours": {
         "basis": "chosen",
@@ -1283,7 +2287,7 @@
         "chapterIds": ["ch-371", "ch-377"],
         "status": "confirmed"
       },
-      "note": "Kimono violet ample à col sombre, obi gris, chignon haut, bouc, katana au côté, jambes découvertes sous le kimono avec bandelettes grises et sandales. Référence visuelle fournie par le mainteneur."
+      "note": "Kimono violet ample à col sombre, obi gris, chignon haut, fine moustache et bouc, katana au côté, jambes découvertes sous le kimono avec bandelettes grises et sandales. Référence visuelle fournie par le mainteneur."
     },
     {
       "id": "feitan-portor",
@@ -1295,7 +2299,13 @@
       "head": {
         "face": "narrow",
         "hairStyle": "bob",
-        "expression": "tired"
+        "expression": "tired",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.139,
+          "jaw": 0.058,
+          "brow": 0.7
+        }
       },
       "colours": {
         "basis": "attested",
@@ -1327,7 +2337,13 @@
       "head": {
         "face": "square",
         "hairStyle": "slicked-back",
-        "expression": "hostile"
+        "expression": "hostile",
+        "features": {
+          "eyes": "narrow",
+          "jaw": 0.142,
+          "brow": 0.08,
+          "neck": 0.067
+        }
       },
       "colours": {
         "basis": "chosen",
@@ -1335,19 +2351,19 @@
         "skin": "0xd8b49a",
         "hair": "0xd8bb6a",
         "attire": {
-          "jacket": "0x075044",
+          "jacket": "0xd8d7d0",
           "shirt": "0xe7e9e4",
-          "trousers": "0x075044",
-          "accent": "0xbc482d"
+          "trousers": "0x262a30",
+          "accent": "0x7d7770"
         }
       },
       "attire": "combat",
       "signatures": [],
       "verified": {
-        "chapterIds": ["ch-371", "ch-377"],
+        "chapterIds": ["ch-371", "ch-377", "ch-398"],
         "status": "confirmed"
       },
-      "note": "Référence fournie : cheveux blonds courts plaqués en arrière, sourcils très discrets, survêtement vert à empiècement blanc aux épaules et doubles bandes orange-rouge, pantalon vert et chaussures grises."
+      "note": "Cheveux courts plaqués en arrière et sourcils très discrets. Le ch. 398 montre une veste de survêtement claire à col haut sombre et bandes sur les manches, avec pantalon sombre. Les couleurs sont choisies."
     },
     {
       "id": "machi-komacine",
@@ -1359,7 +2375,13 @@
       "head": {
         "face": "narrow",
         "hairStyle": "ponytail",
-        "expression": "neutral"
+        "expression": "neutral",
+        "features": {
+          "eyes": "almond",
+          "cheek": 0.145,
+          "jaw": 0.06,
+          "brow": 0.6
+        }
       },
       "colours": {
         "basis": "chosen",
@@ -1419,12 +2441,27 @@
         "build": "broad",
         "height": 1.15,
         "frame": "adult",
-        "shoulders": 1.28
+        "shoulders": 1.28,
+        "proportions": {
+          "torso": 1.05,
+          "limbs": 1.01,
+          "hips": 1.1,
+          "shoulderSlope": -0.02,
+          "posture": "upright"
+        }
       },
       "head": {
         "face": "square",
         "hairStyle": "short",
-        "expression": "severe"
+        "expression": "severe",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.18,
+          "jaw": 0.163,
+          "chin": 0.22,
+          "brow": 2,
+          "neck": 0.09
+        }
       },
       "colours": {
         "basis": "chosen",
@@ -1520,7 +2557,15 @@
       "head": {
         "face": "narrow",
         "hairStyle": "long",
-        "expression": "neutral"
+        "expression": "neutral",
+        "features": {
+          "eyes": "doll",
+          "cheek": 0.139,
+          "jaw": 0.06,
+          "chin": 0.22,
+          "brow": 0.3,
+          "mouth": 0.033
+        }
       },
       "colours": {
         "basis": "chosen",
@@ -1600,7 +2645,9 @@
       "body": {
         "build": "average",
         "height": 1.05,
-        "frame": "adult"
+        "frame": "adult",
+        "shoulders": 0.92,
+        "proportions": { "hips": 0.92, "limbs": 1.045, "shoulderSlope": 0.08 }
       },
       "head": {
         "face": "narrow",
@@ -1661,24 +2708,30 @@
     },
     {
       "id": "lynch-fullbokko",
-      "body": { "build": "average", "height": 1.0, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "short", "expression": "hostile" },
+      "body": {
+        "build": "slim",
+        "height": 0.98,
+        "frame": "adult",
+        "shoulders": 0.9,
+        "proportions": { "hips": 1.03, "shoulderSlope": 0.08 }
+      },
+      "head": { "face": "narrow", "hairStyle": "long", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 390, 393 ; tenue utilitaire, palette sourde",
-        "skin": "0xd3a17c",
-        "hair": "0x2e2724",
+        "source": "Planches monochromes ch. 391–392 : cheveux et tenue clairs, palette choisie.",
+        "skin": "0xe5c2aa",
+        "hair": "0xd3b784",
         "attire": {
-          "jacket": "0x46483f",
-          "shirt": "0xe0dbcd",
-          "trousers": "0x30322c",
-          "accent": "0x8f6f3c"
+          "jacket": "0xdbd1be",
+          "shirt": "0xeee7d7",
+          "trousers": "0xc1b198",
+          "accent": "0x8f8069"
         }
       },
-      "attire": "combat",
+      "attire": "civilian",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-390", "ch-393"], "status": "partial" },
-      "note": "Frappe d'abord, pose les questions après. À confirmer."
+      "verified": { "chapterIds": ["ch-391", "ch-392", "ch-393"], "status": "partial" },
+      "note": "Longs cheveux clairs ondulés, bandeau, haut clair ajusté sans manches et pantalon ample arrêté sous le genou. Le ch. 393 montre aussi Bonolenov sous son apparence."
     },
     {
       "id": "onior-longbao",
@@ -1780,7 +2833,8 @@
       "body": {
         "build": "slim",
         "height": 1.02,
-        "frame": "adult"
+        "frame": "adult",
+        "shoulders": 0.96
       },
       "head": {
         "face": "narrow",
@@ -1789,7 +2843,7 @@
       },
       "colours": {
         "basis": "chosen",
-        "source": "Référence manga fournie par le mainteneur le 2026-11-16 ; palette neutre choisie pour le noir et blanc.",
+        "source": "Référence manga et description fournies par le mainteneur le 2026-11-24 ; cheveux clairs et costume noir canoniques, palette choisie pour les planches monochromes.",
         "skin": "0xdac1a7",
         "hair": "0xe2c998",
         "attire": {
@@ -1805,7 +2859,7 @@
         "chapterIds": ["ch-369", "ch-401"],
         "status": "confirmed"
       },
-      "note": "Référence manga fournie : cheveux clairs à raie centrale tirés en queue-de-cheval, visage long aux joues creuses, costume noir ajusté, chemise claire et cravate noire."
+      "note": "Référence fournie : garde royale élancée aux cheveux clairs séparés au centre, soigneusement tirés vers une longue queue-de-cheval dans le dos. Le visage étroit se distingue par des joues fortement creusées, un menton anguleux et un regard sévère. Elle porte un costume noir ajusté, une chemise claire et une cravate noire."
     },
     {
       "id": "padaille",
@@ -1869,7 +2923,7 @@
         "chapterIds": ["ch-394", "ch-399"],
         "status": "confirmed"
       },
-      "note": "Références fournies : cheveux clairs dressés en flammes, visage anguleux, rouflaquettes et bouc sombre, veste de sport zippée à liserés clairs sur les épaules et la poitrine, manches à poignets et short bordé clair."
+      "note": "Références fournies : cheveux clairs dressés en flammes, visage anguleux, rouflaquettes et bouc sombre, veste de sport zippée à liserés clairs sur les épaules et la poitrine, manches à poignets, pantalon long assorti à bandes segmentées."
     },
     {
       "id": "voconte",
@@ -1934,25 +2988,1795 @@
         "status": "confirmed"
       },
       "note": "Références fournies : carré noir épais rejeté en arrière jusqu’à la nuque, yeux plissés souriants, nez long et sourire ouvert ; costume gris, chemise claire, cravate noire et livre de droit porté à la main. Les gardes numérotés autour de lui restent des entités LSDF distinctes."
-    }
-  ],
-  "deferred": [
-    {
-      "id": "katrono-hui-guo-rou",
-      "reason": "Quatrième reine. Le catalogue la tient par ses fils et par l'espionne qu'elle poste ; aucune planche recensée ne la montre. Ne pas inventer un visage est le même geste que ne pas inventer un passager — à rouvrir avec un numéro de page, pas avec une intuition."
     },
     {
-      "id": "swinko-swinko-hui-guo-rou",
-      "reason": "Cinquième reine. Idem : nommée par ses fils et par ses agents, jamais dessinée sur une planche recensée."
+      "id": "tevelares",
+      "body": {
+        "build": "average",
+        "height": 1.08,
+        "frame": "adult",
+        "shoulders": 1.02,
+        "proportions": {
+          "posture": "neutral"
+        }
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "slicked-back",
+        "expression": "tired",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.165,
+          "jaw": 0.123,
+          "chin": 0.243,
+          "brow": 1.18,
+          "nose": 1.65,
+          "mouth": 0.071
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 391, ch. 393 ; teintes de rendu choisies.",
+        "skin": "0xbc947a",
+        "hair": "0x8a7c69",
+        "attire": {
+          "jacket": "0xa19a8c",
+          "shirt": "0xd7d0c2",
+          "trousers": "0x77736e",
+          "accent": "0x514d46"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-391", "ch-393"],
+        "status": "confirmed"
+      },
+      "note": "Cheveux ondulés ramenés en arrière derrière les oreilles, cinq cicatrices au front, cernes, joues creuses, moustache et barbe naissante. Veste à revers sur un haut clair, patte au bas du dos, pantalon ample et bottes."
+    },
+    {
+      "id": "quorolle",
+      "body": {
+        "build": "slim",
+        "height": 1.01,
+        "frame": "adult",
+        "shoulders": 0.91,
+        "proportions": {
+          "posture": "neutral"
+        }
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "curtain",
+        "expression": "neutral",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.157,
+          "jaw": 0.076,
+          "chin": 0.207,
+          "brow": 0.58,
+          "nose": 0.68,
+          "mouth": 0.049
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 391, ch. 393 ; teintes de rendu choisies.",
+        "skin": "0xe1c0a8",
+        "hair": "0xa99b78",
+        "attire": {
+          "jacket": "0xb3aa99",
+          "shirt": "0xe6ddca",
+          "trousers": "0x9e9688",
+          "accent": "0x807966"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-391", "ch-393"],
+        "status": "confirmed"
+      },
+      "note": "Cheveux ondulés séparés au milieu et retombant sur les oreilles, petit nez et petits yeux sombres. Manteau long à col relevé et encolure ouverte, ceinture à bout pendant, pantalon ample resserré sur les bottes."
+    },
+    {
+      "id": "daemon",
+      "body": {
+        "build": "broad",
+        "height": 1.105,
+        "frame": "adult",
+        "shoulders": 1.14,
+        "proportions": {
+          "posture": "upright"
+        }
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "ponytail",
+        "expression": "severe",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.155,
+          "jaw": 0.101,
+          "chin": 0.245,
+          "brow": 1.08,
+          "nose": 1.32,
+          "mouth": 0.063
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 393 ; teintes de rendu choisies.",
+        "skin": "0xc7997e",
+        "hair": "0x252124",
+        "attire": {
+          "jacket": "0x28282b",
+          "shirt": "0x464348",
+          "trousers": "0x81817d",
+          "accent": "0x555252"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-393"],
+        "status": "confirmed"
+      },
+      "note": "Grand gabarit, visage étroit, cheveux sombres ramenés en arrière avec mèches aux tempes et haut sombre à encolure large."
+    },
+    {
+      "id": "gelato",
+      "body": {
+        "build": "slim",
+        "height": 0.89,
+        "frame": "adult",
+        "shoulders": 0.84,
+        "proportions": {
+          "posture": "neutral"
+        }
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "bowl",
+        "expression": "neutral",
+        "features": {
+          "eyes": "doll",
+          "cheek": 0.168,
+          "jaw": 0.087,
+          "chin": 0.174,
+          "brow": 0.52,
+          "nose": 0.73,
+          "mouth": 0.068
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 393, ch. 394, ch. 399 ; teintes de rendu choisies.",
+        "skin": "0xdfb89d",
+        "hair": "0x242125",
+        "attire": {
+          "jacket": "0xaca299",
+          "shirt": "0xe5dbcc",
+          "trousers": "0x403939",
+          "accent": "0x655b58"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-393", "ch-394", "ch-399"],
+        "status": "confirmed"
+      },
+      "note": "Petite silhouette, frange noire droite, contour de coupe rond et grands yeux. Haut à col montant, fermé au milieu."
+    },
+    {
+      "id": "perigord",
+      "body": {
+        "build": "average",
+        "height": 1.065,
+        "frame": "adult",
+        "shoulders": 1.02,
+        "proportions": {
+          "posture": "relaxed"
+        }
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "curtain",
+        "expression": "anxious",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.181,
+          "jaw": 0.129,
+          "chin": 0.217,
+          "brow": 0.83,
+          "nose": 1.39,
+          "mouth": 0.109
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 393, ch. 399 ; teintes de rendu choisies.",
+        "skin": "0xd9b194",
+        "hair": "0xa89379",
+        "attire": {
+          "jacket": "0xc0b4a6",
+          "shirt": "0xe4d9c7",
+          "trousers": "0x8c8073",
+          "accent": "0x7a7063"
+        }
+      },
+      "attire": "civilian",
+      "signatures": ["lips-full"],
+      "verified": {
+        "chapterIds": ["ch-393", "ch-399"],
+        "status": "confirmed"
+      },
+      "note": "Visage plein, frange séparée au milieu, lèvres épaisses et chemise claire lâche à pointes de col."
+    },
+    {
+      "id": "bille",
+      "body": {
+        "build": "average",
+        "height": 1.025,
+        "frame": "adult",
+        "shoulders": 1.02,
+        "proportions": {
+          "posture": "neutral"
+        }
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "spiked",
+        "expression": "neutral",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.159,
+          "jaw": 0.106,
+          "chin": 0.219,
+          "brow": 1.12,
+          "nose": 1.09,
+          "mouth": 0.076
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 393, ch. 394 ; teintes de rendu choisies.",
+        "skin": "0xd1a88a",
+        "hair": "0xa99b81",
+        "attire": {
+          "jacket": "0xc4baaa",
+          "shirt": "0xe3d9ca",
+          "trousers": "0x8d877f",
+          "accent": "0x7b7468"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-393", "ch-394"],
+        "status": "confirmed"
+      },
+      "note": "Cheveux courts en relief hérissé, yeux ronds, tee-shirt clair à encolure ronde et pantalon de travail."
+    },
+    {
+      "id": "matvere",
+      "body": {
+        "build": "slim",
+        "height": 1.015,
+        "frame": "adult",
+        "shoulders": 0.92,
+        "proportions": {
+          "posture": "neutral"
+        }
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "curtain",
+        "expression": "neutral",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.153,
+          "jaw": 0.086,
+          "chin": 0.208,
+          "brow": 0.68,
+          "nose": 1.07,
+          "mouth": 0.091
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 393, ch. 394 ; teintes de rendu choisies.",
+        "skin": "0xdbb79b",
+        "hair": "0xb9aa82",
+        "attire": {
+          "jacket": "0xaaa093",
+          "shirt": "0xe1d8c7",
+          "trousers": "0x92897e",
+          "accent": "0x665f59"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-393", "ch-394"],
+        "status": "confirmed"
+      },
+      "note": "Grandes mèches claires de part et d’autre de la raie, regard rond, sourire et veste zippée à col fermé, mouchetée dans la planche."
+    },
+    {
+      "id": "connelly",
+      "body": {
+        "build": "average",
+        "height": 1.045,
+        "frame": "adult",
+        "shoulders": 1.055,
+        "proportions": {
+          "posture": "upright"
+        }
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "short",
+        "expression": "severe",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.169,
+          "jaw": 0.128,
+          "chin": 0.218,
+          "brow": 1.72,
+          "nose": 1.41,
+          "mouth": 0.078
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 393, ch. 394 ; teintes de rendu choisies.",
+        "skin": "0xc59b79",
+        "hair": "0x302a27",
+        "attire": {
+          "jacket": "0x5f5f62",
+          "shirt": "0xe2d9ca",
+          "trousers": "0x545458",
+          "accent": "0x7a6961"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-393", "ch-394"],
+        "status": "confirmed"
+      },
+      "note": "Coiffe plate à visière, forts sourcils droits, veste claire à rayures verticales, chemise et cravate à motif."
+    },
+    {
+      "id": "gateaume",
+      "body": {
+        "build": "average",
+        "height": 0.995,
+        "frame": "adult",
+        "shoulders": 0.94,
+        "proportions": {
+          "posture": "stooped"
+        }
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "slicked-back",
+        "expression": "anxious",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.162,
+          "jaw": 0.101,
+          "chin": 0.246,
+          "brow": 1.38,
+          "nose": 1.79,
+          "mouth": 0.109
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 393, ch. 394, ch. 398 ; teintes de rendu choisies.",
+        "skin": "0xbe9e83",
+        "hair": "0x94877b",
+        "attire": {
+          "jacket": "0x8f8375",
+          "shirt": "0x454344",
+          "trousers": "0xa0988b",
+          "accent": "0x685e54"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-393", "ch-394", "ch-398"],
+        "status": "confirmed"
+      },
+      "note": "Vieil homme au front ridé, yeux très ronds et cheveux rejetés en arrière. Haut boutonné à col contrasté. Les scènes de la cabine 3101 montrent le double qui reprend cette silhouette."
+    },
+    {
+      "id": "orarge",
+      "body": {
+        "build": "average",
+        "height": 1.025,
+        "frame": "adult",
+        "shoulders": 0.99,
+        "proportions": {
+          "posture": "neutral"
+        }
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "ponytail",
+        "expression": "neutral",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.169,
+          "jaw": 0.112,
+          "chin": 0.215,
+          "brow": 0.96,
+          "nose": 1.17,
+          "mouth": 0.103
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 394, ch. 399 ; teintes de rendu choisies.",
+        "skin": "0xcf9f7b",
+        "hair": "0xa09174",
+        "attire": {
+          "jacket": "0x37373a",
+          "shirt": "0xc4baa2",
+          "trousers": "0x9b9285",
+          "accent": "0x716354"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-394", "ch-399"],
+        "status": "confirmed"
+      },
+      "note": "Bandeau autour du front, petite queue basse, yeux ronds, gilet à losanges au-dessus d’un haut sombre."
+    },
+    {
+      "id": "montblanc-toto",
+      "body": {
+        "build": "slim",
+        "height": 0.975,
+        "frame": "adult",
+        "shoulders": 0.87,
+        "proportions": {
+          "posture": "neutral"
+        }
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "ponytail",
+        "expression": "neutral",
+        "features": {
+          "eyes": "almond",
+          "cheek": 0.157,
+          "jaw": 0.089,
+          "chin": 0.187,
+          "brow": 0.62,
+          "nose": 0.92,
+          "mouth": 0.071
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 394, ch. 399 ; teintes de rendu choisies.",
+        "skin": "0xdab299",
+        "hair": "0xb99d77",
+        "attire": {
+          "jacket": "0x5c524a",
+          "shirt": "0xd4c7b4",
+          "trousers": "0x443c38",
+          "accent": "0x9a8978"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-394", "ch-399"],
+        "status": "confirmed"
+      },
+      "note": "Cheveux plaqués en arrière et attachés bas en mèches recourbées. Tablier clair de la buanderie sur tenue sombre."
+    },
+    {
+      "id": "chiffon-toto",
+      "body": {
+        "build": "slim",
+        "height": 0.955,
+        "frame": "adult",
+        "shoulders": 0.9,
+        "proportions": {
+          "posture": "neutral"
+        }
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "bob",
+        "expression": "neutral",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.164,
+          "jaw": 0.077,
+          "chin": 0.186,
+          "brow": 0.66,
+          "nose": 0.83,
+          "mouth": 0.064
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 394, ch. 399 ; teintes de rendu choisies.",
+        "skin": "0xe2bfa4",
+        "hair": "0xb7a588",
+        "attire": {
+          "jacket": "0xc5b7a7",
+          "shirt": "0xe7dfd3",
+          "trousers": "0x746a63",
+          "accent": "0x968477"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-394", "ch-399"],
+        "status": "partial"
+      },
+      "note": "Frange courte, cheveux au niveau de la mâchoire, tenue de travail claire à manches courtes. Les détails du dos restent peu documentés."
+    },
+    {
+      "id": "sodom",
+      "body": {
+        "build": "average",
+        "height": 1.085,
+        "frame": "adult",
+        "shoulders": 1.025,
+        "proportions": {
+          "posture": "relaxed"
+        }
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "long",
+        "expression": "anxious",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.167,
+          "jaw": 0.101,
+          "chin": 0.236,
+          "brow": 1.35,
+          "nose": 1.47,
+          "mouth": 0.099
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 394 ; teintes de rendu choisies.",
+        "skin": "0xc49e85",
+        "hair": "0x9f886c",
+        "attire": {
+          "jacket": "0x958c80",
+          "shirt": "0xd0c7b6",
+          "trousers": "0x6e655b",
+          "accent": "0x5b5149"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["goatee", "moustache"],
+      "verified": {
+        "chapterIds": ["ch-394"],
+        "status": "confirmed"
+      },
+      "note": "Cheveux ondulés aux épaules, grands yeux écarquillés, moustache, petit bouc et tenue à larges revers."
+    },
+    {
+      "id": "souffle",
+      "body": {
+        "build": "slim",
+        "height": 0.97,
+        "frame": "adult",
+        "shoulders": 0.91,
+        "proportions": {
+          "posture": "upright"
+        }
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "bob",
+        "expression": "severe",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.155,
+          "jaw": 0.086,
+          "chin": 0.228,
+          "brow": 1.08,
+          "nose": 1.2,
+          "mouth": 0.069
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 394, ch. 399 ; teintes de rendu choisies.",
+        "skin": "0xdfbca4",
+        "hair": "0xb7a786",
+        "attire": {
+          "jacket": "0x352f32",
+          "shirt": "0xd7cbbd",
+          "trousers": "0x3a3438",
+          "accent": "0x82746c"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-394", "ch-399"],
+        "status": "confirmed"
+      },
+      "note": "Carré clair droit à frange irrégulière, paupières étroites, haut sombre sans manches sur col clair."
+    },
+    {
+      "id": "notre",
+      "body": {
+        "build": "broad",
+        "height": 1.055,
+        "frame": "adult",
+        "shoulders": 1.1,
+        "proportions": {
+          "posture": "upright"
+        }
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "slicked-back",
+        "expression": "severe",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.18,
+          "jaw": 0.139,
+          "chin": 0.214,
+          "brow": 1.85,
+          "nose": 1.46,
+          "mouth": 0.104
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 394 ; teintes de rendu choisies.",
+        "skin": "0xc59e7e",
+        "hair": "0x302827",
+        "attire": {
+          "jacket": "0x9c9180",
+          "shirt": "0xd3c4ad",
+          "trousers": "0x7b746b",
+          "accent": "0x60574d"
+        }
+      },
+      "attire": "civilian",
+      "signatures": ["mutton-chops"],
+      "verified": {
+        "chapterIds": ["ch-394"],
+        "status": "confirmed"
+      },
+      "note": "Coupe noire courte rabattue sur le côté, sourcils épais, rouflaquettes et tissu ample drapé autour du cou."
+    },
+    {
+      "id": "otocin",
+      "body": {
+        "build": "slim",
+        "height": 1.03,
+        "frame": "adult",
+        "shoulders": 0.92,
+        "proportions": {
+          "posture": "upright"
+        }
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "swept",
+        "expression": "anxious",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.158,
+          "jaw": 0.093,
+          "chin": 0.216,
+          "brow": 1.16,
+          "nose": 1.17,
+          "mouth": 0.076
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 394, ch. 395 ; teintes de rendu choisies.",
+        "skin": "0xd6ad90",
+        "hair": "0xa99a78",
+        "attire": {
+          "jacket": "0xa6a39a",
+          "shirt": "0xd7d4c9",
+          "trousers": "0x959389",
+          "accent": "0x5e5c54"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-394", "ch-395"],
+        "status": "confirmed"
+      },
+      "note": "Mèche claire en biais, yeux ouverts, béret et uniforme de soldat à col montant."
+    },
+    {
+      "id": "momolly",
+      "body": {
+        "build": "slim",
+        "height": 0.985,
+        "frame": "adult",
+        "shoulders": 0.92,
+        "proportions": {
+          "posture": "upright"
+        }
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "bob",
+        "expression": "severe",
+        "features": {
+          "eyes": "almond",
+          "cheek": 0.153,
+          "jaw": 0.088,
+          "chin": 0.203,
+          "brow": 0.79,
+          "nose": 0.99,
+          "mouth": 0.064
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 394, ch. 395 ; teintes de rendu choisies.",
+        "skin": "0xdcc0a7",
+        "hair": "0x252227",
+        "attire": {
+          "jacket": "0xa8a49a",
+          "shirt": "0xded9ce",
+          "trousers": "0x928e86",
+          "accent": "0x5c5951"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-394", "ch-395"],
+        "status": "confirmed"
+      },
+      "note": "Carré noir, frange sur un œil et regard fermé, béret et uniforme de soldat à col montant."
+    },
+    {
+      "id": "gipper",
+      "body": {
+        "build": "broad",
+        "height": 1.125,
+        "frame": "adult",
+        "shoulders": 1.16,
+        "proportions": {
+          "posture": "upright"
+        }
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "shaved",
+        "expression": "hostile",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.197,
+          "jaw": 0.158,
+          "chin": 0.216,
+          "brow": 2.25,
+          "nose": 1.8,
+          "mouth": 0.103
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 394 ; teintes de rendu choisies.",
+        "skin": "0xaa8269",
+        "hair": "0x504438",
+        "attire": {
+          "jacket": "0x9a968b",
+          "shirt": "0xccc7ba",
+          "trousers": "0x8a867b",
+          "accent": "0x555148"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-394"],
+        "status": "confirmed"
+      },
+      "note": "Crâne rasé à ligne frontale ondulée, lourdes arcades, nez anguleux, cou et épaules massifs. Uniforme clair à col haut."
+    },
+    {
+      "id": "misha-hao",
+      "body": {
+        "build": "slim",
+        "height": 0.985,
+        "frame": "adult",
+        "shoulders": 0.88,
+        "proportions": {
+          "posture": "neutral"
+        }
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "bob",
+        "expression": "tired",
+        "features": {
+          "eyes": "doll",
+          "cheek": 0.161,
+          "jaw": 0.093,
+          "chin": 0.193,
+          "brow": 0.56,
+          "nose": 0.88,
+          "mouth": 0.068
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 392 ; teintes de rendu choisies.",
+        "skin": "0xb9ad9f",
+        "hair": "0x61574e",
+        "attire": {
+          "jacket": "0x2c2b2b",
+          "shirt": "0x665e58",
+          "trousers": "0x363337",
+          "accent": "0x81766e"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-392"],
+        "status": "confirmed"
+      },
+      "note": "Carré à frange, yeux cerclés et marque au front. Tenue sombre et manches longues de sa manifestation de Nen post mortem."
+    },
+    {
+      "id": "tsudonke",
+      "body": {
+        "build": "average",
+        "height": 1.005,
+        "frame": "adult",
+        "shoulders": 1.07,
+        "proportions": {
+          "posture": "neutral"
+        }
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "military",
+        "expression": "severe",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.174,
+          "jaw": 0.138,
+          "chin": 0.219,
+          "brow": 1.37,
+          "nose": 1.36,
+          "mouth": 0.083
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 392, ch. 393 ; teintes de rendu choisies.",
+        "skin": "0xd2a98a",
+        "hair": "0x988769",
+        "attire": {
+          "jacket": "0xbdb4a6",
+          "shirt": "0xc9bba9",
+          "trousers": "0x665c56",
+          "accent": "0x302e31"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-392", "ch-393"],
+        "status": "confirmed"
+      },
+      "note": "Coupe claire à sommet plat, cheveux ras près des tempes, taches de rousseur, veste claire à empiècements sombres et col en V."
+    },
+    {
+      "id": "sun-bin",
+      "body": {
+        "build": "average",
+        "height": 1.02,
+        "frame": "adult",
+        "shoulders": 0.99,
+        "proportions": {
+          "posture": "neutral"
+        }
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "short",
+        "expression": "neutral",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.157,
+          "jaw": 0.1,
+          "chin": 0.222,
+          "brow": 0.83,
+          "nose": 1.19,
+          "mouth": 0.069
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 392 ; teintes de rendu choisies.",
+        "skin": "0xcca787",
+        "hair": "0xb4a784",
+        "attire": {
+          "jacket": "0x96908a",
+          "shirt": "0xc7beb0",
+          "trousers": "0x746d67",
+          "accent": "0x565551"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-392"],
+        "status": "partial"
+      },
+      "note": "Cheveux clairs et fins, yeux obliques. La coupe complète du vêtement reste approximative dans le plan de groupe."
+    },
+    {
+      "id": "vic",
+      "body": {
+        "build": "average",
+        "height": 1.035,
+        "frame": "adult",
+        "shoulders": 1.03,
+        "proportions": {
+          "posture": "neutral"
+        }
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "shaved",
+        "expression": "severe",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.176,
+          "jaw": 0.13,
+          "chin": 0.225,
+          "brow": 1.48,
+          "nose": 1.44,
+          "mouth": 0.093
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 392 ; teintes de rendu choisies.",
+        "skin": "0xbd977d",
+        "hair": "0x554944",
+        "attire": {
+          "jacket": "0x817970",
+          "shirt": "0xb8afa1",
+          "trousers": "0x57534f",
+          "accent": "0x353436"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-392"],
+        "status": "partial"
+      },
+      "note": "Tempes et nuque rasées et petite crête centrée, veste à col sombre près de la porte du bureau. Les détails du bas de la tenue sont peu visibles."
+    },
+    {
+      "id": "maizan",
+      "body": {
+        "build": "broad",
+        "height": 1.045,
+        "frame": "adult",
+        "shoulders": 1.075,
+        "proportions": {
+          "posture": "upright"
+        }
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "military",
+        "expression": "severe",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.177,
+          "jaw": 0.136,
+          "chin": 0.214,
+          "brow": 1.47,
+          "nose": 1.45,
+          "mouth": 0.099
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 392, ch. 393 ; teintes de rendu choisies.",
+        "skin": "0xb38d71",
+        "hair": "0x45372e",
+        "attire": {
+          "jacket": "0xa9a192",
+          "shirt": "0xd9d1c2",
+          "trousers": "0x8b8377",
+          "accent": "0x55524d"
+        }
+      },
+      "attire": "uniform",
+      "signatures": ["moustache"],
+      "verified": {
+        "chapterIds": ["ch-392", "ch-393"],
+        "status": "confirmed"
+      },
+      "note": "Casque sombre à petit rebord, moustache épaisse et uniforme militaire clair à col haut."
+    },
+    {
+      "id": "hanal",
+      "body": {
+        "build": "slim",
+        "height": 1.21,
+        "frame": "adult",
+        "shoulders": 1.02,
+        "proportions": {
+          "posture": "upright"
+        }
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "slicked-back",
+        "expression": "anxious",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.158,
+          "jaw": 0.098,
+          "chin": 0.226,
+          "brow": 0.9,
+          "nose": 1.5,
+          "mouth": 0.098
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 392 ; teintes de rendu choisies.",
+        "skin": "0x79563f",
+        "hair": "0x292321",
+        "attire": {
+          "jacket": "0xa49880",
+          "shirt": "0xe1d7bc",
+          "trousers": "0x635c53",
+          "accent": "0x5e554a"
+        }
+      },
+      "attire": "civilian",
+      "signatures": ["lips-full"],
+      "verified": {
+        "chapterIds": ["ch-392"],
+        "status": "confirmed"
+      },
+      "note": "Très grand passager à peau foncée, cheveux courts, chemise à carreaux serrés et grand col à pointes."
+    },
+    {
+      "id": "tassi",
+      "body": {
+        "build": "broad",
+        "height": 0.91,
+        "frame": "adult",
+        "shoulders": 1.035,
+        "proportions": { "torso": 0.96, "limbs": 0.88, "hips": 1.15, "posture": "relaxed" }
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "bowl",
+        "expression": "anxious",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.192,
+          "jaw": 0.139,
+          "chin": 0.17,
+          "brow": 1.19,
+          "nose": 1.52,
+          "mouth": 0.124
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 394 ; teintes de rendu choisies.",
+        "skin": "0xcf9e7f",
+        "hair": "0x544438",
+        "attire": {
+          "jacket": "0xb2a99d",
+          "shirt": "0xd8cdbc",
+          "trousers": "0x9c9083",
+          "accent": "0x5f574e"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-394"],
+        "status": "confirmed"
+      },
+      "note": "Adulte petit et trapu, cheveux en coupe ronde, gilet zippé à col rond et pantalon court d’apparence ample dans la cabine."
+    },
+    {
+      "id": "loberry",
+      "body": {
+        "build": "broad",
+        "height": 0.93,
+        "frame": "adult",
+        "shoulders": 1.03,
+        "proportions": { "hips": 1.12, "limbs": 0.93 }
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "bob",
+        "expression": "anxious",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.195,
+          "jaw": 0.145,
+          "chin": 0.195,
+          "brow": 0.55,
+          "nose": 1.12,
+          "mouth": 0.105,
+          "neck": 0.057
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 369, ch. 370 ; teintes de rendu choisies.",
+        "skin": "0xe0b99d",
+        "hair": "0x222026",
+        "attire": {
+          "jacket": "0x292833",
+          "shirt": "0xf0eae0",
+          "trousers": "0x292833",
+          "accent": "0x282731"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-369", "ch-370"], "status": "partial" },
+      "note": "Visage large, front dégagé par un carré foncé plaqué sur les côtés, sourcils fins et robe de service à col clair."
+    },
+    {
+      "id": "yuri",
+      "body": {
+        "build": "average",
+        "height": 0.96,
+        "frame": "adult",
+        "shoulders": 0.95
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "bob",
+        "expression": "neutral",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.155,
+          "jaw": 0.095,
+          "chin": 0.18,
+          "nose": 0.88,
+          "mouth": 0.067
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 369, ch. 370 ; teintes de rendu choisies.",
+        "skin": "0xe3bda5",
+        "hair": "0x251f23",
+        "attire": {
+          "jacket": "0x292833",
+          "shirt": "0xf0eae0",
+          "trousers": "0x292833",
+          "accent": "0x282731"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-369", "ch-370"], "status": "partial" },
+      "note": "Carré sombre aux pointes relevées, deux barrettes claires et petits yeux. Même uniforme de service que Loberry."
+    },
+    {
+      "id": "illardia",
+      "body": {
+        "build": "slim",
+        "height": 0.99,
+        "frame": "adult",
+        "shoulders": 0.94
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "curtain",
+        "expression": "neutral",
+        "features": {
+          "eyes": "almond",
+          "cheek": 0.149,
+          "jaw": 0.084,
+          "chin": 0.2,
+          "brow": 0.72,
+          "mouth": 0.065
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 369, ch. 370 ; teintes de rendu choisies.",
+        "skin": "0xe8c7aa",
+        "hair": "0xcab38a",
+        "attire": {
+          "jacket": "0x292833",
+          "shirt": "0xf0eae0",
+          "trousers": "0x292833",
+          "accent": "0x282731"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-369", "ch-370"], "status": "partial" },
+      "note": "Cheveux clairs séparés au milieu et coupés à hauteur des oreilles. Robe de service."
+    },
+    {
+      "id": "ladiolus",
+      "body": {
+        "build": "average",
+        "height": 1.01,
+        "frame": "adult",
+        "shoulders": 0.96
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "bun",
+        "expression": "neutral",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.158,
+          "jaw": 0.132,
+          "chin": 0.244,
+          "nose": 0.8,
+          "mouth": 0.076
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 369, ch. 388 ; teintes de rendu choisies.",
+        "skin": "0xd5aa8f",
+        "hair": "0x2c2525",
+        "attire": {
+          "jacket": "0x292833",
+          "shirt": "0xf0eae0",
+          "trousers": "0x292833",
+          "accent": "0x282731"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-369", "ch-388"], "status": "partial" },
+      "note": "Visage oblong à la mâchoire carrée, nez court et deux chignons bas dans la nuque. Robe de service."
+    },
+    {
+      "id": "barrigen",
+      "body": {
+        "build": "broad",
+        "height": 1.02,
+        "frame": "adult",
+        "shoulders": 1.11
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "military",
+        "expression": "neutral",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.176,
+          "jaw": 0.148,
+          "chin": 0.224,
+          "nose": 1.48,
+          "mouth": 0.098,
+          "neck": 0.081
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 369, ch. 370 ; teintes de rendu choisies.",
+        "skin": "0xd2a184",
+        "hair": "0x3a302b",
+        "attire": {
+          "jacket": "0x24252b",
+          "shirt": "0xf0eae0",
+          "trousers": "0x262730",
+          "accent": "0x383942"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-369", "ch-370"], "status": "partial" },
+      "note": "Garde de Marayam en costume sombre et cravate. Le profil posé et le gabarit servent aussi au modèle couché de l’enquête."
+    },
+    {
+      "id": "belerainte",
+      "body": {
+        "build": "broad",
+        "height": 1.06,
+        "frame": "adult",
+        "shoulders": 1.09
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "slicked-back",
+        "expression": "neutral",
+        "features": {
+          "eyes": "almond",
+          "cheek": 0.176,
+          "jaw": 0.145,
+          "chin": 0.236,
+          "brow": 1.58,
+          "nose": 1.7,
+          "mouth": 0.102,
+          "neck": 0.068
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 369, ch. 370 ; teintes de rendu choisies.",
+        "skin": "0xe1ba99",
+        "hair": "0xc6ad86",
+        "attire": {
+          "jacket": "0x24252b",
+          "shirt": "0xf0eae0",
+          "trousers": "0x262730",
+          "accent": "0x383942"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-369", "ch-370"], "status": "partial" },
+      "note": "Cheveux clairs ramenés vers l’arrière, cils marqués, nez proéminent et barbe sombre sous le menton. Broche H au revers du costume."
+    },
+    {
+      "id": "myuhan",
+      "body": {
+        "build": "broad",
+        "height": 1.04,
+        "frame": "adult",
+        "shoulders": 1.12
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "spiked",
+        "expression": "hostile",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.173,
+          "jaw": 0.144,
+          "chin": 0.23,
+          "brow": 0.64,
+          "nose": 1.77,
+          "mouth": 0.101,
+          "neck": 0.084
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 369, ch. 370, ch. 376 ; teintes de rendu choisies.",
+        "skin": "0xc99373",
+        "hair": "0x272327",
+        "attire": {
+          "jacket": "0x24252b",
+          "shirt": "0xf0eae0",
+          "trousers": "0x262730",
+          "accent": "0x383942"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-369", "ch-370", "ch-376"],
+        "status": "partial"
+      },
+      "note": "Coupe courte hérissée, petits sourcils et nez saillant. Costume sombre de garde."
+    },
+    {
+      "id": "danjin",
+      "body": {
+        "build": "broad",
+        "height": 1.05,
+        "frame": "adult",
+        "shoulders": 1.14
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "short",
+        "expression": "severe",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.18,
+          "jaw": 0.154,
+          "chin": 0.226,
+          "nose": 1.35,
+          "mouth": 0.123,
+          "neck": 0.085
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 369, ch. 370 ; teintes de rendu choisies.",
+        "skin": "0xa9785d",
+        "hair": "0x211e23",
+        "attire": {
+          "jacket": "0x24252b",
+          "shirt": "0xf0eae0",
+          "trousers": "0x262730",
+          "accent": "0x383942"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["lips-full"],
+      "verified": { "chapterIds": ["ch-369", "ch-370"], "status": "partial" },
+      "note": "Crâne rasé avec une touffe cylindrique, favoris prolongés vers la bouche et lèvres épaisses. Costume sombre de garde."
+    },
+    {
+      "id": "satobi",
+      "body": {
+        "build": "average",
+        "height": 1.01,
+        "frame": "adult",
+        "shoulders": 1.035
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "short",
+        "expression": "severe",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.165,
+          "jaw": 0.139,
+          "chin": 0.231,
+          "brow": 1.4,
+          "nose": 1.36,
+          "mouth": 0.086
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 369, ch. 376 ; teintes de rendu choisies.",
+        "skin": "0xd2a687",
+        "hair": "0xc9b18d",
+        "attire": {
+          "jacket": "0x24252b",
+          "shirt": "0xf0eae0",
+          "trousers": "0x262730",
+          "accent": "0x383942"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-369", "ch-376"], "status": "partial" },
+      "note": "Cheveux clairs en deux pointes latérales, sourcils arqués, menton carré et rides marquées."
+    },
+    {
+      "id": "mushaho",
+      "body": {
+        "build": "average",
+        "height": 1.03,
+        "frame": "adult",
+        "shoulders": 1.04
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "military",
+        "expression": "neutral",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.171,
+          "jaw": 0.105,
+          "chin": 0.252,
+          "brow": 0,
+          "nose": 1.29,
+          "mouth": 0.078
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 362, ch. 369 ; teintes de rendu choisies.",
+        "skin": "0xe1bba1",
+        "hair": "0xcdb897",
+        "attire": {
+          "jacket": "0x24252b",
+          "shirt": "0xf0eae0",
+          "trousers": "0x262730",
+          "accent": "0x383942"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-362", "ch-369"], "status": "partial" },
+      "note": "Front bombé, sourcils effacés, menton proéminent et cheveux courts clairs."
+    },
+    {
+      "id": "tenftory",
+      "body": {
+        "build": "broad",
+        "height": 0.99,
+        "frame": "adult",
+        "shoulders": 1.15,
+        "proportions": { "hips": 1.11, "limbs": 0.97 }
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "short",
+        "expression": "neutral",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.194,
+          "jaw": 0.153,
+          "chin": 0.203,
+          "nose": 1.48,
+          "mouth": 0.118,
+          "neck": 0.094
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 369, ch. 370 ; teintes de rendu choisies.",
+        "skin": "0xd0a183",
+        "hair": "0xc8b595",
+        "attire": {
+          "jacket": "0x24252b",
+          "shirt": "0xf0eae0",
+          "trousers": "0x262730",
+          "accent": "0x383942"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["glasses-rectangular", "lips-full"],
+      "verified": { "chapterIds": ["ch-369", "ch-370"], "status": "partial" },
+      "note": "Carrure large, monture rectangulaire, crête claire sur côtés foncés et barbe mince le long de la mâchoire."
+    },
+    {
+      "id": "hashito",
+      "body": {
+        "build": "average",
+        "height": 1.04,
+        "frame": "adult",
+        "shoulders": 1.04
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "pompadour",
+        "expression": "neutral",
+        "features": {
+          "eyes": "almond",
+          "cheek": 0.155,
+          "jaw": 0.111,
+          "chin": 0.227,
+          "nose": 1.27,
+          "mouth": 0.072
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 366, ch. 371, ch. 376 ; teintes de rendu choisies.",
+        "skin": "0xdfb497",
+        "hair": "0xc9b38d",
+        "attire": {
+          "jacket": "0x24252b",
+          "shirt": "0xf0eae0",
+          "trousers": "0x262730",
+          "accent": "0x383942"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-366", "ch-371", "ch-376"],
+        "status": "partial"
+      },
+      "note": "Chevelure claire volumineuse et soigneusement peignée. Costume sombre des gardes de Zhang Lei."
+    },
+    {
+      "id": "slakka",
+      "body": {
+        "build": "average",
+        "height": 1.03,
+        "frame": "adult",
+        "shoulders": 1.05
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "spiked",
+        "expression": "severe",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.163,
+          "jaw": 0.132,
+          "chin": 0.216,
+          "brow": 1.93,
+          "nose": 1.67,
+          "mouth": 0.082
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 365, ch. 376 ; teintes de rendu choisies.",
+        "skin": "0xd6a584",
+        "hair": "0xcab28b",
+        "attire": {
+          "jacket": "0x24252b",
+          "shirt": "0xf0eae0",
+          "trousers": "0x262730",
+          "accent": "0x383942"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-365", "ch-376"], "status": "partial" },
+      "note": "Sommet clair hérissé sur des côtés foncés, sourcils épais relevés et nez large."
+    },
+    {
+      "id": "yuhirai",
+      "body": {
+        "build": "slim",
+        "height": 1.06,
+        "frame": "adult",
+        "shoulders": 0.96
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "military",
+        "expression": "severe",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.148,
+          "jaw": 0.097,
+          "chin": 0.248,
+          "brow": 1.27,
+          "nose": 1.52,
+          "mouth": 0.071
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 362, ch. 369, ch. 370 ; teintes de rendu choisies.",
+        "skin": "0xd5a384",
+        "hair": "0x221f23",
+        "attire": {
+          "jacket": "0x24252b",
+          "shirt": "0xf0eae0",
+          "trousers": "0x262730",
+          "accent": "0x383942"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-362", "ch-369", "ch-370"],
+        "status": "partial"
+      },
+      "note": "Silhouette élancée, yeux étroits et coupe noire à plateau. Costume sombre."
+    },
+    {
+      "id": "shedule",
+      "body": {
+        "build": "slim",
+        "height": 0.99,
+        "frame": "adult",
+        "shoulders": 0.94
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "short",
+        "expression": "neutral",
+        "features": {
+          "eyes": "round",
+          "cheek": 0.156,
+          "jaw": 0.101,
+          "chin": 0.196,
+          "brow": 0.75,
+          "nose": 0.9,
+          "mouth": 0.064
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 362, ch. 369, ch. 370 ; teintes de rendu choisies.",
+        "skin": "0xe5bba0",
+        "hair": "0xcbb48b",
+        "attire": {
+          "jacket": "0x24252b",
+          "shirt": "0xf0eae0",
+          "trousers": "0x262730",
+          "accent": "0x383942"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["glasses-round"],
+      "verified": {
+        "chapterIds": ["ch-362", "ch-369", "ch-370"],
+        "status": "partial"
+      },
+      "note": "Front large, cheveux clairs courts, lunettes et taches de rousseur."
+    },
+    {
+      "id": "woody",
+      "body": {
+        "build": "slim",
+        "height": 1.0,
+        "frame": "adult",
+        "shoulders": 0.99
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "spiked",
+        "expression": "neutral",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.148,
+          "jaw": 0.1,
+          "chin": 0.204,
+          "brow": 0.58,
+          "nose": 0.81,
+          "mouth": 0.071
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches monochromes ch. 358, ch. 359 ; teintes de rendu choisies.",
+        "skin": "0xd8b099",
+        "hair": "0xbcaa88",
+        "attire": {
+          "jacket": "0x24252b",
+          "shirt": "0xf0eae0",
+          "trousers": "0x262730",
+          "accent": "0x383942"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-358", "ch-359"], "status": "partial" },
+      "note": "Visage ovale, petits yeux et cheveux clairs ébouriffés au sommet. La provenance décrit son apparence, indépendamment de l’attribution de sa mort."
     },
     {
       "id": "seiko-hui-guo-rou",
-      "reason": "Sixième reine. Idem. Sa présence dans l'arc passe entièrement par un garde qui espionne pour elle."
-    },
-    {
-      "id": "keni-wang",
-      "reason": "Heil-Ly. Le catalogue le tient comme nom dans l'organigramme ; aucune planche recensée ne lui donne de silhouette."
-    },
+      "body": { "build": "average", "height": 1.01, "frame": "adult", "shoulders": 0.97 },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "curly",
+        "expression": "severe",
+        "features": { "eyes": "almond", "cheek": 0.152, "jaw": 0.088, "chin": 0.215, "brow": 0.85 }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Portrait ch. 374 et apparition ch. 381 ; palette de cour choisie.",
+        "skin": "0xe6c2a9",
+        "hair": "0xd4bc8f",
+        "attire": {
+          "jacket": "0x4f3d59",
+          "shirt": "0xe8dfd1",
+          "trousers": "0x44354b",
+          "accent": "0xb99a73"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-374", "ch-381"], "status": "partial" },
+      "note": "Sixième reine aux cheveux courts et clairs, bouclés vers les côtés. La palette et la coupe précise du vêtement de cour sont des choix de rendu."
+    }
+  ],
+  "deferred": [
     {
       "id": "pyon",
       "reason": "Statué en phase 0 : pyon et piyon ne sont pas un doublon. Le catalogue porte deux zodiaques distincts, deux premières apparitions, deux postes, deux salles. L'annexe A d'ADR-005 ne rédige de notice pour ni l'un ni l'autre — sa liste des douze Hunters à bord ne les nomme pas — donc aucun des deux n'est déclaré, et le motif est l'absence de notice plutôt que l'absence de planche."

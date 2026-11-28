@@ -210,8 +210,9 @@ const REGION_LOCATION_SLUGS: Record<string, string | null> = {
   'tier-5-hangar-entrance': 'tier-5-hangar-entrance',
 }
 
-/// Prince apartments are drawn from one shared asset, so their region ids carry
-/// the room number instead of appearing in the table above.
+/// Prince apartments share one blueprint-backed renderer, so their region ids
+/// carry the room number instead of appearing in the table above. The renderer
+/// selects one of fourteen distinct partitions; it does not reuse one floor plan.
 export function resolveRegionLocationSlug(regionId: string | null): string | null {
   if (!regionId) return null
   const princeRoom = regionId.match(/room-(10(?:0[1-9]|1[0-4]))$/)

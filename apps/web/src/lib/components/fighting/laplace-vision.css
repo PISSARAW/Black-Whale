@@ -1,0 +1,16 @@
+.future-vision-screen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  backdrop-filter: saturate(0.12) contrast(1.35);
+  background:
+    repeating-linear-gradient(
+      0deg,
+      #090c1a18 0px,
+      #090c1a18 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    radial-gradient(ellipse at 50% 48%, transparent 24%, #04142d55 68%, #02050ed9 100%);
+  box-shadow: inset 0 0 80px #abc5e42b;
+}

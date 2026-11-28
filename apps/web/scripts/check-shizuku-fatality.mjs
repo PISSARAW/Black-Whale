@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { fileURLToPath } from 'node:url'
 import { createServer } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
+import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { chromium } from 'playwright'
@@ -20,6 +21,7 @@ const server = await createServer({
       'demos/fighting-showcase/shizuku-fatality.html',
       'ui-tests/fighting-victory/index.html',
     ],
+    holdUntilCrawlEnd: false,
   },
   resolve: { alias: { $lib: path.join(root, 'apps/web/src/lib') } },
   server: { host: '127.0.0.1', port: 0, hmr: false, watch: null },
@@ -27,11 +29,17 @@ const server = await createServer({
   logLevel: 'error',
 })
 await server.listen()
-const browser = await chromium.launch({ headless: true })
+const chrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+const browser = await chromium.launch({
+  executablePath: existsSync(chrome) ? chrome : undefined,
+  headless: true,
+  args: ['--enable-unsafe-swiftshader'],
+})
 const errors = [],
   results = []
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })
+  page.setDefaultTimeout(120_000)
   page.on('pageerror', (error) => errors.push(error.message))
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text())
@@ -46,6 +54,7 @@ try {
     await page.clock.resume()
     await page.goto(
       `${base}/demos/fighting-showcase/shizuku-fatality.html?${new URLSearchParams(options)}`,
+      { waitUntil: 'domcontentloaded' },
     )
     await page.waitForFunction(() => window.fightingShowcase?.ready())
     await page.clock.pauseAt(new Date(await page.evaluate(() => Date.now() + 10000)))
@@ -56,9 +65,13 @@ try {
     assert.equal(report.stageId, options.stage)
     assert.ok(report.wounds > 0)
     assert.equal(report.bloodDeath, true)
-    assert.equal(report.victory.deathFrame, 282)
-    assert.equal(report.victory.lastObjectFrame, 444)
-    for (const age of [84, 210, 282, 366, 402, 444, 498, 570]) {
+    assert.equal(report.frameCount, 540)
+    assert.equal(report.duration, 9)
+    assert.equal(report.victory.shoulderFrame, 291)
+    assert.equal(report.victory.deathFrame, 309)
+    assert.equal(report.victory.nozzleContactFrame, 380)
+    assert.equal(report.victory.lastObjectFrame, 450)
+    for (const age of [30, 90, 118, 140, 238, 291, 310, 365, 380, 398, 451, 472, 518]) {
       await page.evaluate((age) => window.fightingShowcase.seek(age), age)
       await page.clock.runFor(50)
       assert.equal(
@@ -78,7 +91,7 @@ try {
     process.stdout.write(`Verified Shizuku: ${options.target}, ${options.stage}, ${options.side}\n`)
   }
   await page.clock.resume()
-  await page.goto(`${base}/ui-tests/fighting-victory/`)
+  await page.goto(`${base}/ui-tests/fighting-victory/`, { waitUntil: 'domcontentloaded' })
   await page.waitForFunction(() => window.victoryFixture)
   await page.evaluate(async () => {
     await window.victoryFixture.configure({

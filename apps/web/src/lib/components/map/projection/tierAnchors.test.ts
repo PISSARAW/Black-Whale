@@ -74,6 +74,17 @@ describe('the deck a marker is filed under', () => {
     // only position the reconstruction can support without inventing one.
     expect(queens).toMatchObject({ x: 287.1, y: 300, small: true })
   })
+
+  it('anchors the chapter 414 breach team in the corridor rather than room 1009', () => {
+    const corridor = anchorFor(
+      'tier-1',
+      'tier-1-royal-residential-sector-corridor-outside-room-1009',
+    )
+    const room = anchorFor('tier-1', 'tier-1-royal-residential-sector-room-1009')
+
+    expect(corridor).toMatchObject({ x: 635.5, y: 292, small: true })
+    expect(corridor).not.toMatchObject({ x: room!.x, y: room!.y })
+  })
 })
 
 /**

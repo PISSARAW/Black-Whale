@@ -35,6 +35,18 @@ function mesh(root: THREE.Object3D, name: string): THREE.Mesh {
 }
 
 describe('shared model detail integration', () => {
+  it('keeps build and hairstyle identity in the three-mass far LOD', () => {
+    const kurapika = buildHumanFigure({ THREE, glow, seen: visitor('kurapika') })
+    const benjamin = buildHumanFigure({ THREE, glow, seen: visitor('benjamin') })
+    expect(kurapika.lod.far.children).toHaveLength(3)
+    expect((kurapika.lod.far.children[2] as THREE.Mesh).geometry).not.toBe(
+      (benjamin.lod.far.children[2] as THREE.Mesh).geometry,
+    )
+    expect((kurapika.lod.far.children[0] as THREE.Mesh).geometry).not.toBe(
+      (benjamin.lod.far.children[0] as THREE.Mesh).geometry,
+    )
+  })
+
   it.each(['kurapika', 'hisoka', 'biscuit', 'franklin'] as const)(
     'shares detail buffers and caches combat-only skin shading: %s',
     (id) => {
@@ -44,14 +56,29 @@ describe('shared model detail integration', () => {
         glow,
         fighter: createFightState(id, 'hisoka').player,
       })
-      const shared = id === 'franklin' ? ['eye-pupil'] : ['hand-left', 'hand-right', 'eye-pupil']
-      for (const name of shared) {
-        expect(mesh(fight.root, name).geometry).toBe(mesh(tour.root, name).geometry)
+      expect(mesh(fight.root, 'eye-pupil').geometry).toBe(mesh(tour.root, 'eye-pupil').geometry)
+      if (id !== 'franklin') {
+        const secondFight = buildFightFigure({
+          THREE,
+          glow,
+          fighter: createFightState(id, 'hisoka').player,
+        })
+        for (const name of ['hand-left', 'hand-right']) {
+          const canonical = mesh(tour.root, name).geometry
+          const combat = mesh(fight.root, name).geometry
+          expect(combat).not.toBe(canonical)
+          expect(combat).toBe(mesh(secondFight.root, name).geometry)
+          expect(combat.userData.humanGeometryVariant).toBe('clash:grip')
+          expect(canonical.morphAttributes.position).toBeUndefined()
+        }
       }
-      expect(mesh(fight.root, 'face-relief').geometry).toBe(
-        combatFaceGeometry(mesh(tour.root, 'face-relief').geometry),
+      const tourFace = mesh(tour.root, 'face-relief').geometry
+      const fightFace = mesh(fight.root, 'face-relief').geometry
+      expect(fightFace).toBe(
+        tourFace.userData.authoredHeadTones ? tourFace : combatFaceGeometry(tourFace),
       )
-      expect(mesh(tour.root, 'face-relief').geometry.getAttribute('color')).toBeUndefined()
+      if (!tourFace.userData.authoredHeadTones)
+        expect(tourFace.getAttribute('color')).toBeUndefined()
       // The distant representation still has only its three original masses.
       expect(tour.lod.far.children).toHaveLength(3)
       expect(tour.lod.far.getObjectByName('eye-pupil')).toBeUndefined()
@@ -64,10 +91,17 @@ describe('shared model detail integration', () => {
     model.animate(1, 'idle', { motion: fightBodyMotion({ fighter, seconds: 1, progress: 0 }) })
     const elbow = model.root.getObjectByName('elbow-left')!
     const knee = model.root.getObjectByName('knee-left')!
+    const leftFoot = model.root.getObjectByName('foot-left')!
+    const rightFoot = model.root.getObjectByName('foot-right')!
     expect(elbow.children[0].getObjectByName('hand-left')).toBeUndefined()
     expect(mesh(model.root, 'hand-left').parent).toBe(elbow)
     expect(elbow.getObjectByName('sleeve-cuff')?.parent).toBe(elbow)
-    expect(knee.children[1].getObjectByName('shoe-sole-and-toecap')).toBeTruthy()
+    expect(knee.children[1]).toBe(leftFoot)
+    expect(leftFoot.getObjectByName('shoe-sole-and-toecap')).toBeTruthy()
+    expect(leftFoot.getObjectByName('ankle-transition')).toBeTruthy()
+    expect(model.joints.feet).toEqual([leftFoot, rightFoot])
+    expect(mesh(model.root, 'thumb-left').position.x).toBeLessThan(0)
+    expect(mesh(model.root, 'thumb-right').position.x).toBeGreaterThan(0)
     expect(mesh(model.root, 'garment-seams').parent?.name).toBe('fight-chest')
     model.root.updateMatrixWorld(true)
     const box = new THREE.Box3().setFromObject(model.root)

@@ -2,16 +2,16 @@
 
 # Graphe des dépendances
 
-Nœuds : 25 · Arêtes uniques : 63
+Nœuds : 26 · Arêtes uniques : 64
 
 ## Arêtes
 
 | Source | Cible | Occurrences |
 | ------ | ----- | ----------- |
-| `lib:arena` | `lib:combat` | 99 |
+| `lib:arena` | `lib:combat` | 103 |
 | `lib:arena` | `lib:fighting` | 36 |
 | `lib:arena` | `lib:nen` | 9 |
-| `lib:arena` | `lib:tour` | 32 |
+| `lib:arena` | `lib:tour` | 37 |
 | `lib:arena` | `package:@black-whale/nen-engine` | 5 |
 | `lib:assets` | `lib:components` | 1 |
 | `lib:assets` | `lib:map` | 2 |
@@ -38,6 +38,7 @@ Nœuds : 25 · Arêtes uniques : 63
 | `lib:infiltration` | `lib:hunt` | 22 |
 | `lib:infiltration` | `lib:nen` | 2 |
 | `lib:infiltration` | `lib:tour` | 12 |
+| `lib:investigation` | `lib:tour` | 8 |
 | `lib:nen` | `package:@black-whale/ability-modules` | 1 |
 | `lib:nen` | `package:@black-whale/nen-engine` | 12 |
 | `lib:reconstruction` | `package:@black-whale/canon-engine` | 1 |
@@ -52,7 +53,7 @@ Nœuds : 25 · Arêtes uniques : 63
 | `lib:strategy` | `package:@black-whale/canon-engine` | 12 |
 | `lib:strategy` | `package:@black-whale/simulation-engine` | 6 |
 | `lib:tour` | `lib:components` | 2 |
-| `lib:tour` | `lib:fighting` | 35 |
+| `lib:tour` | `lib:fighting` | 38 |
 | `lib:tour` | `package:@black-whale/ability-modules` | 13 |
 | `lib:tour` | `package:@black-whale/domain` | 4 |
 | `lib:tour` | `package:@black-whale/nen-engine` | 36 |

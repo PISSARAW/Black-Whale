@@ -9,13 +9,14 @@ export interface CinematicFrame {
   intensity: number
   inset?: boolean
   yaw?: number
+  focus?: FightSide
 }
 
 /** Fit the authored film pose to the live inset's actual aspect ratio. */
 export function fitCinematicView(frame: CinematicFrame, state: FightState, aspect: number) {
   probe.aspect = aspect
   probe.updateProjectionMatrix()
-  const result = fit({ ...frame, inset: false }, boundsAt([state], 0))
+  const result = fit({ ...frame, inset: false }, boundsAt([state], 0, frame.focus))
   probe.aspect = ASPECT
   probe.updateProjectionMatrix()
   return { x: result.x, y: result.lookY + 0.55, z: result.z, lookY: result.lookY }
@@ -154,7 +155,11 @@ function cueEnvelope(cue: CameraCue, index: number) {
   return cue.strength * (1 - t * t * (3 - 2 * t))
 }
 
-function boundsAt(states: FightState[], index: number) {
+function framedFighters(state: FightState, focus?: FightSide): ArcadeFighter[] {
+  return focus ? [state[focus]] : [state.player, state.opponent]
+}
+
+function boundsAt(states: FightState[], index: number, focus?: FightSide) {
   const bounds: Vector3[] = []
   // Look ahead through jump takeoff and recoil, so widening begins before a body reaches an edge.
   for (const sample of [index, Math.min(states.length - 1, index + 12)]) {
@@ -165,7 +170,7 @@ function boundsAt(states: FightState[], index: number) {
         for (const height of [0.03, 3.35])
           bounds.push(new Vector3(fightWorldX(killer.x) + dx, height, 0.12))
     }
-    for (const fighter of [states[sample].player, states[sample].opponent]) {
+    for (const fighter of framedFighters(states[sample], focus)) {
       const x = fightWorldX(fighter.x)
       const floor = fightWorldY(fighter.y)
       for (const dx of fighter.biscuitTrueForm ? [-1.05, 1.05] : [-0.72, 0.72])

@@ -10,33 +10,44 @@
     onPlay,
     onTimeline,
     immersive,
+    arrowShortcuts,
   }: {
     index: number
     count: number
     isPlaying: boolean
     immersive: boolean
+    arrowShortcuts: boolean
     onChoose: (index: number) => void
     onPlay: () => void
     onTimeline: (event: MouseEvent) => void
   } = $props()
 </script>
 
-<footer class="reconstruction-transport" class:immersive data-hatsu-pass>
+<footer
+  class="reconstruction-transport mode-hud mode-hud-surface"
+  class:immersive
+  data-tone="gold"
+  data-hatsu-pass
+>
   <div class="playback">
     <button
       type="button"
       aria-label={$t.reconstruction.previous}
+      aria-keyshortcuts={arrowShortcuts ? 'ArrowLeft' : undefined}
       disabled={index === 0}
       onclick={() => onChoose(index - 1)}>←</button
     ><button
       type="button"
-      class="play"
+      class="play mode-hud-button mode-command"
       aria-label={isPlaying ? $t.reconstruction.pause : $t.reconstruction.play}
+      aria-keyshortcuts={arrowShortcuts ? 'P Space' : 'P'}
+      title="P"
       aria-pressed={isPlaying}
       onclick={onPlay}><MangaIcon name={isPlaying ? 'pause' : 'play'} /></button
     ><button
       type="button"
       aria-label={$t.reconstruction.next}
+      aria-keyshortcuts={arrowShortcuts ? 'ArrowRight' : undefined}
       disabled={index >= count - 1}
       onclick={() => onChoose(index + 1)}>→</button
     >
@@ -51,9 +62,10 @@
   />
   <button
     type="button"
-    class="event-count"
+    class="event-count mode-hud-button mode-hud-value"
     onclick={onTimeline}
-    aria-label={$reconstructionWords.timeline}>{index + 1} / {count}</button
+    aria-label={$reconstructionWords.timeline}
+    aria-keyshortcuts="M">{index + 1} / {count}</button
   >
 </footer>
 
@@ -65,7 +77,7 @@
     padding: 0.6rem 5rem 0.6rem 0.8rem;
     border: 1px solid #303d44;
     border-radius: 0 0 5px 5px;
-    background: #0c151a;
+    border-inline-start: 2px solid var(--mode-accent);
   }
   .playback {
     display: flex;
@@ -96,8 +108,9 @@
     border: 0;
     padding: 0.5rem;
     min-width: 65px;
-    color: #9fb3bb;
-    font-size: 0.7rem;
+    color: var(--mode-accent);
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
   }
 
   button {
@@ -108,6 +121,11 @@
     background: #0b1419;
     color: #b9c7cc;
     font-size: 0.8rem;
+  }
+  button:focus-visible,
+  input:focus-visible {
+    outline: 2px solid var(--mode-accent);
+    outline-offset: 2px;
   }
   button:hover {
     color: #f1dfb9;

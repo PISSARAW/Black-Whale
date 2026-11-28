@@ -1,3 +1,4 @@
+import { finishDeckSteps } from './deckBuildSteps'
 import type * as Three from 'three'
 
 import { floorOf, type TierPlan } from './blueprint'
@@ -119,9 +120,10 @@ const hashStep = (hash: number, value: number): number => {
   return Math.imul(hash, 16777619) >>> 0
 }
 
-function trafficCacheKey(mesh: TierMesh, plan: TierPlan): string {
+function* trafficCacheKey(mesh: TierMesh, plan: TierPlan): Generator<void, string> {
   let hash = 2166136261
   for (let index = 0; index < mesh.positions.length; index++) {
+    if (index % 65536 === 0) yield
     hash = hashStep(hash, Math.round(mesh.positions[index] * 1000))
   }
   for (const group of mesh.groups) {
@@ -160,7 +162,14 @@ export function clearTrafficCache(): void {
 }
 
 export function trafficAttribute(mesh: TierMesh, plan: TierPlan): Uint8Array {
-  const key = trafficCacheKey(mesh, plan)
+  return finishDeckSteps(trafficAttributeSteps(mesh, plan))
+}
+
+export function* trafficAttributeSteps(
+  mesh: TierMesh,
+  plan: TierPlan,
+): Generator<void, Uint8Array> {
+  const key = yield* trafficCacheKey(mesh, plan)
   const held = trafficCache.get(key)
   if (held) {
     trafficCacheHits += 1
@@ -177,6 +186,7 @@ export function trafficAttribute(mesh: TierMesh, plan: TierPlan): Uint8Array {
     if (!space) continue
     const end = group.start + group.count
     for (let vertex = group.start; vertex < end; vertex++) {
+      if (vertex % 4096 === 0) yield
       const offset = vertex * 3
       const distance = distanceToBoundary(
         [mesh.positions[offset], mesh.positions[offset + 2]],

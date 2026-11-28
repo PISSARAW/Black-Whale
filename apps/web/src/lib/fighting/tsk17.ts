@@ -85,7 +85,7 @@ function resolveTsk17Outcome(state: FightState): FightState {
     return finishFight(state, state.tsk17?.releasedBy ?? 'player', 'knockout')
   const deadSide: FightSide = deadPlayer ? 'player' : 'opponent'
   const otherSide: FightSide = deadSide === 'player' ? 'opponent' : 'player'
-  if (isCamilla(state[deadSide])) return beginCatsName(state, deadSide, otherSide)
+  if (isCamilla(state[deadSide])) return beginPoisonCatsName(state, deadSide, otherSide)
   return finishFight(state, otherSide, 'knockout')
 }
 
@@ -103,7 +103,12 @@ function resolveBenjaminVsCamilla(
     return finishFight(state, camillaSide, 'knockout')
   }
   // Camilla reaches 0 HP first while Benjamin is still alive: Cat's Name triggers.
-  return beginCatsName(state, camillaSide, benjaminSide)
+  return beginPoisonCatsName(state, camillaSide, benjaminSide)
+}
+
+function beginPoisonCatsName(state: FightState, victim: FightSide, killer: FightSide) {
+  const source = state[victim].tskPoisonSource ?? state.tsk17?.releasedBy
+  return beginCatsName(state, victim, killer, source === killer ? 'toxin' : undefined)
 }
 
 /** Advances TSK-17 poison damage once per frame and resolves fatal ticks deterministically. */

@@ -1,3 +1,4 @@
+import timing from '../../src/lib/fighting/victory/bonolenovTiming.json'
 import { ContinuousDirector } from './continuousDirector'
 import type { FighterId, FightSide } from '../../src/lib/fighting/types'
 import type { FightStageId } from '../../src/lib/fighting/stages'
@@ -88,12 +89,15 @@ export function createBonolenovFatalityFilm(
       source:
         'A continuous native fight completes Prologue, lands the conjured spear, completes the 90-frame Jupiter dance and earns a knockout with the actual homing projectile. The ten-second presentation changes no health, knowledge or stage state.',
       victory: {
-        armorFrame: 72,
-        tapFrames: [132, 168],
-        formationFrame: 210,
-        chaseFrame: 288,
-        impactFrame: 396,
-        bowFrame: 516,
+        armorFrame: timing.armor,
+        formationFrame: timing.form,
+        wideFrame: timing.wide,
+        chaseFrame: timing.chase,
+        impactFrame: timing.impact,
+        sinkFrame: timing.sink,
+        dustFrame: timing.dust,
+        dissolveFrame: timing.dissolve,
+        bowFrame: timing.bow,
       },
     },
   }

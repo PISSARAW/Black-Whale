@@ -2476,3 +2476,54 @@
     }
   }
 }
+
+@scope (.arena-world) {
+  .arena-footwork {
+    position: absolute;
+    z-index: 36;
+    top: 8rem;
+    right: clamp(0.75rem, 4vw, 4rem);
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .arena-footwork button {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid #9bd9e758;
+    background: #0b171ee8;
+    color: #f1f7f7;
+    font-size: 0.75rem;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .arena-footwork button:disabled {
+    opacity: 0.48;
+    cursor: default;
+  }
+
+  .arena-footwork button:focus-visible,
+  .arena-footwork button:not(:disabled):hover {
+    border-color: #ffda61;
+  }
+
+  .arena-footwork kbd {
+    color: #ffda61;
+  }
+
+  @media (max-width: 800px) {
+    .arena-footwork {
+      top: 6.25rem;
+    }
+  }
+
+  @media (pointer: coarse) {
+    .arena-footwork kbd {
+      display: none;
+    }
+  }
+}

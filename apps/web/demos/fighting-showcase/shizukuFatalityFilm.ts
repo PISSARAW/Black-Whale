@@ -1,3 +1,18 @@
+import { FIGHT_FPS } from '../../src/lib/fighting/fightClock'
+import {
+  SHIZUKU_VICTORY_DURATION,
+  SHIZUKU_DROP,
+  SHIZUKU_BLOOD,
+  SHIZUKU_RELEASE,
+  SHIZUKU_SHOULDER,
+  SHIZUKU_NOZZLE_CONTACT,
+  SHIZUKU_DEATH,
+  SHIZUKU_CLEAN,
+  SHIZUKU_CONSUMED,
+  SHIZUKU_BUTTON,
+  SHIZUKU_RETURN,
+  SHIZUKU_CAUGHT,
+} from '../../src/lib/fighting/victory/shizukuTiming'
 import { ContinuousDirector } from './continuousDirector'
 import { exposedBlinkyWounds } from '../../src/lib/fighting/blinky'
 import type { FighterId, FightSide } from '../../src/lib/fighting/types'
@@ -63,8 +78,8 @@ export function createShizukuFatalityFilm(
     state: f.state,
     report: {
       ...f.report(),
-      frameCount: 600,
-      duration: 10,
+      frameCount: SHIZUKU_VICTORY_DURATION * FIGHT_FPS,
+      duration: SHIZUKU_VICTORY_DURATION,
       character: 'Shizuku',
       target,
       stageId,
@@ -72,16 +87,19 @@ export function createShizukuFatalityFilm(
       wounds,
       bloodDeath,
       source:
-        'Native Deme-chan blows create exposed wounds; the actual blood-suction command resolves the knockout. A cosmetic edit then portrays the blow, blood extraction, collapse, corpse cleanup and last-object return without changing health or vacuum memory.',
+        'Native Deme-chan blows create exposed wounds; the actual blood-suction command resolves the knockout. The victory edit begins with two existing openings and portrays blood extraction, collapse, corpse cleanup and the return of a sleeve button.',
       victory: {
-        impactFrame: 84,
-        bloodFrame: 138,
-        deathFrame: 282,
-        cleanupFrame: 342,
-        consumedFrame: 402,
-        lastObjectFrame: 444,
-        returnFrame: 474,
-        caughtFrame: 498,
+        dropFrame: SHIZUKU_DROP,
+        bloodFrame: SHIZUKU_BLOOD,
+        releaseFrame: SHIZUKU_RELEASE,
+        shoulderFrame: SHIZUKU_SHOULDER,
+        deathFrame: SHIZUKU_DEATH,
+        cleanupFrame: SHIZUKU_CLEAN,
+        nozzleContactFrame: SHIZUKU_NOZZLE_CONTACT,
+        consumedFrame: SHIZUKU_CONSUMED,
+        lastObjectFrame: SHIZUKU_BUTTON,
+        returnFrame: SHIZUKU_RETURN,
+        caughtFrame: SHIZUKU_CAUGHT,
       },
     },
   }

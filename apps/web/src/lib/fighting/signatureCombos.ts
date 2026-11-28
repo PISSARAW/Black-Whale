@@ -15,6 +15,9 @@ import { LOT2A_SIGNATURES } from './signatureCombosLot2A'
 import { LOT2B_SIGNATURES } from './signatureCombosLot2B'
 import { LOT3A_SIGNATURES } from './signatureCombosLot3A'
 import { LOT3B_SIGNATURES } from './signatureCombosLot3B'
+import { ALTERNATE_SIGNATURE_COMBOS } from './signatureCombosAlternate'
+
+type SignatureAttackId = `${FighterId}:${string}`
 
 /**
  * Signature combos (SIGNATURE_COMBOS.md): one combo counter from the first hit to the last,
@@ -26,6 +29,7 @@ export type SignatureStep =
   /** `hit: false` marks a technique that moves bodies without striking (recall, rebound). */
   /** `hits`: contacts the move must land, for a volley (each bullet is one hit of the combo). */
   | { move: MoveSlot; hit?: false; hits?: number }
+  | { signatureAttack: SignatureAttackId }
   /**
    * `through` crosses the other body (signatureCrossing.ts); `free`: a dash from neutral, not
    * an accélération; `low`: Phinks's low dodge (down held).
@@ -53,6 +57,8 @@ export interface SignatureCombo {
   fighter: CombatFighter
   /** Reference opponent of the demonstration and the tests. */
   opponent: FighterId
+  /** Academy distance for routes designed to demonstrate their own reach. */
+  initialGap?: number
   title: readonly [string, string]
   requirement: readonly [string, string]
   /** Played and settled before the combo: marks, pages and cards are never spontaneous. */
@@ -135,6 +141,7 @@ export const SIGNATURE_COMBOS: readonly SignatureCombo[] = [
   ...LOT2B_SIGNATURES,
   ...LOT3A_SIGNATURES,
   ...LOT3B_SIGNATURES,
+  ...ALTERNATE_SIGNATURE_COMBOS,
 ]
 
 export const signatureCombosFor = (fighter: FighterId) =>
@@ -146,12 +153,13 @@ export function signatureCombo(id: string): SignatureCombo {
   return combo
 }
 
-/** Striking steps, in order: each move, or each projectile of a ranged step, adds one hit. */
-export const signatureHits = (combo: SignatureCombo): (MoveSlot | 'ranged')[] =>
+/** Full move IDs in contact order, including one entry per expected projectile. */
+export const signatureHits = (combo: SignatureCombo): string[] =>
   combo.steps.flatMap((step) => {
-    if ('ranged' in step) return Array<'ranged'>(step.hits).fill('ranged')
+    if ('signatureAttack' in step) return [step.signatureAttack]
+    if ('ranged' in step) return Array<string>(step.hits).fill(`${combo.fighter}:ranged`)
     if (!('move' in step) || step.hit === false) return []
-    return Array<MoveSlot>(step.hits ?? 1).fill(step.move)
+    return Array<string>(step.hits ?? 1).fill(`${combo.fighter}:${step.move}`)
   })
 
 /**
@@ -160,6 +168,7 @@ export const signatureHits = (combo: SignatureCombo): (MoveSlot | 'ranged')[] =>
  */
 /** Contacts a move step must land: none for a technique that only moves bodies. */
 function moveHits(step: SignatureStep): number {
+  if ('signatureAttack' in step) return 1
   if (!('move' in step) || step.hit === false) return 0
   return step.hits ?? 1
 }

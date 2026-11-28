@@ -1,5 +1,6 @@
 import type { MoveTuning } from './movesetTypes'
 import type { ArcadeFighter } from './types'
+import { FEITAN_FINAL_REVERSAL } from './personalSignatureMoves'
 
 export interface FollowUpPhysicsSpec {
   /** Override partial frame / hitbox / knockback tuning for this contextual follow-up. */
@@ -19,7 +20,17 @@ export interface FollowUpPhysicsSpec {
  * Purely martial / kinetic parameters — no invented Hatsu, no invulnerability, no teleport.
  */
 export const FOLLOW_UP_PHYSICS: Readonly<Record<string, FollowUpPhysicsSpec>> = {
+  // Signature-route launchers. These are ordinary authored strikes, so their
+  // launch is keyed by the same move id used by the combat simulation.
+  'saiyu:forwardHeavy': {
+    launchVelocityY: 34,
+  },
+  'bonolenov:standingHeavy': {
+    launchVelocityY: 32,
+  },
+
   // Feitan — traversées et ascension aérienne
+  [FEITAN_FINAL_REVERSAL]: { launchVelocityY: 36 },
   'feitan:pain-stairway': {
     launchVelocityY: 42,
     selfLiftVelocityY: 22,

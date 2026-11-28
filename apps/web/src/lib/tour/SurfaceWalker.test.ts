@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { theShip } from './blueprint'
 import { SurfaceWalker } from './SurfaceWalker'
+import { CASINO_STAIR_LANDING } from './casinoLayout'
 import { resolveMovement } from './navigation'
 import type { Vec2 } from './types'
 
@@ -19,14 +20,15 @@ function walkRoute(walker: SurfaceWalker, points: Vec2[]): Vec2 {
 describe('walking every modelled staircase', () => {
   const flights = new Map<string, typeof plan.structures>()
   for (const step of plan.structures.filter(
-    ({ kind, id }) => kind === 'platform' && /-stair-|-steps/.test(id),
+    ({ kind, id, spaceId }) =>
+      kind === 'platform' && spaceId !== CASINO_STAIR_LANDING && /-stair-|-steps/.test(id),
   )) {
     const key = step.id.replace(/-\d+$/, '')
     flights.set(key, [...(flights.get(key) ?? []), step])
   }
-  it('covers all seven physical flights and their 82 treads', () => {
-    expect(flights.size).toBe(7)
-    expect([...flights.values()].reduce((count, flight) => count + flight.length, 0)).toBe(82)
+  it('covers the eight physical flights and their 90 treads on Tier 1-A', () => {
+    expect(flights.size).toBe(8)
+    expect([...flights.values()].reduce((count, flight) => count + flight.length, 0)).toBe(90)
   })
   it.each([...flights])('ascends and descends every tread of %s', (_id, flight) => {
     const steps = [...flight].sort((a, b) => a.height - b.height)

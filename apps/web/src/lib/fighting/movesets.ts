@@ -4,6 +4,7 @@ import { selectedGumLink } from './bungeeNetwork'
 import { declareMoveCombatRules } from './moveCombatRules'
 import { tunePhysicalCombat } from './physicalCombatProfiles'
 import { attachMoveFollowUps, resolveMoveFollowUp } from './moveFollowUps'
+import { attachAlternateSignature, selectSignatureOpening } from './alternateSignatureAttacks'
 import { schemeSlot } from './controlScheme'
 import { nenActionAllowed } from './nenActionRules'
 import { attackAuraCost } from './fightAttackCost'
@@ -137,11 +138,15 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     // finisher links. Re-apply Cyclotron's canon boundary after that pass.
     .map(tunePhinksMoveset)
     .map(attachMoveFollowUps)
+    .map(attachAlternateSignature)
     .map((moveset) => [moveset.fighterId, moveset]),
 )
 const MOVES = new Map(
   [...MOVESETS.values()].flatMap((moveset) => [
     ...moveset.moves.map((move) => [move.id, move] as const),
+    ...(moveset.signatureOpening
+      ? [[moveset.signatureOpening.id, moveset.signatureOpening] as const]
+      : []),
     ...(moveset.followUps?.map((entry) => [entry.id, entry.move] as const) ?? []),
   ]),
 )
@@ -167,6 +172,8 @@ export function moveForAction(
 ): FighterMove | null {
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
+  const opening = selectSignatureOpening({ fighter, action, input, move: moveset.signatureOpening })
+  if (opening) return opening
   const followUp = resolveMoveFollowUp({
     fighter,
     action,

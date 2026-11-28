@@ -59,7 +59,7 @@ export function addHinrighStripedJacket(build: HumanClothesBuild) {
   const { waist } = mangaBodyShape(profile)
   const tail = new THREE.Mesh(
     geometry(THREE, 'manga:hinrigh-jacket-tail', () =>
-      new THREE.CylinderGeometry(waist * 1.03, waist * 1.15, 0.23, 28)
+      new THREE.CylinderGeometry(waist * 0.99, waist * 1.12, 0.23, 32)
         .scale(1, 1, 0.8)
         .translate(0, -0.005, 0),
     ),
@@ -82,7 +82,7 @@ export function addHinrighStripedJacket(build: HumanClothesBuild) {
                 [x + 0.023, 0.1, 0],
                 [x, 0.1, 0],
               ],
-              depth: (sx) => Math.sqrt(Math.max(0, (waist * 1.15) ** 2 - sx ** 2)) * 0.8 + 0.006,
+              depth: (sx) => Math.sqrt(Math.max(0, (waist * 1.08) ** 2 - sx ** 2)) * 0.8 + 0.006,
             }),
           )
         }
@@ -131,9 +131,9 @@ export function addZakuroCroppedJacket(build: HumanClothesBuild) {
       name: `zakuro-chest-piping-${side}`,
       points: [
         [side * 0.02, 1.315],
-        [side * 0.14, 1.37],
-        [side * 0.15, 1.345],
-        [side * 0.02, 1.29],
+        [side * 0.137, 1.35],
+        [side * 0.145, 1.333],
+        [side * 0.02, 1.301],
       ],
       material: materials.shirt,
       lift: 0.022,
@@ -163,10 +163,8 @@ export function addZakuroCroppedJacket(build: HumanClothesBuild) {
   for (let i = 0; i < 3; i++) {
     const y = 1.31 - i * 0.1
     const button = new THREE.Mesh(
-      geometry(
-        THREE,
-        'manga:zakuro-round-button',
-        () => new THREE.TorusGeometry(0.013, 0.003, 6, 20),
+      geometry(THREE, 'manga:zakuro-round-button', () =>
+        new THREE.SphereGeometry(0.014, 16, 8).scale(1, 1, 0.32),
       ),
       materials.shirt,
     )
@@ -203,8 +201,12 @@ export function addTerebellumSportsJacket(build: HumanClothesBuild) {
       name: `terebellum-chest-piping-${side}`,
       points: [
         [side * 0.008, 1.24],
-        [side * 0.15, 1.39],
-        [side * 0.18, 1.37],
+        [side * 0.072, 1.28],
+        [side * 0.133, 1.36],
+        [side * 0.145, 1.405],
+        [side * 0.188, 1.386],
+        [side * 0.174, 1.329],
+        [side * 0.085, 1.24],
         [side * 0.008, 1.2],
       ],
       material: materials.shirt,

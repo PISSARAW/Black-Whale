@@ -1,4 +1,7 @@
 <script lang="ts">
+  import ModeCommand from '$lib/components/game/ModeCommand.svelte'
+  import { modeShortcut, runModeCommand } from '$lib/components/game/modeKeyboard'
+  import ModeHudGauge from '$lib/components/game/ModeHudGauge.svelte'
   import { onDestroy, onMount, untrack } from 'svelte'
   import { centroid } from '$lib/tour/hatsu'
   import { theShip, crossingsOn } from '$lib/tour/blueprint'
@@ -88,19 +91,11 @@
       return {
         id: subject.id,
         kind: 'avatar',
-        colour: appearance.colour,
-        size: appearance.size,
-        y: appearance.y,
+        ...appearance,
         at: subject.position,
         tierId: definition.scene.tierId,
         spaceId: definition.scene.spaceId,
         stage: 0,
-        human: {
-          role: subject.isDead ? 'victim' : 'witness',
-          identity: `investigation:${subject.id}`,
-          pose: subject.isDead ? 'fallen' : 'idle',
-          aura: 'none',
-        },
         hidden: false,
         pick: true,
       } as Apparition
@@ -139,15 +134,28 @@
     return closeHatsuGate
   })
 
+  let aimedExtra = $state<string | null>(null)
+  const casePanelOpen = $derived(
+    session.briefingOpen || session.reportOpen || session.notebookOpen || !!session.activeSubjectId,
+  )
+
+  function examineAim() {
+    if (aimedExtra && !casePanelOpen && !manualOpen) session.handlePick(aimedExtra)
+  }
+
+  function openEvidence() {
+    if (session.solved) session.reportOpen = true
+    else session.openNotebook('evidence')
+  }
+
   function handleKeydown(event: KeyboardEvent) {
-    if (event.key === '?' || event.key === 'h' || event.key === 'H') {
-      manualOpen = !manualOpen
-      event.preventDefault()
-      return
-    }
-    if (manualOpen) return // Block game inputs while manual is open
-    if (event.key !== 'Escape') return
-    session.closeTopLayer()
+    const code = modeShortcut(event)
+    if (code === '?') return runModeCommand(event, () => (manualOpen = !manualOpen))
+    if (manualOpen) return
+    if (code === 'Escape' && casePanelOpen) return runModeCommand(event, session.closeTopLayer)
+    if (casePanelOpen || $hatsuPanelOpen) return
+    if (code === 'KeyM') runModeCommand(event, openEvidence)
+    if (code === 'KeyL' || code === 'KeyH') runModeCommand(event, () => hatsuPanelOpen.set(true))
   }
 </script>
 
@@ -158,9 +166,12 @@
   <meta name="description" content={ui.description} />
 </svelte:head>
 
-<div class="relative h-[100dvh] w-full overflow-hidden bg-[#050809] font-sans text-[#f4ead4]">
+<div
+  class="relative h-[calc(100dvh-var(--header-height))] w-full overflow-hidden bg-[#050809] font-sans text-[#f4ead4]"
+>
   <TourModeFullscreen />
   <TourMinimapPanel
+    compact
     {plan}
     {position}
     {heading}
@@ -184,7 +195,11 @@
     {extras}
     nen={modeNen.value}
     onNenChange={modeNen.use}
+    bind:aimedExtra
     onPick={session.handlePick}
+    onPhysicalNenAction={examineAim}
+    inputDisabled={manualOpen || casePanelOpen || $hatsuPanelOpen}
+    modeKeyboard
     touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
     soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
     loadingLabel={$t.tour.loading}
@@ -205,17 +220,14 @@
   ></div>
 
   <header
-    class="pointer-events-none absolute inset-x-0 top-0 z-30 flex flex-col items-start justify-between gap-3 p-3 sm:flex-row sm:gap-4 sm:p-6"
+    class="mode-hud pointer-events-none absolute inset-x-0 top-12 z-30 flex flex-col items-start justify-between gap-3 p-3 sm:flex-row sm:gap-4 sm:p-6"
   >
-    <div
-      class="relative max-w-xl overflow-hidden rounded-sm border border-sky-300/30 bg-[#0a0f1c]/80 p-4"
-    >
-      <div class="absolute -left-1 top-1/2 h-8 w-2 -translate-y-1/2 rounded-r bg-sky-400"></div>
-      <p class="text-[10px] font-bold uppercase tracking-normal text-sky-300">
+    <div class="mode-hud-surface min-w-0 max-w-xl p-3 sm:p-4">
+      <p class="mode-hud-label">
         {ui.dossier} · {investigation.subtitle} · {ui.chapter}
         {investigation.chapter}
       </p>
-      <h1 class="mt-1 font-black text-2xl leading-none text-white sm:text-4xl">
+      <h1 class="mode-hud-title mt-1">
         {investigation.title}
       </h1>
       <p class="mt-2 text-xs text-sky-100/70 sm:text-sm">
@@ -223,89 +235,70 @@
       </p>
     </div>
 
-    <div class="pointer-events-auto flex w-full items-stretch justify-end gap-3 sm:w-auto">
+    <div
+      class="pointer-events-auto grid w-[calc(100%-5rem)] shrink-0 grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 self-end sm:w-auto sm:self-start"
+    >
       <button
-        class="group relative min-w-0 flex-1 overflow-hidden rounded-sm border border-sky-400/20 bg-[#0a0f1c]/90 px-4 py-2 text-left transition-all hover:border-sky-400/60 sm:flex-none"
+        type="button"
+        class="mode-hud-button hatsu-button text-left"
+        aria-keyshortcuts="L H"
         onclick={() => hatsuPanelOpen.set(true)}
       >
-        <span
-          class="absolute inset-0 bg-gradient-to-br from-sky-400/0 via-sky-400/5 to-sky-400/10 opacity-0 transition-opacity group-hover:opacity-100"
-        ></span>
-        <span class="relative z-10 flex items-center gap-2">
-          <span class="block h-2 w-2 rounded-full bg-fuchsia-400"></span>
-          <span class="block text-[9px] font-bold uppercase tracking-normal text-sky-300/70"
-            >Hatsu</span
-          >
-        </span>
-        <span
-          class="relative z-10 mt-1 block max-w-28 truncate text-xs font-black tracking-wide"
-          style:color={$activeHatsu?.color ?? '#ffffff'}>{$activeHatsu?.name ?? ui.choose}</span
+        <span class="mode-hud-label"><kbd aria-hidden="true">L</kbd> Hatsu</span>
+        <span style:color={$activeHatsu?.color ?? '#ffffff'}>{$activeHatsu?.name ?? ui.choose}</span
         >
       </button>
       <button
-        class="group relative min-w-0 flex-1 overflow-hidden rounded-sm border border-sky-400/40 bg-sky-900/60 px-5 py-3 text-left transition-all hover:border-sky-400 sm:min-w-32 sm:flex-none"
-        onclick={() =>
-          session.solved ? (session.reportOpen = true) : session.openNotebook('evidence')}
+        type="button"
+        class="mode-hud-button evidence-button text-left"
+        data-primary={session.solved ? '' : undefined}
+        aria-keyshortcuts="M"
+        onclick={openEvidence}
       >
-        <span
-          class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 mix-blend-overlay"
-        ></span>
-        <span class="relative z-10 flex items-center justify-between gap-3">
-          <span class="block text-[9px] font-bold uppercase tracking-normal text-sky-300">
-            {ui.book}
-          </span>
-          <span
-            class="flex h-5 w-5 items-center justify-center rounded-full border border-sky-300/50 bg-sky-400/20 text-[10px] text-sky-100"
-          >
-            {session.solved ? '✓' : session.discoveredIds.length}
-          </span>
+        <span class="mode-hud-label"><kbd aria-hidden="true">M</kbd> {ui.book}</span>
+        <span>{session.solved ? ui.solved : ui.items}</span>
+        <span class="mode-hud-value" aria-hidden="true">
+          {session.solved ? '✓' : session.discoveredIds.length}
         </span>
-        <span class="relative z-10 mt-1 block text-sm font-black text-white"
-          >{session.solved ? ui.solved : `${ui.items}`}</span
-        >
-        <span class="relative z-10 mt-2 block h-1 overflow-hidden rounded-full bg-sky-950"
-          ><span
-            class="block h-full rounded-full bg-sky-400 transition-all"
-            style:width={`${session.progress}%`}
-          ></span></span
-        >
+        <span class="sr-only">
+          {session.discoveredIds.length} · {Math.round(session.progress)}%
+        </span>
+        <span class="evidence-track" aria-hidden="true">
+          <span style:width={`${session.progress}%`}></span>
+        </span>
       </button>
     </div>
   </header>
 
-  <aside class="pointer-events-none absolute bottom-5 left-4 z-30 hidden w-64 sm:block">
-    <p class="mb-2 text-[9px] font-bold uppercase tracking-normal text-white/45">
-      {ui.people}
-    </p>
-    <div class="grid grid-cols-2 gap-1.5">
-      {#each investigation.subjects as subject (subject.id)}
-        <button
-          class="pointer-events-auto border bg-black/70 px-3 py-2 text-left transition {session.subjectReviewed(
-            subject,
-          )
-            ? 'border-[#d6b35a]/60'
-            : 'border-white/15 hover:border-white/40'}"
-          onclick={() => session.openSubject(subject.id)}
-        >
-          <span class="block truncate text-xs font-semibold text-white">{subject.name}</span>
-          <span class="mt-0.5 block truncate text-[9px] uppercase tracking-wider text-white/45"
-            >{subject.role}</span
+  <div
+    class="mode-hud pointer-events-none absolute bottom-5 right-4 z-30 grid w-72 max-w-[calc(100%-2rem)] gap-2"
+    data-tone="gold"
+  >
+    <aside class="mode-hud-surface hidden p-3 sm:block">
+      <p class="mode-hud-label mb-2">
+        {ui.people}
+      </p>
+      <div class="grid grid-cols-2 gap-1.5">
+        {#each investigation.subjects as subject (subject.id)}
+          <button
+            class="mode-hud-button pointer-events-auto subject-button text-left"
+            data-primary={session.subjectReviewed(subject) ? '' : undefined}
+            onclick={() => session.openSubject(subject.id)}
           >
-        </button>
-      {/each}
-    </div>
-  </aside>
-
-  <aside class="pointer-events-none absolute bottom-5 right-4 z-30 hidden w-72 lg:block">
-    <div class="border border-white/15 bg-black/75 p-4">
-      <div class="flex items-center justify-between">
-        <p class="text-[9px] font-bold uppercase tracking-normal text-[#d6b35a]">
-          {ui.objectives}
-        </p>
-        <span class="font-mono text-[10px] text-white/40"
-          >{session.completedObjectives}/{investigation.objectives.length}</span
-        >
+            <span class="block text-xs font-semibold text-white">{subject.name}</span>
+            <span class="mode-hud-label mt-0.5 block">{subject.role}</span>
+          </button>
+        {/each}
       </div>
+    </aside>
+
+    <aside class="mode-hud-surface hidden p-3 lg:block">
+      <ModeHudGauge
+        label={ui.objectives}
+        value={session.completedObjectives}
+        max={investigation.objectives.length}
+        kind="progressbar"
+      />
       <ul class="mt-3 space-y-2">
         {#each investigation.objectives as objective (objective.id)}
           {@const complete = objective.requiredEvidenceIds.every((id) =>
@@ -316,12 +309,30 @@
           </li>
         {/each}
       </ul>
-    </div>
-  </aside>
+    </aside>
+  </div>
 
   <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
     <div class="h-2 w-2 rounded-full border border-white/70 bg-black/20"></div>
   </div>
+
+  {#if !casePanelOpen && !manualOpen && !$hatsuPanelOpen}
+    <div class="mode-hud mode-hud-actions case-actions absolute right-3 z-30 justify-end">
+      <ModeCommand
+        label="Gyo"
+        shortcut="G"
+        pressed={modeNen.value.gyo}
+        onclick={() => modeNen.use({ type: 'GYO', on: !modeNen.value.gyo })}
+      />
+      <ModeCommand
+        label={$locale === 'fr' ? 'Examiner' : 'Inspect'}
+        shortcut="F"
+        primary
+        disabled={!aimedExtra}
+        onclick={examineAim}
+      />
+    </div>
+  {/if}
 
   <CaseSubjectPanel {session} {ui} />
   <CaseBinder {session} {ui} />
@@ -341,12 +352,15 @@
         description: 'Inspect object / Speak to witness',
         descriptionFr: 'Inspecter objet / Parler au témoin',
       },
-      { keys: ['?', 'H'], description: 'Show this manual', descriptionFr: 'Afficher ce manuel' },
+      { keys: ['?'], description: 'Show this manual', descriptionFr: 'Afficher ce manuel' },
       {
         keys: ['G'],
         description: 'Gyo (See what is hidden)',
         descriptionFr: 'Gyo (Voir ce qui est caché)',
       },
+      { keys: ['F'], description: 'Inspect the target', descriptionFr: 'Examiner la cible visée' },
+      { keys: ['L', 'H'], description: 'Choose a Hatsu', descriptionFr: 'Choisir un Hatsu' },
+      { keys: ['M'], description: 'Open the notebook', descriptionFr: 'Ouvrir le carnet' },
       { keys: ['R'], description: 'Ren (Raise aura)', descriptionFr: "Ren (Intensifier l'aura)" },
       { keys: ['N'], description: 'En (Sweep area)', descriptionFr: 'En (Balayer la zone)' },
       {
@@ -358,3 +372,50 @@
     onClose={() => (manualOpen = false)}
   />
 </div>
+
+<style>
+  .case-actions {
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+  @media (min-width: 640px) {
+    .case-actions {
+      right: 19rem;
+    }
+  }
+  @media (pointer: coarse) {
+    .case-actions {
+      bottom: calc(11.25rem + env(safe-area-inset-bottom));
+    }
+  }
+
+  .hatsu-button,
+  .evidence-button,
+  .subject-button {
+    display: grid;
+    justify-items: start;
+  }
+  .evidence-button {
+    grid-template-columns: minmax(0, 1fr) auto;
+    justify-content: stretch;
+    gap: 0.2rem 0.6rem;
+  }
+  .evidence-button .mode-hud-value {
+    justify-self: end;
+  }
+  .evidence-button > :first-child {
+    grid-column: 1 / -1;
+  }
+  .evidence-track {
+    justify-self: stretch;
+    grid-column: 1 / -1;
+    height: 0.3rem;
+    min-width: 5rem;
+    overflow: hidden;
+    background: #03080d;
+  }
+  .evidence-track span {
+    display: block;
+    height: 100%;
+    background: var(--mode-accent);
+  }
+</style>

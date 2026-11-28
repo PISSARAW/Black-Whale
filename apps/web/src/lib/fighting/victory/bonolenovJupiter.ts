@@ -1,52 +1,58 @@
 import * as THREE from 'three'
 import type { VictoryContext } from './types'
 import type { BonolenovVictoryPose } from './bonolenovPose'
-import { BONOLENOV_FORM, BONOLENOV_CHASE, BONOLENOV_IMPACT } from './bonolenovPose'
-import { createVisitHatsuModel } from '../visitHatsuModel'
+import { createJupiterSurface } from './bonolenovJupiterSurface'
 import { ease } from './resources'
+import timing from './bonolenovTiming.json'
 
 export function createVictoryJupiter() {
-  const model = createVisitHatsuModel(THREE, { model: 'jupiter', joints: ['jupiter-sphere'] })
-  model.root.name = 'bonolenov-victory-jupiter'
+  const root = new THREE.Mesh(
+    createJupiterSurface(),
+    new THREE.MeshBasicMaterial({ vertexColors: true }),
+  )
+  root.name = 'bonolenov-victory-jupiter'
   return {
-    root: model.root,
+    root,
     sync(context: VictoryContext, pose: BonolenovVictoryPose) {
       const { hero, victim, age } = context
-      const size = Math.max(1.8, Math.min(2.7, victim.height * 1.25))
-      const formation = ease((age - BONOLENOV_FORM) / (BONOLENOV_CHASE - BONOLENOV_FORM))
-      const vanish = 1 - ease((age - 420) / 54)
-      model.fit({ width: size * 2, height: size * 2 })
-      model.root.rotation.set(0.12, (age - BONOLENOV_FORM) * 0.035, 0)
-      model.root.position.set(0, 0, 0)
-      model.root.updateWorldMatrix(true, true)
-      const core = model.joints.get('jupiter-sphere')!
-      const radius = core.getWorldScale(new THREE.Vector3()).x
-      const y = radius + 0.03
-      const dy = pose.contact.y - y
-      const edge = Math.sqrt(Math.max(0.01, radius * radius - dy * dy))
-      const final = new THREE.Vector3(pose.contact.x - edge, y, pose.contact.z)
-      const pursuit = ease((age - BONOLENOV_CHASE) / (BONOLENOV_IMPACT - BONOLENOV_CHASE))
-      const centre = new THREE.Vector3(pose.start.x, y, pose.start.z).lerp(final, pursuit)
-      centre.x += ease((age - BONOLENOV_IMPACT) / 24) * 0.3
-      model.root.position.add(centre.clone().sub(core.getWorldPosition(new THREE.Vector3())))
-      model.root.scale.multiplyScalar(Math.max(0.001, formation * vanish))
-      model.root.visible = age >= BONOLENOV_FORM && age < 474
-      if (age >= BONOLENOV_CHASE) {
-        hero.root.position.x = centre.x
-        hero.root.position.z = centre.z
-        hero.root.rotation.y = age >= 474 ? 0 : 1.15
-      }
-      hero.root.visible = formation * vanish * radius < hero.height * 0.6
+      const radius = Math.max(1.55, Math.min(2.28, victim.height * 1.13))
+      const formation = ease((age - timing.form) / (timing.chase - timing.form))
+      const dissolve = ease((age - timing.dissolve) / (timing.clear - timing.dissolve))
+      const surfaceRadius = formation * (1 - dissolve) * radius
+      const y = radius + 0.055
+      const depthOffset = 0.68
+      const edge = Math.sqrt(
+        Math.max(0, radius ** 2 - (pose.contact.y - y) ** 2 - depthOffset ** 2),
+      )
+      const end = new THREE.Vector3(pose.contact.x - edge, y, pose.contact.z - depthOffset)
+      const travel = Math.max(0, Math.min(1, (age - timing.chase) / (timing.impact - timing.chase)))
+      const pursuit = travel ** 1.55
+      const centre = new THREE.Vector3(pose.start.x, y, pose.start.z).lerp(end, pursuit)
+      centre.x += ease((age - timing.impact) / 23) * 0.69
+      centre.y = hero.height * 0.53 + (y - hero.height * 0.53) * formation * (1 - dissolve)
+      root.rotation.set(0.11, (age - timing.form) * 0.021, 0)
+      root.scale.setScalar(Math.max(0.001, surfaceRadius))
+      root.position.copy(centre)
+      root.visible = age >= timing.form && age < timing.clear
+      hero.root.position.x = centre.x
+      hero.root.position.z = centre.z
+      hero.root.visible = surfaceRadius < hero.height * 0.56
       hero.root.updateWorldMatrix(true, true)
-      model.root.updateWorldMatrix(true, true)
       return {
         centre,
         radius,
+        surfaceRadius,
         formation,
         pursuit,
-        contactError: Math.abs(centre.x + edge - pose.contact.x),
+        separation: centre.distanceTo(pose.contact) - surfaceRadius,
+        contactError: Math.abs(centre.distanceTo(pose.contact) - surfaceRadius),
       }
     },
-    dispose: model.dispose,
+    dispose() {
+      root.removeFromParent()
+      root.geometry.dispose()
+      root.material.dispose()
+    },
   }
 }
+export type VictoryJupiter = ReturnType<ReturnType<typeof createVictoryJupiter>['sync']>

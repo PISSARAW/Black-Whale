@@ -1,4 +1,5 @@
 <script lang="ts">
+  import '$lib/components/game/mode-hud.css'
   import type { Crossing, TierPlan } from '$lib/tour/blueprint'
   import type { Space, Vec2 } from '$lib/tour/types'
   import TourMinimap from './TourMinimap.svelte'
@@ -9,6 +10,7 @@
     active: boolean
   }
   interface Props {
+    compact?: boolean
     plan: TierPlan
     position: Vec2
     heading: number
@@ -27,6 +29,7 @@
   import { t } from '$lib/i18n'
 
   let {
+    compact = false,
     plan,
     position,
     heading,
@@ -44,44 +47,59 @@
     onSelectPlan,
   }: Props = $props()
 
+  let open = $state(false)
+
   const french = $derived($locale === 'fr')
   const tierName = (tier: { name: string; nameFr: string }) => (french ? tier.nameFr : tier.name)
   const label = $derived($t.tour.minimap(tierName(plan.tier)))
 </script>
 
-<div class="tour-minimap-panel">
-  {#if decks.length > 0}
-    <nav aria-label="Decks" class="deck-selector">
-      <p class="deck-label">{$t.tour.decks}</p>
-      <div class="deck-buttons">
-        {#each decks as deck (deck.id)}
-          <button
-            type="button"
-            onclick={() => onSelectDeck?.(deck.id)}
-            aria-current={deck.active ? 'true' : undefined}
-            class="deck-button {deck.active ? 'active' : ''}"
-          >
-            {deck.label}
-          </button>
-        {/each}
-      </div>
-    </nav>
-  {/if}
+<div class="tour-minimap-panel" class:compact class:open>
+  <div class="map-content">
+    {#if decks.length > 0}
+      <nav aria-label="Decks" class="deck-selector">
+        <p class="deck-label">{$t.tour.decks}</p>
+        <div class="deck-buttons">
+          {#each decks as deck (deck.id)}
+            <button
+              type="button"
+              onclick={() => onSelectDeck?.(deck.id)}
+              aria-current={deck.active ? 'true' : undefined}
+              class="deck-button {deck.active ? 'active' : ''}"
+            >
+              {deck.label}
+            </button>
+          {/each}
+        </div>
+      </nav>
+    {/if}
 
-  <TourMinimap
-    {plan}
-    {position}
-    {heading}
-    {currentSpaceId}
-    {marker}
-    {label}
-    {crossings}
-    {nameOf}
-    {crossingLabel}
-    {selectLabel}
-    onSelect={onSelectPlan}
-    aiming={false}
-  />
+    <TourMinimap
+      {plan}
+      {position}
+      {heading}
+      {currentSpaceId}
+      {marker}
+      {label}
+      {crossings}
+      {nameOf}
+      {crossingLabel}
+      {selectLabel}
+      onSelect={onSelectPlan}
+      aiming={false}
+    />
+  </div>
+  {#if compact}
+    <button
+      class="mode-hud mode-hud-button map-toggle"
+      type="button"
+      aria-expanded={open}
+      aria-label={label}
+      onclick={() => (open = !open)}
+    >
+      {$t.tour.plan.toggle}
+    </button>
+  {/if}
 </div>
 
 <style>
@@ -94,6 +112,26 @@
     flex-direction: column;
     gap: 0.5rem;
     max-width: min(320px, calc(100% - 2rem));
+  }
+  .map-content {
+    display: contents;
+  }
+  .map-toggle {
+    display: none;
+    align-self: start;
+  }
+  @media (max-width: 640px), (pointer: coarse) {
+    .compact:not(.open) .map-content {
+      display: none;
+    }
+    .compact .map-toggle {
+      display: inline-flex;
+    }
+  }
+  @media (pointer: coarse) {
+    .compact {
+      bottom: calc(8rem + env(safe-area-inset-bottom));
+    }
   }
   .deck-selector {
     display: flex;

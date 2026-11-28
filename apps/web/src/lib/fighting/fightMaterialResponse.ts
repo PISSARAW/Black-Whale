@@ -1,8 +1,11 @@
 import type { BufferAttribute, BufferGeometry, Euler, Group, Mesh, Object3D, Vector3 } from 'three'
 import type { HumanFigure, HumanFigureBuild } from '$lib/tour/humanFigure'
 import type { HumanProfile } from '$lib/tour/humanProfiles'
+import { humanGeometryVariant } from '$lib/tour/humanGeometryVariant'
 import { moveById } from './movesets'
 import type { ArcadeFighter } from './types'
+import { addFightHandGripResponse, animateFightHandGripResponse } from './fightHandGrip'
+import { addFightFootPoseResponse, animateFightFootPoseResponse } from './fightFootPose'
 
 type Three = HumanFigureBuild['THREE']
 
@@ -27,7 +30,6 @@ interface MaterialResponse {
 }
 
 const MODELS = new WeakMap<Object3D, MaterialResponse>()
-const GRIP_GEOMETRY = new WeakMap<BufferGeometry, BufferGeometry>()
 const HEM_GEOMETRY = new WeakMap<object, BufferGeometry>()
 
 /**
@@ -40,18 +42,18 @@ export function addFightMaterialResponse(options: {
   profile: HumanProfile
 }): void {
   const { THREE, model, profile } = options
+  addFightHandGripResponse(model)
+  addFightFootPoseResponse(model)
   if (!profile.likeness || MODELS.has(model.turns)) return
-  const hands = ['left', 'right']
-    .map((side) => model.root.getObjectByName(`hand-${side}`))
-    .filter((part): part is Mesh => (part as Mesh | undefined)?.isMesh === true)
+  const hands = model.joints.hands.filter(
+    (part): part is Mesh => (part as Mesh | undefined)?.isMesh === true,
+  )
   const thumbs = hands.map((hand) => hand.children.find((child) => (child as Mesh).isMesh) ?? hand)
   for (const hand of hands) {
     hand.geometry = gripGeometry(THREE, hand.geometry)
     hand.updateMorphTargets()
   }
-  const shoes = ['left', 'right']
-    .map((side) => model.root.getObjectByName(`knee-${side}`)?.children[1])
-    .filter((part): part is Object3D => Boolean(part))
+  const shoes = [...model.joints.feet]
   const hems = profile.likeness === 'kurapika' ? addJacketHems(THREE, model) : []
   const tie = findNamed(model.root, [
     'kurapika-tie',
@@ -90,29 +92,14 @@ export function addFightMaterialResponse(options: {
 
 /** Apply deterministic pose response after the current combat state is known. */
 export function animateFightMaterialResponse(figure: Object3D, fighter: ArcadeFighter): void {
+  animateFightHandGripResponse(figure, fighter)
+  animateFightFootPoseResponse(figure, fighter)
   const model = MODELS.get(figure)
   if (!model) return
   const response = attackResponse(fighter)
   const lead = fighter.facing === 1 ? 1 : 0
   const rear = 1 - lead
-  const grips: [number, number] = [0.24, 0.24]
-  if (fighter.attack?.kind === 'ranged') {
-    const occupied = model.hands.map((hand) =>
-      hand.children.some(
-        (child) =>
-          child.visible &&
-          /(handgun|rifle|pistol|book|fan|needle|flute|blinky|umbrella)/.test(child.name),
-      ),
-    )
-    const weapon = occupied[0] ? 0 : occupied[1] ? 1 : lead
-    grips[weapon] = 0.98
-    grips[1 - weapon] = 0.52
-  } else if (fighter.attack) {
-    const legStrike =
-      fighter.attack.kind === 'heavy' && ['low', 'air'].includes(fighter.attack.variant ?? '')
-    grips[lead] = legStrike ? 0.58 : 0.28 + response.strength * 0.72
-    grips[rear] = 0.46 + response.strength * 0.22
-  }
+  const grips = gripStrengths(model, fighter, { strength: response.strength, lead })
   model.hands.forEach((hand, index) => {
     if (hand.morphTargetInfluences) hand.morphTargetInfluences[0] = grips[index]
     const thumb = model.thumbs[index]
@@ -126,6 +113,7 @@ export function animateFightMaterialResponse(figure: Object3D, fighter: ArcadeFi
   })
 
   model.shoes.forEach((shoe, index) => {
+    if (shoe.userData.skinnedFootRig) return
     const rest = model.shoeRest[index]
     shoe.position.copy(rest.position)
     shoe.rotation.copy(rest.rotation)
@@ -134,11 +122,12 @@ export function animateFightMaterialResponse(figure: Object3D, fighter: ArcadeFi
       index === lead &&
       fighter.attack?.kind === 'heavy' &&
       ['low', 'air'].includes(fighter.attack.variant ?? '')
-    const compression = response.strength * (kicking ? 0.08 : index === rear ? 0.05 : 0.025)
-    shoe.scale.x *= 1 + compression * 0.45
+    const compression = response.strength * (kicking ? 0.035 : index === rear ? 0.022 : 0.012)
+    shoe.scale.x *= 1 + compression * 0.28
     shoe.scale.y *= 1 - compression
-    shoe.scale.z *= 1 + compression * (kicking ? 1.1 : 0.5)
-    shoe.position.y += compression * 0.012
+    shoe.scale.z *= 1 + compression * (kicking ? 0.32 : 0.16)
+    shoe.rotation.x += compression * (kicking ? 0.55 : 0.18)
+    shoe.position.y += compression * 0.009
   })
 
   const travel = clothTravel(fighter, response)
@@ -165,6 +154,33 @@ export function animateFightMaterialResponse(figure: Object3D, fighter: ArcadeFi
     drape.rotation.x -= Math.abs(travel) * 0.12
     drape.rotation.z -= travel * 0.08
   })
+}
+
+function gripStrengths(
+  model: MaterialResponse,
+  fighter: ArcadeFighter,
+  options: { strength: number; lead: number },
+): [number, number] {
+  const { strength, lead } = options
+  const grips: [number, number] = [0.24, 0.24]
+  if (fighter.attack?.kind === 'ranged') {
+    const occupied = model.hands.map((hand) =>
+      hand.children.some(
+        (child) =>
+          child.visible &&
+          /(handgun|rifle|pistol|book|fan|needle|flute|blinky|umbrella)/.test(child.name),
+      ),
+    )
+    const weapon = occupied[0] ? 0 : occupied[1] ? 1 : lead
+    grips[weapon] = 0.98
+    grips[1 - weapon] = 0.52
+  } else if (fighter.attack) {
+    const legStrike =
+      fighter.attack.kind === 'heavy' && ['low', 'air'].includes(fighter.attack.variant ?? '')
+    grips[lead] = legStrike ? 0.58 : 0.28 + strength * 0.72
+    grips[1 - lead] = 0.46 + strength * 0.22
+  }
+  return grips
 }
 
 function attackResponse(fighter: ArcadeFighter): { strength: number; travel: number } {
@@ -195,23 +211,22 @@ function clothTravel(fighter: ArcadeFighter, response: ReturnType<typeof attackR
 }
 
 function gripGeometry(THREE: Three, source: BufferGeometry): BufferGeometry {
-  const held = GRIP_GEOMETRY.get(source)
-  if (held) return held
-  const geometry = source.clone()
-  const position = geometry.getAttribute('position') as BufferAttribute
-  const delta = new Float32Array(position.count * 3)
-  for (let index = 0; index < position.count; index++) {
-    const y = position.getY(index)
-    if (y >= -0.012) continue
-    const curl = clamp01((-y - 0.012) / 0.06)
-    delta[index * 3 + 1] = curl * 0.034
-    delta[index * 3 + 2] = curl * 0.036
-  }
-  geometry.morphAttributes.position = [new THREE.Float32BufferAttribute(delta, 3)]
-  geometry.morphTargetsRelative = true
-  geometry.userData = { ...geometry.userData, sharedHuman: true, fightGripMorph: true }
-  GRIP_GEOMETRY.set(source, geometry)
-  return geometry
+  return humanGeometryVariant(source, 'clash:grip', (canonical) => {
+    const geometry = canonical.clone()
+    const position = geometry.getAttribute('position') as BufferAttribute
+    const delta = new Float32Array(position.count * 3)
+    for (let index = 0; index < position.count; index++) {
+      const y = position.getY(index)
+      if (y >= -0.024) continue
+      const curl = clamp01((-y - 0.024) / 0.075)
+      delta[index * 3 + 1] = curl ** 1.6 * 0.058
+      delta[index * 3 + 2] = Math.sin((curl * Math.PI) / 2) * 0.041
+    }
+    geometry.morphAttributes.position = [new THREE.Float32BufferAttribute(delta, 3)]
+    geometry.morphTargetsRelative = true
+    geometry.userData = { ...geometry.userData, fightGripMorph: true }
+    return geometry
+  })
 }
 
 function addJacketHems(THREE: Three, model: HumanFigure): Group[] {

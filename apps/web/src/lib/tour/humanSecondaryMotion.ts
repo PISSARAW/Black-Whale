@@ -1,4 +1,4 @@
-import type { AnimatedHuman, HumanAnimationChannel } from './humanAnimation'
+import { humanJointSlots, type AnimatedHuman, type HumanAnimationChannel } from './humanAnimation'
 import type { HumanProfile } from './humanProfiles'
 import { hisokaFaceMotion } from './hisokaFaceMotion'
 
@@ -7,6 +7,7 @@ export function humanSecondaryMotionChannels(
   rig: AnimatedHuman,
   profile: HumanProfile,
 ): HumanAnimationChannel[] {
+  if (profile.likeness === 'yokotani') return [yokotaniBookPose(rig)]
   if (profile.likeness !== 'hisoka') return []
   const face = hisokaFaceMotion(rig.head)
   if (!face) return []
@@ -23,4 +24,17 @@ export function humanSecondaryMotionChannels(
       },
     },
   ]
+}
+
+function yokotaniBookPose(rig: AnimatedHuman): HumanAnimationChannel {
+  const elbow = humanJointSlots(rig).elbows[0]
+  return {
+    afterFrame: ({ pose, layer }) => {
+      if (layer?.motion || layer?.afterMotion || (pose !== 'idle' && pose !== 'listen')) return
+      rig.arms[0].rotation.x = -0.22
+      rig.arms[0].rotation.z = 0.24
+      elbow.rotation.x = -1.8
+      elbow.rotation.z = 0.34
+    },
+  }
 }

@@ -6,6 +6,7 @@ import { fightImpactPunctuation } from './fightImpactPunctuation'
 import { createFightState } from './fightState'
 import { defaultFightComfort } from './fightComfort'
 import type { FightImpact, FightState } from './types'
+import { FEITAN_FINAL_REVERSAL, FEITAN_SECOND_CUT } from './feitanSignatureImpact'
 
 function impact(flags: Partial<FightImpact> = {}): FightImpact {
   return {
@@ -34,6 +35,65 @@ function impact(flags: Partial<FightImpact> = {}): FightImpact {
 }
 
 describe('shared impact punctuation', () => {
+  it.each(['player', 'opponent'] as const)(
+    'emits Feitan’s second spark on the posed blade for %s',
+    (side) => {
+      const state = createFightState(
+        side === 'player' ? 'feitan' : 'kurapika',
+        side === 'player' ? 'kurapika' : 'feitan',
+      )
+      const figure = new THREE.Group()
+      const blade = new THREE.Group()
+      figure.position.set(0.2, 1.13, 0.44)
+      blade.name = `feitan-blade:${side}`
+      blade.rotation.z = side === 'player' ? 1.2 : -1.2
+      figure.add(blade)
+      state[side].attack = {
+        moveId: FEITAN_SECOND_CUT,
+        kind: 'light',
+        frame: 6,
+        impacted: true,
+        confirmedHit: true,
+        auraCharged: false,
+        concealed: false,
+        hatsuSource: null,
+        projectileSpawned: false,
+        reversal: false,
+      }
+      const scene = new THREE.Scene()
+      const effect = createFightImpactScene({
+        THREE,
+        scene,
+        initial: state,
+        comfort: defaultFightComfort,
+        figureOf: () => figure,
+        geometry: (made) => made,
+        glow: (color) => new THREE.MeshBasicMaterial({ color }),
+      })
+      effect.emit({ ...state, impact: impact({ attacker: side, kind: 'light' }) }, 0)
+      const mark = scene.getObjectByName('fight-contact-hit')!
+      expect(mark).toBeDefined()
+      const edge = new THREE.Line3(
+        blade.localToWorld(new THREE.Vector3(0, -0.15, 0)),
+        blade.localToWorld(new THREE.Vector3(0, -0.95, 0)),
+      )
+      expect(
+        edge
+          .closestPointToPoint(mark.position, true, new THREE.Vector3())
+          .distanceTo(mark.position),
+      ).toBeLessThan(0.00001)
+    },
+  )
+
+  it('gives a clean reversal its own camera and sound emphasis while preserving guard', () => {
+    const ordinary = fightImpactPunctuation(impact({ knockdown: true }))
+    const reversal = fightImpactPunctuation(impact({ knockdown: true }), FEITAN_FINAL_REVERSAL)
+    expect(reversal.cameraPush).toBeGreaterThan(ordinary.cameraPush)
+    expect(reversal.thumpHz).toBeLessThan(ordinary.thumpHz)
+    expect(fightImpactPunctuation(impact({ blocked: true }), FEITAN_FINAL_REVERSAL)).toEqual(
+      fightImpactPunctuation(impact({ blocked: true })),
+    )
+  })
   it('ranks light, heavy and decisive contacts and silences evasions', () => {
     const light = fightImpactPunctuation(impact({ kind: 'light' }))
     const heavy = fightImpactPunctuation(impact())

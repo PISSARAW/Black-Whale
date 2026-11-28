@@ -8,10 +8,12 @@
  * that into a failing test instead of a room nobody can reach.
  */
 import blueprintJson from '../../../../../data/ship/blueprint.json'
+import { applyPrinceApartmentPlans } from './princeApartmentPlans'
 import { cineplexHallDoorOverrides } from './cineplexHallLayout'
 import { cineplexWalkStructures } from './cineplexWalkStructures'
 import { spawnFacing, spawnPoint } from './spawn'
 import { columnsForRooms, roomColumnPositions } from './roomColumns'
+import { doorwaySurfaceRise } from './standingSurface'
 import {
   EPSILON,
   deriveDoorways,
@@ -43,7 +45,7 @@ import type {
   WallSegment,
 } from './types'
 
-export const blueprint = blueprintJson as unknown as Blueprint
+export const blueprint = applyPrinceApartmentPlans(blueprintJson as unknown as Blueprint)
 export { spawnFacing, spawnPoint }
 
 /** One deck, resolved: its spaces, the doorways between them, its walls. */
@@ -621,9 +623,7 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
   // dressed as a door.
   for (const plan of ship.plans.values()) {
     for (const doorway of plan.doorways) {
-      const a = ship.spaces.get(doorway.a)!
-      const b = ship.spaces.get(doorway.b)!
-      const rise = Math.abs((a.floor ?? 0) - (b.floor ?? 0))
+      const rise = doorwaySurfaceRise(plan, doorway)
       if (rise > STEP_UP + EPSILON) {
         issues.push(`doorway ${doorway.a} | ${doorway.b}: ${rise} m is a climb, not a step`)
       }

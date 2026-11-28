@@ -6,8 +6,9 @@ import { mergeHumanDetails } from './humanDetailGeometry'
 export function addHeillyReferenceFace(build: HumanHeadBuild, head: Group) {
   const { profile } = build
   if (!['luini', 'yokotani'].includes(profile.likeness ?? '')) return
-  if (profile.likeness === 'yokotani') yokotaniSmile(build, head)
-  else luiniGrin(build, head)
+  if (profile.likeness === 'yokotani' && profile.expression === 'neutral')
+    yokotaniSmile(build, head)
+  if (profile.likeness === 'luini' && profile.expression !== 'anxious') luiniGrin(build, head)
 }
 
 function noseLines(build: HumanHeadBuild): BufferGeometry[] {
@@ -91,11 +92,27 @@ function luiniGrin(build: HumanHeadBuild, head: Group) {
   )
   grin.name = 'luini-toothed-grin'
   head.add(grin)
+  const cavity = new THREE.Mesh(
+    geometry(THREE, 'manga:luini-grin-cavity', () =>
+      kurapikaPanel(THREE, [
+        [-0.064, -0.107, 0.178],
+        [-0.04, -0.084, 0.178],
+        [0.02, -0.081, 0.178],
+        [0.064, -0.102, 0.178],
+        [0.046, -0.13, 0.178],
+        [0, -0.145, 0.178],
+        [-0.039, -0.134, 0.178],
+      ]),
+    ),
+    materials.ink,
+  )
+  cavity.name = 'luini-grin-cavity'
+  head.add(cavity)
   const marks = new THREE.Mesh(
     geometry(THREE, 'manga:luini-face-lines', () => {
       const parts = noseLines(build)
       for (let i = -3; i <= 3; i++)
-        parts.push(new THREE.PlaneGeometry(0.002, 0.026).translate(i * 0.014, -0.103, 0.182))
+        parts.push(new THREE.PlaneGeometry(0.0013, 0.022).translate(i * 0.014, -0.105, 0.182))
       parts.push(
         new THREE.TorusGeometry(0.058, 0.0025, 6, 30, Math.PI * 0.88)
           .rotateZ(-1.55)

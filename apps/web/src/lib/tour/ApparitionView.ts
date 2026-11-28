@@ -21,6 +21,7 @@ export interface ApparitionSync<TSeen, TRendered extends RenderedApparition> {
 /** Owns the scene membership and GPU lifetime of rendered apparitions. */
 export class ApparitionView<T extends RenderedApparition> {
   readonly items: Record<string, T | undefined> = {}
+  private readonly prepared = new Map<string, T>()
 
   constructor(
     private readonly scene: Three.Scene,
@@ -30,6 +31,29 @@ export class ApparitionView<T extends RenderedApparition> {
   add(id: string, apparition: T): void {
     this.items[id] = apparition
     this.scene.add(apparition.root)
+  }
+
+  prepare(id: string, key: string, build: () => T): T | null {
+    if (this.items[id]?.key === key) return null
+    const held = this.prepared.get(id)
+    if (held?.key === key) return null
+    if (held) {
+      this.prepared.delete(id)
+      this.disposeRig(held)
+    }
+    const ready = build()
+    ready.key = key
+    this.prepared.set(id, ready)
+    return ready
+  }
+
+  private takePrepared(id: string, key: string): T | undefined {
+    const held = this.prepared.get(id)
+    if (!held) return undefined
+    this.prepared.delete(id)
+    if (held.key === key) return held
+    this.disposeRig(held)
+    return undefined
   }
 
   sync<TSeen>(wanted: readonly TSeen[], operations: ApparitionSync<TSeen, T>): void {
@@ -45,7 +69,7 @@ export class ApparitionView<T extends RenderedApparition> {
         held = undefined
       }
       if (!held) {
-        held = operations.build(seen)
+        held = this.takePrepared(id, key) ?? operations.build(seen)
         held.key = key
         operations.restore(held, preserved)
         this.add(id, held)
@@ -85,6 +109,11 @@ export class ApparitionView<T extends RenderedApparition> {
     disposeExpressionEffects(held.root)
     this.scene.remove(held.root)
     this.portals.drop(id)
+    this.disposeRig(held)
+  }
+
+  private disposeRig(held: T): void {
+    disposeExpressionEffects(held.root)
     held.root.traverse((part) => {
       const mesh = part as Three.Mesh
       if (mesh.geometry && !mesh.geometry.userData.sharedHuman) mesh.geometry.dispose()
@@ -93,5 +122,7 @@ export class ApparitionView<T extends RenderedApparition> {
 
   dispose(): void {
     for (const id of Object.keys(this.items)) this.drop(id)
+    for (const actor of this.prepared.values()) this.disposeRig(actor)
+    this.prepared.clear()
   }
 }

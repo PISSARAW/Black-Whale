@@ -133,3 +133,43 @@ export function addFurykovPuffer(build: HumanClothesBuild) {
   collar.name = `${prefix}-puffer-collar`
   figure.add(collar)
 }
+
+/** Borksen's standard Kakin field jacket, read from the supplied manga close-up. */
+export function addBorksenKakinUniform(build: HumanClothesBuild) {
+  const { THREE, geometry, figure, materials, profile } = build
+  const { chest } = mangaBodyShape(profile)
+  mangaPanel(build, {
+    name: 'borksen-uniform-zipper',
+    points: [
+      [-0.0045, 1.49],
+      [-0.0045, 0.83],
+      [0.0045, 0.83],
+      [0.0045, 1.49],
+    ],
+    material: materials.accent,
+    lift: 0.012,
+  })
+  for (const side of [-1, 1])
+    mangaPanel(build, {
+      name: `borksen-uniform-yoke-${side}`,
+      points: [
+        [side * 0.035, 1.45],
+        [side * chest * 0.74, 1.39],
+        [side * chest * 0.79, 1.34],
+        [side * 0.05, 1.4],
+      ],
+      material: materials.accent,
+      lift: 0.01,
+    })
+  const collar = new THREE.Mesh(
+    geometry(
+      THREE,
+      'manga:borksen-standing-collar',
+      () => new THREE.CylinderGeometry(chest * 0.34, chest * 0.43, 0.12, 28, 1, true),
+    ),
+    materials.cloth,
+  )
+  collar.position.y = 1.485
+  collar.name = 'borksen-standing-collar'
+  figure.add(collar)
+}

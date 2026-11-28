@@ -150,6 +150,8 @@ function ownsComfortCamera(frame: VictoryFrame) {
   return (
     isBeyondCurse(frame.variant) ||
     [
+      'phinks',
+      'tserriednich',
       'kurapika',
       'leorio',
       'camilla',
@@ -186,7 +188,9 @@ export function createVictoryRenderer(options: {
   scenery: Object3D
 }) {
   const drivers = new Map<string, VictoryDriver>(),
-    lighting = victoryLighting()
+    lighting = victoryLighting(),
+    futureLighting = victoryLighting(0.57),
+    phinksLighting = victoryLighting(0.12)
   let disposed = false
   return {
     apply(input: {
@@ -194,10 +198,12 @@ export function createVictoryRenderer(options: {
       frame: VictoryFrame | null
       models: VictoryModels
       comfort: FightComfort
+      futurePerspective?: VictoryContext['futurePerspective']
     }) {
       const { frame, state, models, comfort } = input
       if (!frame?.active || disposed) {
         delete options.scene.userData.victory
+        delete options.scene.userData.premiumCinematic
         return null
       }
       const transaction = victoryTransaction(options.camera)
@@ -230,7 +236,13 @@ export function createVictoryRenderer(options: {
           visible: [hero.root, victim.root, options.scenery],
           save: transaction.save,
         })
-        lighting.apply(options.scenery, transaction)
+        const sceneLighting =
+          frame.fighter === 'phinks'
+            ? phinksLighting
+            : frame.fighter === 'tserriednich' && !isBeyondCurse(frame.variant)
+              ? futureLighting
+              : lighting
+        sceneLighting.apply(options.scenery, transaction)
         const context: VictoryContext = {
           ...options,
           state,
@@ -241,6 +253,7 @@ export function createVictoryRenderer(options: {
           centre,
           gap,
           comfort,
+          futurePerspective: input.futurePerspective,
           save: transaction.save,
           material: transaction.material,
           defer: transaction.defer,
@@ -279,7 +292,10 @@ export function createVictoryRenderer(options: {
       drivers.forEach((driver) => driver.dispose())
       drivers.clear()
       lighting.dispose()
+      futureLighting.dispose()
+      phinksLighting.dispose()
       delete options.scene.userData.victory
+      delete options.scene.userData.premiumCinematic
     },
   }
 }

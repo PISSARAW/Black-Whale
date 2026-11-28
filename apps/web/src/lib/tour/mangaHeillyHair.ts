@@ -16,7 +16,7 @@ export function mangaHeillyHair(kit: MangaHairKit, bob: boolean) {
       width: 0.018,
       depth: 0.01,
       points: [
-        [x, 0.102 + (1 - Math.abs(i) / 8) * 0.018, 0.145],
+        [x, 0.124 + (1 - Math.abs(i) / 8) * 0.025, bob ? 0.13 : 0.143],
         [x * 1.02, 0.21 - Math.abs(x) * 0.2, 0.09],
         [x * 0.95, 0.235 - Math.abs(x) * 0.3, -0.035],
         [x * 0.9, 0.13, -0.15],

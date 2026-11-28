@@ -10,6 +10,7 @@ import { fightContactTarget } from './fightContactAlignment'
 import { fightRigOf } from './fightRig'
 import { anatomicalContactZone, surfaceContactAt } from './fightSurfaceContact'
 import { fightImpactPunctuation } from './fightImpactPunctuation'
+import { feitanBladeSpark } from './feitanSignatureImpact'
 import type { FightImpact, FightSide, FightState } from './types'
 
 export function createFightImpactScene(options: {
@@ -46,32 +47,77 @@ export function createFightImpactScene(options: {
   let last = options.initial.impact?.sequence ?? 0
   let lastClash = options.initial.attackClash?.sequence ?? 0
   const shake = createCombatImpactShake()
+  function emitClash(state: FightState, now: number) {
+    const clash = state.attackClash
+    if (clash && clash.sequence !== lastClash) {
+      lastClash = clash.sequence
+      const origin = new THREE.Vector3(
+        fightWorldX(clash.position.x),
+        fightWorldY(clash.position.y),
+        0.3,
+      )
+      for (let i = 0; i < 2; i++) {
+        const mesh = new THREE.Mesh(shapes.clash, materials.clash)
+        mesh.name = 'fight-contact-clash'
+        mesh.rotation.z = i * (Math.PI / 2)
+        mesh.position.copy(origin)
+        scene.add(mesh)
+        sparks.push({
+          mesh,
+          velocity: new THREE.Vector3(),
+          born: now,
+          size: 0.9 + i * 0.25,
+          ring: true,
+        })
+      }
+    }
+  }
+  function emitPunctuation(options: {
+    origin: Three.Vector3
+    now: number
+    style: keyof typeof materials
+    punctuation: ReturnType<typeof fightImpactPunctuation>
+    profile: ReturnType<typeof comfortableImpact>
+  }) {
+    const { origin, now, style, punctuation, profile } = options
+    if (punctuation.wave) {
+      const mesh = new THREE.Mesh(shapes.wave, materials[style])
+      mesh.name = 'fight-contact-wave'
+      mesh.position.copy(origin)
+      scene.add(mesh)
+      sparks.push({
+        mesh,
+        velocity: new THREE.Vector3(),
+        born: now,
+        size: (0.8 + punctuation.rank * 0.18) * (punctuation.waveScale ?? 1),
+        ring: true,
+      })
+    }
+    for (let i = 0; i < punctuation.rays; i++) {
+      const spread = punctuation.rays <= 1 ? 0 : i / (punctuation.rays - 1) - 0.5
+      const angle = spread * Math.PI * 1.15 + (punctuation.direction < 0 ? Math.PI : 0)
+      const mesh = new THREE.Mesh(shapes.ray, materials[style])
+      mesh.name = 'fight-contact-ray'
+      mesh.rotation.z = angle
+      mesh.position.copy(origin)
+      scene.add(mesh)
+      sparks.push({
+        mesh,
+        velocity: new THREE.Vector3(
+          Math.cos(angle) * profile.sparkSpeed * 0.72,
+          Math.sin(angle) * profile.sparkSpeed * 0.72,
+          0,
+        ),
+        born: now,
+        size: 0.55 + punctuation.rank * 0.12,
+        ring: false,
+      })
+    }
+  }
   return {
     emit(state: FightState, now: number) {
       shake.observe(state)
-      const clash = state.attackClash
-      if (clash && clash.sequence !== lastClash) {
-        lastClash = clash.sequence
-        const origin = new THREE.Vector3(
-          fightWorldX(clash.position.x),
-          fightWorldY(clash.position.y),
-          0.3,
-        )
-        for (let i = 0; i < 2; i++) {
-          const mesh = new THREE.Mesh(shapes.clash, materials.clash)
-          mesh.name = 'fight-contact-clash'
-          mesh.rotation.z = i * (Math.PI / 2)
-          mesh.position.copy(origin)
-          scene.add(mesh)
-          sparks.push({
-            mesh,
-            velocity: new THREE.Vector3(),
-            born: now,
-            size: 0.9 + i * 0.25,
-            ring: true,
-          })
-        }
-      }
+      emitClash(state, now)
       const impact = state.impact
       if (!impact || impact.sequence === last) return
       last = impact.sequence
@@ -83,15 +129,10 @@ export function createFightImpactScene(options: {
         moveId: state[impact.attacker].attack?.moveId,
         comfort: comfort(),
       })
-      const punctuation = fightImpactPunctuation(impact)
+      const punctuation = fightImpactPunctuation(impact, state[impact.attacker].attack?.moveId)
       shake.hit(impact, { profile, facing: state[impact.attacker].facing })
-      const origin = new THREE.Vector3(
-        fightWorldX(impact.position.x),
-        fightWorldY(displayContactHeight(state, impact)),
-        0.25,
-      )
-      alignCloseImpact(origin, { state, impact, figureOf: options.figureOf })
-      const count = style === 'parry' && profile.sparks > 0 ? 1 : profile.sparks
+      const origin = contactOrigin(THREE, { state, impact, figureOf: options.figureOf })
+      const count = style === 'parry' ? Math.min(1, profile.sparks) : profile.sparks
       for (let i = 0; i < count; i++) {
         const angle = (i / count) * Math.PI * 2
         const mesh = new THREE.Mesh(shapes[style], materials[style])
@@ -111,39 +152,7 @@ export function createFightImpactScene(options: {
           ring: style === 'parry',
         })
       }
-      if (punctuation.wave) {
-        const mesh = new THREE.Mesh(shapes.wave, materials[style])
-        mesh.name = 'fight-contact-wave'
-        mesh.position.copy(origin)
-        scene.add(mesh)
-        sparks.push({
-          mesh,
-          velocity: new THREE.Vector3(),
-          born: now,
-          size: 0.8 + punctuation.rank * 0.18,
-          ring: true,
-        })
-      }
-      for (let i = 0; i < punctuation.rays; i++) {
-        const spread = punctuation.rays <= 1 ? 0 : i / (punctuation.rays - 1) - 0.5
-        const angle = spread * Math.PI * 1.15 + (punctuation.direction < 0 ? Math.PI : 0)
-        const mesh = new THREE.Mesh(shapes.ray, materials[style])
-        mesh.name = 'fight-contact-ray'
-        mesh.rotation.z = angle
-        mesh.position.copy(origin)
-        scene.add(mesh)
-        sparks.push({
-          mesh,
-          velocity: new THREE.Vector3(
-            Math.cos(angle) * profile.sparkSpeed * 0.72,
-            Math.sin(angle) * profile.sparkSpeed * 0.72,
-            0,
-          ),
-          born: now,
-          size: 0.55 + punctuation.rank * 0.12,
-          ring: false,
-        })
-      }
+      emitPunctuation({ origin, now, style, punctuation, profile })
     },
     animate(now: number) {
       for (let i = sparks.length - 1; i >= 0; i--) {
@@ -171,6 +180,27 @@ export function createFightImpactScene(options: {
       sparks.length = 0
     },
   }
+}
+
+function contactOrigin(
+  THREE: typeof Three,
+  options: {
+    state: FightState
+    impact: FightImpact
+    figureOf?: (side: FightSide) => Three.Object3D
+  },
+): Three.Vector3 {
+  const { state, impact } = options
+  const { x, y, z } = impact.position
+  if (z !== undefined)
+    return feitanBladeSpark(new THREE.Vector3(fightWorldX(x), fightWorldY(y), z), options)
+  const origin = new THREE.Vector3(
+    fightWorldX(x),
+    fightWorldY(displayContactHeight(state, impact)),
+    0.25,
+  )
+  alignCloseImpact(origin, options)
+  return feitanBladeSpark(origin, options)
 }
 
 function alignCloseImpact(

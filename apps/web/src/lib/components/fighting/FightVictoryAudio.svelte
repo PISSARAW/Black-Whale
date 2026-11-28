@@ -42,7 +42,13 @@
   }
 
   function failed() {
-    if (!frame?.active || frame.token !== token || fallback || !frame.variant) return
+    if (
+      !frame?.active ||
+      frame.token !== token ||
+      fallback ||
+      victoryTrack(frame).url === victoryTrack(frame, true).url
+    )
+      return
     fallback = true
     load(frame)
   }

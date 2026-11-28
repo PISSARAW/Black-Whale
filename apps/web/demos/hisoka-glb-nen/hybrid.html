@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <title>Hisoka · Essai du regard hybride</title>
+    <style>
+      body {
+        margin: 0;
+        background: #202131;
+        color: #e9e2ee;
+        font:
+          16px system-ui,
+          sans-serif;
+      }
+      #view {
+        width: min(100vw, 1120px);
+        margin: auto;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+      }
+      #status {
+        text-align: center;
+        min-height: 1.3em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="view"></div>
+    <p id="status" role="status">Chargement de Hisoka.glb…</p>
+    <script type="module" src="./hybrid.ts"></script>
+  </body>
+</html>

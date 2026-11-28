@@ -1,6 +1,9 @@
 <script lang="ts">
+  import '$lib/components/game/mode-hud.css'
+  import ModeCommand from '$lib/components/game/ModeCommand.svelte'
+  import { modeNumberSlot, modeShortcut, runModeCommand } from '$lib/components/game/modeKeyboard'
   import { tick } from 'svelte'
-  import { t } from '$lib/i18n'
+  import { locale, t } from '$lib/i18n'
   import {
     CARD_COLOURS,
     DEALER_COLOUR,
@@ -21,6 +24,7 @@
     onCommand: (command: MorenaCommand) => void
     onChoice: (choice: AnswerCard | null) => void
     knowsInfection?: boolean
+    keyboardActive?: boolean
   }
 
   let {
@@ -30,9 +34,13 @@
     onCommand,
     onChoice,
     knowsInfection = false,
+    keyboardActive = true,
   }: Props = $props()
   const copy = $derived($t.tour.morena)
   const settlement = $derived(needsAChoice(game))
+  const finalChoices = $derived(
+    settlement === 'joker' ? (['yes', 'no'] as const) : settlement === 'back' ? game.graveyard : [],
+  )
   let actionHeading = $state<HTMLHeadingElement | null>(null)
   const questionCopy = (question: QuestionCard) =>
     (copy.questions as Record<string, { short: string; title: string }>)[question]
@@ -48,18 +56,33 @@
     if (settlement && !choice) return
     onCommand({ kind: 'settle', choice: choice ?? undefined })
   }
+  function phaseShortcut(event: KeyboardEvent, code: string | null) {
+    const slot = modeNumberSlot(code)
+    if (game.phase === 'asking' && game.questions[slot])
+      return runModeCommand(event, () => onCommand({ kind: 'ask', question: game.questions[slot] }))
+    if (game.phase === 'deal' && game.graveyard[slot])
+      return runModeCommand(event, () =>
+        onCommand({ kind: 'accept-deal', card: game.graveyard[slot] }),
+      )
+    if (game.phase !== 'settling') return
+    if (finalChoices[slot]) return runModeCommand(event, () => onChoice(finalChoices[slot]))
+    if (code === 'Enter' && (!settlement || choice)) runModeCommand(event, play)
+  }
+
+  function keyboard(event: KeyboardEvent) {
+    const target = event.target
+    if (!keyboardActive || document.pointerLockElement || target instanceof HTMLCanvasElement)
+      return
+    if (target instanceof HTMLElement && target.closest('dialog, [role="dialog"]')) return
+    phaseShortcut(event, modeShortcut(event))
+  }
 </script>
 
+<svelte:window onkeydown={keyboard} />
+
 {#if game.phase === 'deal'}
-  <div
-    class="mt-4 rounded border border-[#d94f68]/60 bg-[#d94f68]/10 p-3"
-    data-testid="morena-action"
-  >
-    <h2
-      class="text-sm font-semibold text-[#FFFFF0] outline-none"
-      bind:this={actionHeading}
-      tabindex="-1"
-    >
+  <div class="mode-hud mode-hud-surface mt-3 p-3" data-tone="rose" data-testid="morena-action">
+    <h2 class="mode-hud-title outline-none" bind:this={actionHeading} tabindex="-1">
       {copy.deal.title}
     </h2>
     <p class="mt-1 text-xs leading-relaxed text-[#FFFFF0]/70">
@@ -67,38 +90,39 @@
     </p>
     <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">{copy.deal.pick}</p>
     <div class="mt-2 flex flex-wrap items-end gap-2">
-      {#each game.graveyard as card (card)}
+      {#each game.graveyard as card, index (card)}
         <button
-          class="rounded border border-[#d94f68] p-1.5 hover:bg-[#d94f68]/30"
+          class="mode-hud-button mode-command"
+          type="button"
+          aria-keyshortcuts={index < 9 ? String(index + 1) : undefined}
           onclick={() => onCommand({ kind: 'accept-deal', card })}
           title="{copy.deal.take} · {nameOfCard(card)}"
         >
+          {#if index < 9}<kbd aria-hidden="true">{index + 1}</kbd>{/if}
           <MorenaCard face={card} label={nameOfCard(card)} ink={cssInk(CARD_COLOURS[card])} />
         </button>
       {/each}
-      <button
-        class="rounded border border-[#444] px-3 py-1.5 text-xs text-[#FFFFF0] hover:border-[#FFD700]"
-        onclick={() => onCommand({ kind: 'decline-deal' })}>{copy.deal.refuse}</button
+      <button class="mode-hud-button" onclick={() => onCommand({ kind: 'decline-deal' })}
+        >{copy.deal.refuse}</button
       >
     </div>
   </div>
 {:else if game.phase === 'asking'}
-  <section data-testid="morena-action">
-    <h2
-      class="mt-4 text-sm font-semibold text-[#FFFFF0] outline-none"
-      bind:this={actionHeading}
-      tabindex="-1"
-    >
+  <section class="mode-hud mode-hud-surface mt-3 p-3" data-tone="rose" data-testid="morena-action">
+    <h2 class="mode-hud-title outline-none" bind:this={actionHeading} tabindex="-1">
       {copy.askTitle}
     </h2>
     <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.askHint}</p>
     <ul class="mt-2 space-y-1.5">
-      {#each game.questions as question (question)}
+      {#each game.questions as question, index (question)}
         <li>
           <button
-            class="flex w-full items-center gap-3 rounded border border-[#333] p-2 text-left text-sm text-[#FFFFF0]/85 hover:border-[#d94f68] hover:text-[#FFFFF0]"
+            class="mode-hud-button mode-command w-full !justify-start text-left"
+            type="button"
+            aria-keyshortcuts={index < 9 ? String(index + 1) : undefined}
             onclick={() => onCommand({ kind: 'ask', question })}
           >
+            {#if index < 9}<kbd aria-hidden="true">{index + 1}</kbd>{/if}
             <MorenaCard
               face={question}
               label={questionCopy(question).short}
@@ -111,25 +135,23 @@
     </ul>
   </section>
 {:else if game.phase === 'settling'}
-  <section data-testid="morena-action">
-    <h2
-      class="mt-4 text-sm font-semibold text-[#FFFFF0] outline-none"
-      bind:this={actionHeading}
-      tabindex="-1"
-    >
+  <section class="mode-hud mode-hud-surface mt-3 p-3" data-tone="rose" data-testid="morena-action">
+    <h2 class="mode-hud-title outline-none" bind:this={actionHeading} tabindex="-1">
       {copy.settle.title}
     </h2>
     {#if settlement === 'joker'}
       <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.settle.jokerHint}</p>
       <div class="mt-2 flex gap-2">
-        {#each ['yes', 'no'] as const as side (side)}
+        {#each ['yes', 'no'] as const as side, index (side)}
           <button
-            class="rounded border p-1.5 {choice === side
-              ? 'border-[#FFD700] bg-[#FFD700]/10'
-              : 'border-[#444] hover:border-[#FFD700]/60'}"
+            class="mode-hud-button mode-command"
+            type="button"
+            aria-keyshortcuts={index < 9 ? String(index + 1) : undefined}
+            aria-pressed={choice === side}
             onclick={() => onChoice(side)}
             title={nameOfCard(side)}
           >
+            <kbd aria-hidden="true">{index + 1}</kbd>
             <MorenaCard face={side} label={nameOfCard(side)} ink={cssInk(CARD_COLOURS[side])} />
           </button>
         {/each}
@@ -137,14 +159,16 @@
     {:else if settlement === 'back'}
       <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.settle.backHint}</p>
       <div class="mt-2 flex flex-wrap gap-2">
-        {#each game.graveyard as card (card)}
+        {#each game.graveyard as card, index (card)}
           <button
-            class="rounded border p-1.5 {choice === card
-              ? 'border-[#FFD700] bg-[#FFD700]/10'
-              : 'border-[#444] hover:border-[#FFD700]/60'}"
+            class="mode-hud-button mode-command"
+            type="button"
+            aria-keyshortcuts={index < 9 ? String(index + 1) : undefined}
+            aria-pressed={choice === card}
             onclick={() => onChoice(card)}
             title={nameOfCard(card)}
           >
+            {#if index < 9}<kbd aria-hidden="true">{index + 1}</kbd>{/if}
             <MorenaCard face={card} label={nameOfCard(card)} ink={cssInk(CARD_COLOURS[card])} />
           </button>
         {/each}
@@ -152,10 +176,15 @@
     {:else if lastCard(game) === 'back'}
       <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">{copy.settle.backEmpty}</p>
     {/if}
-    <button
-      class="mt-3 rounded bg-[#d94f68] px-4 py-2 text-sm font-semibold text-[#0b0b0d] disabled:opacity-40"
-      disabled={Boolean(settlement) && !choice}
-      onclick={play}>{copy.settle.play}</button
-    >
+    <div class="mt-3">
+      <ModeCommand
+        label={copy.settle.play}
+        shortcut="Enter"
+        keyLabel={$locale === 'fr' ? 'Entrée' : 'Enter'}
+        primary
+        disabled={Boolean(settlement) && !choice}
+        onclick={play}
+      />
+    </div>
   </section>
 {/if}

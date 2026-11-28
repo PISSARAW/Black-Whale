@@ -168,7 +168,7 @@ function separate(pass: ContactPass, index: number): void {
   // A Black Voice carrier is forced through the press until its Moon-marked hand reaches
   // the Sun target. Crowd separation previously cancelled every forward step in a dense
   // section and froze the linked-head explosion several metres away.
-  if (spectator.order === 'touch-sun' || spectator.order === 'pile-on-hisoka') return
+  if (spectator.order === 'touch-sun' || pressesAgainstHisoka(spectator)) return
   const { push, dense } = contactsOf(pass, index)
   const target = { ...spectator.at, x: spectator.at.x + push.x, z: spectator.at.z + push.z }
   const at = railBetween(spectator.at, target) ? spectator.at : target
@@ -179,12 +179,15 @@ function separate(pass: ContactPass, index: number): void {
       : { ...spectator, at, health: crushed }
 }
 
+const pressesAgainstHisoka = (spectator: Spectator) =>
+  spectator.order === 'pile-on-hisoka' || spectator.order === 'trip-hisoka'
+
 /** A fighter shoves bodies aside; pushed over the pit barrier, a spectator falls. */
 function shove(spectator: Spectator, fighter: Vec3): Spectator {
   if (!living(spectator) || spectator.posture === 'airborne' || spectator.posture === 'held')
     return spectator
   // The bodies ordered onto him are not shoved off: that is how he is buried.
-  if (spectator.order === 'pile-on-hisoka') return spectator
+  if (pressesAgainstHisoka(spectator)) return spectator
   const dx = spectator.at.x - fighter.x
   const dz = spectator.at.z - fighter.z
   const distance = Math.hypot(dx, dz)

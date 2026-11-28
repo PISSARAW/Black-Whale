@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ModeCommand from '$lib/components/game/ModeCommand.svelte'
   import { ModeNenState } from '$lib/nen/modeState.svelte'
   /**
    * Morena's game: the one room of the walk you sit down in.
@@ -365,15 +366,10 @@
     session.dispatch(commandForGesture(gesture))
   }
 
-  /**
-   * Whether anything is live, which is what F answers to.
-   *
-   * The same keys as the walk, for the same reason: the aura is in the
-   * visitor's hand and the room is where it is played. One seat is one key, and
-   * F is it; the book is the only thing here that fills the second, which is
-   * where R goes — a page, exactly as on the walk. C stays unspent: nothing at
-   * this table is an instrument with three airs.
-   */
+  function playPointedCard() {
+    if (view === 'table' && aimedExtra) takeHold(aimedExtra)
+  }
+
   const castable = $derived(
     view === 'table' && game.phase !== 'over' && keyed.some((seat) => !seat.usedUp),
   )
@@ -534,6 +530,8 @@
         {hands}
         bind:aimedExtra
         onPick={view === 'table' ? takeHold : undefined}
+        onPhysicalNenAction={playPointedCard}
+        modeKeyboard
         aiming={castable}
         onCast={cast}
         onHatsu={cast}
@@ -582,6 +580,14 @@
         {immersive}
         onFullscreen={toggleFullscreen}
       />
+      {#if pointedLabel && view === 'table'}
+        <div
+          class="mode-hud absolute bottom-3 right-3 z-30 hidden pointer-coarse:block"
+          data-tone="rose"
+        >
+          <ModeCommand label={pointedLabel} shortcut="F" primary onclick={playPointedCard} />
+        </div>
+      {/if}
     </section>
 
     <!-- The hand, once it is folded away: the table is still there to be looked
@@ -751,14 +757,15 @@
              footage as a picture. -->
         {#if lastAsked}
           <div
-            class="mt-3 rounded border border-[#3a2b33] bg-[#140f13] p-3"
+            class="mode-hud mode-hud-surface mt-3 p-3"
+            data-tone="rose"
             data-testid="morena-turn-result"
           >
-            <p class="text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">
+            <p class="mode-hud-label">
               {copy.askedLabel}
             </p>
             <p class="text-sm font-semibold text-[#FFFFF0]">{copy.questions[lastAsked].title}</p>
-            <p class="mt-2 text-[10px] uppercase tracking-widest text-[#d94f68]/80">
+            <p class="mode-hud-label mt-2">
               {copy.answerLabel}
             </p>
             <p class="mt-1 text-sm italic leading-relaxed text-[#FFFFF0]/80">
@@ -790,6 +797,7 @@
             onCommand={(command) => session.dispatch(command)}
             onChoice={(card) => session.choose(card)}
             {knowsInfection}
+            keyboardActive={!immersive || panelOpen}
           />
           <div class="mt-4 border-t border-[#222] pt-3">
             <p class="text-[11px] leading-snug text-[#FFFFF0]/45">{copy.hatsu.leaveWarning}</p>

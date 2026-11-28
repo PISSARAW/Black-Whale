@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte'
+  import { createCamillaFatalityFilm } from '../../demos/fighting-showcase/camillaFatalityFilm'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
   import FightScene from '$lib/components/fighting/FightScene.svelte'
   import FightVictoryOverlay from '$lib/components/fighting/FightVictoryOverlay.svelte'
@@ -42,18 +43,22 @@
   }
   async function finish() {
     const side = victorySide
-    state = {
-      ...state,
-      phase: 'finished',
-      winner: side,
-      matchWinner: side,
-      finishReason: 'knockout',
-      frame: 600,
-      [side === 'player' ? 'opponent' : 'player']: {
-        ...state[side === 'player' ? 'opponent' : 'player'],
-        health: 0,
-      },
-    }
+    if (state[side].id === 'camilla' && state.mode !== 'training') {
+      const target = state[side === 'player' ? 'opponent' : 'player'].id
+      state = createCamillaFatalityFilm({ side, target, stageId }).state
+    } else
+      state = {
+        ...state,
+        phase: 'finished',
+        winner: side,
+        matchWinner: side,
+        finishReason: 'knockout',
+        frame: 600,
+        [side === 'player' ? 'opponent' : 'player']: {
+          ...state[side === 'player' ? 'opponent' : 'player'],
+          health: 0,
+        },
+      }
     const selection = selectVictory(state)
     frame = selection ? { ...selection, elapsed: 0, active: true } : null
     await tick()

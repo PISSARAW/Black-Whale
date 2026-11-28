@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tick } from 'svelte'
+  import timing from '../../src/lib/fighting/victory/bonolenovTiming.json'
   import FightScene from '../../src/lib/components/fighting/FightScene.svelte'
   import FightVictoryOverlay from '../../src/lib/components/fighting/FightVictoryOverlay.svelte'
   import { createBonolenovFatalityFilm } from './bonolenovFatalityFilm'
@@ -23,17 +24,13 @@
     failed = false
   $: frame = { ...selected, elapsed: index / 60, active: true }
   $: phase =
-    index < 72
-      ? 'Les trous du corps chantent'
-      : index < 210
+    index < timing.armor
+      ? 'Le premier appui'
+      : index < timing.form
         ? 'Prologue'
-        : index < 288
+        : index < timing.dissolve
           ? 'Jupiter'
-          : index < 396
-            ? 'Tant que la musique te parvient…'
-            : index < 474
-              ? 'Le dernier accord'
-              : 'Le dernier mouvement'
+          : 'Le dernier mouvement'
   export const ready = () => mounted || failed
   export const count = () => 600
   export const report = () => ({

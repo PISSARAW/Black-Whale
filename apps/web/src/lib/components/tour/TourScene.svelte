@@ -69,7 +69,8 @@
   import { comfort, reducedMotion, setComfort, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh } from '$lib/tour/mesh'
   import { animateDealerFace } from '$lib/tour/dealer'
-  import { HUMAN_LOD_DISTANCE, humanStateKey } from '$lib/tour/humanFigure'
+  import { HUMAN_LOD_DISTANCE } from '$lib/tour/humanFigure'
+  import { setHumanExtremityLod } from '$lib/tour/humanExtremityLod'
   import { shownState } from '$lib/tour/apparitionShown'
   import type { HumanPose } from '$lib/tour/humanAnimation'
   import type { HumanFigure } from '$lib/tour/humanFigure'
@@ -89,7 +90,7 @@
     walkInput,
     wayOutOfInterior,
   } from '$lib/tour/navigation'
-  import { StairNavigator, type JumpArrival } from '$lib/tour/StairNavigator'
+  import { StairNavigator, stairInteractionArrival, type JumpArrival } from '$lib/tour/StairNavigator'
   import { SurfaceWalker } from '$lib/tour/SurfaceWalker'
   import {
     beginTierTransition,
@@ -139,7 +140,7 @@
     TourCameraFov,
     type ThirdPersonCamera,
   } from './TourCameraPlacement'
-  import { CameraSight } from '$lib/tour/cameraSight'
+  import { TOUR_CAMERA_TRACE_ATTRIBUTE, traceTourCamera } from './TourCameraTrace'
   // The roar makes a noise of its own rather than reporting one: it is answered
   // to a keypress, so it does not go through the page's report-to-sound table.
   // The flock's chirp is raised by the page itself, where the arrival happens.
@@ -147,8 +148,13 @@
   import { playNenObjectSound, playNenTechniqueSound, sustainNenSound } from '$lib/audio/nenSounds'
   import { NEN_KEYS, nenZoneIndex, ryuDistribution, type NenBodyZone } from '$lib/nen/controls'
   import { visibleSpaces } from '$lib/tour/visibility'
+  import { prepareStairLandings } from '$lib/tour/stairLandingWarmup'
   import { createShaftDecks } from '$lib/tour/shaftDecks'
+  import { CasinoSpiralWalk } from '$lib/tour/casinoSpiralWalk'
+  import { buildCasinoSpiralView } from '$lib/tour/casinoSpiralView'
   import { buildGangwayView, type GangwayView } from '$lib/tour/gangwayView'
+  import { offersRouteInteriorExit, TSERRIEDNICH_HALL } from '$lib/tour/tserriednichRoute'
+  import type { GangwayPresentation } from '$lib/tour/gangwayLockdownView'
   import {
     enterGangway,
     gangwayPaths,
@@ -176,6 +182,7 @@
     NIGHT_LIGHT_INTENSITY,
     TourAtmosphereView,
   } from '$lib/tour/TourAtmosphereView'
+  import { apparitionKey, landingActorSteps } from '$lib/tour/landingActorWarmup'
   import { ApparitionView } from '$lib/tour/ApparitionView'
   import { buildBasicApparition, BIRD_TETHER, BIRD_WINGS } from '$lib/tour/apparitionBasicView'
   import { buildAntennaApparition } from '$lib/tour/antennaModel'
@@ -215,6 +222,9 @@
     availableLink?: { link: Link; to: string } | null
     /** Whether the chapter 419 gangway is currently extended. */
     retractableGangwayOpen?: boolean
+    gangwayLockdown?: boolean
+    gangwayPresentation?: GangwayPresentation
+    guidedRoute?: boolean
     /** Set to jump the visitor somewhere; cleared once honoured. */
     jumpTo?: string | null
     /**
@@ -258,11 +268,6 @@
     cameraImpulse?: Vec2
     /** Optional shoulder camera owned by a game layered over the walk. */
     thirdPerson?: ThirdPersonCamera | null
-    /** Track this apparition only while it is visible from the rendered camera. */
-    sightExtra?: string
-    visibleExtraAt?: Vec2 | null
-    /** Request a single recenter on the tracked apparition, if it is still visible. */
-    focusSequence?: number
     /**
      * What Nen is currently doing to the ship. The scene is the only thing that
      * draws it; `$lib/tour/hatsu` is the only thing that decides it.
@@ -276,8 +281,10 @@
     showNenControls?: boolean
     /** Lets a mode replace the Tour keyboard vocabulary with its own shared control scheme. */
     keyboardNen?: boolean
+    modeKeyboard?: boolean
     /** Freezes movement and scene shortcuts while a modal owned by the page is open. */
     inputDisabled?: boolean
+    movementDisabled?: boolean
     concert?: ConcertPerformance
     /** Visible-but-disabled principles for modes that intentionally implement a subset. */
     nenAvailability?: Partial<Record<NenTechnique | 'hatsu' | 'action', boolean | string>>
@@ -382,6 +389,7 @@
      * treatment: built once, keyed on `id`, moved rather than rebuilt.
      */
     extras?: Apparition[]
+    landingActors?: (tierId: string, spaceId: string) => Apparition[]
     /** Moving solids supplied by a game layered over the walk. */
     collisionWalls?: WallSegment[]
     /** Named canonical bodies by room; sound may react without drawing a crowd. */
@@ -611,6 +619,9 @@
     currentSpace = $bindable(null),
     availableLink = $bindable(null),
     retractableGangwayOpen = $bindable(true),
+    gangwayLockdown = false,
+    gangwayPresentation = $bindable('open'),
+    guidedRoute = false,
     jumpTo = $bindable(null),
     jumpAt = $bindable(null),
     jumpHeading = $bindable(null),
@@ -630,9 +641,6 @@
     eyeHeightOffset = 0,
     cameraImpulse = [0, 0],
     thirdPerson = null,
-    sightExtra,
-    visibleExtraAt = $bindable(null),
-    focusSequence = 0,
     world = EMPTY_WORLD,
     auraColour = null,
     nen,
@@ -640,7 +648,9 @@
     onPhysicalNenAction,
     showNenControls = true,
     keyboardNen = true,
+    modeKeyboard = false,
     inputDisabled = false,
+    movementDisabled = false,
     concert = { mode: null, playing: false },
     nenAvailability = {},
     flash = null,
@@ -655,6 +665,7 @@
     roomDetailMode = 'default',
     seated = null,
     extras = [],
+    landingActors,
     collisionWalls = [],
     roomOccupancy = {},
     paceMultiplier = 1,
@@ -1068,6 +1079,7 @@
       // apart rather than evicting the deck it was turned on from.
       const revealedDecks: Record<string, Built | undefined> = {}
       let visible: Built | null = null
+      let spiralDeck: Built | null = null
 
       /**
        * The remote eye: a second camera parked in a room, and the deck it is
@@ -1119,7 +1131,7 @@
        * in which case it stays.
        */
       const heldElsewhere = (built: Built | null) =>
-        Boolean(built) && (built === eyeDeck || built === filmDeck || portalDecks.includes(built!))
+        Boolean(built) && (built === eyeDeck || built === filmDeck || built === spiralDeck || portalDecks.includes(built!))
 
       /** The plan as Nen leaves it: what is drawn, and what still stops you. */
       let activePlan: TierPlan | null = null
@@ -1164,16 +1176,10 @@
        * however many rooms it has. Each room then differs only in its draw range
        * and in the bounding sphere `buildTierMesh` measured for it.
        */
-      function extrude(nextTierId: string): Built {
-        return tierView.build({
-          ship,
-          world,
-          tierId: nextTierId,
-          reveal,
-          detailMode: roomDetailMode,
-          dustScale: quality.dustScale,
-        })
-      }
+      const deckOptions = (id: string) => ({
+        ship, world, tierId: id, reveal, detailMode: roomDetailMode, dustScale: quality.dustScale,
+      })
+      const extrude = (id: string) => tierView.build(deckOptions(id))
 
       const dispose = (built: Built) => tierView.dispose(built)
 
@@ -1221,15 +1227,33 @@
         return { built, key }
       }
 
+      const prepareLandings = prepareStairLandings({
+        THREE, runtime, ship,
+        readPlan: (id) => walkedPlan(ship, world, id),
+        readDeck: (id) => decks[id],
+        prepareActors: prepareLandingActors,
+        buildSteps: (id) => tierView.buildSteps(deckOptions(id)),
+        canPrepare: (id) => !reveal && worldKey(id) === `${id}::::::`,
+        cacheDeck: (id, built) => {
+          if (decks[id]) dispose(built)
+          else {
+            decks[id] = built
+            shownKey = ''
+          }
+        },
+      })
+
       /** State the render loop owns; Svelte state is only mirrored out of it. */
       let pointer: Vec2 = [0, 0]
       /** The floor the visitor is standing on, eased between rooms at a step. */
       let ground = 0
       const surfaces = new SurfaceWalker()
       const stairs = new StairNavigator(ship)
+      const casinoSpiral = new CasinoSpiralWalk(ship)
+      const spiralView = buildCasinoSpiralView(THREE, casinoSpiral.path)
+      if (spiralView) scene.add(spiralView.root)
       let yaw = 0
       let pitch = 0
-      let appliedFocusSequence = focusSequence
       // A manga plan can lift the camera out of the visitor's body. It remains
       // stable until the visitor walks or another jump restores eye level.
       let authoredEyeHeight: number | null = null
@@ -1319,6 +1343,7 @@
        * tunnel puts you where its far mouth stands, not where the stairs would.
        */
       function goTo(spaceId: string, arrival: JumpArrival = {}) {
+        casinoSpiral.reset()
         gangwayWalk = null
         gangwayOccupied = false
         const space = ship.spaces.get(spaceId)
@@ -1340,6 +1365,21 @@
           report()
         }
         tierId = space.tierId
+      }
+
+      const crossStair = (to: string, arrival?: JumpArrival) => {
+        const origin = currentTierId
+        const from = spaceAt(ship.plans.get(origin)!, pointer)?.id ?? ''
+        const start = pointer
+        const arrive = () => {
+          goTo(to, arrival)
+          stairs.arrived(from, to)
+        }
+        const valid = () =>
+          currentTierId === origin &&
+          linkIsOpen(world, from) &&
+          Math.hypot(pointer[0] - start[0], pointer[1] - start[1]) < 6
+        if (!prepareLandings.cross({ from, to, arrive, valid })) arrive()
       }
 
       loadTier(tierId)
@@ -1547,6 +1587,20 @@
           .join(',')}`
         if (key === shownKey) return
         shownKey = key
+        const farLanding = casinoSpiral.partner(standingId)
+        const farTier = farLanding?.tierId
+        const farDeck = !farTier
+          ? null
+          : worldKey(farTier) === `${farTier}::::::`
+            ? (decks[farTier] ?? null)
+            : buildDeck(farTier).built
+        if (spiralView) spiralView.root.visible = farLanding !== null
+        if (spiralDeck !== farDeck) {
+          const previous = spiralDeck
+          spiralDeck = farDeck
+          if (previous && previous !== visible && !heldElsewhere(previous)) scene.remove(previous.root)
+          if (farDeck && farDeck !== visible) scene.add(farDeck.root)
+        }
 
         // A list rather than a Map: there are at most two decks in the scene,
         // and the render loop owns this outright — nothing in the markup reads
@@ -1573,6 +1627,10 @@
         if (eyeDeck && eyeSpace) {
           const eyePlan = ship.plans.get(eyeSpace.tierId)
           if (eyePlan) want(eyeDeck, visibleSpaces(eyePlan, eyeSpace.id, quality.viewDepth))
+        }
+        if (spiralDeck && farLanding) {
+          const farPlan = ship.plans.get(farLanding.tierId)!
+          want(spiralDeck, visibleSpaces(farPlan, farLanding.spaceId, quality.viewDepth))
         }
         // What a mouth of the tunnel looks out on: the far room and whatever
         // can be seen from it, on whichever deck that is.
@@ -2105,8 +2163,12 @@
         }
       }
 
-      function dropApparition(id: string) {
-        apparitionView.drop(id)
+      function prepareLandingActors(space: Space) {
+        return landingActorSteps({
+          actors: landingActors?.(space.tierId, space.id) ?? [],
+          prepare: (seen) =>
+            apparitionView.prepare(seen.id, apparitionKey(seen, sight), () => buildApparition(seen)),
+        })
       }
 
       /** Puts what the world says is standing into the scene, and takes out the rest. */
@@ -2125,8 +2187,7 @@
         ].filter((seen) => !seen.hidden || effectiveNen.gyo)
         apparitionView.sync(wanted, {
           idOf: (seen) => seen.id,
-          keyOf: (seen) =>
-            `${seen.kind}|${seen.variant ?? ''}|${seen.carried ?? ''}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|sight:${sight}`,
+          keyOf: (seen) => apparitionKey(seen, sight),
           build: buildApparition,
           preserve: humanCarry.preserve,
           restore: humanCarry.restore,
@@ -2516,6 +2577,7 @@
           if (held.humanLod) {
             const distance = camera.position.distanceTo(held.root.position)
             const near = distance <= HUMAN_LOD_DISTANCE
+            setHumanExtremityLod(held.humanLod.near, distance)
             held.humanLod.near.visible = near
             held.humanLod.far.visible = !near
             // Position remains authoritative even off-screen; pose animation and
@@ -3243,66 +3305,11 @@
       // an empty list and never runs.
 
       const picker = new THREE.Raycaster()
-      const cameraSight = new CameraSight(camera)
-      const sightBox = new THREE.Box3()
-      const sightPoint = new THREE.Vector3()
       /** The middle of the screen, where a held pointer is always looking. */
       const RETICLE = new THREE.Vector2(0, 0)
       let focusDistance = 10
       /** And where a free cursor is, in clip space, for a page that has one. */
       const cursor = new THREE.Vector2()
-
-      function updateExtraSight(placeCamera: () => void) {
-        if (!sightExtra) return
-        const extra = apparitions[sightExtra]
-        const body = extra?.humanLod
-          ? extra.humanLod.near.visible
-            ? extra.humanLod.near
-            : extra.humanLod.far
-          : extra?.root
-        const cover: import('three').Object3D[] = []
-        for (const room of visible?.rooms ?? []) {
-          for (const object of [room.mesh, room.fittings, room.doors, room.details]) {
-            if (object?.visible) cover.push(object)
-          }
-        }
-        for (const solid of Object.values(solids)) {
-          if (solid?.mesh.visible) cover.push(solid.mesh)
-        }
-        const canSee = () => {
-          if (!body || !extra?.root.visible || blinded || !visible) return false
-          camera.updateMatrixWorld()
-          body.updateWorldMatrix(true, true)
-          sightBox.setFromObject(body)
-          if (sightBox.isEmpty()) return false
-          sightBox.getCenter(sightPoint)
-          const height = sightBox.max.y - sightBox.min.y
-          return [0.5, 0.83, 0.17].some((fraction) => {
-            sightPoint.y = sightBox.min.y + height * fraction
-            return cameraSight.sees(sightPoint, body, cover)
-          })
-        }
-
-        let seen = canSee()
-        if (focusSequence !== appliedFocusSequence) {
-          appliedFocusSequence = focusSequence
-          if (seen && extra && !inputDisabled) {
-            yaw = Math.atan2(pointer[0] - extra.root.position.x, pointer[1] - extra.root.position.z)
-            pitch = 0
-            placeCamera()
-            seen = canSee()
-          }
-        }
-        const at = seen && extra ? extra.root.position : null
-        const previous = untrack(() => visibleExtraAt)
-        if (!at) {
-          if (previous) visibleExtraAt = null
-        } else if (at.x !== previous?.[0] || at.z !== previous[1]) {
-          visibleExtraAt = [at.x, at.z]
-        }
-        const picked = seen && body && cameraSight.aimsAt(body, cover) ? sightExtra : null
-        if (picked !== untrack(() => aimedExtra)) aimedExtra = picked
-      }
 
       /** The cursor, or a finger, in the clip space the raycaster wants. */
       function aimFrom(clientX: number, clientY: number) {
@@ -3626,9 +3633,13 @@
         index === 2 ? 'third' : index === 1 ? 'second' : 'first'
       let hatsuHoldTimer: number | null = null
       let hatsuPressed = false
+      let hatsuCode = NEN_KEYS.hatsu as string
 
       function beginHatsu(event: KeyboardEvent) {
         if (!onHatsu || hatsuBlockedByMode() || event.repeat) return false
+        if (modeKeyboard && (hatsuPressed || event.ctrlKey || event.metaKey || event.altKey))
+          return false
+        hatsuCode = event.code
         hatsuPressed = true
         hatsuVariantIndex = event.shiftKey && hatsuVariants.length > 1 ? 1 : lastHatsuVariant
         hatsuHoldTimer = window.setTimeout(() => {
@@ -3639,7 +3650,7 @@
       }
 
       function finishHatsu(event: KeyboardEvent) {
-        if (event.code !== NEN_KEYS.hatsu || !hatsuPressed) return false
+        if (event.code !== hatsuCode || !hatsuPressed) return false
         hatsuPressed = false
         if (hatsuHoldTimer !== null) window.clearTimeout(hatsuHoldTimer)
         hatsuHoldTimer = null
@@ -3709,26 +3720,17 @@
       }
 
       const onKeyDown = (event: KeyboardEvent) => {
-        // Giving the pointer back, without giving the screen back with it.
-        //
-        // Esc releases the pointer, and in full screen it also leaves full
-        // screen — the browser answers it before the page does, so a visitor who
-        // touched the walk to look around has to drop out of full screen to get
-        // a cursor for the panel beside it. Tab is the second way out: it means
-        // "hand the keyboard back to the page" everywhere else, it is nothing to
-        // the walk while the pointer is held, and full screen is untouched.
-        //
-        // Ahead of `typingElsewhere` on purpose: a captured pointer belongs to
-        // the scene whatever the page last focused, and that is exactly the case
-        // where the visitor most needs the way out.
+        // Tab releases the pointer without leaving fullscreen. Check before
+        // focus guards so it works even if another element had focus on entry.
         if (event.code === 'Tab' && document.pointerLockElement === canvas) {
           event.preventDefault()
           document.exitPointerLock()
           return
         }
-        if (inputDisabled) return
+        if (inputDisabled || (modeKeyboard && event.defaultPrevented)) return
         if (sceneKeyIsForElsewhere(event, canvas)) return
-        if (keyboardNen && event.code === NEN_KEYS.hatsu && beginHatsu(event)) return
+        const hatsuKey = event.code === NEN_KEYS.hatsu || (modeKeyboard && event.code === 'KeyL')
+        if (keyboardNen && hatsuKey && beginHatsu(event)) return
         const wheelZone = nenZoneIndex(event.code)
         if (hatsuWheelOpen && wheelZone !== null) {
           if (wheelZone < hatsuVariants.length) hatsuVariantIndex = wheelZone
@@ -3771,8 +3773,8 @@
         if (gangwayWalk) return true
         const found = untrack(() => availableLink)
         if (!found?.link.retractable) return false
+        if (gangwayLockdown) return true
         retractableGangwayOpen = !retractableGangwayOpen
-        gangwayView?.setExtended(retractableGangwayOpen)
         return true
       }
 
@@ -3789,12 +3791,12 @@
           return
         }
         const found = untrack(() => availableLink)
-        if (found?.link.retractable && !retractableGangwayOpen) return
+        if (found?.link.retractable && (!retractableGangwayOpen || !gangwayView?.passable)) return
         if (found?.link.retractable && !$comfort.jumpOnly) {
           beginGangway(found.link)
           return
         }
-        if (found) goTo(found.to)
+        if (found) crossStair(found.to, stairInteractionArrival(found, { facing: yaw, looking: pitch }))
       }
 
       function beginGangway(link: Link) {
@@ -4220,6 +4222,7 @@
       const temporal = new WalkTemporalState()
 
       const tick = (now: number) => {
+        const frameStarted = performance.now()
         const delta = Math.min((now - previous) / 1000, 0.1)
         previous = now
 
@@ -4476,7 +4479,8 @@
          * meaning exactly — Kurton and the Enhancer multiply the speed being
          * leaned towards, not the position — and so does the visitor's own dial.
          */
-        const walking = !inputDisabled && !arc && !$comfort.jumpOnly
+        const walking =
+          !inputDisabled && !movementDisabled && !arc && !$comfort.jumpOnly && !gangwayView?.showingLockdown
         const pace =
           (running ? SPRINT_SPEED : WALK_SPEED) *
           paceOf(world.body) *
@@ -4516,19 +4520,36 @@
           // is taken whole and the collision pass is simply not run.
           const from = pointer
           const movement: Vec2 = [velocity[0] * delta, velocity[1] * delta]
-          if (!gangwayWalk) {
+          const stepSpace = spaceAt(plan, pointer)
+          if (!casinoSpiral.origin && !gangwayWalk && !seated && linkIsOpen(world, stepSpace?.id ?? null)) {
+            casinoSpiral.enter(stepSpace?.id ?? null, pointer, target)
+          }
+          const spiralStep = casinoSpiral.advance(movement)
+          if (!spiralStep && !gangwayWalk) {
             gangwayWalk = enterGangway(boardingPaths, {
               tierId: currentTierId,
               at: pointer,
               movement,
-              open: retractableGangwayOpen && linkIsOpen(world, spaceAt(plan, pointer)?.id ?? null),
+              open:
+                retractableGangwayOpen &&
+                Boolean(gangwayView?.passable) &&
+                linkIsOpen(world, spaceAt(plan, pointer)?.id ?? null),
             })
             if (gangwayWalk) {
               gangwayOccupied = true
               shownKey = ''
             }
           }
-          if (gangwayWalk) {
+          if (spiralStep) {
+            pointer = spiralStep.at
+            yaw += spiralStep.turn
+            if (spiralStep.landing) {
+              goTo(spiralStep.landing.spaceId, {
+                at: pointer, facing: yaw, looking: pitch, surfaceHeight: spiralStep.landing.floor,
+              })
+              return
+            }
+          } else if (gangwayWalk) {
             const step = stepGangway(gangwayWalk, pointer, movement)
             pointer = step.at
             gangwayWalk.progress = step.progress
@@ -4554,7 +4575,7 @@
           // pushing into a bulkhead has stopped walking, and their gait and their
           // footsteps both have to know it.
           travelledOnFoot += Math.hypot(pointer[0] - from[0], pointer[1] - from[1])
-          const stair = stairs.cross({
+          const stair = spiralStep ? null : stairs.cross({
             spaceId: spaceAt(plan, pointer)?.id ?? null,
             from,
             at: pointer,
@@ -4563,7 +4584,7 @@
               !gangwayWalk && !seated && linkIsOpen(world, spaceAt(plan, pointer)?.id ?? null),
           })
           if (stair) {
-            goTo(stair.spaceId, { ...stair.arrival, facing: yaw, looking: pitch })
+            crossStair(stair.spaceId, { ...stair.arrival, facing: yaw, looking: pitch })
             return
           }
         }
@@ -4573,7 +4594,9 @@
           world.solids[world.puppet].at = pointer
         }
 
-        const standing = gangwayWalk
+        const standing = casinoSpiral.origin
+          ? (ship.spaces.get(casinoSpiral.origin.spaceId) ?? null)
+          : gangwayWalk
           ? (ship.spaces.get(
               gangwayWalk.reverse ? gangwayWalk.path.link.to : gangwayWalk.path.link.from,
             ) ?? null)
@@ -4588,7 +4611,7 @@
         })
         const groundTarget = gangwayWalk
           ? gangwayFloor(gangwayWalk)
-          : surfaces.floor(walked, pointer)
+          : (casinoSpiral.floor ?? surfaces.floor(walked, pointer))
         ground = easeWalkingGround(ground, groundTarget, delta)
         const eye =
           ground +
@@ -4605,24 +4628,20 @@
         const cameraPullback = thirdPerson
           ? thirdPerson.distance * Math.max(1, 1.15 / camera.aspect)
           : authoredCameraDistance * Math.max(1, 1.4 / camera.aspect)
-        const placeCamera = () => {
-          const frame = {
-            camera,
-            at: pointer,
-            eye,
-            yaw,
-            pitch,
-            pullback: cameraPullback,
-            impulse: ($reducedMotion ? [0, 0] : cameraImpulse) as Vec2,
-            roll:
-              bob.roll +
-              (staggered && !$reducedMotion ? Math.sin((now / 1_000) * Math.PI * 5) * 0.025 : 0),
-          }
-          if (thirdPerson) placeThirdPersonCamera({ ...frame, thirdPerson, ground })
-          else placeTourCamera(frame)
+        const frame = {
+          camera,
+          at: pointer,
+          eye,
+          yaw,
+          pitch,
+          pullback: cameraPullback,
+          impulse: ($reducedMotion ? [0, 0] : cameraImpulse) as Vec2,
+          roll:
+            bob.roll +
+            (staggered && !$reducedMotion ? Math.sin((now / 1_000) * Math.PI * 5) * 0.025 : 0),
         }
-        placeCamera()
-        updateExtraSight(placeCamera)
+        if (thirdPerson) placeThirdPersonCamera({ ...frame, thirdPerson, ground })
+        else placeTourCamera(frame)
         {
           nenAura.update(effectiveNen, camera, {
             ground,
@@ -4768,7 +4787,13 @@
                 : null,
             authoredVisibleSpaceIds !== null,
           )
-          gangwayView.setExtended(retractableGangwayOpen)
+          gangwayView.advance({
+            extended: retractableGangwayOpen,
+            delta,
+            cutaway: gangwayLockdown && standing?.id === TSERRIEDNICH_HALL,
+            instant: guidedRoute && $comfort.jumpOnly,
+          })
+          gangwayPresentation = gangwayView.presentation
         }
         const far = outside ? Math.max(420, cameraPullback + VIEW_DISTANCE * 2) : VIEW_DISTANCE
         if (camera.far !== far) {
@@ -4781,7 +4806,9 @@
         // the bedroom never passed the vestibule.
         const link = linkIsOpen(world, standing?.id ?? null)
           ? (linkUnderfoot(ship.links, standing?.id ?? null, pointer) ??
-            (standing ? wayOutOfInterior(ship.links, plan.tier) : null))
+            (standing && offersRouteInteriorExit(guidedRoute, standing.id)
+              ? wayOutOfInterior(ship.links, plan.tier)
+              : null))
           : null
         if (link?.to !== untrack(() => availableLink)?.to) availableLink = link
         const stepped = worth.stepped(pointer)
@@ -4912,7 +4939,7 @@
         // lying on a table is not going anywhere between two frames. Traced
         // rather than walked — see `whatIsUnder` — and skipped outright where
         // nothing was handed over, which is everywhere but Morena's table.
-        if (!sightExtra && onPick && ++sincePick >= 6) {
+        if (onPick && ++sincePick >= 6) {
           sincePick = 0
           const picked = whatIsUnder(pointerIsHeld() || touch ? RETICLE : cursor)
           if (picked !== aimedExtra) aimedExtra = picked
@@ -4962,7 +4989,12 @@
           concert: concertView.active,
         })
 
-        composer.render()
+        if (!gangwayView?.renderLockdown(renderer, scene)) composer.render()
+        if (canvas?.hasAttribute(TOUR_CAMERA_TRACE_ATTRIBUTE)) {
+          traceTourCamera(canvas, frame, {
+            tierId: currentTierId, spaceId: standing?.id ?? null, ground, onSpiral: casinoSpiral.origin !== null,
+          })
+        }
 
         // The live corner and the footage corner, over the finished frame.
         insets.render({
@@ -4975,6 +5007,7 @@
           showing: Boolean(showing),
           record,
         })
+        prepareLandings.frame(currentTierId, frameStarted, standing?.id ?? null)
       }
 
       /**
@@ -5012,6 +5045,7 @@
         takeScreenshot = null
         if (hatsuHoldTimer !== null) window.clearTimeout(hatsuHoldTimer)
         stopAnimating()
+        prepareLandings.dispose()
         resize.dispose()
         stopListening()
         for (const built of Object.values(decks)) if (built) dispose(built)
@@ -5025,7 +5059,7 @@
         eyeCamera = null
         insets.clear()
         for (const id of Object.keys(solids)) dropSolid(id)
-        for (const id of Object.keys(apparitions)) dropApparition(id)
+        apparitionView.dispose()
         while (leaving.length) dropLeavingCard(leaving.length - 1)
         for (const material of Object.values(glowMaterials)) material?.dispose()
         for (const material of Object.values(glassMaterials)) material?.dispose()
@@ -5042,6 +5076,7 @@
         hatsuEffects.dispose()
         nenAura.dispose(scene)
         gangwayView?.dispose()
+        spiralView?.dispose()
         // The walk is over: no more footsteps, and the audio graph goes with it.
         stopSteps()
         shells?.geometry.dispose()
@@ -5189,9 +5224,9 @@
        balanced, without leaving the page. Top left, because the remote eye's
        feed is inset in the top right and the read-outs are along the bottom.
        See `TourSoundControls`. -->
-  {#if ready && !failure}
+  {#if ready && !failure && gangwayPresentation !== 'cutaway'}
     <TourSoundControls labels={soundLabels} />
-    {#if availableLink?.link.retractable}
+    {#if availableLink?.link.retractable && !gangwayLockdown}
       <button
         type="button"
         onclick={() => toggle?.()}
@@ -5221,7 +5256,8 @@
         {french}
         onAction={useNen}
         onTen={toggleTen}
-        onInteract={() => interactWithNen?.()}
+        onInteract={() =>
+          (modeKeyboard ? (onPhysicalNenAction ?? interactWithNen) : interactWithNen)?.()}
         onHatsu={openOrCastHatsu}
       />
       <TourNenJournal entries={nenCauses} {french} />
@@ -5248,7 +5284,7 @@
   <!-- The touchscreen's keyboard: a stick to walk with, and buttons for the
        actions a phone has no keys for. Everything here is
        what the keys already do, routed through the same functions. -->
-  {#if touch && ready && !failure}
+  {#if touch && ready && !failure && gangwayPresentation !== 'cutaway'}
     <!-- Jump-only mode has nothing for the stick to do, so it is not offered. -->
     {#if !$comfort.jumpOnly}
       <div

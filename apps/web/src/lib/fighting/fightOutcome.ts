@@ -4,6 +4,7 @@ import { finishFight } from './combatVerdict'
 import { BIOHAZARD_GRACE } from './biohazard'
 import { releaseBiohazardWounds } from './biohazardWounds'
 import { explicitDeath, resolvePostMortemDeaths } from './fightDeaths'
+import { historicalSequenceFinished } from './heavensDeathMatch/library'
 import { fightFormat } from './formats'
 import type { FightFinishReason, FightSide, FightState } from './types'
 
@@ -14,7 +15,13 @@ export function fightResolutionPending(state: FightState): boolean {
 }
 
 export function fightAcceptsCommands(state: FightState): boolean {
-  return state.phase === 'fighting' && !state.catsName && !state.gumResuscitation
+  return (
+    state.phase === 'fighting' &&
+    !state.catsName &&
+    !state.gumResuscitation &&
+    state.deathMatch?.scenario.survival.deathFrame == null &&
+    !historicalSequenceFinished(state.deathMatch)
+  )
 }
 
 /** The sole verdict path for damage and attributed deaths; time and expulsion are nonlethal. */
@@ -35,8 +42,18 @@ export function resolveFightOutcome(state: FightState): FightState {
       winner: 'draw',
       finishReason: playerLost,
     })
-  if (playerLost) return finishFight(cleared, 'opponent', playerLost)
-  return opponentLost ? finishFight(cleared, 'player', opponentLost) : cleared
+  const loser = playerLost ? 'player' : 'opponent'
+  const winner = playerLost ? 'opponent' : 'player'
+  const reason = playerLost ?? opponentLost
+  if (!reason) return cleared
+  const shot = triggered.deaths?.find(
+    (death) => death.victimSide === loser && death.killerSide === winner,
+  )?.shotId
+  return finishFight(
+    reason === 'knockout' && shot !== undefined ? { ...cleared, finishingShot: shot } : cleared,
+    winner,
+    reason,
+  )
 }
 
 /** Points and death-match bouts both survive zero HP unless a death was recorded. */

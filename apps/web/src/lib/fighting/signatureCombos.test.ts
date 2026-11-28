@@ -12,6 +12,8 @@ import { throwImmune } from './throwRules'
 import { comboAuraCost } from './comboAuraCost'
 import { ELASTIC_HOLD_FRAMES, advanceElasticHold } from './elasticHold'
 import { performTrainingAction } from './trainingAction'
+import { tickFight } from './engine'
+import { interpolatedPosition } from './fightInterpolation'
 import { EMPTY_INPUT, type ArcadeFighter, type FightState } from './types'
 
 describe('signature combos are true combos through real commands', () => {
@@ -20,13 +22,53 @@ describe('signature combos are true combos through real commands', () => {
       it.each([5, 7])(`${combo.id}, mirrored=${mirrored}, gap=%s`, (gap) => {
         const run = playSignatureCombo(combo, createSignatureFight(combo, { mirrored, gap }))
         expect(run.reached).toBe(combo.steps.length)
-        expect(run.contacts.map((hit) => hit.move)).toEqual(
-          signatureHits(combo).map((slot) => `${combo.fighter}:${slot}`),
-        )
+        expect(run.contacts.map((hit) => hit.move)).toEqual(signatureHits(combo))
         expect(run.contacts.map((hit) => hit.combo)).toEqual(signatureComboCounts(combo))
         expect(run.contacts.some((hit) => hit.blocked)).toBe(false)
       })
 })
+
+it.each([false, true])(
+  'Feitan projects Kurapika on the reversal contact, mirrored=%s',
+  (mirrored) => {
+    const combo = signatureCombo('feitan:alternate-signature')
+    const start = createSignatureFight(combo, { mirrored, gap: 8 })
+    const { state, contacts } = playSignatureCombo(combo, start)
+    const { opponent } = state
+    expect(contacts.map((hit) => hit.combo)).toEqual([1, 2, 3])
+    expect(opponent.y).toBeGreaterThan(0)
+    expect(opponent.velocityY).toBeGreaterThan(0)
+    expect(opponent.knockdownFrames).toBeGreaterThan(0)
+    expect(state.hitstop).toBe(1)
+    expect(interpolatedPosition({ ...state, frameAccumulator: 0 }, 'opponent')).toEqual({
+      x: opponent.x,
+      y: opponent.y,
+    })
+    const options = { dt: 1 / 60, ai: false, opponentInput: EMPTY_INPUT }
+    const released = tickFight(state, EMPTY_INPUT, options)
+    expect(tickFight(released, EMPTY_INPUT, options).opponent.y).toBeGreaterThan(opponent.y)
+  },
+)
+
+it.each([false, true])(
+  'Kurapika reels a distant opponent into the heel, mirrored=%s',
+  (mirrored) => {
+    const combo = signatureCombo('kurapika:alternate-signature')
+    const gaps = new Map<number, number>()
+    const start = createSignatureFight(combo, { mirrored, gap: combo.initialGap! })
+    const run = playSignatureCombo(combo, start, {
+      onFrame(state) {
+        const hits = state.impact?.comboHits
+        if (hits && !gaps.has(hits)) gaps.set(hits, Math.abs(state.opponent.x - state.player.x))
+      },
+    })
+    expect(run.contacts.map((hit) => hit.combo)).toEqual([1, 2, 3])
+    expect(run.contacts.every((hit) => !hit.blocked)).toBe(true)
+    expect(gaps.get(1)).toBeGreaterThan(13)
+    expect(gaps.get(2)).toBeLessThan(gaps.get(1)! - 4)
+    expect(run.state.opponent.knockdownFrames).toBeGreaterThan(0)
+  },
+)
 
 describe('Verdict écarlate', () => {
   const play = (id: string) => {

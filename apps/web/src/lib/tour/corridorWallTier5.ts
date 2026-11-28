@@ -1,3 +1,4 @@
+import { finishDeckSteps } from './deckBuildSteps'
 import { wallBox, wallPoint, type WallSurface } from './corridorWallLayout'
 
 const WEB_FRAME = 0x2e333a
@@ -58,13 +59,14 @@ function webGussets(wall: WallSurface, along: number, context: Tier5WallContext)
   })
 }
 
-function transverseWebFrames(wall: WallSurface, context: Tier5WallContext): void {
+function* transverseWebFrames(wall: WallSurface, context: Tier5WallContext): Generator<void> {
   const { floor, ceiling } = context
   const height = ceiling - floor
   const pitch = 2.8
   const { length } = wall.run
 
   for (let along = 1.4; along < length; along += pitch) {
+    yield
     // Deep structural vertical frame (transverse web frame)
     wallBox(wall, [0.16, height, 0.24], {
       along,
@@ -147,9 +149,18 @@ function massiveVentilationTrunk(wall: WallSurface, context: Tier5WallContext): 
 
 /** Dresses a Tier 5 steerage/cargo passage with colossal web frames, stringers and ducts. */
 export function dressTier5CorridorWall(wall: WallSurface, context: Tier5WallContext): void {
+  finishDeckSteps(dressTier5CorridorWallSteps(wall, context))
+}
+
+export function* dressTier5CorridorWallSteps(
+  wall: WallSurface,
+  context: Tier5WallContext,
+): Generator<void> {
   const { floor } = context
   baseScupper(wall, floor)
-  transverseWebFrames(wall, context)
+  yield* transverseWebFrames(wall, context)
+  yield
   horizontalGirdersAndCables(wall, context)
+  yield
   massiveVentilationTrunk(wall, context)
 }

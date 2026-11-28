@@ -354,6 +354,19 @@ direction n’est pas gêné, la démonstration lit le suivi d’appuis du moteu
 
 ## Dans l’Académie
 
+Les 40 combattants jouables ont une deuxième signature en trois mouvements propres
+au personnage. L’ouverture se joue au sol avec une diagonale et l’attaque légère.
+La commande de transition dépend du personnage. Après la deuxième touche,
+maintenir bas-avant et appuyer sur l’attaque lourde pendant la fenêtre d’annulation.
+Les deux annulations demandent une touche confirmée. La liste des coups indique les
+commandes, et les 40 routes figurent dans l’Académie en pratique et en démonstration.
+
+- **Feitan, Retour du fourreau**. L’estoc avance avec la lame, la taille suivante
+  passe plus bas, puis Feitan prend appui et son revers soulève la cible dès le
+  contact. La traînée du revers suit les dernières positions du tranchant.
+- **Kurapika, Talon de la chaîne**. Le Maillon rasant ouvre à distance. Le Rappel du
+  poignet ramène la cible à portée du talon sur touche.
+
 École de combat → « Combos signature » propose chaque combo en pratique et en
 démonstration (`signatureSchool.ts`, `FightSignatureLessons.svelte`). L’exercice suit
 les étapes réellement jouées : un coup qui démarre, une accélération, Emperor Time,

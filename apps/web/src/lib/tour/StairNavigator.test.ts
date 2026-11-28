@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { theShip } from './blueprint'
 import { StairNavigator } from './StairNavigator'
+import { isCasinoSpiralLink } from './casinoSpiralLayout'
 import { SurfaceWalker } from './SurfaceWalker'
 import type { Vec2 } from './types'
 
@@ -8,9 +9,11 @@ const ship = theShip()
 const stairs = new StairNavigator(ship)
 
 describe('automatic stair landings', () => {
-  it('covers both ends of every non-retractable stair link', () => {
+  it('covers both ends of every stair link that uses automatic landings', () => {
     expect(stairs.ends).toHaveLength(
-      ship.links.filter(({ kind, retractable }) => kind === 'stair' && !retractable).length * 2,
+      ship.links.filter(
+        (link) => link.kind === 'stair' && !link.retractable && !isCasinoSpiralLink(link),
+      ).length * 2,
     )
     for (const end of stairs.ends) {
       const direction = end.direction ?? [-1, 0]

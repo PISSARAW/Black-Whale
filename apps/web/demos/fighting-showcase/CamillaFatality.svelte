@@ -8,7 +8,7 @@
   import { FIGHT_STAGES } from '../../src/lib/fighting/stages'
   const query = new URLSearchParams(location.search)
   const target =
-    FIGHTING_ROSTER.find((fighter) => fighter.id === query.get('target'))?.id ?? 'chrollo'
+    FIGHTING_ROSTER.find((fighter) => fighter.id === query.get('target'))?.id ?? 'musse'
   const stageId =
     FIGHT_STAGES.find((stage) => stage.id === query.get('stage'))?.id ?? 'camilla-salon'
   const film = createCamillaFatalityFilm({
@@ -22,18 +22,6 @@
     mounted = false,
     failed = false
   $: frame = { ...selected, elapsed: index / 60, active: true }
-  $: phase =
-    index < 102
-      ? 'Cat’s Name'
-      : index < 195
-        ? 'La prise'
-        : index < 306
-          ? 'L’écrasement'
-          : index < 357
-            ? 'La vie est absorbée'
-            : index < 510
-              ? 'Le retour de la vie'
-              : 'Le souffle'
   export const ready = () => mounted || failed
   export const count = () => 600
   export const report = () => ({
@@ -58,7 +46,7 @@
     presentationSeconds={index / 60}
     comfort={{
       camera: query.has('reduced') ? 0 : 1,
-      shake: 0,
+      shake: query.has('reduced') ? 0 : 1,
       flashes: !query.has('reduced'),
       highContrast: false,
     }}
@@ -68,8 +56,6 @@
   <FightVictoryOverlay {state} {frame} language="fr" onSkip={() => {}} />
   <div class="credits">
     <b>BLACK WHALE <span>CLASH</span></b>
-    <p>{phase}</p>
-    <small>CAMILLA · LE SOUFFLE</small>
   </div>
 </main>
 
@@ -96,7 +82,7 @@
     right: 17%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 1rem;
     color: #dfc68c;
     letter-spacing: 0.1em;
@@ -113,21 +99,5 @@
   .credits span {
     color: #eee;
     margin-left: 0.5em;
-  }
-  .credits p {
-    font-size: 0.8em;
-    text-transform: uppercase;
-    margin: 0;
-  }
-  .credits small {
-    font-size: 0.5em;
-  }
-  @media (max-width: 700px) {
-    .credits small {
-      display: none;
-    }
-    .credits {
-      right: 28%;
-    }
   }
 </style>

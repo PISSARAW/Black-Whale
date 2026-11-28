@@ -1,4 +1,5 @@
 import type * as Three from 'three'
+import { finishDeckSteps } from './deckBuildSteps'
 import { floorOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { WarehouseDetailSurface } from './warehouseDetailSurface'
@@ -52,6 +53,12 @@ export interface WarehouseViewOptions {
 
 /** Chapter 378: high-fidelity Tier 5 warehouse guarded by the Cha-R family. */
 export function buildWarehouseDetails(options: WarehouseViewOptions): Three.Group | null {
+  return finishDeckSteps(buildWarehouseDetailSteps(options))
+}
+
+export function* buildWarehouseDetailSteps(
+  options: WarehouseViewOptions,
+): Generator<void, Three.Group | null> {
   const { THREE, plan, spaceId, reveal } = options
   if (reveal || spaceId !== WAREHOUSE_SPACE) return null
 
@@ -62,19 +69,24 @@ export function buildWarehouseDetails(options: WarehouseViewOptions): Three.Grou
   const floor = floorOf(space, plan.tier)
 
   // 1. Tall archive hall, shallow roof trusses, pendant lamps and wall conduits
+  yield
   dressWarehouseArchitecture({ THREE, into, floor })
 
   // 2. Concrete slab expansion joints, diamond steel plates, and hazard markings
+  yield
   dressWarehouseFloor({ into, floor })
 
   // 3. Rolling freight shutter, locked service door, and Luini's spatial portal
+  yield
   dressWarehouseEntranceFeatures({ into, floor })
 
   // 4. Dress the 37 blueprint structures (32 tall carton racks, 4 guard posts, 1 camera)
   const structures = plan.structures.filter((s) => s.spaceId === spaceId)
   for (const structure of structures) {
+    yield
     dressStructure(into, structure, floor)
   }
 
+  yield
   return into.finish('warehouse-cha-r-details')
 }

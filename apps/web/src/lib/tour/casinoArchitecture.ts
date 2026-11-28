@@ -4,7 +4,8 @@ import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { chandelier } from './banquetArchitecture'
 import { banquetWallRuns, wallPoint } from './banquetWallLayout'
 import { lampsOf, lamplightOf } from './light'
-import { CASINO_SPACE } from './casinoLayout'
+import { CASINO_SPACE, isCasinoGamingSurface } from './casinoLayout'
+import { dressCasinoTread } from './casinoEmergencyView'
 import type { Structure } from './types'
 
 const STONE = 0xc9c5b5,
@@ -24,13 +25,15 @@ function ceiling(context: Context, floor: number): void {
   const y = floor + ceilingOf(space, plan.tier)
   const xs = space.footprint.map(([x]) => x),
     zs = space.footprint.map(([, z]) => z)
+  // The stair-room recess cuts the casino footprint at the back wall.
   for (const [x, z] of lampsOf(space.footprint, light)) {
     const margin = Math.min(
       x - Math.min(...xs),
       Math.max(...xs) - x,
       z - Math.min(...zs),
-      Math.max(...zs) - z,
+      (x > -51.5 && x < -45.5 ? 51 : Math.max(...zs)) - z,
     )
+    if (margin < 0.4) continue
     const span = Math.min(light.spacing * 0.86, margin * 1.8)
     into.box([span - 0.1, 0.045, span - 0.1], { at: [x, y - 0.035, z], colour: STONE })
     for (const side of [-1, 1]) {
@@ -144,16 +147,20 @@ function wallsAndColumns(context: Context, floor: number): void {
   }
 }
 
-function carpet(context: Context, floor: number): void {
-  const { into } = context
-  for (const x of [-51.8, -46.2])
-    into.box([0.04, 0.008, 51], { at: [x, floor + 0.005, 29.75], colour: GOLD })
-  for (let z = 6.5; z < 55; z += 2.5) {
-    for (const x of [-55, -52, -46, -43]) {
+function carpet(into: BanquetDetailBuilder, terrace: Structure, floor: number): void {
+  const [centreX, centreZ] = terrace.at
+  const [width, depth] = terrace.size
+  const y = floor + terrace.height + 0.014
+  for (let z = centreZ - depth / 2 + 0.6; z < centreZ + depth / 2 - 0.4; z += 2.4) {
+    for (const offset of [-0.34, -0.11, 0.11, 0.34]) {
       for (const side of [-1, 1]) {
         into.ring(
           { radius: 0.32, tube: 0.008 },
-          { at: [x + side * 0.22, floor + 0.012, z], rotation: [Math.PI / 2, 0, 0], colour: GOLD },
+          {
+            at: [centreX + width * offset + side * 0.22, y, z],
+            rotation: [Math.PI / 2, 0, 0],
+            colour: GOLD,
+          },
         )
       }
     }
@@ -168,10 +175,12 @@ export function dressCasinoArchitecture(context: Context): void {
   )
   ceiling(context, floor)
   wallsAndColumns(context, floor)
-  carpet(context, floor)
   for (const structure of plan.structures.filter(({ spaceId }) => spaceId === CASINO_SPACE)) {
     if (structure.id.includes('-mezzanine-')) gallery(into, structure, floor)
     if (structure.id.includes('-balustrade-')) parapet(into, structure, floor)
     if (structure.id.includes('-shopfront-')) shopfront(into, structure, floor)
+    if (!isCasinoGamingSurface(structure)) continue
+    if (structure.id.includes('-stair-')) dressCasinoTread(into, structure, floor)
+    else carpet(into, structure, floor)
   }
 }

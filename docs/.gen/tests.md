@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 1301
+Fichiers : 1326
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -157,6 +157,10 @@ Fichiers : 1301
 ## `apps/web/src/lib/arena/replay/skillHunterReplay.test.ts`
 
 - Skill Hunter replay > reconstructs the fifth page, its seal and the selected book slot
+
+## `apps/web/src/lib/arena/rush.test.ts`
+
+- Arena rush > moves toward the opponent without overshooting melee range
 
 ## `apps/web/src/lib/arena/sectorPersistence.test.ts`
 
@@ -876,6 +880,14 @@ Fichiers : 1301
 
 - the six fighters express combat through their existing face > gives the six fighters distinct expressions and keeps Chrollo restrained
 
+## `apps/web/src/lib/fighting/fightFaceReadability.test.ts`
+
+- combat face readability without extra rendering work > keeps all roster and kameo hair attached while anchoring the real chin
+
+## `apps/web/src/lib/fighting/fightFootPose.test.ts`
+
+- deterministic skinned fight feet > articulates the lead toe for a low heavy without moving its contact anchor
+
 ## `apps/web/src/lib/fighting/fightGameplayIdentity.test.ts`
 
 - P19 gameplay-camera identity lock > mounts five shared canonical accents on the parts that own them
@@ -884,9 +896,9 @@ Fichiers : 1301
 
 - graphics profiles leave gameplay information intact > preserves the previous render settings for old or invalid preferences
 
-## `apps/web/src/lib/fighting/fightImpactPunctuation.test.ts`
+## `apps/web/src/lib/fighting/fightHandGrip.test.ts`
 
-- shared impact punctuation > ranks light, heavy and decisive contacts and silences evasions
+- deterministic skinned fight grips > closes the lead hand for a punch without moving its public grip anchor
 
 ## `apps/web/src/lib/fighting/fightJointLimits.test.ts`
 
@@ -2027,7 +2039,7 @@ Fichiers : 1301
 
 ## `apps/web/src/lib/fighting/signatureCombosLot3.test.ts`
 
-- Lot 3 signature combos & 40/40 roster coverage (31–40) > covers every single one of the 40 duel roster fighters
+- Lot 3 signature combos & 40/40 roster coverage (31–40) > gives all 40 fighters a distinct sequence of three new attacks and an Academy lesson
 
 ## `apps/web/src/lib/fighting/signatureCombosSecond.test.ts`
 
@@ -2216,7 +2228,11 @@ Fichiers : 1301
 ## `apps/web/src/lib/fighting/victory/playback.test.ts`
 
 - victory selection > uses all real opponents and every stage for either winning side, including mirrors
-- victory playback > keeps real ten-second timing when rendering drops below ten frames per second
+- victory playback > ends the Phinks presentation at eight seconds
+
+## `apps/web/src/lib/fighting/victory/premiumCinematic.test.ts`
+
+- premium cinematic foundation > provides anticipation, contact hold and a deterministic recovery
 
 ## `apps/web/src/lib/fighting/voconte.test.ts`
 
@@ -2678,6 +2694,10 @@ Fichiers : 1301
 
 - final investigation report > separates established facts, deductions and testimony
 
+## `apps/web/src/lib/investigation/silentMajorityReplayScene.test.ts`
+
+- Silent Majority reconstruction > shows the masked doll during the diversion and four materialized snakes during the attack
+
 ## `apps/web/src/lib/investigation/v3Runtime.test.ts`
 
 - investigation V3 runtime adapter > exposes partial progress before a hypothesis is established
@@ -3045,13 +3065,17 @@ Fichiers : 1301
 
 - strategy AI personalities > assigns a stable personality to every faction
 
+## `apps/web/src/lib/tour/ApparitionView.test.ts`
+
+- prepared apparitions > keeps a prepared actor out of the scene until its matching appearance is used
+
 ## `apps/web/src/lib/tour/LaplaceDevilEffect.test.ts`
 
 - Laplace Devil in the Tour > returns the visitor to the activation instant and removes the dream from world time
 
 ## `apps/web/src/lib/tour/StairNavigator.test.ts`
 
-- automatic stair landings > covers both ends of every non-retractable stair link
+- automatic stair landings > covers both ends of every stair link that uses automatic landings
 
 ## `apps/web/src/lib/tour/TourAtmosphereView.test.ts`
 
@@ -3137,6 +3161,10 @@ Fichiers : 1301
 
 - the room of Prince Benjamin reconstructed from chapters 363 and 366 > satisfies the shared blueprint invariants for Benjamin’s room
 
+## `apps/web/src/lib/tour/blackWhaleAppearances.test.ts`
+
+- Black Whale chapter-specific appearances > renders Bonolenov’s disguises without replacing Hisoka’s appearance
+
 ## `apps/web/src/lib/tour/blueprint.test.ts`
 
 - the ship blueprint > satisfies every reconstruction invariant
@@ -3167,7 +3195,7 @@ Fichiers : 1301
 
 ## `apps/web/src/lib/tour/casinoView.test.ts`
 
-- the chapter 420 casino reconstruction > keeps a bounded two-batch room below the banquet detail budget
+- the chapter 420 casino reconstruction > aligns the grand staircase doorway with the walkable surface on both sides
 
 ## `apps/web/src/lib/tour/cast/address.test.ts`
 
@@ -3232,7 +3260,7 @@ Fichiers : 1301
 
 ## `apps/web/src/lib/tour/cast/mangaStage.test.ts`
 
-- manga panel cast staging > keeps an explicitly unpopulated programme-type room empty
+- manga panel cast staging > preserves Bonolenov’s identity and changes his disguise from the concourse to the cinema
 
 ## `apps/web/src/lib/tour/cast/nen.test.ts`
 
@@ -3354,6 +3382,10 @@ Fichiers : 1301
 
 - the central dining hall reconstructed from chapters 371, 377 and 379-380 > satisfies the shared blueprint invariants for the dining hall
 
+## `apps/web/src/lib/tour/diningVisit.test.ts`
+
+- the free visit between decks 4 and 5 > starts on deck 4 in Free Life and keeps frame diagnostics
+
 ## `apps/web/src/lib/tour/doorView.test.ts`
 
 - doorView — resolveTier > correctly maps space ids and plan tier fallbacks to tiers 1 through 5
@@ -3413,6 +3445,10 @@ Fichiers : 1301
 ## `apps/web/src/lib/tour/fugetsuView.test.ts`
 
 - Fugetsu’s apartment against the bedroom panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
+
+## `apps/web/src/lib/tour/furnitureAccess.test.ts`
+
+- furniture circulation throughout the ship > never separates two accesses unless the architecture explicitly seals them
 
 ## `apps/web/src/lib/tour/gangwayNavigation.test.ts`
 
@@ -3530,7 +3566,7 @@ Fichiers : 1301
 
 ## `apps/web/src/lib/tour/humanAnimation.test.ts`
 
-- humanAnimation > changes a combatant pose without rebuilding its rig
+- humanAnimation > runs generic authored channels around the shared pose clock
 
 ## `apps/web/src/lib/tour/humanAuraLook.test.ts`
 
@@ -3539,6 +3575,18 @@ Fichiers : 1301
 - Ko > leaves the rest of the body bare, with no skin and no bending volume
 - En > keeps the rings on the floor and raises a dome over them
 
+## `apps/web/src/lib/tour/humanExtremityAnchors.test.ts`
+
+- semantic human extremity anchors > mounts stable hand, grip, effect and ground contacts on both sides
+
+## `apps/web/src/lib/tour/humanExtremityFamily.test.ts`
+
+- roster extremity families > maps body plans to bounded family scales
+
+## `apps/web/src/lib/tour/humanExtremityLod.test.ts`
+
+- extremity distance LOD > uses skinned detail near and procedural geometry at mid distance
+
 ## `apps/web/src/lib/tour/humanFaceMotion.test.ts`
 
 - Tour facial animation > changes the actual face with the pose and restores it without cumulative deformation
@@ -3546,6 +3594,10 @@ Fichiers : 1301
 ## `apps/web/src/lib/tour/humanFigure.test.ts`
 
 - shared human figure > forwards locomotion poses and combat motion to the articulated rig
+
+## `apps/web/src/lib/tour/humanFootContact.test.ts`
+
+- semantic sole contact > uses the lower endpoint while retaining the authored sole centre
 
 ## `apps/web/src/lib/tour/humanHair.test.ts`
 
@@ -3556,6 +3608,10 @@ Fichiers : 1301
 ## `apps/web/src/lib/tour/humanLocomotion.test.ts`
 
 - the rendered Tour walk > eases guard-to-walk shoulders instead of jumping by 57 degrees in one frame
+
+## `apps/web/src/lib/tour/humanModelDetails.test.ts`
+
+- shared model detail integration > keeps build and hairstyle identity in the three-mass far LOD
 
 ## `apps/web/src/lib/tour/humanProfiles.test.ts`
 
@@ -3608,7 +3664,7 @@ Fichiers : 1301
 
 ## `apps/web/src/lib/tour/mangaCast.test.ts`
 
-- manga cast shared by the visit and Fighting > shares Salé-salé’s round face, smile, right-ear rings and light robe with Clash
+- manga cast shared by the visit and Fighting > draws Saquelle tall and long-faced with small eyes, thick lips, stubble and temple veins
 
 ## `apps/web/src/lib/tour/mangaEvent.test.ts`
 
@@ -3753,6 +3809,10 @@ Fichiers : 1301
 ## `apps/web/src/lib/tour/princeApartmentEnvelope.test.ts`
 
 - the shared manga envelope of the princely apartments > covers every internal room of all fourteen princes
+
+## `apps/web/src/lib/tour/princeApartmentPlans.test.ts`
+
+- the fourteen chapter 363 prince-apartment transcriptions > keeps one explicit partition record and one distinct plan per prince
 
 ## `apps/web/src/lib/tour/princeBedroomDetails.test.ts`
 
@@ -3948,6 +4008,10 @@ Fichiers : 1301
 
 - source-bound interior certification > covers exactly the twelve declared programmes
 
+## `apps/web/src/lib/tour/stairLandingWarmup.test.ts`
+
+- deck 4–5 stair warmup > leaves the first frames clear, draws both landings incrementally, and restores the scene
+
 ## `apps/web/src/lib/tour/standardResidentialFidelity.test.ts`
 
 - the Tier 3 standard-cabin plan > keeps twelve cabins with one plan bed and cupboard each
@@ -4003,7 +4067,7 @@ Fichiers : 1301
 
 ## `apps/web/src/lib/tour/tserriednichRoute.test.ts`
 
-- the chapters 419–420 walk > only names spaces that exist in the walkable ship
+- the chapters 418–420 walk > only names spaces that exist in the walkable ship
 
 ## `apps/web/src/lib/tour/tubeppaView.test.ts`
 
@@ -4033,6 +4097,10 @@ Fichiers : 1301
 ## `apps/web/src/lib/tour/warehouseView.test.ts`
 
 - the Tier 5 Cha-R Warehouse reconstructed from chapters 378, 379 and 380 > satisfies the shared blueprint invariants for the warehouse
+
+## `apps/web/src/lib/tour/wobleSwaddle.test.ts`
+
+- Woble carried in the Tour > uses the film head, blanket and pose in the Zhang Lei audience
 
 ## `apps/web/src/lib/tour/wobleView.test.ts`
 
@@ -4301,7 +4369,7 @@ Fichiers : 1301
 - what the schemas are allowed to drop > keeps the fields the voyage clock reads
 - likeness-names-somebody-real > refuses a likeness for somebody the catalogue has never heard of
 - likeness-covers-the-roster > refuses an annexe A id that is neither declared nor deferred
-- what a likeness may and may not say > refuses a hairstyle nobody can draw
+- what a likeness may and may not say > accepts bounded silhouette proportions and rejects invented posture names
 
 ## `packages/domain/src/voyage-clock.test.ts`
 

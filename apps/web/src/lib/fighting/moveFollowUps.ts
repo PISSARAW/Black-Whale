@@ -8,6 +8,7 @@ import type {
 import type { ArcadeFighter, FightInput, FighterId, MoveAction, MoveSlot } from './types'
 import { LATE_WAVE_FOLLOW_UPS } from './moveFollowUpSpecsLate'
 import { followUpPhysicsFor } from './moveFollowUpPhysics'
+import { numpadDirection } from './motionInput'
 
 export interface FollowUpSpec {
   id: string
@@ -397,8 +398,11 @@ export function resolveMoveFollowUp(options: {
   const { fighter, action, input, followUps } = options
   if (!followUps?.length || !isFollowUpAction(action) || !hasConfirmedAttack(fighter)) return null
   const currentId = fighter.attack?.moveId
+  if (!currentId) return null
   const candidates = followUps.filter(
-    (entry) => entry.input === action && entry.sourceMoveId === currentId,
+    (entry) =>
+      entry.input === action &&
+      (entry.sourceMoveId === currentId || entry.legacySourceMoveId === currentId),
   )
   const matched = candidates.find((entry) => conditionSatisfied(fighter, entry, input))
   return matched?.move ?? null
@@ -420,6 +424,10 @@ function conditionSatisfied(
   const attack = fighter.attack!
   if (entry.condition === 'on-block') return Boolean(attack.confirmedBlock && isNeutral(input))
   if (!attack.confirmedHit) return false
+  if (entry.move.signatureDirection !== undefined)
+    return (
+      fighter.y === 0 && numpadDirection(fighter.facing, input) === entry.move.signatureDirection
+    )
   if (entry.condition === 'crossed') return isBackInput(fighter, input)
   if (entry.condition === 'airborne') return fighter.y > 0
   if (entry.condition === 'counter') return fighter.reversalWindow > 0

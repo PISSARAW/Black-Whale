@@ -49,7 +49,7 @@
       <div class="flex items-baseline justify-between gap-2">
         <p class="text-sm font-semibold" style:color={auraColor}>
           {#if keyed.length > 1 && !seat.unbidden}<span class="text-[#FFFFF0]/40"
-              >{keyed.indexOf(seat) === 0 ? 'F' : 'R'} ·
+              >{keyed.indexOf(seat) === 0 ? 'L' : '⇧ L'} ·
             </span>{/if}{seat.name}
         </p>
         <span

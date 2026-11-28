@@ -17,13 +17,13 @@ function pinstripes(build: HumanLimbsBuild, limbs: HumanLimbs) {
   }
 }
 
-function furykov(build: HumanLimbsBuild, limbs: HumanLimbs) {
+function furykov(build: HumanLimbsBuild, limbs: HumanLimbs, fullness = 1) {
   const { THREE, geometry, glow } = build
   for (let i = 0; i < 2; i++) {
-    limbs.arms[i].children[0].scale.x *= 1.4
-    limbs.elbows[i].children[0].scale.x *= 1.4
-    limbs.legs[i].children[0].scale.x *= 1.5
-    limbs.knees[i].children[0].scale.x *= 1.35
+    limbs.arms[i].children[0].scale.x *= 1 + 0.4 * fullness
+    limbs.elbows[i].children[0].scale.x *= 1 + 0.4 * fullness
+    limbs.legs[i].children[0].scale.x *= 1 + 0.5 * fullness
+    limbs.knees[i].children[0].scale.x *= 1 + 0.35 * fullness
     const boot = new THREE.Mesh(
       geometry(
         THREE,
@@ -55,6 +55,8 @@ function furykov(build: HumanLimbsBuild, limbs: HumanLimbs) {
 
 export function addRoyalMilitaryLimbDetails(build: HumanLimbsBuild, limbs: HumanLimbs) {
   if (build.profile.likeness === 'prince-halkenburg') pinstripes(build, limbs)
+  if (['borksen', 'otocin', 'momolly', 'gipper', 'maizan'].includes(build.profile.likeness ?? ''))
+    furykov(build, limbs, 0.55)
   if (['furykov', 'prince-benjamin', 'rihan'].includes(build.profile.likeness ?? ''))
     furykov(build, limbs)
 }

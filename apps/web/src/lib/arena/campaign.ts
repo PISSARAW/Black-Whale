@@ -96,6 +96,18 @@ export const ARENA_CAMPAIGN: CampaignMission[] = [
   },
 ]
 
+export function arenaMissionSearch(mission: CampaignMission): string {
+  return new URLSearchParams({
+    terrain: mission.terrainId,
+    challenge: mission.challengeId,
+    doctrine: mission.doctrine,
+    difficulty: mission.difficulty,
+    format: mission.formatId,
+    opponent: mission.opponentId,
+    mission: mission.id,
+  }).toString()
+}
+
 export function missionStatus(
   mission: CampaignMission,
   profile: ArenaProfile,

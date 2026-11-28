@@ -62,13 +62,13 @@ try {
   ])
   await page.clock.pauseAt(new Date(await page.evaluate(() => Date.now() + 10000)))
   const report = await page.evaluate(() => window.fightingShowcase.report())
-  assert.equal(report.frameCount, 600)
-  assert.equal(report.duration, 10)
+  assert.equal(report.frameCount, 540)
+  assert.equal(report.duration, 9)
   assert.equal(report.character, 'Shizuku')
   assert.ok(report.wounds > 0)
   assert.equal(report.bloodDeath, true)
-  assert.equal(report.victory.deathFrame, 282)
-  assert.equal(report.victory.lastObjectFrame, 444)
+  assert.equal(report.victory.deathFrame, 309)
+  assert.equal(report.victory.lastObjectFrame, 450)
   assert.equal(report.winner, 'player')
   assert.equal(report.failed, false)
   assert.deepEqual(report.continuity, { resets: 0, backwards: false, healed: false })
@@ -84,8 +84,8 @@ try {
   )
   {
     const samples = [
-      0, 42, 72, 84, 108, 150, 210, 270, 282, 306, 330, 342, 366, 396, 402, 432, 444, 474, 486, 498,
-      540, 570,
+      0, 30, 54, 63, 86, 97, 111, 120, 146, 190, 225, 245, 285, 291, 309, 331, 365, 380, 398, 430,
+      462, 478, 500, 530,
     ].map((age) => ({ name: `victory-${age}`, frame: age }))
     const diagnostics = []
     for (const sample of samples) {
@@ -107,7 +107,7 @@ try {
     )
   }
   if (!inspect) {
-    const destination = path.join(output, 'Shizuku-Rien-A-Signaler-picture.mp4')
+    const destination = path.join(output, 'Shizuku-Rien-A-Signaler-picture-9s.mp4')
     encoder = spawn(
       'ffmpeg',
       [

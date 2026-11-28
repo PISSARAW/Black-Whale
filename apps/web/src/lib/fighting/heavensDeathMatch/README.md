@@ -63,21 +63,18 @@ et vérifie qu'ils se rejouent à l'identique.
 
 ## Dans le jeu
 
-- **Menu** — la carte « Combat historique » du menu Clash ouvre `/fighting/historical`
-  (`FightHistoricalSetup.svelte`) : camp, déroulement, difficulté, aides de déduction.
-  `historicalSetup.ts` installe Hisoka et Chrollo, le format à mort et la Tour ; les
-  options voyagent dans `environment.deathMatch`, donc les replays les rejouent
-  (`optionsCodec.ts`).
-- **Boucle du duel** — `prepare.ts` crée le monde avec le combat ; `engine.ts` appelle
-  `stepDeathMatchFight` (`fightBridge.ts`) après chaque frame. La voie (x de 0 à 100)
-  passe en mètres par `fightWorldX`, sur l'axe du ring (z = 0). Les plans déplacent les
-  deux combattants en mode scripté et le combattant CPU dans les autres modes. Dans les
-  gradins, la voie le garde à sa projection, intouchable, et le rendu le dessine à sa vraie
-  place (`deathMatchBodyPosition`). Les souffles détruisent réellement la main et la
-  jambe d'Hisoka dans le moteur ; l'asphyxie enregistrée termine le combat.
-- **Rendu** — `render/crowdScene.ts` dessine la foule de la Tour depuis `crowdInstances` :
-  la simulation vivante dans ce scénario, une salle assise et immobile dans les duels.
-
-Limites actuelles : les commandes gestuelles du joueur Hisoka ne sont pas encore
-traduites en actions complexes de foule en modes semi-libre et libre ; la difficulté est
-enregistrée mais ne règle encore rien ; l'arbitre n'a pas de figure propre.
+- **Menu** — « Combat historique » ouvre `/fighting/historical`. La bibliothèque
+  reconstruit la salle et les combattants dans un worker pour reprendre un chapitre ou
+  rejouer une séquence entre ses deux temps forts. Une reprise part de l’état canonique du
+  chapitre et reprend les options choisies dans le menu.
+- **Jouer Hisoka** — maintenir Contexte (H par défaut) engage l’action indiquée dans le
+  HUD. Bungee Gum guide aussi le déplacement en profondeur et en hauteur. Relâcher
+  Contexte rend la main aux commandes ordinaires. Les déductions apparaissent dans le
+  HUD si elles sont activées. La difficulté change les dégâts d’explosion sur les PV
+  en mode manuel. Les blessures qui structurent le scénario restent simulées.
+- **Simulation et rendu** — le duel affiche le livre du plan de Chrollo, les contacts des
+  têtes lancées, les blessures d’Hisoka et la foule vivante (poses, évacuations, copies).
+  La caméra suit Hisoka dans la salle après la première explosion.
+- **Verdict et épilogue** — le verdict arrête les commandes du duel. Un saut temporel
+  fait arriver les secours, puis le chapitre 357 joue la réanimation, les prothèses et
+  la rencontre avec Machi avant l’écran de résultat.

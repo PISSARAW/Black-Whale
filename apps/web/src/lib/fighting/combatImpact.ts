@@ -1,4 +1,5 @@
 import { recordCyclotronContact, mergeCyclotronContacts } from './phinksImpact'
+import { CYCLOTRON_PUNCH, cyclotronNenActive } from './phinksCyclotron'
 import { catchBungeeObject } from './hisokaCatch'
 import { settleHalkenburgArrow } from './hatsu/halkenburg'
 import { prepareDefence } from './combatDefence'
@@ -39,7 +40,8 @@ import {
   type AttackFrameData,
 } from './frameData'
 import { resolveHatsuImpact } from './hatsu'
-import { isCriticalAuraStrike, releaseFocusedAura, setIn } from './nen'
+import { isCriticalAuraStrike, nenTacticalState, releaseFocusedAura, setIn } from './nen'
+import { voluntaryNenAvailable } from './nenAccess'
 import {
   atWall,
   cornerPushbackTransfer,
@@ -285,6 +287,26 @@ function resolveAttackOutcome(context: AttackResolutionContext): FightState {
       onRage: rage,
       projectileId: null,
       position,
+      ...(attacker.id === 'phinks' && damage > 0 && !defence.avoided
+        ? {
+            phinksStrike: {
+              frame: state.frame,
+              turns:
+                attacker.attack.moveId === CYCLOTRON_PUNCH && cyclotronNenActive(attacker)
+                  ? (attacker.attack.cyclotronTurns ?? 0)
+                  : 0,
+              ken: defence.fighter.nen.ken,
+              ...(critical && data.auraZone === 'hands' ? { ko: true } : {}),
+              ...(nenTacticalState(defence.fighter).technique === 'ten' &&
+              voluntaryNenAvailable(defence.fighter, { requireHatsu: false, requireReserve: true })
+                ? { ten: true }
+                : {}),
+              ...(attacker.nen.mode === 'ren' && !attacker.nen.ko && !attacker.attack.concealed
+                ? { ren: true }
+                : {}),
+            },
+          }
+        : {}),
     },
     hitstop: data.hitstop,
   }
@@ -487,6 +509,11 @@ function applyProjectileHit(state: FightState, hit: ProjectileHit): FightState {
     archived,
     archived.impact!.attacker,
     otherSide(archived.impact!.attacker),
+    attacker.id === 'tserriednich' &&
+      hit.projectile.fighterId === attacker.id &&
+      isFirearmProjectile(hit.projectile)
+      ? hit.projectile.id
+      : undefined,
   )
 }
 
@@ -513,6 +540,7 @@ function finishAfterImpact(
   state: FightState,
   attackerSide: FightSide,
   defenderSide: FightSide,
+  shotId?: number,
 ): FightState {
   const impact = state.impact
   const owner = impact?.transfer?.owner ?? attackerSide
@@ -521,6 +549,9 @@ function finishAfterImpact(
     victimSide: defenderSide,
     killerSide: owner === defenderSide ? null : owner,
     cause,
+    ...(cause === 'projectile' && shotId !== undefined && impact?.projectileId === shotId
+      ? { shotId }
+      : {}),
   })
 }
 

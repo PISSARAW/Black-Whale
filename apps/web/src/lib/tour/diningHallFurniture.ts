@@ -1,4 +1,5 @@
 import { BanquetDetailBuilder, type Point3 } from './banquetDetailBuilder'
+import { DINING_TABLE_SOURCE } from './diningVisit'
 import type { Structure } from './types'
 
 export const TABLE_TOP = 0x4d3f2e
@@ -280,9 +281,16 @@ export function dressFranklinTable(context: FurnitureContext): void {
   const y = floor + structure.base
   const topY = y + structure.height
 
-  // Table top & legs
-  into.box([w, 0.045, d], { at: [x, topY - 0.022, z], colour: TABLE_TOP })
-  into.box([w + 0.02, 0.05, d + 0.02], { at: [x, topY - 0.025, z], colour: TABLE_EDGE })
+  into.box([w, 0.045, d], {
+    at: [x, topY - 0.02, z],
+    colour: TABLE_TOP,
+    tag: DINING_TABLE_SOURCE,
+  })
+  into.box([w + 0.02, 0.05, d + 0.02], {
+    at: [x, topY - 0.027, z],
+    colour: TABLE_EDGE,
+    tag: DINING_TABLE_SOURCE,
+  })
 
   for (const sx of [-1, 1]) {
     for (const sz of [-1, 1]) {

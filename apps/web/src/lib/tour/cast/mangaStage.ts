@@ -22,21 +22,22 @@ export function stagePostsForMangaView(
   // An empty apartment plan also leaves its adjoining rooms unpopulated through open doors.
   if (view.staging.length === 0) return posts.filter((post) => post.tierId !== viewTierId)
 
-  const staging = new Map(view.staging.map((entry) => [entry.characterId, entry]))
+  const staging = view.staging
   return posts.flatMap((post) => {
-    const entry = staging.get(post.member.characterId)
-    if (!entry) return post.spaceId === view.spaceId ? [] : [post]
-    return [
-      {
-        ...post,
-        spaceId: entry.spaceId ?? view.spaceId,
-        tierId: viewTierId,
-        inside: true,
-        at: entry.at,
-        ...(entry.heading === undefined ? {} : { heading: entry.heading }),
-        ...(entry.pose === undefined ? {} : { pose: entry.pose }),
-        ...(entry.floorOffset === undefined ? {} : { floorOffset: entry.floorOffset }),
-      },
-    ]
+    const entries = staging.filter((entry) => entry.characterId === post.member.characterId)
+    if (entries.length === 0) return post.spaceId === view.spaceId ? [] : [post]
+    return entries.map((entry) => ({
+      ...post,
+      spaceId: entry.spaceId ?? view.spaceId,
+      tierId: viewTierId,
+      inside: true,
+      at: entry.at,
+      ...(entry.heading === undefined ? {} : { heading: entry.heading }),
+      ...(entry.pose === undefined ? {} : { pose: entry.pose }),
+      ...(entry.floorOffset === undefined ? {} : { floorOffset: entry.floorOffset }),
+      ...(entry.projection ? { projection: true } : {}),
+      ...(entry.unmasked ? { unmasked: true } : {}),
+      ...(entry.bonolenovDisguise ? { bonolenovDisguise: entry.bonolenovDisguise } : {}),
+    }))
   })
 }

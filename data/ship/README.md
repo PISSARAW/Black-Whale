@@ -990,10 +990,10 @@ Le second : **ce qu'une planche montre est ce que la pièce est** —
   donner deux mètres sous plafond pour que la visite puisse y entrer serait
   inventer une coursive que rien ne montre. On marche dessous, comme sous les
   gaines du 37564 ;
-- le casino VIP est sa salle de jeu, les devantures autour et la mezzanine
-  au-dessus (chap. 405) — c'est la mezzanine qui lui donne ses 8 m sous
-  plafond, aucune salle à galerie ne tenant sous les 5 m du pont. La reprise
-  des bornes, de SWAMP BALL et des décors du chapitre 420 est détaillée dans
+- le casino VIP comprend les paliers de jeu, les îlots de machines, SWAMP BALL
+  sur son estrade et une mezzanine à devantures (chap. 405 et 420). La salle a
+  une hauteur reconstituée de 8 m. Les volées et le hall inférieur du chapitre
+  420 sont détaillés dans
   [`casino-audit.md`](casino-audit.md) ;
 - le pont d'observation est la baie par laquelle il regarde dehors
   (chap. 380) : la planche la dessine incurvée, le plan des ponts dessine en
@@ -1091,8 +1091,8 @@ les quartiers des gardes restent sur le pont 1-B reconstruit.
 
 Le parcours des chapitres 419–420 est praticable de bout en bout dans `/tour` :
 chambre 1004, couloirs des princes, salle de loisirs, Route A rétractée, raccord
-reconstitué vers le casino, SWAMP BALL, salle de secours, escalier en colimaçon
-et pont extérieur principal. Le guide distingue les jalons montrés en case des
+reconstitué vers le casino, paliers de jeu, SWAMP BALL, local de secours,
+escalier en colimaçon, hall inférieur et pont extérieur principal. Le guide distingue les jalons montrés en case des
 raccords métriques nécessaires à la visite.
 
 ### Vue schématique du pont 1-A

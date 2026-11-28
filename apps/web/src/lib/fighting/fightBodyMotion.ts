@@ -163,7 +163,6 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     animatePadailleWeapon(human.figure, fighter, seconds)
     animateCyclotron(rig, fighter)
     animateBlinky(human.figure, fighter, seconds)
-    animateMelodyFlute(rig, fighter)
     animateBenjaminRifle(rig, fighter)
     animateBonolenovSpear(rig, fighter)
     keepHumanJoints(rig)
@@ -175,6 +174,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
       pursuitSupport: attackSupport(plan.attackFlow),
     })
     if (anchor) plantHanzoSoles(rig, fighter)
+    animateMelodyFlute(rig, fighter)
   })
 }
 

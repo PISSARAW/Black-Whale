@@ -20,6 +20,7 @@ import { resolveFightImpacts } from './combatImpact'
 import { buildFightFigure } from './fighterFigure'
 import { animateCyclotron } from './phinksMotion'
 import { fightRigOf, type FightRig } from './fightRig'
+import { selectVictory } from './victory/catalogue'
 import { EMPTY_INPUT, type FightInput, type FightState } from './types'
 
 function duel(): FightState {
@@ -148,6 +149,54 @@ describe('Phinks — right-arm rotations, then one Ripper Cyclotron punch', () =
     expect(struck.player.health).toBeLessThan(winding.player.health)
     expect(struck.player.cyclotronWindup).toBeUndefined()
     expect(struck.player.hatsuEffects.cyclotronTurns).toBe(1)
+  })
+
+  it('keeps the charge and Nen at contact after a decisive punch spends them', () => {
+    const charged = charge(3)
+    const target = charged.opponent
+    const released = punch({
+      ...charged,
+      opponent: { ...target, health: 1, nen: { ...target.nen, ken: true } },
+    })
+    const attacker = released.player
+    const zone = attackData('special', attacker).auraZone
+    const finished = strike({
+      ...released,
+      player: { ...attacker, nen: { ...attacker.nen, ko: zone } },
+    })
+    expect(finished).toMatchObject({ phase: 'finished', winner: 'player' })
+    expect(finished.impact).toMatchObject({
+      critical: true,
+      phinksStrike: { frame: finished.frame, turns: 3, ken: true, ko: true },
+    })
+    expect(finished.player.hatsuEffects.cyclotronTurns).toBe(0)
+    expect(finished.impact?.phinksStrike?.ten).toBeUndefined()
+    expect(finished.impact?.phinksStrike?.ren).toBeUndefined()
+    expect(selectVictory(finished)?.phinksStrike).toMatchObject({ turns: 3, ko: true, ken: true })
+    expect(selectVictory({ ...finished, frame: finished.frame + 1 })?.phinksStrike).toMatchObject({
+      turns: 0,
+      ko: false,
+      ken: false,
+    })
+  })
+
+  it('captures the Ren that powers the punch and the Ten that absorbs it', () => {
+    const charged = charge(2)
+    const released = punch({
+      ...charged,
+      player: { ...charged.player, nen: { ...charged.player.nen, mode: 'ren' } },
+      opponent: {
+        ...charged.opponent,
+        health: 1,
+        nen: { ...charged.opponent.nen, mode: 'ten' },
+      },
+    })
+    const finished = strike(released)
+    expect(finished).toMatchObject({ phase: 'finished', winner: 'player' })
+    expect(finished.impact).toMatchObject({
+      critical: false,
+      phinksStrike: { frame: finished.frame, turns: 2, ken: false, ten: true, ren: true },
+    })
   })
 
   it('allows the charged punch after one full turn, with no invented four-turn minimum', () => {

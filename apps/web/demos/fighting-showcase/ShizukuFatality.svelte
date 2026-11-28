@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tick } from 'svelte'
+  import { FIGHT_FPS } from '../../src/lib/fighting/fightClock'
   import FightScene from '../../src/lib/components/fighting/FightScene.svelte'
   import FightVictoryOverlay from '../../src/lib/components/fighting/FightVictoryOverlay.svelte'
   import { createShizukuFatalityFilm } from './shizukuFatalityFilm'
@@ -21,23 +22,9 @@
   let index = 0,
     mounted = false,
     failed = false
-  $: frame = { ...selected, elapsed: index / 60, active: true }
-  $: phase =
-    index < 84
-      ? 'Deme-chan'
-      : index < 138
-        ? 'Aspire son sang'
-        : index < 282
-          ? 'Par la blessure'
-          : index < 342
-            ? 'Le silence'
-            : index < 444
-              ? 'Le corps. Et les traces.'
-              : index < 498
-                ? 'Le dernier objet'
-                : 'Rien à signaler'
+  $: frame = { ...selected, elapsed: index / FIGHT_FPS, active: true }
   export const ready = () => mounted || failed
-  export const count = () => 600
+  export const count = () => film.report.frameCount
   export const report = () => ({
     ...film.report,
     failed,
@@ -45,7 +32,7 @@
     nativeState: JSON.stringify(state),
   })
   export async function seek(age: number) {
-    index = Math.max(0, Math.min(599, age))
+    index = Math.max(0, Math.min(count() - 1, age))
     await tick()
   }
 </script>
@@ -57,7 +44,7 @@
     victoryFrame={frame}
     hideSecondaryView
     keepCombatantMarkers={false}
-    presentationSeconds={index / 60}
+    presentationSeconds={index / FIGHT_FPS}
     comfort={{
       camera: query.has('reduced') ? 0 : 1,
       shake: 0,
@@ -70,7 +57,6 @@
   <FightVictoryOverlay {state} {frame} language="fr" onSkip={() => {}} />
   <div class="credits">
     <b>BLACK WHALE <span>CLASH</span></b>
-    <p>{phase}</p>
     <small>SHIZUKU · RIEN À SIGNALER</small>
   </div>
 </main>
@@ -115,11 +101,6 @@
   .credits span {
     color: #eee;
     margin-left: 0.5em;
-  }
-  .credits p {
-    font-size: 0.8em;
-    text-transform: uppercase;
-    margin: 0;
   }
   .credits small {
     font-size: 0.5em;

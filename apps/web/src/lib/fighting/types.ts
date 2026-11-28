@@ -359,7 +359,16 @@ export interface FightImpact {
   /** A last-health On heavy consumed the attacker's grudge for one lethal strike. */
   onRage?: boolean
   projectileId: number | null
-  position: { x: number; y: number }
+  position: { x: number; y: number; z?: number }
+  /** Phinks's melee contact, before the defender's Nen and the attack's charge are spent. */
+  phinksStrike?: {
+    frame: number
+    turns: number
+    ken: boolean
+    ten?: boolean
+    ren?: boolean
+    ko?: boolean
+  }
   /** Sweet Home moves the wound once; it never creates an invulnerable/avoided hit. */
   /** `ally`: the wound came from the owner's own kameo, held by the right hand. */
   objectTransfer?: { objectId: string; owner: FightSide; damage: number; ally?: true }
@@ -446,6 +455,7 @@ export interface FightState {
   deaths?: readonly FightDeath[]
   catsName?: CatsNameSequence
   catsNameConsumed?: FightSide
+  catsNameFatality?: import('./camillaCat').CatsNameFatality
   moonlight?: import('./moonlightContract').MoonlightState
   parallelFuture?: ParallelFutureState
   /** Interactive solo illusion, isolated from authoritative damage, resources and verdicts. */
@@ -476,6 +486,8 @@ export interface FightState {
   roundNumber: number
   roundsWon: Record<FightSide, number>
   finishReason: FightFinishReason
+  /** A firearm projectile witnessed at the knockout, retained for the victory reconstruction. */
+  finishingShot?: number
   score: Record<FightSide, number>
   knockdowns: Record<FightSide, number>
   bungeeGum: BungeeGumAttachment | null

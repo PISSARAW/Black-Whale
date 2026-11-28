@@ -7,5 +7,12 @@ it('keeps the real Cat’s Name death, consumption and resurrection before the v
   expect(film.state.player.health).toBe(film.state.player.maxHealth)
   expect(film.report.postMortemFrames).toBeGreaterThan(0)
   expect(film.report.consumed).toBe('opponent')
+  expect(film.state.catsNameFatality).toEqual({
+    victimSide: 'player',
+    killerSide: 'opponent',
+    zetsu: true,
+    cause: 'projectile',
+  })
+  expect(film.report.victory).toMatchObject({ revealFrame: 120, tailChargedFrame: 378 })
   expect(film.report.continuity).toEqual({ resets: 0, backwards: false, healed: true })
 })

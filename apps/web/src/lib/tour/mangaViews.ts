@@ -23,6 +23,7 @@ import { MANGA_LUZURUS_VIEWS } from './mangaLuzurusViews'
 import { MANGA_TYSON_VIEWS } from './mangaTysonViews'
 import { MANGA_TUBEPPA_VIEWS } from './mangaTubeppaViews'
 import { MANGA_TSERRIEDNICH_VIEWS } from './mangaTserriednichViews'
+import { MANGA_TSERRIEDNICH_ROUTE_VIEWS } from './mangaTserriednichRouteViews'
 import { MANGA_VVIP_RECREATION_VIEWS } from './mangaVvipRecreationViews'
 import { MANGA_JUSTICE_BUREAU_VIEWS } from './mangaJusticeBureauViews'
 import { MANGA_CINEPLEX_VIEWS } from './mangaCineplexViews'
@@ -33,6 +34,7 @@ import { MANGA_HOSPITAL_VIEWS } from './mangaHospitalViews'
 import { MANGA_ROYAL_ARMY_CONFERENCE_VIEWS } from './mangaRoyalArmyConferenceViews'
 import { MANGA_ROYAL_ARMY_ROOMS_VIEWS } from './mangaRoyalArmyRoomsViews'
 import { MANGA_SCREENING_ROOM_VIEWS } from './mangaScreeningRoomViews'
+import { MANGA_TIER_FOUR_VIEWS } from './mangaTierFourViews'
 import { mangaView as view, type MangaView } from './mangaViewModel'
 
 export type { MangaCastStaging, MangaView } from './mangaViewModel'
@@ -106,6 +108,16 @@ export const MANGA_VIEWS: MangaView[] = [
     chapter: 393,
     volume: 38,
     pages: '64–67',
+    staging: [
+      {
+        characterId: 'gateaume',
+        at: [-4.82, -2.44],
+        heading: Math.PI / 2,
+        pose: 'seated',
+        floorOffset: 0.12,
+        projection: true,
+      },
+    ],
     label: 'Room 3101 facing the stacked bunk and open wall storage',
     labelFr: 'La chambre 3101 face au lit superposé et au rangement mural ouvert',
   }),
@@ -155,6 +167,7 @@ export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_CAMILLA_VIEWS,
   ...MANGA_ZHANG_LEI_VIEWS,
   ...MANGA_TSERRIEDNICH_VIEWS,
+  ...MANGA_TSERRIEDNICH_ROUTE_VIEWS,
   ...MANGA_TUBEPPA_VIEWS,
   ...MANGA_TYSON_VIEWS,
   ...MANGA_LUZURUS_VIEWS,
@@ -197,6 +210,7 @@ export const MANGA_VIEWS: MangaView[] = [
     ],
   }),
   ...MANGA_OBSERVATION_DECK_VIEWS,
+  ...MANGA_TIER_FOUR_VIEWS,
   ...MANGA_APARTMENT_VIEWS,
 ]
 

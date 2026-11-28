@@ -13,6 +13,7 @@ import { directionalFinishPose } from './directionalFinishPoses'
 import { rosterDirectionalMove } from './rosterDirectionalPoses'
 import { naturalTechniqueTimeline } from './naturalTechniqueTimeline'
 import { kurapikaKeyedMove } from './kurapikaPoses'
+import { alternateSignaturePose } from './alternateSignaturePoses'
 import type { ArcadeFighter, MoveSlot } from './types'
 
 /** The same equipment-aware timeline feeds the drawn body and its aura allocation. */
@@ -21,7 +22,18 @@ export function fighterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
   if (astral) return { timeline: astral, authored: true }
   const finish = directionalFinishPose(fighter)
   if (finish) return { timeline: finish, authored: true }
-  const native =
+  const directed = rosterDirectionalMove(fighter, equipmentAwareMove(fighter, slot))
+  const timeline = naturalTechniqueTimeline(
+    fighter.id,
+    slot,
+    biscuitNaturalNormal(fighter, slot, directed.timeline),
+  )
+  const alternate = alternateSignaturePose(fighter, timeline)
+  return alternate ? { timeline: alternate, authored: true } : { ...directed, timeline }
+}
+
+function equipmentAwareMove(fighter: ArcadeFighter, slot: MoveSlot) {
+  return (
     kurapikaKeyedMove(fighter) ??
     feitanEquipmentMove(fighter) ??
     padailleKeyedMove(fighter) ??
@@ -31,13 +43,5 @@ export function fighterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
     benjaminKeyedMove(fighter) ??
     hisokaKeyedMove(fighter) ??
     padailleArmedNormal(fighter, keyedMove(fighter.id, slot))
-  const directed = rosterDirectionalMove(fighter, native)
-  return {
-    ...directed,
-    timeline: naturalTechniqueTimeline(
-      fighter.id,
-      slot,
-      biscuitNaturalNormal(fighter, slot, directed.timeline),
-    ),
-  }
+  )
 }

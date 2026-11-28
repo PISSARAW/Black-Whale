@@ -15,7 +15,11 @@ function canonical(value: unknown, cache: WeakMap<object, string>): string {
 function canonicalObject(object: Record<string, unknown>, cache: WeakMap<object, string>) {
   return `{${Object.keys(object)
     .filter(
-      (key) => key !== 'audioContacts' && key !== 'audioInterceptions' && object[key] !== undefined,
+      (key) =>
+        key !== 'audioContacts' &&
+        key !== 'audioInterceptions' &&
+        key !== 'catsNameFatality' &&
+        object[key] !== undefined,
     )
     .sort()
     .map((key) => `${JSON.stringify(key)}:${canonical(object[key], cache)}`)

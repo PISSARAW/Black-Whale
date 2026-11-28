@@ -21,6 +21,7 @@ export interface VictoryContext {
   centre: number
   gap: number
   comfort: FightComfort
+  futurePerspective?: 'perceived' | 'real'
   save: (node: Object3D) => void
   material: (mesh: Mesh, material: Material | Material[]) => void
   defer: (restore: () => void) => void

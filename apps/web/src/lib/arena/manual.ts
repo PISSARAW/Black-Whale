@@ -11,10 +11,14 @@ export const ARENA_MANUAL_CONTROLS = [
     description: 'Directional evade; R alone backsteps',
     descriptionFr: 'Esquive directionnelle ; R seul recule',
   },
-  { keys: ['F'], description: 'Recenter on opponent', descriptionFr: "Recentrer sur l'adversaire" },
+  {
+    keys: ['F'],
+    description: 'Rush toward the opponent',
+    descriptionFr: 'Se ruer vers l’adversaire',
+  },
   { keys: ['E'], description: 'Interact with the arena', descriptionFr: "Interagir avec l'arène" },
   { keys: ['P'], description: 'Pause and controls', descriptionFr: 'Pause et commandes' },
-  { keys: ['Space'], description: 'Active guard', descriptionFr: 'Garde active' },
+  { keys: ['Space'], description: 'Hold guard', descriptionFr: 'Maintenir la garde' },
   { keys: ['J', 'Click'], description: 'Light attack', descriptionFr: 'Attaque légère' },
   {
     keys: ['K', 'L', 'M', 'I'],

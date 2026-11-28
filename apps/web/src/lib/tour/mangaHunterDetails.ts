@@ -4,26 +4,26 @@ import { mergeHumanDetails } from './humanDetailGeometry'
 
 export function addHunterHeadDetails(build: HumanHeadBuild, head: Group) {
   if (build.profile.likeness === 'biscuit-krueger' && build.profile.frame === 'child')
-    biscuitRibbons(build, head)
+    biscuitLacedBun(build, head)
   if (build.profile.likeness === 'hanzo') hanzoFace(build, head)
 }
 
-function biscuitRibbons(build: HumanHeadBuild, head: Group) {
+function biscuitLacedBun(build: HumanHeadBuild, head: Group) {
   const { THREE, geometry, glow, profile } = build
-  const ribbon = geometry(THREE, 'manga:biscuit-hair-ribbons', () => {
+  const lacing = geometry(THREE, 'manga:biscuit-laced-bun', () => {
     const parts = []
-    for (const side of [-1, 1])
-      for (const lobe of [-1, 1]) {
-        const shape = new THREE.Shape()
-        shape.moveTo(0, 0)
-        shape.bezierCurveTo(lobe * 0.065, 0.12, lobe * 0.085, 0.015, 0, 0)
-        parts.push(new THREE.ShapeGeometry(shape, 16).translate(side * 0.163, 0.19, 0.035))
-      }
+    for (let band = -2; band <= 2; band++)
+      parts.push(
+        new THREE.TorusGeometry(0.09, 0.006, 6, 24)
+          .scale(1.2, 0.78, 1)
+          .rotateY(band * 0.32)
+          .translate(0, 0.22, -0.31),
+      )
     return mergeHumanDetails(parts)
   })
-  const bows = new THREE.Mesh(ribbon, glow(profile.accent, 1))
-  bows.name = 'biscuit-hair-ribbons'
-  head.add(bows)
+  const bun = new THREE.Mesh(lacing, glow(profile.accent, 1))
+  bun.name = 'biscuit-laced-bun'
+  head.add(bun)
 }
 
 function hanzoFace(build: HumanHeadBuild, head: Group) {

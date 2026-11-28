@@ -64,6 +64,8 @@ describe('death-match rules', () => {
     expect(createFight('kurapika', 'chrollo').opponent.chrolloBook?.pages).toEqual([
       'sun-and-moon',
       'black-voice',
+      'order-stamp',
+      'convert-hands',
     ])
   })
 })

@@ -33,7 +33,7 @@ export const HUNT_MANUAL_CONTROLS: HuntManualControl[] = [
     description: 'Shu (imbue the aimed object)',
     descriptionFr: "Shu (imprégner l'objet visé)",
   },
-  { keys: [label(NEN_KEYS.hatsu)], description: 'Hatsu', descriptionFr: 'Hatsu' },
+  { keys: ['L', label(NEN_KEYS.hatsu)], description: 'Hatsu', descriptionFr: 'Hatsu' },
   {
     keys: [label(HUNT_PAGE_KEYS.lay)],
     description: 'Lay an entrave (Bungee Gum)',
@@ -43,6 +43,11 @@ export const HUNT_MANUAL_CONTROLS: HuntManualControl[] = [
     keys: [label(HUNT_PAGE_KEYS.take)],
     description: 'Take an entrave back (hunt and duel)',
     descriptionFr: 'Reprendre une entrave (traque et duel)',
+  },
+  {
+    keys: ['F'],
+    description: 'Context: recover a trap nearby, or lay one',
+    descriptionFr: 'Contexte : reprendre une entrave à portée ou en poser une',
   },
   {
     keys: ['1', '2', '3', '4'],
@@ -55,9 +60,10 @@ export const HUNT_MANUAL_CONTROLS: HuntManualControl[] = [
     descriptionFr: 'Duel : Gyo / In / Ken',
   },
   {
-    keys: ['Space', label(NEN_KEYS.ko), label(NEN_KEYS.action)],
+    keys: ['J', 'Space', label(NEN_KEYS.ko), label(NEN_KEYS.action)],
     description: 'Duel: gather a Ko',
     descriptionFr: 'Duel : concentrer un Ko',
   },
+  { keys: ['Shift+V'], description: 'Full screen', descriptionFr: 'Plein écran' },
   { keys: ['?'], description: 'This manual', descriptionFr: 'Ce manuel' },
 ]

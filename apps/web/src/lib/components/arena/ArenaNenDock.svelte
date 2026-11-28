@@ -15,7 +15,7 @@
     hatsuName: string
     onActive: boolean
     onCommand: (command: ArenaCommand) => void
-    onGuard: () => void
+    onGuard: (held: boolean) => void
     onRyu: () => void
     onOn: () => void
     onHatsu: () => void
@@ -38,8 +38,21 @@
 </script>
 
 <nav class="arena-action-dock" aria-label={$t.arena.ui.quickActions}>
-  <button type="button" data-arena-action="guard" onclick={onGuard}
-    ><kbd>⇧</kbd><span>{$t.arena.ui.guard}</span></button
+  <button
+    type="button"
+    data-arena-action="guard"
+    class="hold-guard"
+    onpointerdown={(event) => {
+      if (event.button !== 0) return
+      event.currentTarget.setPointerCapture(event.pointerId)
+      onGuard(true)
+    }}
+    onlostpointercapture={() => onGuard(false)}
+    onclick={(event) => {
+      if (event.detail !== 0) return
+      onGuard(true)
+      onGuard(false)
+    }}><kbd>␣</kbd><span>{$t.arena.ui.guard}</span></button
   >
   {#each techniques as technique (technique.id)}
     <button
@@ -71,6 +84,10 @@
   .arena-action-dock {
     grid-template-columns: repeat(10, minmax(0, 1fr));
     gap: 0.3rem;
+  }
+
+  .hold-guard {
+    touch-action: none;
   }
 
   .technique {

@@ -27,7 +27,7 @@ const subjectCopy: Record<string, Partial<InvestigationCase['subjects'][number]>
       'I saw no masked girl behind me. The creatures attached to Barrigen’s neck, however, were materialised and visible to everyone.',
   },
   belerainte: {
-    role: 'Tubeppa guard',
+    role: 'Hunter and Marayam’s guard',
     status: 'Declared Nen user · cooperative',
     dialogue:
       'Six people in this room already know Nen, but only Furykov and I declared it. The killer may be hiding among those who remain silent.',

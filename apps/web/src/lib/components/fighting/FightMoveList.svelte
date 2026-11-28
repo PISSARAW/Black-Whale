@@ -17,6 +17,9 @@
 
   $: hints = touch ? fightTouchBindings(language) : $bindings
   $: moveset = movesetFor(fighterId)
+  $: moves = moveset?.signatureOpening
+    ? [...moveset.moves, moveset.signatureOpening]
+    : (moveset?.moves ?? [])
   $: combos = new Map(moveset?.combos.map((route) => [route.join(':'), route]))
   $: arena = arenaTechnique(fighterId)
   $: groups = moveset
@@ -73,10 +76,10 @@
     {/if}
     <div class="move-groups">
       {#each groups as [category, title] (category)}
-        {#if moveset.moves.some((move) => move.category === category)}
+        {#if moves.some((move) => move.category === category)}
           <div>
             <h3>{title}</h3>
-            {#each moveset.moves.filter((move) => move.category === category) as move (move.id)}
+            {#each moves.filter((move) => move.category === category) as move (move.id)}
               <p>
                 <kbd>{moveInputHint(move.input, hints)}</kbd><span
                   >{language === 'fr' ? move.nameFr : move.nameEn}</span

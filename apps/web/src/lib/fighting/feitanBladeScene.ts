@@ -1,7 +1,8 @@
 import type { EffectSceneOptions, FighterEffectScene } from './fighterEffectScene'
-import type { ArcadeFighter, FightSide } from './types'
+import type { ArcadeFighter, FightSide, FightState } from './types'
 import { createFeitanBladeTrail } from './feitanBladeTrail'
 import { feitanIconicIdle } from './feitanIdentity'
+import { alignPersonalBlade } from './personalBladeAlignment'
 
 /** Physical blade attached to the anatomical weapon hand, including after a rig rebuild. */
 export function createFeitanBladeScene(options: EffectSceneOptions): FighterEffectScene {
@@ -33,7 +34,8 @@ export function createFeitanBladeScene(options: EffectSceneOptions): FighterEffe
     return root
   }
 
-  function syncHand(actor: ArcadeFighter, side: FightSide) {
+  function syncHand(state: FightState, side: FightSide) {
+    const actor = state[side]
     const figure = options.figureOf?.(side)
     if (!figure) {
       trail.drop(side)
@@ -45,7 +47,9 @@ export function createFeitanBladeScene(options: EffectSceneOptions): FighterEffe
       trail.drop(side)
       return
     }
-    syncWeapon({ actor, side, figure, hand, source })
+    const root = syncWeapon({ actor, side, figure, hand, source })
+    alignPersonalBlade(options, root, { state, side })
+    trail.sync(actor, root, side)
   }
 
   function syncWeapon({
@@ -65,16 +69,11 @@ export function createFeitanBladeScene(options: EffectSceneOptions): FighterEffe
     if (root.parent !== hand) hand.add(root)
     const usable = !actor.weaponsConfiscated && !actor.hatsuEffects.painPacker?.armour
     root.visible = usable
-    const iconic = feitanIconicIdle(actor)
-    const forwardHeavy = ['feitan:standingHeavy', 'feitan:forwardHeavy'].includes(
-      actor.attack?.moveId ?? '',
-    )
-    root.rotation.set(0, 0, iconic ? -Math.PI / 2 : forwardHeavy ? 0.58 : 0)
-    root.position.set(iconic ? 0.04 : 0, iconic ? -0.01 : 0, 0)
+    placeBlade(root, actor)
     setOriginal(source, usable && !actor.umbrellaFeintFrames)
     const cloth = figure.getObjectByName('signature-umbrella-cloth')
     if (cloth) setOriginal(cloth, source.visible)
-    trail.sync(actor, root, side)
+    return root
   }
 
   function setOriginal(object: import('three').Object3D, visible: boolean) {
@@ -88,7 +87,7 @@ export function createFeitanBladeScene(options: EffectSceneOptions): FighterEffe
         root.visible = false
       })
       for (const side of ['player', 'opponent'] as const) {
-        if (state[side].id === 'feitan') syncHand(state[side], side)
+        if (state[side].id === 'feitan') syncHand(state, side)
         else trail.drop(side)
       }
     },
@@ -105,4 +104,13 @@ export function createFeitanBladeScene(options: EffectSceneOptions): FighterEffe
       dark.dispose()
     },
   }
+}
+
+function placeBlade(root: import('three').Object3D, actor: ArcadeFighter) {
+  const iconic = feitanIconicIdle(actor)
+  const forwardHeavy = ['feitan:standingHeavy', 'feitan:forwardHeavy'].includes(
+    actor.attack?.moveId ?? '',
+  )
+  root.rotation.set(0, 0, iconic ? -Math.PI / 2 : forwardHeavy ? 0.58 : 0)
+  root.position.set(iconic ? 0.04 : 0, iconic ? -0.01 : 0, 0)
 }

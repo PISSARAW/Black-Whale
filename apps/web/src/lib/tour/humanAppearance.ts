@@ -1,5 +1,8 @@
 import type { NenTechniqueState } from '@black-whale/nen-engine'
+import type { TwinCostume } from './mangaTwinWardrobe'
 import type { Pace } from './cast/pace'
+
+export type BonolenovDisguise = 'hisoka' | 'lynch'
 
 export type HumanExpression = 'neutral' | 'severe' | 'tired' | 'anxious' | 'hostile'
 
@@ -17,6 +20,7 @@ export interface HumanAppearance {
   pose:
     | 'idle'
     | 'walk'
+    | 'wipe-table'
     | 'listen'
     | 'search'
     | 'held'
@@ -24,6 +28,8 @@ export interface HumanAppearance {
     | 'brace'
     | 'attack'
     | 'fallen'
+    | 'kneeling'
+    | 'zetsu'
     | 'seated'
     | 'reclined'
     | 'cross-legged'
@@ -41,11 +47,15 @@ export interface HumanAppearance {
    * `lib/tour/cast/wardrobe.ts`, which is the only thing that sets this.
    */
   dress?: 'civilian' | 'uniform' | 'suit' | 'combat' | 'ritual' | 'gown'
+  royalCostume?: TwinCostume
   aura?: 'none' | 'ten' | 'ren' | 'zetsu'
   /** Shared Nen state; every human figure consumes the same engine contract. */
   nen?: NenTechniqueState<'head' | 'torso' | 'hands' | 'feet'>
   /** Stable identity seed: named character when known, otherwise apparition id. */
   identity?: string
+  unmasked?: boolean
+  bonolenovDisguise?: BonolenovDisguise
+  plainSuit?: boolean
   alert?: boolean
   /** Presentation-only facial bearing; combat can change it without changing identity. */
   expression?: HumanExpression

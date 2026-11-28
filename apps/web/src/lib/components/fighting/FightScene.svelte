@@ -75,6 +75,7 @@
   import { createFeitanScene } from '$lib/fighting/feitanScene'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import { drawFightScene } from '$lib/fighting/drawFightScene'
+  import { createPhinksLens, type PhinksFocus } from '$lib/fighting/victory/phinksLens'
   import type { VictoryFrame } from '$lib/fighting/victory/playback'
   import type { FightState } from '$lib/fighting/types'
   import './FightScene.css'
@@ -388,6 +389,7 @@
           impacts.shake(camera, now)
         }
 
+        let phinksLens: ReturnType<typeof createPhinksLens> | undefined
         const finishCombatFrame = (now: number) => {
           drawFightScene({
             victory: victoryRenderer,
@@ -395,7 +397,18 @@
             frame: victoryFrame,
             comfort: visualComfort(),
             models: { player: models.player.model.root, opponent: models.opponent.model.root },
-            draw: () => (post ? post.render() : renderer.render(scene, camera)),
+            THREE,
+            renderer,
+            scene,
+            camera,
+            draw: () => {
+              const focus = scene.userData.phinksFocus as PhinksFocus | undefined
+              if (focus && comfort.graphics !== 'performance') {
+                phinksLens ??= createPhinksLens(renderer)
+                phinksLens.render(scene, camera, focus)
+              } else if (post) post.render()
+              else renderer.render(scene, camera)
+            },
             failed: onSceneFailed,
           })
           inset.draw(renderer, { prediction, rect: detailRect, visible: detailVisible, now })
@@ -438,7 +451,6 @@
           projectileScene.sync(arsenalProjectilePresentation(state), seconds, state[viewer])
           predatorScene.sync(state, seconds)
           lsdfScene.sync(state, seconds)
-          feitanScene.sync(state, seconds)
           projectionScene.sync(state, seconds)
           animateFighter({
             side: 'opponent',
@@ -450,6 +462,7 @@
           feitanSpeed.sync(state, now)
           kurapikaSpeed.sync(state, now)
           alignPhysicalContact(state)
+          feitanScene.sync(state, seconds)
           impacts.emit(state, now)
           fighterEffects.sync(state, seconds)
           onAwakening.sync(state, onFrames)
@@ -475,6 +488,7 @@
           cancelAnimationFrame(animationFrame)
           resize?.disconnect()
           inset.dispose()
+          phinksLens?.dispose()
           victoryRenderer.dispose()
           trackingSilhouettes.dispose()
           impacts.dispose()

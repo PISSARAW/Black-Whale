@@ -10,7 +10,7 @@
 | `abilities` | `+page.server.ts`, `+page.svelte`, `page.server.test.ts` |
 | `abilities/[slug]` | `+page.server.ts`, `+page.svelte`, `page.server.test.ts` |
 | `about` | `+page.server.ts`, `+page.svelte` |
-| `arena` | `+page.svelte`, `+page.ts`, `arena.css` |
+| `arena` | `+layout.svelte`, `+page.svelte`, `+page.ts`, `ArenaDuelSetup.svelte`, `ArenaMainMenu.svelte`, `ArenaModeChoices.svelte`, `arena.css` |
 | `arena/pvp` | `+page.svelte` |
 | `arena/pvp/[matchId]` | `+page.svelte`, `+page.ts` |
 | `arena/pvp/api/matches` | `+server.ts` |

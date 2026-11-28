@@ -6,10 +6,21 @@ import { EMPTY_INPUT } from './types'
 import type { FightSide, FightState, FighterId } from './types'
 
 /** Engine-driven presentation fixtures: resources are declared before combat, never fabricated hits. */
-export function cinematicDuel(id: FighterId, side: FightSide = 'player'): FightState {
+export function cinematicDuel(
+  id: FighterId,
+  side: FightSide = 'player',
+  options: { preparePredatorPrey?: boolean } = {},
+): FightState {
+  const state = cinematicStartingState(id, side)
+  return id === 'rihan' && options.preparePredatorPrey === false
+    ? state
+    : prepareAction(state, id, side)
+}
+
+function cinematicStartingState(id: FighterId, side: FightSide): FightState {
   const other: FightSide = side === 'player' ? 'opponent' : 'player'
   const adversary = id === 'rihan' ? 'hisoka' : 'chrollo'
-  let state = beginFight(
+  const state = beginFight(
     createFight(side === 'player' ? id : adversary, side === 'opponent' ? id : adversary, {
       mode: 'versus-local',
       formatId: 'knockout',
@@ -29,12 +40,11 @@ export function cinematicDuel(id: FighterId, side: FightSide = 'player'): FightS
     (e) => e.owner === side && e.kind === preparedKind(id),
   )
   const x = entity?.x ?? 48
-  state = {
+  return {
     ...state,
     [side]: { ...state[side], x, aura: 100 },
-    [other]: { ...state[other], x: x + (side === 'player' ? 5 : -5), aura: 100 },
+    [other]: { ...state[other], x: x + state[side].facing * 5, aura: 100 },
   }
-  return prepareAction(state, id, side)
 }
 function cinematicStage(id: FighterId) {
   return id === 'yokotani' ? ('heilly-hideout' as const) : ('heavens-arena' as const)

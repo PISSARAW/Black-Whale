@@ -50,7 +50,7 @@ class Take {
     readonly id: FighterId,
     readonly spacious = false,
   ) {
-    this.state = cinematicDuel(id)
+    this.state = cinematicDuel(id, 'player', { preparePredatorPrey: false })
     if (id === 'chrollo') {
       const s = beginFight(
         createFight('chrollo', 'hisoka', {
@@ -321,8 +321,17 @@ export function makeChapter(id: FighterId, spacious = false): Chapter {
       t.cast('neutralSpecial', 'Hanzo Skill 4 — retour et réveil du corps', 80)
       break
     case 'rihan':
-      t.cast('neutralSpecial', 'Predator — observation de Bungee Gum', 220)
-      t.cast('finisher', 'Predator — chasse de la manifestation étudiée', 160)
+      t.cast('neutralSpecial', 'Predator — veille', 1)
+      t.action('neutralSpecial', 'Hisoka fixe Bungee Gum sous les yeux de Rihan', 'opponent')
+      t.advance(45)
+      t.ready()
+      t.ready('opponent')
+      t.caption = 'Predator — étude de la portée et des déplacements'
+      t.advance(1, { left: true }, { jump: true })
+      t.advance(19, { left: true })
+      t.advance(10)
+      t.advance(1, { jump: true })
+      t.advance(250)
       break
     case 'zakuro':
       t.cast('neutralSpecial', 'Bloody Mary — fil de sang et capture', 100)

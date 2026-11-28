@@ -82,7 +82,7 @@ it.each([...LARGE_FRAMES, ...NATURAL_LUNGES] as const)(
     expect(contact?.root?.[2] ?? 0).toBeGreaterThan(0.05)
     expect(contact?.leadHip?.[0] ?? 0).toBeLessThan(-0.4)
     expect(contact?.rearHip?.[0] ?? 0).toBeGreaterThan(0.25)
-    if (id === 'beyond' || id === 'franklin') {
+    if (id === 'franklin') {
       expect(contact?.leadKnee?.[0] ?? 0).toBeGreaterThan(0.8)
       expect(contact?.rearKnee?.[0] ?? 0).toBeGreaterThan(0.5)
     } else {

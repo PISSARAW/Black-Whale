@@ -23,7 +23,7 @@ import { crouchPose } from './fightLocomotion'
 import { hanzoAstralStrikePlan } from './hanzoAstralMotion'
 import { sampleTimeline } from './keyPoseTimeline'
 import { moveById } from './movesets'
-import { strikingStance } from './strikingLegs'
+import { strikesFromLunge, strikingStance } from './strikingLegs'
 import type { ArcadeFighter, AttackKind, AttackVariant, MoveSlot } from './types'
 import { kurapikaGoldenHeavySupport } from './kurapikaGoldenHeavySupport'
 import { kurapikaGoldenHeavyOutcomePose } from './kurapikaGoldenHeavyOutcome'
@@ -130,12 +130,18 @@ export function attackPlan(
       active: frames.active,
       recovery: frames.recovery,
       supportLeg: postureSupportLeg(fighter),
-      loadAt: fightPhysicalProfile(fighter).loadAt,
+      loadAt: strikeLoadAt(fighter, slot),
       facing: fighter.facing,
       transfer,
       contact: bridgeContact(attack.moveId, { frame, startup: frames.startup, poseAt, pursuit }),
     },
   }
+}
+
+// A long lunge compresses early so the legs have time to travel into contact.
+function strikeLoadAt(fighter: ArcadeFighter, slot: MoveSlot): number {
+  const loadAt = fightPhysicalProfile(fighter).loadAt
+  return slot === 'standingHeavy' && strikesFromLunge(fighter.id) ? Math.min(loadAt, 0.16) : loadAt
 }
 
 function attackOnGround(

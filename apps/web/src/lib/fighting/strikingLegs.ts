@@ -27,6 +27,10 @@ const STRIKE_FROM_LUNGE = new Set<FighterId>([
   'biscuit',
 ])
 
+export function strikesFromLunge(id: FighterId): boolean {
+  return STRIKE_FROM_LUNGE.has(id)
+}
+
 export function strikingStance(id: FighterId, standing: FightPose): FightPose {
-  return STRIKE_FROM_LUNGE.has(id) ? { ...standing, ...LUNGE_LEGS } : standing
+  return strikesFromLunge(id) ? { ...standing, ...LUNGE_LEGS } : standing
 }

@@ -155,7 +155,7 @@ function contactWeight(fighter: ArcadeFighter, rival: ArcadeFighter, authored: b
   const p = Math.max(0, Math.min(1, attack.frame / Math.max(1, data.startup)))
   const approach = strikeApproach(attack, authored, p)
   const release = Math.max(0, 1 - Math.max(0, attack.frame - data.startup - data.active) / 4)
-  return approach * release * (authored ? 0.58 : 1)
+  return approach * release * (authored && !attack.confirmedHit ? 0.58 : 1)
 }
 
 export function fightContactTarget(rig: FightRig, zone: FightNenZone, facing: 1 | -1): Vector3 {

@@ -5,6 +5,7 @@ import {
   readyCohort,
 } from '../../src/lib/fighting/preparationWorld'
 import { COHORT_WILL_FRAMES } from '../../src/lib/fighting/preparationTuning'
+import { exchangeParticipant } from '../../src/lib/fighting/halkenburgCanonicalExchange'
 import type { FighterId, FightSide } from '../../src/lib/fighting/types'
 import type { FightStageId } from '../../src/lib/fighting/stages'
 
@@ -50,8 +51,8 @@ export function createHalkenburgFatalityFilm(
   )
   f.hit(side, 'neutralSpecial')
   f.until(() => f.state.phase === 'finished', f.state.remainingFrames + 60)
-  const exchange = f.state[loser].halkenburgSoul
-  if (f.state.winner !== side || f.state[loser].health <= 0 || !exchange)
+  const donor = f.state[loser].halkenburgSoul?.donor
+  if (f.state.winner !== side || f.state[loser].health <= 0 || !donor)
     throw new Error(
       `Halkenburg requires a charged native Grimmel verdict: ${JSON.stringify({ winner: f.state.winner, health: f.state[loser].health, effects: f.state[side].hatsuEffects, supporter: f.state[side].halkenburgSupporter })}`,
     )
@@ -66,7 +67,7 @@ export function createHalkenburgFatalityFilm(
       stageId,
       winner: side,
       consentingSupporters: cohort,
-      chosenSupporter: exchange.donor.kind === 'supporter' ? exchange.donor.id : `self:${side}`,
+      chosenSupporter: exchangeParticipant(donor),
       possessionFrames: f.state[loser].hatsuEffects.possessedFrames,
       source:
         'Native shared-will scenario with three consenting feather bearers. Grimmel swaps consciousness without damage; the ordinary round timer adjudicates the competitive verdict. The following ten seconds portray the transfer without extra damage or ability acquisition.',

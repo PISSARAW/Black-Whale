@@ -10,6 +10,7 @@ import { DASH_BRAKE_MIN_FRAME, SWAY_FRAMES, SWAY_UPPER_SHIFT } from './movementT
 import { movementTechPose } from './movementTechPoses'
 import { aiBackSwayInput, aiWakeupInput } from './movementTechAi'
 import { DELAYED_WAKEUP_FRAMES, UKEMI_ROLL_FRAMES, UKEMI_ROLL_SPEED } from './wakeupMovement'
+import { physicalCombatProfileFor } from './physicalCombatProfiles'
 import {
   EMPTY_INPUT,
   type ArcadeFighter,
@@ -71,9 +72,13 @@ describe('universal martial & Nen movement techniques', () => {
     const swayed = step(start, { left: true, guard: true })
     expect(swayed.player.swayFrames).toBe(SWAY_FRAMES)
     const swayBoxes = hurtboxes(swayed.player)
-    // Lower leg hurtbox stays in place; upper torso/head hurtbox shifts backward.
-    expect(swayBoxes[0].right).toBeCloseTo(baseBoxes[0].right, 5)
-    expect(swayBoxes[1].right).toBeCloseTo(baseBoxes[1].right - SWAY_UPPER_SHIFT, 5)
+    const translated = swayed.player.x - start.player.x
+    expect(swayBoxes[0].right - translated).toBeCloseTo(baseBoxes[0].right, 5)
+    const swayScale = physicalCombatProfileFor(start.player)?.sway ?? 1
+    expect(swayBoxes[1].right - translated).toBeCloseTo(
+      baseBoxes[1].right - SWAY_UPPER_SHIFT * swayScale,
+      5,
+    )
   })
 
   it('accelerates forward walk during the post-guard Ryu window (Parry Advancing Step)', () => {
@@ -173,7 +178,8 @@ describe('wakeup movement (delayed wakeup & ukemi roll)', () => {
     const rolled = step(downed, { left: true, guard: true })
     expect(rolled.player.ukemiRoll).toEqual({ direction: -1, frames: UKEMI_ROLL_FRAMES })
     const after = steps(rolled, UKEMI_ROLL_FRAMES)
-    expect(after.player.x).toBeCloseTo(40 - UKEMI_ROLL_FRAMES * UKEMI_ROLL_SPEED, 3)
+    const rollScale = physicalCombatProfileFor(base.player)?.roll ?? 1
+    expect(after.player.x).toBeCloseTo(40 - UKEMI_ROLL_FRAMES * UKEMI_ROLL_SPEED * rollScale, 3)
     expect(after.player.ukemiRoll).toBeUndefined()
   })
 })

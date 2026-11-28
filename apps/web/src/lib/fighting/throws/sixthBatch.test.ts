@@ -124,23 +124,21 @@ describe('sixth batch: real resources and physical personality', () => {
       const state = grab(duel('gel'), powered),
         view = renderer(state)
       const hand = view.figures.player.root.getObjectByName('hand-right')!
-      const meshes: THREE.Object3D[] = []
+      const materials = new Map<THREE.Mesh, THREE.Mesh['material']>()
       hand.traverse((node) => {
-        if ((node as THREE.Mesh).isMesh && node.visible) meshes.push(node)
+        const mesh = node as THREE.Mesh
+        if (mesh.isMesh && mesh.visible) materials.set(mesh, mesh.material)
       })
-      expect(meshes.length).toBeGreaterThan(0)
+      expect(materials.size).toBeGreaterThan(0)
       view.sync()
       const serpent = view.scene.getObjectByName('throw-signature:serpent')!
       expect(serpent.visible).toBe(true)
       expect(serpent.position.length()).toBeGreaterThan(0.1)
       expect(hand.visible).toBe(true)
-      expect(
-        meshes.every((mesh) => !((mesh as THREE.Mesh).material as THREE.Material).visible),
-      ).toBe(true)
+      for (const mesh of materials.keys())
+        expect((mesh.material as THREE.Material).visible).toBe(false)
       view.clear()
-      expect(
-        meshes.every((mesh) => ((mesh as THREE.Mesh).material as THREE.Material).visible),
-      ).toBe(true)
+      for (const [mesh, material] of materials) expect(mesh.material).toBe(material)
       // A later native special retains ownership of the parent hand visibility.
       hand.visible = false
       view.sync(state, 0.9)

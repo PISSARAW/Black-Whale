@@ -1,5 +1,6 @@
 import type { BodyPlan, FightPose, Turn } from './fightPose'
 import { fightFamily } from './fightArchetypes'
+import { LEORIO_REMOTE_MOVE } from './leorioAttack'
 import type { ArcadeFighter } from './types'
 
 interface LeanBudget {
@@ -17,6 +18,7 @@ export const FIGHT_LEAN_BUDGETS = {
   crouch: { body: [-0.16, 0.24], trunk: [-0.24, 0.36] },
   moving: { body: [-0.18, 0.22], trunk: [-0.28, 0.34] },
   attack: { body: [-0.22, 0.24], trunk: [-0.32, 0.38] },
+  floorStrike: { body: [-0.22, 0.24], trunk: [-0.32, 1.75] },
   bruteAttack: { body: [-0.18, 0.16], trunk: [-0.26, 0.26] },
 } as const satisfies Record<string, LeanBudget>
 
@@ -43,14 +45,18 @@ export function keepFightPosture(plan: BodyPlan, fighter: ArcadeFighter): BodyPl
 
 function leanBudget(fighter: ArcadeFighter): LeanBudget | null {
   if (['hit', 'down', 'wakeup', 'ko'].includes(fighter.pose)) return null
-  if (fighter.attack)
-    return fighter.id === 'franklin' || fightFamily(fighter.id) === 'brute'
-      ? FIGHT_LEAN_BUDGETS.bruteAttack
-      : FIGHT_LEAN_BUDGETS.attack
+  if (fighter.attack) return attackLeanBudget(fighter)
   if (fighter.crouching) return FIGHT_LEAN_BUDGETS.crouch
   if (fighter.pose === 'walk' || fighter.pose === 'jump' || fighter.motion?.dash)
     return FIGHT_LEAN_BUDGETS.moving
   return FIGHT_LEAN_BUDGETS.ready
+}
+
+function attackLeanBudget(fighter: ArcadeFighter): LeanBudget {
+  if (fighter.attack?.moveId === LEORIO_REMOTE_MOVE) return FIGHT_LEAN_BUDGETS.floorStrike
+  return fighter.id === 'franklin' || fightFamily(fighter.id) === 'brute'
+    ? FIGHT_LEAN_BUDGETS.bruteAttack
+    : FIGHT_LEAN_BUDGETS.attack
 }
 
 function keepPosePosture(pose: FightPose, budget: LeanBudget, limitKnees: boolean): FightPose {

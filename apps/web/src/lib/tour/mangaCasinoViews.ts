@@ -1,6 +1,7 @@
 import { mangaView as view, type MangaView } from './mangaViewModel'
 import { CASINO_LOWER_HALL, CASINO_SPACE, CASINO_STAIR_ROOM } from './casinoLayout'
 import { TSERRIEDNICH_EXTERIOR } from './tserriednichRoute'
+import { MANGA_CASINO_LAPLACE_VIEWS } from './mangaCasinoLaplaceViews'
 
 const tserriednichEnters = {
   characterId: 'prince-tserriednich',
@@ -18,6 +19,7 @@ const hisokaClose = {
 }
 
 export const MANGA_CASINO_VIEWS: MangaView[] = [
+  ...MANGA_CASINO_LAPLACE_VIEWS,
   view({
     id: 'casino-420-gaming-floor',
     spaceId: CASINO_SPACE,

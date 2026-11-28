@@ -201,6 +201,9 @@ export interface Post {
   /** A panel may place a reclining body on a bunk rather than on the floor. */
   floorOffset?: number
   projection?: boolean
+  unmasked?: boolean
+  bonolenovDisguise?: NonNullable<Apparition['human']>['bonolenovDisguise']
+  plainSuit?: boolean
   costume: Costume
   /**
    * Whether this is the body's place on the interior level of its room, rather

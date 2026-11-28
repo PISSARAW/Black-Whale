@@ -69,8 +69,8 @@ describe('Tserriednich’s apartment against the training panels', () => {
     }
   })
 
-  it('keeps all eleven inspection cameras on clear floor and marks the seven reconstructions', () => {
-    expect(MANGA_TSERRIEDNICH_VIEWS).toHaveLength(11)
+  it('keeps inspection and diary cameras on clear floor and marks reconstructed rooms', () => {
+    expect(MANGA_TSERRIEDNICH_VIEWS).toHaveLength(16)
     for (const view of MANGA_TSERRIEDNICH_VIEWS) {
       expect(pointInPolygon(view.at, ship.spaces.get(view.spaceId)!.footprint), view.id).toBe(true)
       for (const item of plan.structures.filter((item) => item.spaceId === view.spaceId))

@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import type { MangaView } from '../mangaViews'
 import type { Post } from './types'
 import { stagePostsForMangaView } from './mangaStage'
+import { MANGA_CINEPLEX_VIEWS } from '../mangaCineplexViews'
+import { dressBlackWhaleCast } from './blackWhaleWardrobe'
 
 const post = (characterId: string, spaceId = 'salon'): Post => ({
   member: {
@@ -21,6 +23,25 @@ const post = (characterId: string, spaceId = 'salon'): Post => ({
 })
 
 describe('manga panel cast staging', () => {
+  it('preserves Bonolenov’s identity and changes his disguise from the concourse to the cinema', () => {
+    const view = MANGA_CINEPLEX_VIEWS.find(({ id }) => id === 'cineplex-auditorium-screen')!
+    const bonolenov = post('bonolenov-ndongo', 'concourse')
+    const hisoka = post('hisoka', view.spaceId)
+    const posts = dressBlackWhaleCast([bonolenov, hisoka], {
+      chapterNumber: 393,
+      eventId: 'ch-393-bonolenov-kills-lynch',
+    })
+    expect(posts[0].bonolenovDisguise).toBe('lynch')
+    expect(posts[1]).toBe(hisoka)
+    const staged = stagePostsForMangaView(posts, view, 'interior')
+    expect(staged).toHaveLength(1)
+    expect(staged[0]).toMatchObject({
+      member: { characterId: 'bonolenov-ndongo' },
+      bonolenovDisguise: 'hisoka',
+      pose: 'seated',
+    })
+  })
+
   it('keeps an explicitly unpopulated programme-type room empty', () => {
     const view = { spaceId: 'salon', staging: [] } as unknown as MangaView
     const posts = [

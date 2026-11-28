@@ -32,6 +32,7 @@ import {
   type Visitor,
 } from '$lib/tour/cast'
 import { stagePostsForMangaView } from '$lib/tour/cast/mangaStage'
+import { dressBlackWhaleCast } from '$lib/tour/cast/blackWhaleWardrobe'
 import { stageBeastsForMangaView } from '$lib/tour/cast/mangaBeastStage'
 import { pacedPosts } from '$lib/tour/cast/pace'
 import { residueApparitions } from '$lib/tour/cast/residue'
@@ -124,7 +125,7 @@ export class TourCastView {
 
   private postsOn(tierId: string): Post[] {
     const { mangaView, concert } = this.options.read()
-    const all = this.distributed
+    const all = dressBlackWhaleCast(this.distributed, this.options.readCast())
     const posts = concert
       ? concertCast(all, {
           ship: this.options.ship,

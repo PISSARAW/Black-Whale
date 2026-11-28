@@ -70,6 +70,7 @@
   import { buildSolidMesh } from '$lib/tour/mesh'
   import { animateDealerFace } from '$lib/tour/dealer'
   import { HUMAN_LOD_DISTANCE } from '$lib/tour/humanFigure'
+  import { setHumanExtremityLod } from '$lib/tour/humanExtremityLod'
   import { shownState } from '$lib/tour/apparitionShown'
   import type { HumanPose } from '$lib/tour/humanAnimation'
   import type { HumanFigure } from '$lib/tour/humanFigure'
@@ -2576,6 +2577,7 @@
           if (held.humanLod) {
             const distance = camera.position.distanceTo(held.root.position)
             const near = distance <= HUMAN_LOD_DISTANCE
+            setHumanExtremityLod(held.humanLod.near, distance)
             held.humanLod.near.visible = near
             held.humanLod.far.visible = !near
             // Position remains authoritative even off-screen; pose animation and

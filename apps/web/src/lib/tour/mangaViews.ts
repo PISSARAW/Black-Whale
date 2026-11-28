@@ -34,6 +34,7 @@ import { MANGA_HOSPITAL_VIEWS } from './mangaHospitalViews'
 import { MANGA_ROYAL_ARMY_CONFERENCE_VIEWS } from './mangaRoyalArmyConferenceViews'
 import { MANGA_ROYAL_ARMY_ROOMS_VIEWS } from './mangaRoyalArmyRoomsViews'
 import { MANGA_SCREENING_ROOM_VIEWS } from './mangaScreeningRoomViews'
+import { MANGA_TIER_FOUR_VIEWS } from './mangaTierFourViews'
 import { mangaView as view, type MangaView } from './mangaViewModel'
 
 export type { MangaCastStaging, MangaView } from './mangaViewModel'
@@ -209,6 +210,7 @@ export const MANGA_VIEWS: MangaView[] = [
     ],
   }),
   ...MANGA_OBSERVATION_DECK_VIEWS,
+  ...MANGA_TIER_FOUR_VIEWS,
   ...MANGA_APARTMENT_VIEWS,
 ]
 

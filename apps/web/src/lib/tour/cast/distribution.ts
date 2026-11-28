@@ -245,8 +245,11 @@ function drawnAs(post: Post, look: CastLook): NonNullable<Apparition['human']> {
     ...(post.costume.dress ? { dress: post.costume.dress } : {}),
     pose: look.reaction ?? post.pose ?? poseOf(post.costume.role),
     identity: post.member.characterId,
+    ...(post.unmasked ? { unmasked: true } : {}),
+    ...(post.bonolenovDisguise ? { bonolenovDisguise: post.bonolenovDisguise } : {}),
+    ...(post.plainSuit ? { plainSuit: true } : {}),
     ...(look.aura ? { aura: look.aura } : {}),
-    ...(look.nen ? { nen: look.nen } : {}),
+    ...(look.nen && post.pose !== 'zetsu' ? { nen: look.nen } : {}),
     ...(look.alert ? { alert: look.alert } : {}),
   }
 }

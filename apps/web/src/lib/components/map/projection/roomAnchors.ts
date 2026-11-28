@@ -20,6 +20,7 @@ import { princesSpotAnchors } from './princesPlan'
 import { justiceSpotAnchors } from './justiceBureauPlan'
 import { policeSpotAnchors } from './policeStationPlan'
 import { cineplexSpotAnchors } from './cineplexPlan'
+import { casinoSpotAnchors } from './casinoPlan'
 import { royalArmyConferenceSpotAnchors } from './royalArmyConferencePlan'
 import { vvipRecreationSpotAnchors } from './vvipRecreationPlan'
 import { supremeCourtSpotAnchors } from './supremeCourtPlan'
@@ -212,16 +213,7 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
       keeney: { x: 9, y: 31.67, inferred: true },
     },
   },
-  // `local/casino.svelte`, 1000 × 400, sixteen pixels to the metre with the
-  // room turned a quarter turn: fore to the left, port at the top. The gaming
-  // floor is two columns of nine tables, on x = -53.5 and -44.5, from z = 8
-  // aft at a 5.5 m pitch — the same tables the blueprint lays.
-  //
-  // Hisoka plays the unconventional variants in ch. 405. Which table is not
-  // depicted, so he takes one on the port column, mid-room.
-  'tier-1-vip-casino': {
-    occupants: { hisoka: { x: 50.4, y: 34.5, inferred: true } },
-  },
+  'tier-1-vip-casino': casinoSpotAnchors,
   // The Supreme Court courtroom (ch. 349, 371, 376, 379).
   'tier-1-supreme-court': supremeCourtSpotAnchors,
   // The Tier 2 Screening Room & Grand Theatre (ch. 359).

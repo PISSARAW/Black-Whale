@@ -1,9 +1,14 @@
 import { mangaView as view, type MangaCastStaging } from './mangaViewModel'
 
 const hisokaIslandStaging: MangaCastStaging[] = [
-  { characterId: 'hisoka', at: [-17.0, 0], heading: 0, pose: 'seated' },
+  {
+    characterId: 'bonolenov-ndongo',
+    bonolenovDisguise: 'hisoka',
+    at: [-17, 0],
+    heading: 0,
+    pose: 'seated',
+  },
   { characterId: 'hinrigh-biganduffno', at: [-14.5, 0.5], heading: -Math.PI, pose: 'idle' },
-  { characterId: 'lynch-fullbokko', at: [-14.5, -0.5], heading: -Math.PI, pose: 'idle' },
 ]
 
 const rampStaging: MangaCastStaging[] = [
@@ -12,7 +17,13 @@ const rampStaging: MangaCastStaging[] = [
 ]
 
 const auditoriumStaging: MangaCastStaging[] = [
-  { characterId: 'bonolenov-ndongo', at: [-24.5, 25.4], heading: 0, pose: 'seated' },
+  {
+    characterId: 'bonolenov-ndongo',
+    bonolenovDisguise: 'hisoka',
+    at: [-24.5, 25.4],
+    heading: 0,
+    pose: 'seated',
+  },
 ]
 
 export const MANGA_CINEPLEX_VIEWS = [
@@ -60,15 +71,16 @@ export const MANGA_CINEPLEX_VIEWS = [
     chapter: 393,
     volume: 38,
     staging: hisokaIslandStaging,
-    label: 'The circular seating island where Hisoka waits with popcorn and soda',
-    labelFr: "L'îlot circulaire de sièges où Hisoka attend avec pop-corn et soda",
+    label: 'The circular seating island where the man posing as Hisoka waits',
+    labelFr: 'L’îlot circulaire où attend l’homme qui se fait passer pour Hisoka',
   }),
   view({
     id: 'cineplex-auditorium-screen',
     spaceId: 'tier-3-cineplex-screen-1',
-    at: [-23.5, 18.4],
+    at: [-24.5, 18.4],
     target: [-24.5, 36.8],
-    pitch: 0.08,
+    eyeHeight: 3.55,
+    pitch: -0.07,
     chapter: 393,
     volume: 38,
     staging: auditoriumStaging,

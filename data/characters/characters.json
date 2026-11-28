@@ -42107,6 +42107,16 @@
         "note": "Forme un trio avec Chrollo et Shizuku"
       },
       {
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-392.2",
+        "note": "Lynch interroge Bonolenov sous l’apparence de Hisoka."
+      },
+      {
+        "location": "tier-3-cineplex",
+        "fromChapterId": "ch-393",
+        "note": "Bonolenov reprend l’apparence de Hisoka pour rencontrer Hinrigh au cinéma."
+      },
+      {
         "location": "tier-1-vip-casino",
         "fromChapterId": "ch-405"
       }

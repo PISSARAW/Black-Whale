@@ -106,7 +106,7 @@ export const MANGA_TSERRIEDNICH_ROUTE_VIEWS: MangaView[] = [
     target: deckPrince.at,
     eyeHeight: 1.75,
     pitch: -0.04,
-    staging: [{ ...deckPrince }],
+    staging: [{ ...deckPrince, unmasked: true }],
     label: 'Subjective close-up as Tserriednich considers breaking Zetsu',
     labelFr: 'Gros plan subjectif lorsque Tserriednich envisage de rompre son Zetsu',
   }),

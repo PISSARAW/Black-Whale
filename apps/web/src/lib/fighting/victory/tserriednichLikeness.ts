@@ -42,7 +42,7 @@ function princeStubble(head: Object3D) {
   stubble.name = 'tserriednich-prince-stubble'
   return stubble
 }
-function uncoveredPrince(head: Object3D) {
+export function buildUncoveredTserriednich(head: Object3D) {
   const root = new Group(),
     hair = new MeshBasicMaterial({ color: 0xb3a17b })
   root.name = 'tserriednich-reference-likeness'
@@ -78,7 +78,7 @@ export function createTserriednichLikeness() {
   return {
     apply(context: VictoryContext) {
       const head = context.hero.head
-      const look = owned.get(head) ?? uncoveredPrince(head)
+      const look = owned.get(head) ?? buildUncoveredTserriednich(head)
       owned.set(head, look)
       const bare = context.age < 66 || context.age >= 210
       for (const node of head.children) {

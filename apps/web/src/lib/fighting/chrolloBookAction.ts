@@ -13,6 +13,26 @@ import { skillHunterBookHandReady } from './historicalHands'
 import type { AttackKind, FightSide, FightState } from './types'
 
 /** Book handling has recovery, but never a hitbox, a lunge, or a free hit cancel. */
+function executeBookChange(
+  book: NonNullable<FightState['player']['chrolloBook']>,
+  moveId: string | undefined,
+  recyclingStolen: boolean,
+) {
+  return recyclingStolen
+    ? selectChrolloSlot(book, 'stolen')
+    : moveId === CHROLLO_TURN
+      ? { ...turnChrolloPage(book), isFlipping: true }
+      : toggleChrolloBookmark(book)
+}
+
+function canTurnOrBookmark(
+  fighter: FightState['player'],
+  kind: AttackKind,
+  moveId?: string,
+): boolean {
+  return !fighter.attack && !(fighter.y > 0) && canStartFighterAttack(fighter, kind, moveId)
+}
+
 export function performChrolloBookAction(options: {
   state: FightState
   side: FightSide
@@ -27,13 +47,8 @@ export function performChrolloBookAction(options: {
   if (!chrolloBookMove(moveId) && !recyclingStolen) return null
   if (!skillHunterBookHandReady(state, side)) return state
   const effectiveMoveId = recyclingStolen ? CHROLLO_TURN : moveId
-  if (fighter.attack || fighter.y > 0 || !canStartFighterAttack(fighter, kind, effectiveMoveId))
-    return state
-  const changed = recyclingStolen
-    ? selectChrolloSlot(book!, 'stolen')
-    : moveId === CHROLLO_TURN
-      ? { ...turnChrolloPage(book!), isFlipping: true }
-      : toggleChrolloBookmark(book!)
+  if (!canTurnOrBookmark(fighter, kind, effectiveMoveId)) return state
+  const changed = executeBookChange(book!, moveId, recyclingStolen)
   const next = {
     ...state,
     [side]: {

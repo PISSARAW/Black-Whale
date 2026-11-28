@@ -6,15 +6,20 @@ import type {
 } from './types'
 
 /** Folds visible match discoveries into a persistent, descriptive dossier. */
+function observedFacts(intel: NonNullable<CareerMatch['intel']>): OpponentKnowledgeFact[] {
+  const facts: OpponentKnowledgeFact[] = []
+  if (intel.auraObserved) facts.push('aura')
+  if (intel.kameoRevealed) facts.push('kameo')
+  for (const condition of intel.revealedConditions) facts.push(`condition:${condition}`)
+  return facts
+}
+
 export function rememberOpponentIntel(
   knowledge: CareerProfile['opponentKnowledge'],
   match: CareerMatch,
 ): CareerProfile['opponentKnowledge'] {
   if (!match.intel) return knowledge
-  const facts: OpponentKnowledgeFact[] = []
-  if (match.intel.auraObserved) facts.push('aura')
-  if (match.intel.kameoRevealed) facts.push('kameo')
-  for (const condition of match.intel.revealedConditions) facts.push(`condition:${condition}`)
+  const facts = observedFacts(match.intel)
   if (facts.length === 0) return knowledge
 
   const previous = knowledge[match.opponent]?.entries ?? []

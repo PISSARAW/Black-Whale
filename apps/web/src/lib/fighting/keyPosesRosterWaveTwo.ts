@@ -93,7 +93,7 @@ export const ROSTER_WAVE_TWO_GROUNDED_POSES = Object.fromEntries(
     Object.fromEntries(
       ROSTER_WAVE_TWO_SLOTS.map((slot) => [
         slot,
-        rosterWaveOneGroundedTimeline(id, slot, ROSTER_WAVE_TWO_SIGNATURES[id]),
+        rosterWaveOneGroundedTimeline(id, slot, { signature: ROSTER_WAVE_TWO_SIGNATURES[id] }),
       ]),
     ),
   ]),

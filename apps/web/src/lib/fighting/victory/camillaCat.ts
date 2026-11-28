@@ -70,6 +70,24 @@ export function createCamillaVictoryCat() {
   const current = Array.from({ length: 7 }, () => new THREE.Mesh(bead, gold))
   current.forEach((light) => root.add(light))
   root.add(drop)
+  function syncOpeningPaw(age: number, scale: number, base: InstanceType<typeof THREE.Vector3>) {
+    const landing = Math.max(0, Math.min(1, (age - CAMILLA_PAW_LANDS + 22) / 22)) ** 2
+    const pawImpact = 1 - ease((age - CAMILLA_PAW_LANDS) / 11)
+    openingPaw.visible = age >= CAMILLA_PAW_LANDS - 22 && age < CAMILLA_REVEAL
+    openingPaw.scale.setScalar(scale)
+    if (age >= CAMILLA_PAW_LANDS) openingPaw.scale.y *= 1 - pawImpact * 0.12
+    paw.position.copy(model.joints.get('paw-1')!.position).add(model.body.position)
+    leg.position.copy(model.joints.get('leg-1')!.position).add(model.body.position)
+    leg.scale.y = 0.55
+    openingPaw.position.copy(base).add(new THREE.Vector3((1 - landing) * 0.24, 0, 0.12))
+    pawShadow.visible = openingPaw.visible && landing > 0.6
+    if (openingPaw.visible) {
+      openingPaw.position.y += 0.022 + (1 - landing) * 0.53 - visibleVictoryBounds(paw).min.y
+      paw.getWorldPosition(pawShadow.position)
+      pawShadow.position.y = 0.014
+    }
+  }
+
   return {
     root,
     sync(context: VictoryContext, pose: ReturnType<typeof camillaVictoryPose>) {
@@ -83,21 +101,7 @@ export function createCamillaVictoryCat() {
       model.root.position.copy(base)
       model.root.updateWorldMatrix(true, true)
       model.root.visible = age >= CAMILLA_REVEAL && age < CAMILLA_RISE
-      const landing = Math.max(0, Math.min(1, (age - CAMILLA_PAW_LANDS + 22) / 22)) ** 2
-      const pawImpact = 1 - ease((age - CAMILLA_PAW_LANDS) / 11)
-      openingPaw.visible = age >= CAMILLA_PAW_LANDS - 22 && age < CAMILLA_REVEAL
-      openingPaw.scale.setScalar(scale)
-      if (age >= CAMILLA_PAW_LANDS) openingPaw.scale.y *= 1 - pawImpact * 0.12
-      paw.position.copy(model.joints.get('paw-1')!.position).add(model.body.position)
-      leg.position.copy(model.joints.get('leg-1')!.position).add(model.body.position)
-      leg.scale.y = 0.55
-      openingPaw.position.copy(base).add(new THREE.Vector3((1 - landing) * 0.24, 0, 0.12))
-      pawShadow.visible = openingPaw.visible && landing > 0.6
-      if (openingPaw.visible) {
-        openingPaw.position.y += 0.022 + (1 - landing) * 0.53 - visibleVictoryBounds(paw).min.y
-        paw.getWorldPosition(pawShadow.position)
-        pawShadow.position.y = 0.014
-      }
+      syncOpeningPaw(age, scale, base)
       bodyShadow.visible = pose.fall > 0.78 && pose.rise < 0.25
       bodyShadow.position.set(pose.bodyContact.x, 0.015, pose.bodyContact.z)
       const contacts = paws.sync({

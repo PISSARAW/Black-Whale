@@ -33,6 +33,18 @@ export function resolveFightOutcome(state: FightState): FightState {
   if (triggered.catsName || triggered.gumResuscitation) return triggered
   const cleared = { ...triggered, deaths: undefined }
   if (state.mode === 'training') return restoreTrainingCasualties(cleared)
+  return resolveRoundLoss(triggered, cleared)
+}
+
+function keepRecordedKnockoutShot(
+  state: FightState,
+  reason: NonNullable<FightState['finishReason']>,
+  shot: number | undefined,
+): FightState {
+  return reason === 'knockout' && shot !== undefined ? { ...state, finishingShot: shot } : state
+}
+
+function resolveRoundLoss(triggered: FightState, cleared: FightState): FightState {
   const playerLost = lossReason(triggered, 'player')
   const opponentLost = lossReason(triggered, 'opponent')
   if (playerLost && opponentLost)
@@ -49,11 +61,7 @@ export function resolveFightOutcome(state: FightState): FightState {
   const shot = triggered.deaths?.find(
     (death) => death.victimSide === loser && death.killerSide === winner,
   )?.shotId
-  return finishFight(
-    reason === 'knockout' && shot !== undefined ? { ...cleared, finishingShot: shot } : cleared,
-    winner,
-    reason,
-  )
+  return finishFight(keepRecordedKnockoutShot(cleared, reason, shot), winner, reason)
 }
 
 /** Points and death-match bouts both survive zero HP unless a death was recorded. */

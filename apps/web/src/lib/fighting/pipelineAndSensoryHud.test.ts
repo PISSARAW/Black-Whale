@@ -41,8 +41,9 @@ describe('Deterministic 4-layer transfer pipeline & zero-text Sensory HUD', () =
       nenMentalFatigue: 6000,
       fearCooldownFrames: 60,
     }
-    for (let i = 0; i < 3; i++) hanzo = rememberBodyHit(hanzo, 'hands', 10, false)
-    hanzo = rememberBodyHit(hanzo, 'feet', 10, false)
+    for (let i = 0; i < 3; i++)
+      hanzo = rememberBodyHit(hanzo, { zone: 'hands', damage: 10, blocked: false })
+    hanzo = rememberBodyHit(hanzo, { zone: 'feet', damage: 10, blocked: false })
 
     const beyondRen = {
       ...state.opponent,

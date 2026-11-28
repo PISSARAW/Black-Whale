@@ -10,10 +10,7 @@ function hairline(azimuth: number): number {
   const temple = Math.sin(azimuth) ** 4
   const back = Math.max(0, -Math.cos(azimuth))
   return (
-    1.3 -
-    0.31 * Math.sin(azimuth * 2) * Math.max(0, Math.cos(azimuth)) +
-    0.28 * temple +
-    back * 0.8
+    1.3 - 0.31 * Math.sin(azimuth * 2) * Math.max(0, Math.cos(azimuth)) + 0.28 * temple + back * 0.8
   )
 }
 

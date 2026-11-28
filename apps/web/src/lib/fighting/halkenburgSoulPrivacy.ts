@@ -4,15 +4,18 @@ import { halkenburgMindCanWake } from './halkenburgMindAccess'
 import type { HalkenburgSoulExchange, HalkenburgPassenger } from './halkenburgSoulTypes'
 
 /** A falling body is visible; the exact consciousness drawn from the group is private. */
-export function privateHalkenburgSouls(state: FightState, viewer: FightSide | null): FightState {
-  const bodies = [
+function soulBodies(state: FightState) {
+  return [
     state.player,
     state.opponent,
     ...(state.rosterGuests ?? []).map((entry) => entry.fighter),
     ...(state.teamMatch?.seats.player.members ?? []),
     ...(state.teamMatch?.seats.opponent.members ?? []),
   ]
-  const visibleIdentities = new Set(
+}
+
+function visibleSoulIdentities(state: FightState, viewer: FightSide | null) {
+  return new Set(
     viewer
       ? [
           state.halkSoulOrigins?.[viewer] ?? state[viewer].halkenburgOrigin ?? state[viewer].id,
@@ -25,12 +28,16 @@ export function privateHalkenburgSouls(state: FightState, viewer: FightSide | nu
               .filter((mind) => mind.side === viewer && mind.identity)
               .map((mind) => mind.identity!),
           ),
-          ...bodies
+          ...soulBodies(state)
             .filter((body) => body.halkRosterMind?.startsWith(`mind:${viewer}`))
             .map((body) => body.id),
         ]
       : [],
   )
+}
+
+export function privateHalkenburgSouls(state: FightState, viewer: FightSide | null): FightState {
+  const visibleIdentities = visibleSoulIdentities(state, viewer)
   const privateGraphMind = <T extends { identity?: import('./types').FighterId }>(mind: T): T =>
     mind.identity && visibleIdentities.has(mind.identity) ? mind : { ...mind, identity: undefined }
   const privateState = mapPhysicalBodies(state, (body) => {

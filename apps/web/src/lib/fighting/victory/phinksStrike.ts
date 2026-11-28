@@ -21,7 +21,15 @@ export function phinksVictoryStrike(state: FightState, winner: FightSide) {
       ren: Boolean(strike.phinksStrike.ren),
     }
 
-  // Older replay snapshots can still identify a Cyclotron through its recorded contact.
+  return legacyCyclotronContact(state, winner, isContact)
+}
+
+// Older replay snapshots can still identify a Cyclotron through its recorded contact.
+function legacyCyclotronContact(
+  state: FightState,
+  winner: FightSide,
+  isContact: (hit: NonNullable<FightState['impact']>) => boolean,
+) {
   const legacy = state.cyclotronContacts?.[winner]
   const impact = state.impact
   const decisive =

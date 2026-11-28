@@ -30,7 +30,8 @@ describe('5-fighter upgrades: Feitan, Terebellum, Shizuku, Hanzo, Kalluto', () =
   it('Feitan charges Pain Packer from real damage without an invented limb multiplier', () => {
     const before = beginFight(createFight('feitan', 'hisoka', { mode: 'versus-local' }))
     let weakened = before.player
-    for (let i = 0; i < 3; i++) weakened = rememberBodyHit(weakened, 'hands', 10, false)
+    for (let i = 0; i < 3; i++)
+      weakened = rememberBodyHit(weakened, { zone: 'hands', damage: 10, blocked: false })
     expect(feitanBodyMemoryChargeFactor(weakened)).toBe(1)
 
     const after = { ...before, player: { ...weakened, health: weakened.health - 10 } }
@@ -79,7 +80,8 @@ describe('5-fighter upgrades: Feitan, Terebellum, Shizuku, Hanzo, Kalluto', () =
   it('Terebellum does not use abstract stored damage or direct status transfer', () => {
     const state = beginFight(createFight('terebellum', 'hisoka', { mode: 'versus-local' }))
     let self = absorbSweetHomeRightHand(state.player, 18)
-    for (let i = 0; i < 3; i++) self = rememberBodyHit(self, 'hands', 10, false)
+    for (let i = 0; i < 3; i++)
+      self = rememberBodyHit(self, { zone: 'hands', damage: 10, blocked: false })
     self = { ...self, haikuBurn: true, openWounds: 1, tskPoisoned: true }
 
     const transferred = transferSweetHomeLeftHand({ ...state, player: self }, 'player')

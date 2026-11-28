@@ -7,6 +7,15 @@ import type { AttackFrameData } from './frameData'
 import type { ArcadeFighter, AttackKind, FightInput } from './types'
 
 /** Duel tuning, not a canonical cadence, aura price or damage formula. */
+export interface PhinksStrikeEvidence {
+  frame: number
+  turns: number
+  ken: boolean
+  ten?: boolean
+  ren?: boolean
+  ko?: boolean
+}
+
 export const CYCLOTRON_ROTATION_FRAMES = 36
 export const CYCLOTRON_ROTATION_AURA = 2
 export const CYCLOTRON_PUNCH = 'phinks:finisher'

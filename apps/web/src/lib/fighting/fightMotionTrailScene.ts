@@ -63,16 +63,8 @@ export function createFightMotionTrailScene(options: {
           previous.set(id, current.clone())
           return from ? [{ name, from, current, distance: from.distanceTo(current) }] : []
         })
-        if (!shouldTrail(state, side, advanced, options.comfort())) continue
-        const dashEcho = fighter.id === 'kurapika' && Boolean(motionOf(fighter).dash)
-        const heavy = fighter.attack?.kind === 'heavy'
-        const threshold = dashEcho ? 0.025 : heavy ? 0.045 : 0.065
-        const limit = dashEcho ? 4 : heavy ? 2 : 1
-        const colour = fighter.attack
-          ? attackAuraColour(fighter)
-          : fighter.kurapika?.emperorTime
-            ? 0xd44a65
-            : 0x91abc8
+        if (!shouldTrail(state, side, { advanced, comfort: options.comfort() })) continue
+        const { threshold, limit, colour, opacity, life } = trailStyle(fighter)
         for (const sample of samples
           .filter(({ distance }) => distance >= threshold && distance <= 1.1)
           .sort((a, b) => b.distance - a.distance)
@@ -83,9 +75,9 @@ export function createFightMotionTrailScene(options: {
           mesh.quaternion.setFromUnitVectors(up, direction.clone().normalize())
           mesh.scale.set(1, sample.distance, 1)
           mesh.material.color.set(colour)
-          mesh.material.opacity = dashEcho ? 0.26 : heavy ? 0.42 : 0.3
+          mesh.material.opacity = opacity
           mesh.userData.born = now
-          mesh.userData.life = dashEcho ? LIFE_MS + 55 : LIFE_MS + (heavy ? 35 : 0)
+          mesh.userData.life = life
           mesh.visible = true
         }
       }
@@ -115,11 +107,25 @@ export function createFightMotionTrailScene(options: {
   }
 }
 
+function trailStyle(fighter: FightState['player']) {
+  const colour = fighter.attack
+    ? attackAuraColour(fighter)
+    : fighter.kurapika?.emperorTime
+      ? 0xd44a65
+      : 0x91abc8
+  if (fighter.id === 'kurapika' && motionOf(fighter).dash) {
+    return { threshold: 0.025, limit: 4, colour, opacity: 0.26, life: LIFE_MS + 55 }
+  }
+  if (fighter.attack?.kind === 'heavy') {
+    return { threshold: 0.045, limit: 2, colour, opacity: 0.42, life: LIFE_MS + 35 }
+  }
+  return { threshold: 0.065, limit: 1, colour, opacity: 0.3, life: LIFE_MS }
+}
+
 function shouldTrail(
   state: FightState,
   side: FightSide,
-  advanced: boolean,
-  comfort: FightComfort,
+  { advanced, comfort }: { advanced: boolean; comfort: FightComfort },
 ): boolean {
   const fighter = state[side]
   const attack = fighter.attack

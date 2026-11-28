@@ -210,6 +210,12 @@ function* roomDetails(options: RoomDetailOptions): Generator<void, Three.Group |
   return null
 }
 
+function attachTierRoom(root: Three.Group, room: TierRoomView): void {
+  root.add(room.mesh, room.edges, room.seams, room.patterns, room.fittings)
+  if (room.panes) root.add(room.panes)
+  if (room.motes) root.add(room.motes)
+}
+
 export class TierView {
   constructor(
     private readonly THREE: typeof Three,
@@ -261,9 +267,7 @@ export class TierView {
         if (room.details) room.mesh.add(room.details)
         room.doors = buildDoorDetails(detailsOptions)
         if (room.doors) room.mesh.add(room.doors)
-        root.add(room.mesh, room.edges, room.seams, room.patterns, room.fittings)
-        if (room.panes) root.add(room.panes)
-        if (room.motes) root.add(room.motes)
+        attachTierRoom(root, room)
       }
       yield
       const lampAir = reveal

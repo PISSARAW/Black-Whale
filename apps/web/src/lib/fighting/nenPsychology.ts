@@ -145,7 +145,8 @@ function reactToImpact(
   const defenderProfile = nenPsychologyProfile(defender.id)
   const attackerProfile = nenPsychologyProfile(fighters[impact.attacker].id)
   const damageShock = Math.round((impact.damage / Math.max(1, defender.maxHealth)) * 2_500)
-  const openingShock = impact.counterHit || impact.punish ? 160 : 0
+  const opening = Boolean(impact.counterHit || impact.punish)
+  const openingShock = opening ? 160 : 0
   const shock = Math.max(30, Math.min(700, damageShock + openingShock))
   const guarded = impact.blocked ? 0.35 : 1
   return {
@@ -155,10 +156,7 @@ function reactToImpact(
       composure: -scaled(shock * guarded * 0.5, defenderProfile.impactComposureLoss),
     }),
     [impact.attacker]: shiftPsychology(fighters[impact.attacker], {
-      resolve: scaled(
-        impact.counterHit || impact.punish ? 180 : 70,
-        attackerProfile.successResolve,
-      ),
+      resolve: scaled(opening ? 180 : 70, attackerProfile.successResolve),
       composure: impact.counterHit ? 70 : 20,
     }),
   }

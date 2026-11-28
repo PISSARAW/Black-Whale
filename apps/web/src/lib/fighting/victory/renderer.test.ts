@@ -368,7 +368,9 @@ describe('live victory renderer', () => {
     const { fov } = fixture.camera
     try {
       expect(selectVictory(fixture.state)?.duration).toBe(9)
-      for (const age of [0, 82, 119, 120, 235, 272, 285, 291, 309, 324, 365, 380, 384, 401, 411, 450, 462, 483, 539]) {
+      for (const age of [
+        0, 82, 119, 120, 235, 272, 285, 291, 309, 324, 365, 380, 384, 401, 411, 450, 462, 483, 539,
+      ]) {
         const restore = fixture.renderer.apply({
           state: fixture.state,
           models: fixture.models,
@@ -538,7 +540,10 @@ describe('live victory renderer', () => {
     let openingCameraX = 0
     let revealCameraX = 0
     try {
-      for (const age of [12, 28, 53, 107, 144, 170, 230, 259, 273, 320, 377, 419, 442, 463, 480, 501, 515, 532, 552, 594]) {
+      for (const age of [
+        12, 28, 53, 107, 144, 170, 230, 259, 273, 320, 377, 419, 442, 463, 480, 501, 515, 532, 552,
+        594,
+      ]) {
         const restore = fixture.renderer.apply({
           state: fixture.state,
           models: fixture.models,
@@ -571,7 +576,8 @@ describe('live victory renderer', () => {
           expect(drop.z).toBeCloseTo(audit.lips.z)
           expect(drop.y - audit.lips.y).toBeCloseTo(age === 419 ? 0.43 : 0.035, 2)
         }
-        if (age === 463) expect([audit.hand, audit.breath, audit.eyes, audit.rise]).toEqual([0, 0, 0, 0])
+        if (age === 463)
+          expect([audit.hand, audit.breath, audit.eyes, audit.rise]).toEqual([0, 0, 0, 0])
         if (age === 480) expect(audit.hand).toBeGreaterThan(0.5)
         if (age === 501) expect(audit.breath).toBeCloseTo(1)
         if (age < 522) expect(audit.eyes).toBe(0)
@@ -726,13 +732,17 @@ describe('live victory renderer', () => {
       expect(torsoAnchor.distanceTo(pelvisAnchor)).toBeLessThan(1e-6)
       restoreRig()
       const rival = models.opponent.position.toArray()
-      const seam = scene.getObjectByName('tserriednich-floor-joint')!.getWorldPosition(new THREE.Vector3())
+      const seam = scene
+        .getObjectByName('tserriednich-floor-joint')!
+        .getWorldPosition(new THREE.Vector3())
       restore()
       restore = render(5.2)
       expect(models.player.rotation.z).toBe(0)
       expect(models.player.position.z).toBeGreaterThan(seam.z)
       expect(models.opponent.position.toArray()).toEqual(rival)
-      expect(scene.getObjectByName('tserriednich-floor-joint')!.getWorldPosition(new THREE.Vector3())).toEqual(seam)
+      expect(
+        scene.getObjectByName('tserriednich-floor-joint')!.getWorldPosition(new THREE.Vector3()),
+      ).toEqual(seam)
       expect(snapshot(scene)).not.toEqual(before)
       restore()
       restore = render(7.25)
@@ -741,7 +751,9 @@ describe('live victory renderer', () => {
       expect(scene.getObjectByName('tserriednich-future-execution')).toBeUndefined()
       restore()
       restore = render(8.25)
-      expect(Boolean(scene.getObjectByName('tserriednich-future-execution'))).toBe(shot !== undefined)
+      expect(Boolean(scene.getObjectByName('tserriednich-future-execution'))).toBe(
+        shot !== undefined,
+      )
       expect(scene.userData.futureVictory.shot).toBe(shot)
       restore()
       restore = render(10.8)
@@ -795,7 +807,9 @@ describe('live victory renderer', () => {
             frame: { ...selection, active: true, elapsed },
           })!
           try {
-            const head = models[side].getObjectByName('face-mouth')!.getWorldPosition(new THREE.Vector3())
+            const head = models[side]
+              .getObjectByName('face-mouth')!
+              .getWorldPosition(new THREE.Vector3())
             expect(camera.position.distanceTo(head)).toBeLessThan(1.7)
             expect(Math.abs(head.project(camera).x)).toBeLessThan(0.35)
             expect(models[side].visible).toBe(true)
@@ -826,7 +840,7 @@ describe('live victory renderer', () => {
           const split = elapsed >= 2.2 && elapsed < 6.8
           camera.aspect = split ? panelAspect : aspect
           camera.updateProjectionMatrix()
-          for (const futurePerspective of split ? ['real', 'perceived'] as const : [undefined]) {
+          for (const futurePerspective of split ? (['real', 'perceived'] as const) : [undefined]) {
             const restore = renderer.apply({
               state,
               models,

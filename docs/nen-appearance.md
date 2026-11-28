@@ -9,7 +9,7 @@ pas des mesures ou des couleurs canoniques.
 
 | Manifestation                | Éléments repris                                                                                                        | Repères                          |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Without You                  | Visage et coiffure de Kacho, robe du banquet à chevrons ; pose assise à la table de Morena                                          | ch. 383, 400 ; `appearance.json` |
+| Without You                  | Visage et coiffure de Kacho, robe du banquet à chevrons ; pose assise à la table de Morena                             | ch. 383, 400 ; `appearance.json` |
 | Indoor Fish                  | Colonne, côtes ouvertes, crâne, mâchoire et nageoires                                                                  | ch. 97                           |
 | Blinky                       | Embout avec yeux, bouche dentée et langue ; tuyau continu                                                              | ch. 71, 227                      |
 | Cat's Name                   | Chat noir, bras longs, mains préhensiles, pieds, moustaches et queue                                                   | ch. 373                          |
@@ -32,7 +32,7 @@ pas des mesures ou des couleurs canoniques.
 | Predator                     | Uniquement le contre montré face à Salé-salé : gueule à quatre lobes, rangées de dents, chevelure et membres           | ch. 375                          |
 | Silent Majority              | Poupée humaine partagée et quatre serpents blancs à lèvres humaines, distincts de Snake Arm                            | ch. 369–376                      |
 | Biohazard                    | Caméra-chat et menottes-pigeons ; l'objet original est masqué pendant ces transformations                              | ch. 390–391                      |
-| Magical Worm                 | Petite porte cintrée, battant à cœur et volutes, poignée latérale et tunnel             | ch. 374, 381, 383                     |
+| Magical Worm                 | Petite porte cintrée, battant à cœur et volutes, poignée latérale et tunnel                                            | ch. 374, 381, 383                |
 | Skill Hunter / Double Face   | Couverture avec paume, blocs de portrait et texte, marque-page uniquement lorsqu'il est actif                          | ch. 99, 351–352                  |
 | Papier de Kalluto            | Silhouette découpée avec bras, jambes et tête, épaisseur de papier                                                     | ch. 226                          |
 | Black Voice / Love Dial      | Téléphones distincts ; antenne du contrôle conservée sur la cible                                                      | ch. 227 ; arc Yorknew            |

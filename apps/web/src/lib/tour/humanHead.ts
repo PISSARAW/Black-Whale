@@ -62,7 +62,16 @@ export function buildHumanHead(build: HumanHeadBuild): Group {
   head.position.y = CANON.headY
   if (seen.human?.role === 'silent-majority') {
     const brass = glow(SILENT_MAJORITY_PALETTE.brass, 1)
-    addSilentMajorityMask({ THREE, geometry, outlined, ink, pale: skin, hair: hairInk, brass, head })
+    addSilentMajorityMask({
+      THREE,
+      geometry,
+      outlined,
+      ink,
+      pale: skin,
+      hair: hairInk,
+      brass,
+      head,
+    })
     return head
   }
   const skull = outlined({

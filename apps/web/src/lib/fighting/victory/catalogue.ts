@@ -105,24 +105,50 @@ export interface VictorySelection {
   winner: FightSide
   loser: FightSide
 }
-export function selectVictory(state: FightState): VictorySelection | null {
+function cinematicWinner(state: FightState): FightSide | null {
   if (state.phase !== 'finished' || state.winner === null || state.winner === 'draw') return null
   if (state.mode === 'training' || state.forecastSimulation || state.catsName) return null
-  const winner = state.winner,
-    fighter = state[winner].id
+  return state.winner
+}
+
+function catRevivalFinished(state: FightState, winner: FightSide, loser: FightSide): boolean {
+  return (
+    state.catsNameFatality?.victimSide === winner &&
+    state.catsNameFatality.killerSide === loser &&
+    state.catsNameConsumed === loser &&
+    state[winner].health > 0 &&
+    state[loser].health <= 0
+  )
+}
+
+function futureFinishingShot(
+  state: FightState,
+  fighter: VictoryFighter,
+  curse: ReturnType<typeof beyondCurseVariant>,
+): Pick<VictorySelection, 'finishingShot'> {
+  if (
+    curse ||
+    fighter !== 'tserriednich' ||
+    state.finishReason !== 'knockout' ||
+    state.finishingShot === undefined
+  )
+    return {}
+  return { finishingShot: state.finishingShot }
+}
+
+function curseAwareDuration(fighter: VictoryFighter, curse: ReturnType<typeof beyondCurseVariant>) {
+  return fighter === 'tserriednich' && curse ? undefined : VICTORY_DURATIONS[fighter]
+}
+
+export function selectVictory(state: FightState): VictorySelection | null {
+  const winner = cinematicWinner(state)
+  if (!winner) return null
+  const fighter = state[winner].id
   if (!hasVictoryCinematic(fighter)) return null
   const loser = winner === 'player' ? 'opponent' : 'player'
-  if (
-    fighter === 'camilla' &&
-    (state.catsNameFatality?.victimSide !== winner ||
-      state.catsNameFatality.killerSide !== loser ||
-      state.catsNameConsumed !== loser ||
-      state[winner].health <= 0 ||
-      state[loser].health > 0)
-  )
-    return null
+  if (fighter === 'camilla' && !catRevivalFinished(state, winner, loser)) return null
   const curse = beyondCurseVariant(state)
-  const duration = fighter === 'tserriednich' && curse ? undefined : VICTORY_DURATIONS[fighter]
+  const duration = curseAwareDuration(fighter, curse)
   const token = [
     state.environment.stageId,
     state.roundNumber,
@@ -137,9 +163,7 @@ export function selectVictory(state: FightState): VictorySelection | null {
     winner,
     loser,
     ...(duration === undefined ? {} : { duration }),
-    ...(!curse && fighter === 'tserriednich' && state.finishReason === 'knockout' && state.finishingShot !== undefined
-      ? { finishingShot: state.finishingShot }
-      : {}),
+    ...futureFinishingShot(state, fighter, curse),
     ...(fighter === 'phinks' ? { phinksStrike: phinksVictoryStrike(state, winner) } : {}),
     ...(curse ? { variant: curse } : victoryVariant(fighter, state[loser].id)),
   }

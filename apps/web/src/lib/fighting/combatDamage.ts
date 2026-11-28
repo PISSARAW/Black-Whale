@@ -1,7 +1,7 @@
 import { shuGuardFactor } from './nenCombat/protection'
 import { cinematicThrowKnockdown } from './superThrow'
 import { fightCategoryEfficiency } from './nenCategories'
-import { attackData, attackPhase } from './frameData'
+import { attackData } from './frameData'
 import { hatsuDamageFactor, hatsuDefenceFactor } from './hatsu'
 import { nenAttackFactor, nenDamageFactor, releaseFocusedAura } from './nen'
 import type { ProjectileHit } from './projectiles'
@@ -41,10 +41,10 @@ import {
   padailleHammerKenDrain,
 } from './finalFiveUpgrades'
 import type { ArcadeFighter, AttackKind, FightNenZone } from './types'
-import { comboRestraintHeld } from './comboRestraintHold'
 import { pinnedKnockback, pinnedKnockdown } from './groundedPin'
 import { guardKnockbackFactor } from './characterMovementTech'
 import { franklinProjectileGuardFactor } from './defensiveMovementTech'
+export { openingType, openingDamageMultiplier, nextComboHits, comboScale } from './combatOpening'
 
 const GROUND = 0
 const MIN_X = 7
@@ -282,12 +282,21 @@ function applyBodyMemory(
   options: StrikeOptions & { knockback: number; hitstun: number; blockstun: number },
   next: ArcadeFighter,
 ): ArcadeFighter {
-  let updated = rememberBodyHit(next, options.zone, options.damage, options.blocked)
+  let updated = rememberBodyHit(next, {
+    zone: options.zone,
+    damage: options.damage,
+    blocked: options.blocked,
+  })
   const stacks = Math.max(
     leorioSurgicalStack(options.attacker, options.fighter),
     padailleDrillBodyMemoryStack(options.attacker),
   )
-  if (stacks > 1) updated = rememberBodyHit(updated, options.zone, options.damage, options.blocked)
+  if (stacks > 1)
+    updated = rememberBodyHit(updated, {
+      zone: options.zone,
+      damage: options.damage,
+      blocked: options.blocked,
+    })
   if (firearmBodyMemoryApplies(options)) return firearmBodyMemoryUpdate(updated, options)
   return updated
 }
@@ -439,39 +448,6 @@ function comboState(
 function knockdownFrames(options: StrikeOptions & { hitstun: number }): number {
   if (!options.knockdown || options.blocked) return pinnedKnockdown(options, options.hitstun)
   return Math.max(options.fighter.knockdownFrames, cinematicThrowKnockdown(options.attacker))
-}
-
-export function openingType(
-  defender: ArcadeFighter,
-  blocked: boolean,
-): { counterHit: boolean; punish: boolean } {
-  if (blocked || !defender.attack) return { counterHit: false, punish: false }
-  const phase = attackPhase(defender)
-  return {
-    counterHit: phase === 'startup' || phase === 'active',
-    punish: phase === 'recovery',
-  }
-}
-
-export function openingDamageMultiplier(opening: { counterHit: boolean; punish: boolean }): number {
-  if (opening.counterHit) return 1.1
-  if (opening.punish) return 1.15
-  return 1
-}
-
-export function nextComboHits(defender: ArcadeFighter, defence: ImpactDefence): number {
-  if (defence.blocked || defence.avoided) return 0
-  const continuing =
-    comboRestraintHeld(defender) ||
-    defender.hitStun > 0 ||
-    defender.knockdownFrames > 0 ||
-    defender.y > GROUND ||
-    defender.juggleCount > 0
-  return continuing ? Math.max(1, defender.comboHits + 1) : 1
-}
-
-export function comboScale(comboHits: number): number {
-  return comboHits <= 1 ? 1 : Math.max(0.4, 1 - (comboHits - 1) * 0.1)
 }
 
 export function atWall(

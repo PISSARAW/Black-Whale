@@ -30,13 +30,13 @@ const faceFrontPower = (y: number) => (y < 0.06 ? 0.42 : 0.6)
 
 function facialPlanes(x: number, y: number) {
   const side = Math.abs(x)
-  const pad = (atX: number, atY: number, width: number, height: number) =>
+  const pad = ([atX, atY]: readonly [number, number], [width, height]: readonly [number, number]) =>
     Math.exp(-(((side - atX) / width) ** 2) - ((y - atY) / height) ** 2)
   return (
-    0.009 * pad(0.102, -0.044, 0.045, 0.047) -
-    0.007 * pad(0.071, 0.015, 0.041, 0.025) +
-    0.004 * pad(0.018, -0.105, 0.053, 0.045) +
-    0.004 * pad(0.055, 0.055, 0.044, 0.022)
+    0.009 * pad([0.102, -0.044], [0.045, 0.047]) -
+    0.007 * pad([0.071, 0.015], [0.041, 0.025]) +
+    0.004 * pad([0.018, -0.105], [0.053, 0.045]) +
+    0.004 * pad([0.055, 0.055], [0.044, 0.022])
   )
 }
 

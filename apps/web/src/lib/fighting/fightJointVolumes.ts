@@ -33,6 +33,17 @@ const geometryByThree = new WeakMap<object, BufferGeometry>()
  * hinges and squash as the elbow or knee closes, so a bent limb reads as one
  * body instead of two rigid tubes meeting at a pivot.
  */
+function deformingShoulder(
+  arm: Object3D | undefined,
+  side: 'left' | 'right',
+): DeformingShoulder | undefined {
+  const cap = arm?.children[2] as Group | undefined
+  if (!arm || !cap) return
+  cap.name = `fight-shoulder-volume-${side}`
+  cap.userData.deformableJoint = 'shoulder'
+  return { arm, volume: cap, restRotation: arm.quaternion.clone(), restScale: cap.scale.clone() }
+}
+
 export function addFightJointVolumes(options: {
   THREE: Three
   model: HumanFigure
@@ -55,21 +66,13 @@ export function addFightJointVolumes(options: {
     const arm = model.root.getObjectByName(`shoulder-${side}`)
     const elbow = model.root.getObjectByName(`elbow-${side}`)
     const knee = model.root.getObjectByName(`knee-${side}`)
-    if (arm) {
-      const cap = arm.children[2] as Group | undefined
-      if (cap) {
-        cap.name = `fight-shoulder-volume-${side}`
-        cap.userData.deformableJoint = 'shoulder'
-        shoulders.push({
-          arm,
-          volume: cap,
-          restRotation: arm.quaternion.clone(),
-          restScale: cap.scale.clone(),
-        })
-      }
-    }
+    const shoulder = deformingShoulder(arm, side)
+    if (shoulder) shoulders.push(shoulder)
     if (elbow) {
-      const volume = jointVolume(THREE, elbow, `fight-elbow-volume-${side}`, 0.052 * girth)
+      const volume = jointVolume(THREE, elbow, {
+        name: `fight-elbow-volume-${side}`,
+        radius: 0.052 * girth,
+      })
       if (volume)
         joints.push({
           hinge: elbow,
@@ -81,7 +84,10 @@ export function addFightJointVolumes(options: {
         })
     }
     if (knee) {
-      const volume = jointVolume(THREE, knee, `fight-knee-volume-${side}`, 0.066 * girth)
+      const volume = jointVolume(THREE, knee, {
+        name: `fight-knee-volume-${side}`,
+        radius: 0.066 * girth,
+      })
       if (volume)
         joints.push({
           hinge: knee,
@@ -118,7 +124,11 @@ export function addFightJointVolumes(options: {
   return { sync }
 }
 
-function jointVolume(THREE: Three, hinge: Object3D, name: string, radius: number): Group | null {
+function jointVolume(
+  THREE: Three,
+  hinge: Object3D,
+  { name, radius }: { name: string; radius: number },
+): Group | null {
   const materials = segmentMaterials(hinge.children[0])
   if (!materials) return null
   const group = new THREE.Group()

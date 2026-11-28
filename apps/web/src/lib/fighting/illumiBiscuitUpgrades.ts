@@ -42,12 +42,15 @@ export function hasIllumiNeedleOrder(fighter: ArcadeFighter): boolean {
 }
 
 /** Parasites the victim's commands without locking the controller. */
+function movesForward(facing: ArcadeFighter['facing'], input: FightInput): boolean {
+  return facing === 1 ? input.right && !input.left : input.left && !input.right
+}
+
 export function applyIllumiMotorParasite(fighter: ArcadeFighter, input: FightInput): FightInput {
   const order = fighter.illumiNeedleOrder?.order
   if (!order) return input
   if (order === 'retreat') {
-    const pressingForward =
-      fighter.facing === 1 ? input.right && !input.left : input.left && !input.right
+    const pressingForward = movesForward(fighter.facing, input)
     const reversedMove = pressingForward
       ? { left: !input.left, right: !input.right }
       : { left: input.left, right: input.right }

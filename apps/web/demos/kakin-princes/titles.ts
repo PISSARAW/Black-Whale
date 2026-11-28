@@ -3,7 +3,7 @@ import type { Shot } from './shots'
 const paper = '#f5ecda'
 const gold = '#d8b684'
 
-function lettered(ctx: CanvasRenderingContext2D, text: string, x: number, y: number) {
+function lettered(ctx: CanvasRenderingContext2D, text: string, [x, y]: readonly [number, number]) {
   for (const character of text) {
     ctx.fillText(character, x, y)
     x += ctx.measureText(character).width + 2.4
@@ -65,7 +65,7 @@ export function portraitTitle(
 
   ctx.fillStyle = gold
   ctx.font = '600 16px Arial'
-  lettered(ctx, `KAKIN  /  ${String(index + 1).padStart(2, '0')}`, 55, height - 144)
+  lettered(ctx, `KAKIN  /  ${String(index + 1).padStart(2, '0')}`, [55, height - 144])
   ctx.fillStyle = paper
   ctx.font = '64px Georgia'
   ctx.fillText(guardianKacho ? 'Without You' : shot.name, 51, height - 77)

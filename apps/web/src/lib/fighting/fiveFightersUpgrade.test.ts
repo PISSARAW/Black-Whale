@@ -50,7 +50,8 @@ describe('5-fighter upgrades: Bill, Lynch, Mizaistom, Rihan, Gel', () => {
   it('does not let Erigeron catalyse poison, burns, or Body Memory', () => {
     const fight = beginFight(createFight('bill', 'hisoka', { mode: 'versus-local' }))
     let victim = fight.opponent
-    for (let i = 0; i < 3; i++) victim = rememberBodyHit(victim, 'hands', 10, false)
+    for (let i = 0; i < 3; i++)
+      victim = rememberBodyHit(victim, { zone: 'hands', damage: 10, blocked: false })
     victim = {
       ...victim,
       nen: { ...victim.nen, ryu: { hands: 0.7 } },

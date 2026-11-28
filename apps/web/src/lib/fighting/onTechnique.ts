@@ -65,10 +65,17 @@ export function onRageReady(fighter: ArcadeFighter): boolean {
 export function onRageDamage(
   attacker: ArcadeFighter,
   defender: ArcadeFighter,
-  kind: import('./types').AttackKind,
-  ordinaryDamage: number,
-  blocked: boolean,
-  avoided: boolean,
+  {
+    kind,
+    ordinaryDamage,
+    blocked,
+    avoided,
+  }: {
+    kind: import('./types').AttackKind
+    ordinaryDamage: number
+    blocked: boolean
+    avoided: boolean
+  },
 ): { damage: number; rage: boolean } {
   const rage = kind === 'heavy' && !blocked && !avoided && onRageReady(attacker)
   return { damage: rage ? defender.health : ordinaryDamage, rage }
@@ -163,14 +170,13 @@ export function resolveOnImpacts(before: FightState, after: FightState): FightSt
   const impact = after.impact
   if (!impact || impact.sequence === before.impact?.sequence) return fed
   if (!before[impact.attacker].nen.on || impact.avoided) return fed
-  return resolveOnBlow(fed, impact.attacker, impact.blocked, impact.onRage)
+  return resolveOnBlow(fed, impact.attacker, { blocked: impact.blocked, rage: impact.onRage })
 }
 
 function resolveOnBlow(
   state: FightState,
   attacker: FightSide,
-  blocked: boolean,
-  rage = false,
+  { blocked, rage = false }: { blocked: boolean; rage?: boolean },
 ): FightState {
   const defenderSide: FightSide = attacker === 'player' ? 'opponent' : 'player'
   const defender = state[defenderSide]

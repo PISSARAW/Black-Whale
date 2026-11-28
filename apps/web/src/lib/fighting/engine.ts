@@ -26,7 +26,6 @@ import { maryHeld } from './bloodyMary'
 import { maryAiAction } from './bloodyMaryAi'
 import { reconcileBattleCantabile } from './battleCantabileFrame'
 import { canAct, canMove, auraAttackBodyFree } from './fightActorState'
-import { biohazardBodyFree } from './biohazard'
 import { performPreparedAction } from './preparationActions'
 import { preparationCheck } from './preparationRequirements'
 import { resolveCrossGameCommand } from './crossGameAction'
@@ -70,11 +69,8 @@ import { capturePositions } from './fightInterpolation'
 import { EMPTY_INPUT } from './types'
 import { stepActors } from './duelStep/actors'
 import { resolveContextInput } from './contextInput'
-import { applyOnContext, canSwearOn } from './onTechnique'
 import { flushDirectMoves } from './directFightBuffer'
 import { withCombatPressure } from './combatPressure'
-import { performChrolloBookAction, pickChrolloFlipSlot } from './chrolloBookAction'
-import { CHROLLO_STEAL } from './chrolloBook'
 import { revealBookSlot } from './chrolloDeck'
 import { resolveContacts, settleBodies } from './duelStep/contacts'
 import { closeFrame, openFrame } from './duelStep/frame'
@@ -88,6 +84,12 @@ import type {
   FighterPose,
   MoveAction,
 } from './types'
+import {
+  blocksMove,
+  performBookShortcut,
+  performOnShortcut,
+  type PerformMoveOptions,
+} from './fightMoveShortcuts'
 
 export { TOWER_WIN_SCORE }
 export { nextFightRound as nextRound }
@@ -200,57 +202,16 @@ export function performAttack(state: FightState, side: FightSide, kind: AttackKi
   return performAuraAttack({ state, side, kind, auraCharged: false })
 }
 
-interface PerformMoveOptions {
-  state: FightState
-  side: FightSide
-  action: MoveAction
-  input?: FightInput
-}
-
 export function performMove(options: PerformMoveOptions): FightState {
   const perception = performFuturePerceptionAction(options.state, options.side, (state) =>
     performMove({ ...options, state }),
   )
   if (perception) return perception
-  if (options.state[options.side].arenaRecovery) return options.state
-  if (options.state[options.side].easterEgg) return options.state
-  if (!biohazardBodyFree(options.state[options.side])) return options.state
-  if (!illumiBodyFree(options.state[options.side])) return options.state
-  if (maryHeld(options.state[options.side])) return options.state
-  if (crossGameBusy(options.state[options.side])) return options.state
-  if (options.state[options.side].chrolloBook?.isFlipping) {
-    const slot = options.action === 'light' ? 0 : options.action === 'heavy' ? 1 : null
-    if (slot !== null)
-      return pickChrolloFlipSlot(options.state, options.side, slot) ?? options.state
-  }
-  const chrollo = options.state[options.side]
-  if (
-    options.action === 'special' &&
-    chrollo.id === 'chrollo' &&
-    chrollo.chrolloBook?.stolenPage &&
-    options.input &&
-    (chrollo.facing === 1
-      ? options.input.right && !options.input.left
-      : options.input.left && !options.input.right) &&
-    !options.input.down
-  ) {
-    const flipped = performChrolloBookAction({
-      state: options.state,
-      side: options.side,
-      kind: 'special',
-      moveId: CHROLLO_STEAL,
-    })
-    if (flipped) return flipped
-  }
-  if (
-    options.action === 'special' &&
-    !options.input?.directControls &&
-    options.input?.aura &&
-    canSwearOn(options.state[options.side])
-  ) {
-    const sworn = applyOnContext(options.state[options.side], { ...options.input, hatsu: true })
-    if (sworn) return { ...options.state, [options.side]: sworn }
-  }
+  if (blocksMove(options.state[options.side])) return options.state
+  const book = performBookShortcut(options)
+  if (book) return book
+  const oath = performOnShortcut(options)
+  if (oath) return oath
   const executed = resolveCrossGameCommand(options.state, executeFightMove(options), options.side)
   return revealUsedChrolloSlot(executed, options.side, options.action)
 }

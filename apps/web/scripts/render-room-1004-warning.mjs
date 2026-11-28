@@ -34,7 +34,8 @@ const server = await createServer({
 })
 await server.listen()
 const browser = await chromium.launch({
-  executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ||
+  executablePath:
+    process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ||
     '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   headless: true,
   args: ['--use-angle=metal', '--enable-unsafe-swiftshader', '--disable-gpu-shader-disk-cache'],
@@ -57,21 +58,49 @@ async function capture(page, info, picture) {
     }
     return
   }
-  const encoder = spawn('ffmpeg', [
-    '-hide_banner', '-v', 'error', '-y', '-f', 'image2pipe', '-vcodec', 'mjpeg',
-    '-framerate', String(fps), '-i', 'pipe:0', '-an', '-c:v', 'libx264',
-    '-threads', '3', '-preset', 'veryfast', '-crf', '17', '-pix_fmt', 'yuv420p', picture,
-  ], { stdio: ['pipe', 'inherit', 'inherit'] })
+  const encoder = spawn(
+    'ffmpeg',
+    [
+      '-hide_banner',
+      '-v',
+      'error',
+      '-y',
+      '-f',
+      'image2pipe',
+      '-vcodec',
+      'mjpeg',
+      '-framerate',
+      String(fps),
+      '-i',
+      'pipe:0',
+      '-an',
+      '-c:v',
+      'libx264',
+      '-threads',
+      '3',
+      '-preset',
+      'veryfast',
+      '-crf',
+      '17',
+      '-pix_fmt',
+      'yuv420p',
+      picture,
+    ],
+    { stdio: ['pipe', 'inherit', 'inherit'] },
+  )
   const done = once(encoder, 'exit')
   encoder.stdin.on('error', () => {})
   try {
     for (let frame = 0; frame < info.duration * fps; frame++) {
       await seek(page, frame / fps)
       const { data } = await cdp.send('Page.captureScreenshot', {
-        format: 'jpeg', quality: 94, fromSurface: true,
+        format: 'jpeg',
+        quality: 94,
+        fromSurface: true,
       })
       if (!encoder.stdin.write(Buffer.from(data, 'base64'))) await once(encoder.stdin, 'drain')
-      if (frame % (fps * 5) === 0) process.stdout.write(`Captured ${frame / fps}s / ${info.duration}s\n`)
+      if (frame % (fps * 5) === 0)
+        process.stdout.write(`Captured ${frame / fps}s / ${info.duration}s\n`)
     }
   } finally {
     encoder.stdin.end()
@@ -84,15 +113,52 @@ async function finish(page, info, picture) {
   const concert = path.join(root, 'output/melody-clash-tiktok/melody-clash-tiktok-9x16.mp4')
   const destination = path.join(output, 'room-1004-day-02-warning-tiktok-en.mp4')
   const { start, duration } = info.melodyCut
-  await writeFile(audio, Buffer.from(await page.evaluate(() => window.warningFilm.audio()), 'base64'))
+  await writeFile(
+    audio,
+    Buffer.from(await page.evaluate(() => window.warningFilm.audio()), 'base64'),
+  )
   await run('ffmpeg', [
-    '-hide_banner', '-v', 'error', '-y', '-filter_complex_threads', '2',
-    '-i', picture, '-i', audio, '-ss', '27', '-t', String(duration), '-i', concert,
+    '-hide_banner',
+    '-v',
+    'error',
+    '-y',
+    '-filter_complex_threads',
+    '2',
+    '-i',
+    picture,
+    '-i',
+    audio,
+    '-ss',
+    '27',
+    '-t',
+    String(duration),
+    '-i',
+    concert,
     '-filter_complex',
     `[2:v]setpts=PTS-STARTPTS+${start}/TB[melody];[0:v][melody]overlay=enable='gte(t,${start})*lt(t,${start + duration})',fade=t=out:st=${info.duration - 0.6}:d=0.6[v];[1:a]volume=0.82[room];[2:a]volume=0.8,afade=t=in:d=0.12,afade=t=out:st=${duration - 0.28}:d=0.28,adelay=${start * 1000}:all=1[flute];[room][flute]amix=inputs=2:normalize=0,alimiter=limit=0.9[a]`,
-    '-map', '[v]', '-map', '[a]', '-t', String(info.duration),
-    '-c:v', 'libx264', '-threads', '3', '-preset', 'veryfast', '-crf', '18',
-    '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '256k', '-movflags', '+faststart', destination,
+    '-map',
+    '[v]',
+    '-map',
+    '[a]',
+    '-t',
+    String(info.duration),
+    '-c:v',
+    'libx264',
+    '-threads',
+    '3',
+    '-preset',
+    'veryfast',
+    '-crf',
+    '18',
+    '-pix_fmt',
+    'yuv420p',
+    '-c:a',
+    'aac',
+    '-b:a',
+    '256k',
+    '-movflags',
+    '+faststart',
+    destination,
   ])
   process.stdout.write(`${destination}\n`)
 }
@@ -149,11 +215,43 @@ async function finishSplit() {
     '[openSound][impactSound][fluteSound][endSound]concat=n=4:v=0:a=1[a]',
   ]
   await run('ffmpeg', [
-    '-hide_banner', '-v', 'error', '-y', '-filter_complex_threads', '2',
-    '-i', original, '-i', top, '-i', bottom, '-i', audio, '-filter_complex', filters.join(';'),
-    '-map', '[v]', '-map', '[a]', '-c:v', 'libx264', '-threads', '3', '-preset', 'veryfast',
-    '-crf', '17', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '256k',
-    '-movflags', '+faststart', destination,
+    '-hide_banner',
+    '-v',
+    'error',
+    '-y',
+    '-filter_complex_threads',
+    '2',
+    '-i',
+    original,
+    '-i',
+    top,
+    '-i',
+    bottom,
+    '-i',
+    audio,
+    '-filter_complex',
+    filters.join(';'),
+    '-map',
+    '[v]',
+    '-map',
+    '[a]',
+    '-c:v',
+    'libx264',
+    '-threads',
+    '3',
+    '-preset',
+    'veryfast',
+    '-crf',
+    '17',
+    '-pix_fmt',
+    'yuv420p',
+    '-c:a',
+    'aac',
+    '-b:a',
+    '256k',
+    '-movflags',
+    '+faststart',
+    destination,
   ])
   process.stdout.write(`${destination}\n`)
 }

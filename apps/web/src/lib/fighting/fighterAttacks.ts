@@ -74,6 +74,15 @@ function startingAuraCost(options: Parameters<typeof startFighterAttack>[0]): nu
   return options.auraCost ?? attackAuraCost({ fighter, kind, moveId, concealed })
 }
 
+function nextNenAttackCounts(fighter: ArcadeFighter, moveId?: string) {
+  const nenBranchCount = nextNenBranchCount(fighter, moveId)
+  return {
+    nenBranchCount,
+    nenConversionCount:
+      (fighter.nenConversionCount ?? 0) + Number(nenBranchCount > (fighter.nenBranchCount ?? 0)),
+  }
+}
+
 export function startFighterAttack(options: {
   fighter: ArcadeFighter
   kind: AttackKind
@@ -107,10 +116,7 @@ export function startFighterAttack(options: {
   return {
     ...prepared,
     nenOpening: undefined,
-    nenBranchCount: nextNenBranchCount(fighter, options.moveId),
-    nenConversionCount:
-      (fighter.nenConversionCount ?? 0) +
-      Number(nextNenBranchCount(fighter, options.moveId) > (fighter.nenBranchCount ?? 0)),
+    ...nextNenAttackCounts(fighter, options.moveId),
     ...takeoffFor(fighter, options.directionalChain, options.moveId),
     nen: { ...prepared.nen, en: enDuringAttack(prepared) },
     ...beginAttackDrive(fighter, { distance: data.lunge, immediate: options.variant === 'throw' }),
@@ -181,15 +187,22 @@ export function canStartFighterAttack(
   return illumiBodyFree(fighter) && ordinaryCanStartFighterAttack(fighter, kind, intent)
 }
 
+function preventsOrdinaryAttack(fighter: ArcadeFighter): boolean {
+  return Boolean(
+    fighter.pluggingWounds ||
+    fighter.throwTechRecoveryFrames ||
+    (fighter.firearmReloadFrames ?? 0) > 0 ||
+    fighterTechniqueBusy(fighter),
+  )
+}
+
 function ordinaryCanStartFighterAttack(
   fighter: ArcadeFighter,
   kind: AttackKind,
   intent: DirectionalIntent,
 ): boolean {
   const { moveId } = intent
-  if (fighter.pluggingWounds || fighter.throwTechRecoveryFrames) return false
-  if ((fighter.firearmReloadFrames ?? 0) > 0) return false
-  if (fighterTechniqueBusy(fighter)) return false
+  if (preventsOrdinaryAttack(fighter)) return false
   if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
   if (!biohazardBodyFree(fighter)) return false
   const resourceReady = hasAttackResources(fighter, kind, moveId)
@@ -198,6 +211,12 @@ function ordinaryCanStartFighterAttack(
     (fighter.attack === null ? !intent.directionalChain : cancelReady(fighter, kind, intent)) &&
     resourceReady
   )
+}
+
+function characterMoveIsFree(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
+  if (!bodyguardPhysicalShot(fighter, kind) && !kurapikaMoveAvailable(fighter, moveId)) return false
+  if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
+  return !(chrolloRightHandOccupied(fighter) && moveById(moveId)?.category === 'throw')
 }
 
 function characterAttackAvailable(
@@ -209,9 +228,7 @@ function characterAttackAvailable(
   if (chainsImmobilize(fighter)) return false
   // Winding Phinks still strikes with ordinary blows (rotation en mouvement).
   if (!cyclotronAllowsAttack(fighter, kind, { moveId })) return false
-  if (!bodyguardPhysicalShot(fighter, kind) && !kurapikaMoveAvailable(fighter, moveId)) return false
-  if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
-  if (chrolloRightHandOccupied(fighter) && moveById(moveId)?.category === 'throw') return false
+  if (!characterMoveIsFree(fighter, kind, moveId)) return false
   const zone = attackData(kind, fighter).auraZone
   const isThrow = moveById(moveId)?.category === 'throw'
   if (hinrighBlocksHandAction(fighter, isThrow ? 'throw' : kind, zone)) return false

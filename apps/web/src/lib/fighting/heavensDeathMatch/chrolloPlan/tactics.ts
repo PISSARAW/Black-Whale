@@ -400,6 +400,14 @@ const TACTICS: Record<ChrolloPhase, Tactic> = {
  * The reflexes above every phase: never trade blows head-on, strike only a busy Hisoka
  * from out of his sight, and fall back into the crowd at once.
  */
+function puppetCoversApproach(world: DeathMatchWorld, phase: ChrolloPhase): boolean {
+  return Boolean(
+    phase === 'harass' &&
+    world.chrollo.disguisedAs &&
+    headsOf(world.crowd).some((head) => !head.spent),
+  )
+}
+
 function reflex(world: DeathMatchWorld, phase: ChrolloPhase): ChrolloIntent | null {
   if (!inCrowdPhase(phase)) return null
   const gap = distance(world.chrollo.at, world.hisoka.at)
@@ -409,12 +417,7 @@ function reflex(world: DeathMatchWorld, phase: ChrolloPhase): ChrolloIntent | nu
   if (opening && gap <= 1.5) return { kind: 'surprise-strike' }
   // Convert Hands keeps the approach invisible after Hisoka has committed to the puppet.
   // Let the harass tactic finish that approach instead of triggering the generic retreat.
-  if (
-    phase === 'harass' &&
-    world.chrollo.disguisedAs &&
-    headsOf(world.crowd).some((head) => !head.spent)
-  )
-    return null
+  if (puppetCoversApproach(world, phase)) return null
   if (gap < SAFE_DISTANCE && !opening) return { kind: 'retreat', to: hidingSpot(world) }
   return null
 }

@@ -27,51 +27,43 @@ import { authoredStrikeDirection, type StrikeContactJoint } from './physicalStri
 export function createFightContactAlignment(figureOf: (side: FightSide) => Object3D) {
   const separateBodies = createFightBodySeparation(figureOf)
   const latches = { player: createFightContactLatch(), opponent: createFightContactLatch() }
+  function contactFor(state: FightState, side: FightSide) {
+    const fighter = state[side],
+      other = side === 'player' ? 'opponent' : 'player'
+    const own = humanAnimationRig(figureOf(side)),
+      rival = humanAnimationRig(figureOf(other))
+    if (!own || !rival) return undefined
+    constrainContactArms(fightRigOf(own), figureOf(other), { fighter, rival: state[other] })
+    const { authored, spear, weapon, joint } = contactSource(fighter, own.figure)
+    const weight = contactWeight(fighter, state[other], Boolean(authored))
+    if (weight <= 0) return undefined
+    const zone = anatomicalContactZone(
+      fighter,
+      state[other],
+      attackData(fighter.attack!.kind, fighter).targetZone,
+    )
+    const ownRig = fightRigOf(own)
+    const fresh = fightContactSurface(fightRigOf(rival), zone, {
+      facing: fighter.facing,
+      near: contactSourcePoint(ownRig, fighter, { spear, weapon, joint }),
+    })
+    const data = attackData(fighter.attack!.kind, fighter)
+    const target = latches[side](fighter, contactPart(fightRigOf(rival), zone), {
+      position: fresh,
+      active: withinContact(fighter.attack!.frame, data),
+      identity: `${state.roundNumber}:${state.player.id}:${state.opponent.id}`,
+    })
+    alignUnkeyedContact(ownRig, fighter, { target, weight, joint, spear })
+    return { side, zone, target }
+  }
+
   return (state: FightState) => {
     separateBodies(state)
     if (!physicalRosterPair(state.player.id, state.opponent.id)) return
     const pending: Array<{ side: FightSide; zone: FightNenZone; target: Vector3 }> = []
     for (const side of ['player', 'opponent'] as const) {
-      const fighter = state[side],
-        other = side === 'player' ? 'opponent' : 'player'
-      const own = humanAnimationRig(figureOf(side)),
-        rival = humanAnimationRig(figureOf(other))
-      if (!own || !rival) continue
-      if (!projectionBody(fighter) && !projectionBody(state[other]))
-        clearPassiveArms(fightRigOf(own), figureOf(other), fighter)
-      constrainFightRig(fightRigOf(own))
-      const slot = moveById(fighter.attack?.moveId)?.slot
-      const authored = slot ? authoredStrikeDirection(fighter.id, slot) : undefined
-      const spear = spearNormal(fighter, slot)
-      const weapon = meleeWeaponContact(own.figure, fighter)
-      const joint =
-        spear || weapon || typeof authored !== 'object' ? undefined : authored.contactJoint
-      const weight = contactWeight(fighter, state[other], Boolean(authored))
-      if (weight <= 0) continue
-      const zone = anatomicalContactZone(
-        fighter,
-        state[other],
-        attackData(fighter.attack!.kind, fighter).targetZone,
-      )
-      const ownRig = fightRigOf(own)
-      const fresh = fightContactSurface(fightRigOf(rival), zone, {
-        facing: fighter.facing,
-        near:
-          (spear && spearContactPoint(ownRig, spear.contact)) ??
-          weapon?.getWorldPosition(new Vector3()) ??
-          strikeRoot(ownRig, fighter, joint).getWorldPosition(new Vector3()),
-      })
-      const data = attackData(fighter.attack!.kind, fighter)
-      const target = latches[side](fighter, contactPart(fightRigOf(rival), zone), {
-        position: fresh,
-        active:
-          fighter.attack!.frame >= data.startup &&
-          fighter.attack!.frame < data.startup + data.active,
-        identity: `${state.roundNumber}:${state.player.id}:${state.opponent.id}`,
-      })
-      if (!joint && !spear && !gelSnakeNormalReach(fighter))
-        alignStrike(ownRig, fighter, { target, weight })
-      pending.push({ side, zone, target })
+      const contact = contactFor(state, side)
+      if (contact) pending.push(contact)
     }
     // This is the final pose boundary: support IK, contact IK, passive arms,
     // expressions and head tracking have all run by now.
@@ -79,6 +71,58 @@ export function createFightContactAlignment(figureOf: (side: FightSide) => Objec
     rememberFinalImpacts(figureOf, state, pending)
     settleBothBodies(figureOf)
   }
+}
+
+function contactSource(fighter: ArcadeFighter, figure: Object3D) {
+  const slot = moveById(fighter.attack?.moveId)?.slot
+  const authored = slot ? authoredStrikeDirection(fighter.id, slot) : undefined
+  const spear = spearNormal(fighter, slot)
+  const weapon = meleeWeaponContact(figure, fighter)
+  const joint = spear || weapon || typeof authored !== 'object' ? undefined : authored.contactJoint
+  return { authored, spear, weapon, joint }
+}
+
+function contactSourcePoint(
+  rig: FightRig,
+  fighter: ArcadeFighter,
+  { spear, weapon, joint }: Pick<ReturnType<typeof contactSource>, 'spear' | 'weapon' | 'joint'>,
+): Vector3 {
+  return (
+    (spear && spearContactPoint(rig, spear.contact)) ??
+    weapon?.getWorldPosition(new Vector3()) ??
+    strikeRoot(rig, fighter, joint).getWorldPosition(new Vector3())
+  )
+}
+
+function constrainContactArms(
+  rig: FightRig,
+  rivalFigure: Object3D,
+  { fighter, rival }: { fighter: ArcadeFighter; rival: ArcadeFighter },
+) {
+  if (!projectionBody(fighter) && !projectionBody(rival))
+    clearPassiveArms(rig, rivalFigure, fighter)
+  constrainFightRig(rig)
+}
+
+function withinContact(frame: number, data: ReturnType<typeof attackData>): boolean {
+  return frame >= data.startup && frame < data.startup + data.active
+}
+
+function alignUnkeyedContact(
+  rig: FightRig,
+  fighter: ArcadeFighter,
+  {
+    target,
+    weight,
+    joint,
+    spear,
+  }: Pick<ReturnType<typeof contactSource>, 'joint' | 'spear'> & {
+    target: Vector3
+    weight: number
+  },
+) {
+  if (!joint && !spear && !gelSnakeNormalReach(fighter))
+    alignStrike(rig, fighter, { target, weight })
 }
 
 function keepFinalJoints(figureOf: (side: FightSide) => Object3D, state: FightState): void {
@@ -91,6 +135,17 @@ function keepFinalJoints(figureOf: (side: FightSide) => Object3D, state: FightSt
   }
 }
 
+function strikeApproach(
+  attack: NonNullable<ArcadeFighter['attack']>,
+  authored: boolean,
+  progress: number,
+) {
+  const slot = moveById(attack.moveId)?.slot
+  const neutral = slot === 'standingLight' || slot === 'standingHeavy'
+  const confirmed = attack.confirmedHit || attack.confirmedBlock
+  return (neutral || authored) && !confirmed ? 0 : progress * progress * (3 - 2 * progress)
+}
+
 function contactWeight(fighter: ArcadeFighter, rival: ArcadeFighter, authored: boolean): number {
   const attack = fighter.attack
   if (!attack || !['light', 'heavy'].includes(attack.kind) || attack.variant === 'throw') return 0
@@ -98,10 +153,7 @@ function contactWeight(fighter: ArcadeFighter, rival: ArcadeFighter, authored: b
   const data = attackData(attack.kind, fighter)
   if (Math.abs(fighter.x - rival.x) > data.box.right + 2) return 0
   const p = Math.max(0, Math.min(1, attack.frame / Math.max(1, data.startup)))
-  const slot = moveById(attack.moveId)?.slot
-  const neutral = slot === 'standingLight' || slot === 'standingHeavy'
-  const confirmed = attack.confirmedHit || attack.confirmedBlock
-  const approach = (neutral || authored) && !confirmed ? 0 : p * p * (3 - 2 * p)
+  const approach = strikeApproach(attack, authored, p)
   const release = Math.max(0, 1 - Math.max(0, attack.frame - data.startup - data.active) / 4)
   return approach * release * (authored ? 0.58 : 1)
 }

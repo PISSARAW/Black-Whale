@@ -18,6 +18,6 @@ export const camillaHatsu: FighterHatsu = {
   },
   onDeath: ({ state, victimSide, killerSide }) =>
     camillaCatsNameEligible(state[victimSide])
-      ? beginCatsName(state, victimSide, killerSide)
+      ? beginCatsName(state, { victimSide, killerSide })
       : state,
 }

@@ -101,7 +101,7 @@ export const ROSTER_WAVE_ONE_GROUNDED_POSES = Object.fromEntries(
     Object.fromEntries(
       ROSTER_WAVE_ONE_SLOTS.map((slot) => [
         slot,
-        rosterWaveOneGroundedTimeline(id, slot, ROSTER_WAVE_ONE_SIGNATURES[id]),
+        rosterWaveOneGroundedTimeline(id, slot, { signature: ROSTER_WAVE_ONE_SIGNATURES[id] }),
       ]),
     ),
   ]),
@@ -110,8 +110,10 @@ export const ROSTER_WAVE_ONE_GROUNDED_POSES = Object.fromEntries(
 export function rosterWaveOneGroundedTimeline(
   id: FighterId,
   slot: MoveSlot,
-  signature: GroundedSignature,
-  accent: GroundedSignature = { load: {}, contact: {}, recoil: {}, settle: {} },
+  {
+    signature,
+    accent = { load: {}, contact: {}, recoil: {}, settle: {} },
+  }: { signature: GroundedSignature; accent?: GroundedSignature },
 ): MoveTimeline {
   const source = rosterKeyPoses(id)[slot]!
   const startup = source.find(({ phase }) => phase === 'startup')!

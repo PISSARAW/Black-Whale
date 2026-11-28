@@ -12,18 +12,28 @@ export interface CombatIdentity {
 }
 
 /** Resolves legacy identity flags into one graph without changing combat authority. */
+function actorController(actor: ArcadeFighter, side?: FightSide): FightSide | undefined {
+  return actor.halkSoul?.mind?.side ?? actor.halkenburgPassenger?.owner ?? side
+}
+
+function actorMind(actor: ArcadeFighter, adapterBody: FighterId) {
+  const mind = actor.halkSoul?.mind
+  const originBodyId = actor.halkenburgOrigin ?? adapterBody
+  const mindOwner = mind?.identity ?? originBodyId
+  return { originBodyId, mindOwner, mindId: mind?.key ?? `mind:${mindOwner}` }
+}
+
 export function combatIdentityOf(actor: ArcadeFighter, side?: FightSide): CombatIdentity {
   const adapterBody = actor.nenOwner ?? actor.id
-  const mindOwner = actor.halkSoul?.mind?.identity ?? actor.halkenburgOrigin ?? adapterBody
-  const controllerSide = actor.halkSoul?.mind?.side ?? actor.halkenburgPassenger?.owner ?? side
+  const { originBodyId, mindOwner, mindId } = actorMind(actor, adapterBody)
   const bodyId = `body:${adapterBody}:${actor.halkenburgTransferFrame ?? 0}`
   return {
     bodyId,
-    mindId: actor.halkSoul?.mind?.key ?? `mind:${mindOwner}`,
-    controllerSide,
+    mindId,
+    controllerSide: actorController(actor, side),
     nenOwnerId: adapterBody,
     hatsuOwnerId: actor.attack?.hatsuSource ?? actor.id,
-    originBodyId: actor.halkenburgOrigin ?? adapterBody,
+    originBodyId,
     avatarId: actor.hanzoProjection ? `projection:${mindOwner}` : bodyId,
     borrowedAura: Boolean(actor.dolphinExecution?.borrowedTen),
   }

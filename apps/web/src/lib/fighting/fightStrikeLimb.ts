@@ -22,14 +22,31 @@ const LEGS: Record<'lead' | 'rear', FightJoint[]> = {
 }
 
 /** Read the contact actually authored for this equipment, rather than assuming every heavy is a fist. */
+function fixedHandStrike(fighter: ArcadeFighter): Limb | undefined {
+  if (usesFranklinBarrage(fighter)) return 'both'
+  if (rightHandStrike(fighter)) return 'right'
+}
+
+function weaponStrikeHand(
+  fighter: ArcadeFighter,
+  move: NonNullable<ReturnType<typeof moveById>>,
+): Limb | undefined {
+  if (THETA_FREE_HAND.has(move.id)) return 'left'
+  if (spearNormal(fighter, move.slot)) return 'right'
+}
+
 export function fightStrikeLimb(fighter: ArcadeFighter, zone: FightNenZone): Limb {
   if (uncommittedLimb(fighter, zone)) return 'both'
-  if (zone === 'hands' && usesFranklinBarrage(fighter)) return 'both'
-  if (zone === 'hands' && rightHandStrike(fighter)) return 'right'
+  if (zone === 'hands') {
+    const fixed = fixedHandStrike(fighter)
+    if (fixed) return fixed
+  }
   const move = moveById(fighter.attack!.moveId)
   if (!move) return 'both'
-  if (zone === 'hands' && THETA_FREE_HAND.has(move.id)) return 'left'
-  if (zone === 'hands' && spearNormal(fighter, move.slot)) return 'right'
+  if (zone === 'hands') {
+    const fixed = weaponStrikeHand(fighter, move)
+    if (fixed) return fixed
+  }
   const { timeline } = fighterKeyedMove(fighter, move.slot)
   const contact = timeline.find((key) => key.phase === 'active' && key.at === 0)?.pose
   if (!contact) return 'both'

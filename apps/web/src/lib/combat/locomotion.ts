@@ -59,7 +59,7 @@ function orientation(a: Vec2, b: Vec2, c: Vec2): number {
   return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
 }
 
-function segmentsCross(a: Vec2, b: Vec2, c: Vec2, d: Vec2): boolean {
+function segmentsCross([a, b]: readonly [Vec2, Vec2], [c, d]: readonly [Vec2, Vec2]): boolean {
   const o1 = orientation(a, b, c)
   const o2 = orientation(a, b, d)
   const o3 = orientation(c, d, a)
@@ -74,8 +74,7 @@ function crossedOpenBoundary(
 ): CombatBoundary | null {
   if (!pointInPolygon(from, terrain.footprint) || pointInPolygon(to, terrain.footprint)) return null
   for (const boundary of terrain.boundaries ?? []) {
-    const [start, end] = boundary.edge
-    if (segmentsCross(from, to, start, end)) return boundary
+    if (segmentsCross([from, to], boundary.edge)) return boundary
   }
   return null
 }

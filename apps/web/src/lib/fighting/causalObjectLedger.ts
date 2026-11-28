@@ -87,8 +87,7 @@ export function advanceCausalObjectLedger(state: FightState): FightState {
 export function recordObjectTouch(
   state: FightState,
   key: string,
-  actor: FightSide,
-  cause: string,
+  { actor, cause }: { actor: FightSide; cause: string },
 ): FightState {
   const old = state.causalObjectLedger?.records[key]
   if (!old) return state

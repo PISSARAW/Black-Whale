@@ -1,11 +1,9 @@
 <script lang="ts">
+  import { createFightStageEffects } from './fightStageEffects'
   import { fightGroundContact } from '$lib/fighting/fightGroundContact'
   import { createFinishedFallPresentation } from '$lib/fighting/finishedFallPresentation'
   import { createCinematicDirector, type CameraDetail } from '$lib/fighting/cinematicDirector'
   import { createFightImpactScene } from '$lib/fighting/fightImpactScene'
-  import { createFightMotionTrailScene } from '$lib/fighting/fightMotionTrailScene'
-  import { createKurapikaSpeedScene } from '$lib/fighting/kurapikaSpeedScene'
-  import { createFeitanSpeedScene } from '$lib/fighting/feitanSpeedScene'
   import { createFightStagingScene } from '$lib/fighting/fightStagingScene'
   import { createOnAwakeningClock } from '$lib/fighting/onAwakening'
   import { createOnAwakeningScene } from '$lib/fighting/onAwakeningScene'
@@ -28,7 +26,6 @@
   import { applyPresentationCamera } from '$lib/fighting/presentation/introCamera'
   import type { IntroFrame } from '$lib/fighting/presentation/introPlayback'
   import { fightCameraBodyBounds } from '$lib/fighting/fightCameraBodyBounds'
-  import { createFightCollisionScene } from '$lib/fighting/fightCollisionScene'
   import { fightWorldX as worldX, fightWorldY as worldY } from '$lib/fighting/fightCoordinates'
   import { createFightReactionPresentation } from '$lib/fighting/fightReactionPresentation'
   import { createPresentedModelRefresh } from '$lib/fighting/refreshPresentedModel'
@@ -41,9 +38,6 @@
   import { onMount } from 'svelte'
   import { disposeMountedVisitHatsu } from '$lib/fighting/visitHatsuModel'
   import { liveCameraFraming } from '$lib/fighting/liveCameraFraming'
-  import { createLsdfScene } from '$lib/fighting/lsdfScene'
-  import { createPredatorScene } from '$lib/fighting/predatorScene'
-  import { createHanzoProjectionScene } from '$lib/fighting/kameos/stageScene'
   import { sleepingBody } from '$lib/fighting/hanzoProjection'
   import {
     createFighterFacing,
@@ -70,9 +64,6 @@
     type FighterSceneAnimation,
   } from '$lib/fighting/sceneMotion'
   import { arsenalProjectilePresentation } from '$lib/fighting/retrospectivePresentation'
-  import { createProjectileScene } from '$lib/fighting/projectileScene'
-  import { createFighterEffectScene } from '$lib/fighting/fighterEffectScene'
-  import { createFeitanScene } from '$lib/fighting/feitanScene'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import { drawFightScene } from '$lib/fighting/drawFightScene'
   import { createPhinksLens, type PhinksFocus } from '$lib/fighting/victory/phinksLens'
@@ -163,46 +154,31 @@
           scene,
           figureOf: (side) => models[side].model.root,
         })
-        const collisions = createFightCollisionScene({ THREE, scene })
-        const projectileScene = createProjectileScene({
-          viewer: () => viewer,
-          comfort: visualComfort,
+        const {
+          collisions,
+          projectileScene,
+          projectionScene,
+          fighterEffects,
+          lsdfScene,
+          predatorScene,
+          feitanScene,
+          motionTrails,
+          feitanSpeed,
+          kurapikaSpeed,
+        } = createFightStageEffects({
           THREE,
           scene,
           glow,
           geometry,
+          visualComfort,
           worldX,
           worldY,
-        })
-        const projectionScene = createHanzoProjectionScene({
-          scene,
-          buildFighter: buildReference,
-          worldX,
-        })
-        const fighterEffects = createFighterEffectScene({
-          throwFrame: presentation.throwFrame,
-          comfort: visualComfort,
           viewer: () => viewer,
-          THREE,
-          scene,
-          worldX,
-          worldY,
+          readState: () => state,
+          buildReference,
+          throwFrame: presentation.throwFrame,
           figureOf: (side) => models[side].model.turns,
-          handAnchor: (side, hand) => {
-            const lead = state[side].facing === 1 ? 'right' : 'left'
-            const limb = hand === 'lead' ? lead : lead === 'right' ? 'left' : 'right'
-            return models[side].model.root.getObjectByName(`hand-${limb}`)
-          },
-        })
-        const lsdfScene = createLsdfScene({ THREE, scene, glow, worldX })
-        const predatorScene = createPredatorScene({ THREE, scene, glow, worldX, worldY })
-        const feitanScene = createFeitanScene({
-          THREE,
-          scene,
-          worldX,
-          worldY,
-          figureOf: (side) => models[side].model.turns,
-          comfort: visualComfort,
+          rootOf: (side) => models[side].model.root,
         })
         const inset = createParallelFutureInset({
           resources: { THREE, glow, geometry },
@@ -229,27 +205,6 @@
           geometry,
           glow,
         })
-        const motionTrails = createFightMotionTrailScene({
-          THREE,
-          scene,
-          comfort: visualComfort,
-          figureOf: (side) => models[side].model.turns,
-        })
-        const feitanSpeed = createFeitanSpeedScene({
-          THREE,
-          scene,
-          comfort: visualComfort,
-          figureOf: (side) => models[side].model.root,
-          worldX,
-          worldY,
-        })
-        const kurapikaSpeed = createKurapikaSpeedScene({
-          THREE,
-          scene,
-          comfort: visualComfort,
-          figureOf: (side) => models[side].model.root,
-        })
-
         const fit = () => {
           resizeFightCanvas({ canvas, renderer, camera, post, graphics: comfort.graphics })
           // Resizing clears WebGL even when the presentation clock is paused.
@@ -327,6 +282,7 @@
 
         const cameraIntensity = () => visualComfort().camera ?? 1
         const updateCombatCamera = (dt: number, now: number) => {
+          const minimumDistance = scenery.framing?.minimumDistance
           const observed = hideSecondaryView
             ? cinematicDirector.update(state, cameraIntensity(), dt)
             : null
@@ -360,7 +316,7 @@
             fallenBounds: fightCameraBodyBounds(state, models),
             companion: visibleFutureBeastOwner(state, viewer),
             intensity: cameraIntensity(),
-            minimumDistance: scenery.framing?.minimumDistance,
+            minimumDistance,
           })
           if (!pose.detailReady) detail = null
           detailVisible = Boolean(detail)
@@ -374,7 +330,7 @@
               models,
               state,
               authored: cameraFrame,
-              minimumDistance: scenery.framing?.minimumDistance,
+              minimumDistance,
               throwFrame: presentation.throwFrame(),
               intro: introFrame,
               reduced: motionPreference.matches,

@@ -21,13 +21,58 @@ interface Beat {
 }
 
 const beats: Beat[] = [
-  { seconds: 4, from: 0, to: 57, viewer: 'player', kicker: 'ROOM 1004 · SUNDAY 19:35', line: 'Warning' },
-  { seconds: 5, from: 60, to: 113, viewer: 'opponent', focus: 'opponent', kicker: 'TSERRIEDNICH', line: 'I closed my eyes.' },
-  { seconds: 3, from: proof.killed - 80, to: proof.killed - 36, viewer: 'player', focus: 'player', kicker: 'THETA' },
-  { seconds: 5, from: proof.killed - 36, to: proof.killed + 54, viewer: 'player', kicker: 'WHAT THETA SAW', perception: true },
+  {
+    seconds: 4,
+    from: 0,
+    to: 57,
+    viewer: 'player',
+    kicker: 'ROOM 1004 · SUNDAY 19:35',
+    line: 'Warning',
+  },
+  {
+    seconds: 5,
+    from: 60,
+    to: 113,
+    viewer: 'opponent',
+    focus: 'opponent',
+    kicker: 'TSERRIEDNICH',
+    line: 'I closed my eyes.',
+  },
+  {
+    seconds: 3,
+    from: proof.killed - 80,
+    to: proof.killed - 36,
+    viewer: 'player',
+    focus: 'player',
+    kicker: 'THETA',
+  },
+  {
+    seconds: 5,
+    from: proof.killed - 36,
+    to: proof.killed + 54,
+    viewer: 'player',
+    kicker: 'WHAT THETA SAW',
+    perception: true,
+  },
   { seconds: 3, from: proof.killed + 54, to: proof.killed + 54, viewer: 'player' },
-  { seconds: 8, from: 90, to: proof.killed + 54, viewer: 'opponent', kicker: 'THE SAME TEN SECONDS', line: 'I had already stepped aside.' },
-  { seconds: 6, from: proof.reveal - 22, to: proof.reveal + 42, viewer: 'opponent', focus: 'opponent', kicker: 'PARALLEL FUTURE', line: 'Laplace’s Demon', settle: true },
+  {
+    seconds: 8,
+    from: 90,
+    to: proof.killed + 54,
+    viewer: 'opponent',
+    kicker: 'THE SAME TEN SECONDS',
+    line: 'I had already stepped aside.',
+  },
+  {
+    seconds: 6,
+    from: proof.reveal - 22,
+    to: proof.reveal + 42,
+    viewer: 'opponent',
+    focus: 'opponent',
+    kicker: 'PARALLEL FUTURE',
+    line: 'Laplace’s Demon',
+    settle: true,
+  },
 ]
 export const warningDuration = beats.reduce((total, { seconds }) => total + seconds, 0)
 export const melodyCut = { start: 17, duration: 3 }
@@ -73,7 +118,9 @@ export function warningFrame(seconds: number) {
     focus,
   }
   return {
-    ...beat, camera, state,
+    ...beat,
+    camera,
+    state,
     reveal: Boolean(beat.settle && !real.futurePerception),
     shotFlash: beat.viewer === 'player' && frame >= proof.killed - 4 && frame < proof.killed + 1,
   }
@@ -100,7 +147,9 @@ export function splitWarningFrame(seconds: number, viewer: FightSide) {
     focus,
   }
   return {
-    viewer, state, camera,
+    viewer,
+    state,
+    camera,
     kicker: perceived ? 'THETA' : 'TSERRIEDNICH',
     line: perceived ? 'What she sees' : 'What really happens',
     perception: perceived,

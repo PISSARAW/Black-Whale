@@ -39,6 +39,28 @@ function resolveLimbTint(fighter: ArcadeFighter, zone: 'hands' | 'feet'): LimbRi
  * Translates internal Nen subsystems (nenBudget, nenCognitiveLoad, nenPsychology, bodyMemory)
  * into pure visual/audio sensory cues without adding any extra HUD bars or text labels.
  */
+function hudPortraitStress(
+  fighter: FightState['player'],
+  viewer: FightState['player'],
+  { strained, watchingOpponent }: { strained: boolean; watchingOpponent: boolean },
+): number {
+  const fatigue = nenMentalFatigueRatio(fighter)
+  const lowHpStress = fighter.health < 40 ? (40 - fighter.health) / 40 : 0
+  const rawStress = Math.max(fatigue, lowHpStress, strained ? 0.6 : 0)
+  const hideStress = watchingOpponent && thetaPortraitHidesStress(fighter, viewer)
+  return hideStress ? 0 : Math.max(0, Math.min(1, rawStress))
+}
+
+function hudHeartbeat(fighter: FightState['player'], foe: FightState['player']): number {
+  const apprehension = (fighter.nenPsychology?.apprehension ?? 0) / MAX_NEN_PSYCHOLOGY
+  const fearActive = (fighter.fearCooldownFrames ?? 0) > 0 ? 0.75 : 0
+  const maliceClose =
+    foe.nen.mode === 'ren' && Math.abs(foe.x - fighter.x) <= 5 && fighter.nen.mode === 'zetsu'
+      ? 0.65
+      : 0
+  return Math.max(0, Math.min(1, Math.max(apprehension, fearActive, maliceClose)))
+}
+
 export function readNenSensoryHud(
   state: FightState,
   side: FightSide,
@@ -60,19 +82,11 @@ export function readNenSensoryHud(
   const loadJitter = cognitive.strained ? Math.min(1, (cognitive.ratio - 0.7) / 0.5) : 0
   const auraBarJitter = Math.max(0, Math.min(1, Math.max(loadJitter, saturationJitter)))
 
-  const fatigue = nenMentalFatigueRatio(fighter)
-  const lowHpStress = fighter.health < 40 ? (40 - fighter.health) / 40 : 0
-  const rawStress = Math.max(fatigue, lowHpStress, cognitive.strained ? 0.6 : 0)
-  const hideStress = side !== viewerSide && thetaPortraitHidesStress(fighter, viewer)
-  const portraitStressLevel = hideStress ? 0 : Math.max(0, Math.min(1, rawStress))
-
-  const apprehension = (fighter.nenPsychology?.apprehension ?? 0) / MAX_NEN_PSYCHOLOGY
-  const fearActive = (fighter.fearCooldownFrames ?? 0) > 0 ? 0.75 : 0
-  const maliceClose =
-    foe.nen.mode === 'ren' && Math.abs(foe.x - fighter.x) <= 5 && fighter.nen.mode === 'zetsu'
-      ? 0.65
-      : 0
-  const heartbeatPulse = Math.max(0, Math.min(1, Math.max(apprehension, fearActive, maliceClose)))
+  const portraitStressLevel = hudPortraitStress(fighter, viewer, {
+    strained: cognitive.strained,
+    watchingOpponent: side !== viewerSide,
+  })
+  const heartbeatPulse = hudHeartbeat(fighter, foe)
 
   return {
     detachedAuraRatio,

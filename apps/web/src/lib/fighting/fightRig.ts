@@ -260,9 +260,10 @@ export function captureFootPlant(rig: FightRig): FootPlantAnchor {
   const positions = rig.ankles.map((ankle) =>
     ground.worldToLocal(ankle.getWorldPosition(rig.probe)).clone(),
   ) as [Vector3, Vector3]
-  const contacts = rig.ankles.map((ankle) =>
-    humanFootContactPoint(ankle, ground, rig.probe),
-  ) as [Vector3, Vector3]
+  const contacts = rig.ankles.map((ankle) => humanFootContactPoint(ankle, ground, rig.probe)) as [
+    Vector3,
+    Vector3,
+  ]
   return { positions, contacts }
 }
 

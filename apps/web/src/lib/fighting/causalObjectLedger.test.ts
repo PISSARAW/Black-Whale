@@ -35,7 +35,7 @@ describe('causal object ledger', () => {
       },
     }
     state = advanceCausalObjectLedger(state)
-    state = recordObjectTouch(state, key, 'player', 'bungee-gum')
+    state = recordObjectTouch(state, key, { actor: 'player', cause: 'bungee-gum' })
     state = {
       ...state,
       frame: 2,

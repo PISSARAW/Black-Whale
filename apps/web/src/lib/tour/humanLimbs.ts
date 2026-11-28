@@ -93,7 +93,7 @@ function segment(build: HumanLimbsBuild, { key, length, taper, colour }: Segment
     THREE,
     geometry: geometry(THREE, tailored ? `hisoka:${style}:${key}` : `limb:${key}`, () =>
       tailored
-        ? hisokaClothGeometry(THREE, length, taper, style)
+        ? hisokaClothGeometry(THREE, { length, taper, style })
         : taperedGeometry(THREE, length, taper),
     ),
     material: fabric,

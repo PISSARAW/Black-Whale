@@ -35,7 +35,7 @@ describe('canonical rivalry rules', () => {
   it('reports Camilla’s death trap and lets the existing post-mortem rule resolve it', () => {
     const state = createFight('camilla', 'hisoka')
     state.player.health = 0
-    const trapped = beginCatsName(state, 'player', 'opponent')
+    const trapped = beginCatsName(state, { victimSide: 'player', killerSide: 'opponent' })
     expect(activeRivalryRules(state).map((rule) => rule.id)).toContain('cats-name-trap')
     expect(trapped.catsName).toMatchObject({ victimSide: 'player', killerSide: 'opponent' })
   })

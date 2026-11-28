@@ -17,6 +17,12 @@ export function postureSupportLeg(fighter: ArcadeFighter): 'lead' | 'rear' | und
 }
 
 /** Commit the support leg before the drive; a kicking leg can never also be the planted support. */
+function kickSupport(fighter: ArcadeFighter, lead: number, progress: number) {
+  const limb = fightStrikeLimb(fighter, 'feet')
+  const free = limb === 'both' ? lead : limb === 'left' ? 0 : 1
+  return { support: 1 - free, free, pivot: Math.sin(Math.PI * progress * 0.8) * 0.18 }
+}
+
 export function supportCycle(fighter: ArcadeFighter): {
   support: number
   free?: number
@@ -28,11 +34,7 @@ export function supportCycle(fighter: ArcadeFighter): {
     return fighter.pose === 'walk' ? shuffleSupport(fighter) : { support: lead, pivot: 0 }
   const data = attackData(attack.kind, fighter)
   const progress = Math.min(1, attack.frame / Math.max(1, data.startup))
-  if (kicking(fighter)) {
-    const limb = fightStrikeLimb(fighter, 'feet')
-    const free = limb === 'both' ? lead : limb === 'left' ? 0 : 1
-    return { support: 1 - free, free, pivot: Math.sin(Math.PI * progress * 0.8) * 0.18 }
-  }
+  if (kicking(fighter)) return kickSupport(fighter, lead, progress)
   const slot = moveById(attack.moveId)?.slot
   const personal = slot && standingStrikeSupport(fighter, slot, data)
   if (personal)

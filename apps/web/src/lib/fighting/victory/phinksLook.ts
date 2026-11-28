@@ -122,7 +122,7 @@ export function createPhinksLook() {
   }
 
   return {
-    apply(context: VictoryContext, fist: Vector3, charge: number, ko: boolean) {
+    apply(context: VictoryContext, fist: Vector3, { charge, ko }: { charge: number; ko: boolean }) {
       const { age, scene, hero, victim, scenery, state, centre } = context
       const previousFog = scene.fog
       const previousBackground = scene.background

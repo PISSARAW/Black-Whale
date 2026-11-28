@@ -58,14 +58,9 @@ export function nenCognitiveCapacity(state: FightState, side: FightSide): number
   return nenCognitiveBaseCapacity(state, side) * (1 - fatigue * 0.35)
 }
 
-/** Recomputed exclusively from live effects, so rollback and replay cannot accumulate drift. */
-export function readNenCognitiveLoad(state: FightState, side: FightSide): NenCognitiveLoad {
-  const fighter = state[side]
-  const commitments: NenAttentionCommitment[] = []
-  const add = (id: string, mode: NenAttentionMode, cost: number) => {
-    if (cost > 0) commitments.push({ id, mode, cost: Math.round(cost) })
-  }
+type AddCommitment = (id: string, mode: NenAttentionMode, cost: number) => void
 
+function addCoreCommitments(fighter: FightState[FightSide], add: AddCommitment): void {
   if (fighter.nen.en) add('en', 'directed', 12 + Math.min(8, fighter.nen.en.radius / 2))
   if (fighter.nen.gyo) add('gyo', 'directed', 7)
   if (fighter.nen.in) add('in', 'maintained', 4)
@@ -73,11 +68,17 @@ export function readNenCognitiveLoad(state: FightState, side: FightSide): NenCog
   if (fighter.nen.ko) add('ko', 'directed', 5)
   if (fighter.nenTransfer) add('ryu-transfer', 'directed', 10)
   if (fighter.nen.shu.length) add('shu', 'maintained', fighter.nen.shu.length * 3)
+}
 
+function addPersonalCommitments(fighter: FightState[FightSide], add: AddCommitment): void {
   if (fighter.hanzoProjection) add('hanzo-projection', 'directed', 26)
   if (fighter.melodyPerformance) add('melody-performance', 'directed', 24)
   if (fighter.machiSuture) add('machi-suture', 'directed', 22)
   if (fighter.hatsuEffects.painPacker?.sun) add('rising-sun', 'maintained', 16)
+}
+
+function addMaintainedCommitments(state: FightState, side: FightSide, add: AddCommitment): void {
+  const fighter = state[side]
   if (
     fighter.musseOwlActive ||
     fighter.secretWindow ||
@@ -91,15 +92,28 @@ export function readNenCognitiveLoad(state: FightState, side: FightSide): NenCog
   ) {
     add('kalluto-doll', 'maintained', 8)
   }
+}
+
+function activeBiohazardPigeon(state: FightState, side: FightSide): boolean {
+  const pigeon = state.hinrighBioPigeon
+  return Boolean(pigeon?.active && pigeon.owner === side)
+}
+
+function addSurfaceCommitments(state: FightState, side: FightSide, add: AddCommitment): void {
+  const fighter = state[side]
   if (state.zakuroBloodDrops?.owner === side || fighter.bloodyMary?.drops.length) {
     add('zakuro-drops', 'directed', 10)
   }
-  if (state.hinrighBioPigeon?.active && state.hinrighBioPigeon.owner === side) {
+  if (activeBiohazardPigeon(state, side)) {
     add('biohazard-pigeon', 'maintained', 8)
   }
   if (state.voconteDoors?.networks[side]?.active) {
     add('voconte-doors', 'maintained', 8)
   }
+}
+
+function addAttackCommitments(state: FightState, side: FightSide, add: AddCommitment): void {
+  const fighter = state[side]
   if (fighter.attack?.hatsuSource) {
     const unfamiliar = fighter.attack.hatsuSource !== (fighter.nenOwner ?? fighter.id)
     add('active-hatsu', 'directed', unfamiliar ? 16 : 12)
@@ -115,6 +129,21 @@ export function readNenCognitiveLoad(state: FightState, side: FightSide): NenCog
 
   const gumLinks = state.gumNetwork?.links.filter((link) => link.owner === side).length ?? 0
   if (gumLinks) add('bungee-links', 'directed', concurrentCost(gumLinks, 4, 2))
+}
+
+/** Recomputed exclusively from live effects, so rollback and replay cannot accumulate drift. */
+export function readNenCognitiveLoad(state: FightState, side: FightSide): NenCognitiveLoad {
+  const fighter = state[side]
+  const commitments: NenAttentionCommitment[] = []
+  const add = (id: string, mode: NenAttentionMode, cost: number) => {
+    if (cost > 0) commitments.push({ id, mode, cost: Math.round(cost) })
+  }
+
+  addCoreCommitments(fighter, add)
+  addPersonalCommitments(fighter, add)
+  addMaintainedCommitments(state, side, add)
+  addSurfaceCommitments(state, side, add)
+  addAttackCommitments(state, side, add)
 
   const load = commitments.reduce((sum, commitment) => sum + commitment.cost, 0)
   const capacity = nenCognitiveCapacity(state, side)

@@ -107,6 +107,23 @@ export function createFightState(
   )
 }
 
+function roundFighter(
+  state: FightState,
+  side: 'player' | 'opponent',
+  health: number,
+): FightState['player'] {
+  const fighter = state[side]
+  const isPlayer = side === 'player'
+  const fresh = createFighter({
+    id: state.halkSoulOrigins?.[side] ?? fighter.halkenburgOrigin ?? fighter.id,
+    x: isPlayer ? 22 : 78,
+    facing: isPlayer ? 1 : -1,
+    health,
+  })
+  const withMemory = carryBodyMemory(preserveLifespan(fresh, fighter, state.frame), fighter)
+  return carryTskPoison(applyBiscuitInterRoundCare(withMemory), fighter)
+}
+
 export function nextFightRound(state: FightState): FightState {
   if (state.phase !== 'finished' || state.matchWinner) return state
   const format = fightFormat(state.formatId)
@@ -141,46 +158,8 @@ export function nextFightRound(state: FightState): FightState {
       burst: undefined,
       burstAvailable: { player: true, opponent: true },
       opponentIntel: carryOpponentIntel(state.opponentIntel),
-      player: carryTskPoison(
-        applyBiscuitInterRoundCare(
-          carryBodyMemory(
-            preserveLifespan(
-              createFighter({
-                id:
-                  state.halkSoulOrigins?.player ?? state.player.halkenburgOrigin ?? state.player.id,
-                x: 22,
-                facing: 1,
-                health: format.health,
-              }),
-              state.player,
-              state.frame,
-            ),
-            state.player,
-          ),
-        ),
-        state.player,
-      ),
-      opponent: carryTskPoison(
-        applyBiscuitInterRoundCare(
-          carryBodyMemory(
-            preserveLifespan(
-              createFighter({
-                id:
-                  state.halkSoulOrigins?.opponent ??
-                  state.opponent.halkenburgOrigin ??
-                  state.opponent.id,
-                x: 78,
-                facing: -1,
-                health: format.health,
-              }),
-              state.opponent,
-              state.frame,
-            ),
-            state.opponent,
-          ),
-        ),
-        state.opponent,
-      ),
+      player: roundFighter(state, 'player', format.health),
+      opponent: roundFighter(state, 'opponent', format.health),
       ...(state.kameos && {
         kameos: nextRoundKameos(state.kameos, (fighter, side) =>
           preserveLifespan(

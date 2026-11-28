@@ -32,19 +32,9 @@ export function catsNamePhase(frame: number): CatsNamePhase {
 }
 
 /** Post-mortem Nen works without live aura or a mandatory Zetsu condition (ch. 373). */
-export function beginCatsName(
-  state: FightState,
-  victimSide: FightSide,
-  killerSide: FightSide,
-  cause = state.deaths?.find(
-    (death) => death.victimSide === victimSide && death.killerSide === killerSide,
-  )?.cause,
-): FightState {
-  if (state.catsName || state[victimSide].health > 0) return state
-  if (victimSide === killerSide || state[killerSide].health <= 0) return state
-  const victim = state[victimSide]
+function ordinaryTen(victim: FightState['player']): boolean {
   const { nen } = victim
-  const ten =
+  return (
     nen.mode === 'ten' &&
     !nen.ken &&
     !nen.ko &&
@@ -52,6 +42,22 @@ export function beginCatsName(
     !nen.in &&
     !victim.auraExhausted &&
     victim.aura > 0
+  )
+}
+
+export function beginCatsName(
+  state: FightState,
+  {
+    victimSide,
+    killerSide,
+    cause = state.deaths?.find(
+      (death) => death.victimSide === victimSide && death.killerSide === killerSide,
+    )?.cause,
+  }: { victimSide: FightSide; killerSide: FightSide; cause?: FightDeathCause },
+): FightState {
+  if (state.catsName || state[victimSide].health > 0) return state
+  if (victimSide === killerSide || state[killerSide].health <= 0) return state
+  const victim = state[victimSide]
   return {
     ...state,
     catsName: { victimSide, killerSide, frame: 0 },
@@ -61,8 +67,8 @@ export function beginCatsName(
           victimSide,
           killerSide,
           cause,
-          zetsu: nen.mode === 'zetsu',
-          ...(ten ? { ten: true } : {}),
+          zetsu: victim.nen.mode === 'zetsu',
+          ...(ordinaryTen(victim) ? { ten: true } : {}),
         }
       : undefined,
     deaths: undefined,

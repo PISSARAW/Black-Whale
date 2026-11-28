@@ -61,12 +61,17 @@ export function createFightingNen() {
 }
 
 /** One held Aura input, interpreted from the physical context. */
-export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  input = applyIllumiMotorParasite(fighter, input)
-  if (!illumiBodyFree(fighter)) return fighter
+function forcedAuraContext(fighter: ArcadeFighter): ArcadeFighter | undefined {
   if ((fighter.burstZetsuFrames ?? 0) > 0) return forceZetsu(fighter)
   if (predatorNenLocked(fighter)) return enforcePredatorSeal(fighter)
   if (fighter.moonlightZetsu) return forceZetsu(fighter)
+}
+
+export function applyAuraContext(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  input = applyIllumiMotorParasite(fighter, input)
+  if (!illumiBodyFree(fighter)) return fighter
+  const forced = forcedAuraContext(fighter)
+  if (forced) return forced
   const restricted = restrictedChainAura(fighter, input)
   if (restricted) return restricted
   const sworn = applyOnContext(fighter, input)
@@ -152,9 +157,13 @@ export function auraFlowRate(fighter: ArcadeFighter): number {
   )
 }
 
+function zetsuAuraFlow(fighter: ArcadeFighter, surge: boolean): number {
+  return fighter.auraExhausted && surge ? 20 : 10
+}
+
 function baseAuraFlow(fighter: ArcadeFighter): number {
   const surge = (fighter.erigeronSurgeFrames ?? 0) > 0
-  if (fighter.nen.mode === 'zetsu') return fighter.auraExhausted && surge ? 20 : 10
+  if (fighter.nen.mode === 'zetsu') return zetsuAuraFlow(fighter, surge)
   if (fighter.nen.ken) return -8 * bashoKenCostFactor(fighter)
   if (hasRyu(fighter)) return -6
   if (fighter.nen.mode === 'ren') return isBeyond(fighter) ? BEYOND_REN_DRAIN : -4
@@ -205,10 +214,21 @@ export function forceZetsu(fighter: ArcadeFighter): ArcadeFighter {
   return withAction(fighter, { type: 'ZETSU' })
 }
 
+function occupiedHandPenalty(
+  fighter: ArcadeFighter,
+  kind: AttackKind,
+  zone: ReturnType<typeof attackData>['auraZone'],
+): number {
+  return kind === 'heavy' && zone === 'hands' && chrolloRightHandOccupied(fighter) ? 0.85 : 1
+}
+
+function canReinforceStrike(fighter: ArcadeFighter): boolean {
+  return !predatorNenLocked(fighter) && fighter.nen.mode !== 'zetsu'
+}
+
 export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): number {
   fighter = dolphinActor(fighter)
-  if (predatorNenLocked(fighter)) return 0.7
-  if (fighter.nen.mode === 'zetsu') return 0.7
+  if (!canReinforceStrike(fighter)) return 0.7
   const zone = attackData(kind, fighter).auraZone
   // Ko protects and powers only its committed region; every other strike is purely physical.
   if (fighter.nen.ko && fighter.nen.ko !== zone) return 0.7
@@ -217,8 +237,7 @@ export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): numbe
   if (share > 0) factor += share * 0.48
   if (fighter.nen.ko) factor += isBeyond(fighter) ? BEYOND_KO_BONUS : 0.82
   if (fighter.nen.on) factor += ON_ATTACK_BONUS
-  const bookPenalty =
-    kind === 'heavy' && zone === 'hands' && chrolloRightHandOccupied(fighter) ? 0.85 : 1
+  const bookPenalty = occupiedHandPenalty(fighter, kind, zone)
   return (
     factor *
     bookPenalty *

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import TourSectorEntry from './TourSectorEntry.svelte'
+  import { createTouristControls, diningVisitHref, tserriednichVisitHref } from './touristControls'
   import { onDestroy, onMount, untrack } from 'svelte'
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
@@ -18,7 +20,7 @@
   import { trackBodyReach } from '$lib/analytics/client'
   import { HATSU_PROFILES, hatsuById, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { localizeHatsu } from '$lib/i18n/hatsu'
-  import { link, parsePathname, t } from '$lib/i18n'
+  import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
   import { crossingsOn, deckOf, theShip, type Crossing } from '$lib/tour/blueprint'
   import { loadComfort, reducedMotion } from '$lib/tour/comfort'
@@ -79,16 +81,11 @@
   import type { BodyReadoutWords } from '$lib/tour/pageBodyReadout'
   import { NO_HOUR } from '$lib/tour/hour'
   import { mangaViewById, viewsForSpace, type MangaView } from '$lib/tour/mangaViews'
-  import {
-    TSERRIEDNICH_ROUTE_ID,
-    TSERRIEDNICH_ROUTE_START,
-    tserriednichRouteUrl,
-  } from '$lib/tour/tserriednichRoute'
+  import { TSERRIEDNICH_ROUTE_ID, TSERRIEDNICH_ROUTE_START } from '$lib/tour/tserriednichRoute'
   import {
     DINING_VISIT,
     DINING_VISIT_HEADING,
     DINING_VISIT_START,
-    diningVisitUrl,
     isDiningVisitStart,
   } from '$lib/tour/diningVisit'
   import { diningVisitActors } from '$lib/tour/diningVisitActors'
@@ -139,14 +136,9 @@
   let arenaSector = $state<ArenaSectorSnapshot | null>(null)
   let previousPressure: 'none' | 'ren' | 'on' = 'none'
   const routeActive = $derived($page.url.searchParams.get('route') === TSERRIEDNICH_ROUTE_ID)
-  const routeHref = $derived.by(() => {
-    const url = tserriednichRouteUrl($page.url)
-    return $link(`${parsePathname(url.pathname).path}${url.search}`)
-  })
+  const routeHref = $derived($link(tserriednichVisitHref($page.url)))
   const diningRouteActive = $derived($page.url.searchParams.get('route') === DINING_VISIT)
-  const diningHref = $derived(
-    $link(`/tour${diningVisitUrl($page.url).search}#tour-stage-container`),
-  )
+  const diningHref = $derived($link(diningVisitHref($page.url)))
   const tierId = $derived(navigation.tierId)
   const diningActors = $derived(diningVisitActors(ship, tierId, tourMode))
   const currentSpace = $derived(navigation.currentSpace)
@@ -163,28 +155,6 @@
   const insideInterior = $derived(plan.tier.kind === 'interior')
   const french = $derived($locale === 'fr')
   const sectorSituation = $derived(arenaSector ? arenaSectorSituation(arenaSector) : null)
-  const sectorTitle = $derived.by(() => {
-    if (!sectorSituation) return french ? 'Engager le duel du secteur' : 'Enter the sector duel'
-    if (sectorSituation.phase === 'lockdown')
-      return french ? 'Intervention imminente' : 'Intervention imminent'
-    if (sectorSituation.phase === 'watched')
-      return french ? 'Secteur sous surveillance' : 'Sector under watch'
-    if (sectorSituation.phase === 'altered')
-      return french ? 'Reprendre le duel altéré' : 'Resume the altered duel'
-    return french ? 'Engager le duel du secteur' : 'Enter the sector duel'
-  })
-  const sectorAftermath = $derived.by(() => {
-    const resolution = sectorSituation?.lastResolution
-    if (resolution === 'controlled')
-      return french ? 'DERNIÈRE ISSUE · SECTEUR CONTRÔLÉ' : 'LAST OUTCOME · SECTOR CONTROLLED'
-    if (resolution === 'exposed')
-      return french ? 'DERNIÈRE ISSUE · COUVERTURE PERDUE' : 'LAST OUTCOME · COVER BLOWN'
-    if (resolution === 'intercepted')
-      return french ? 'DERNIÈRE ISSUE · INTERCEPTION' : 'LAST OUTCOME · INTERCEPTED'
-    if (resolution === 'rival-held')
-      return french ? 'DERNIÈRE ISSUE · HISOKA TIENT LE SECTEUR' : 'LAST OUTCOME · HISOKA HOLDS'
-    return french ? 'OBJECTIF · PRENDRE LE CONTRÔLE' : 'OBJECTIVE · TAKE CONTROL'
-  })
   const nameOf = (entity: { name: string; nameFr: string }) => localizedName(entity, french)
   const sourceOf = (entity: { source: string; sourceFr: string }) => localizedSource(entity, french)
   const sortedSpaces = $derived(
@@ -978,68 +948,27 @@
       : null,
   )
 
-  const locationReadout = $derived(overlayView.location)
-  const aimReadout = $derived(overlayView.aim)
-  const overlayControls = $derived(overlayView.controls)
-  const statusHint = $derived(overlayView.status)
-
   let takeScreenshot = $state<(() => Promise<Blob | null>) | null>(null)
   let postcardPhotoBlob = $state<Blob | null>(null)
   const gyoMode = $derived(hatsuSession.nen.gyo)
   const currentMangaViews = $derived(viewsForSpace(currentSpace?.id ?? null))
   const currentMangaView = $derived(currentMangaViews[0] ?? null)
 
-  const tourist = $derived({
-    available: true,
-    ...(currentMangaView
-      ? {
-          mangaViewLabel: `${french ? currentMangaView.labelFr : currentMangaView.label} — ${
-            currentMangaView.volume
-              ? `${french ? 'tome' : 'vol.'} ${currentMangaView.volume}, `
-              : ''
-          }${french ? 'chap.' : 'ch.'} ${currentMangaView.chapter}${
-            currentMangaView.pages ? `, p. ${currentMangaView.pages}` : ''
-          }`,
-          mangaViewButtonLabel:
-            currentMangaView.id === 'royal-liner-prince-view'
-              ? $t.tour.sceneOverlay.princeView
-              : undefined,
-          onJumpToAngle: () => {
-            const view = currentMangaView
-            if ($page.url.searchParams.get('mangaView') !== view.id) {
-              const url = new URL($page.url)
-              url.searchParams.delete('deck')
-              url.searchParams.delete('eventId')
-              url.searchParams.set('space', view.spaceId)
-              url.searchParams.set('mangaView', view.id)
-              void goto(url.toString(), { keepFocus: true, noScroll: true })
-              return
-            }
-            activeMangaView = view
-            applyMangaView(navigation, view)
-          },
-        }
-      : {}),
-    onTakePhoto: async () => {
-      if (takeScreenshot) {
-        const blob = await takeScreenshot()
-        if (blob) {
-          postcardPhotoBlob = blob
-        }
-      }
-    },
-    onTakePhotoWithHud: async () => {
-      const el = document.getElementById('tour-stage-container')
-      if (!el || !takeScreenshot) return
-
-      const sceneBlob = await takeScreenshot()
-      if (!sceneBlob) return
-
-      const { captureStageWithHud } = await import('$lib/tour/hudCapture')
-      const blob = await captureStageWithHud(el, sceneBlob)
-      if (blob) postcardPhotoBlob = blob
-    },
-  })
+  const tourist = $derived(
+    createTouristControls({
+      view: currentMangaView,
+      french,
+      princeLabel: $t.tour.sceneOverlay.princeView,
+      url: () => $page.url,
+      openUrl: (url) => void goto(url.toString(), { keepFocus: true, noScroll: true }),
+      apply: (view) => {
+        activeMangaView = view
+        applyMangaView(navigation, view)
+      },
+      screenshot: () => takeScreenshot,
+      save: (blob) => (postcardPhotoBlob = blob),
+    }),
+  )
 </script>
 
 {#if postcardPhotoBlob}
@@ -1199,12 +1128,12 @@
       autopilot: isAutopilot,
       reticleColor: technique?.color ?? null,
       spoken,
-      location: locationReadout,
+      location: overlayView.location,
       penalty: hatsuSession.penalty,
       note: bodyNote,
-      aim: aimReadout,
-      controls: overlayControls,
-      statusHint,
+      aim: overlayView.aim,
+      controls: overlayView.controls,
+      statusHint: overlayView.status,
       tourist,
       gyo: {
         active: gyoMode,
@@ -1276,38 +1205,11 @@
 </TourWorkspace>
 
 {#if simulation && currentSpace?.id === WAREHOUSE_SPACE}
-  <a
-    class="arena-sector-entry"
-    data-phase={sectorSituation?.phase ?? 'quiet'}
+  <TourSectorEntry
+    situation={sectorSituation}
+    {french}
     href={$link('/arena?terrain=tier-5-warehouse&fighter=kurapika&enemy=hisoka&source=tour')}
-  >
-    <small>ARENA × TOUR</small>
-    <strong>{sectorTitle}</strong>
-    {#if sectorSituation}
-      <span class="arena-sector-state">
-        {french ? 'COMBATS' : 'FIGHTS'}
-        {sectorSituation.fights} ·
-        {french ? 'TÉMOINS' : 'WITNESSES'}
-        {sectorSituation.witnesses} ·
-        {french ? 'ALERTE' : 'ALERT'}
-        {sectorSituation.securityAlert}/5
-      </span>
-      <span>
-        {sectorSituation.changedObjects}
-        {french ? 'OBJETS ALTÉRÉS' : 'ALTERED OBJECTS'} ·
-        {sectorSituation.opponentReads}
-        {french ? 'LECTURES ADVERSES' : 'OPPONENT READS'} ·
-        {sectorSituation.parcelStage.replaceAll('_', ' ')}
-      </span>
-      <span>{sectorAftermath}</span>
-    {:else}
-      <span
-        >{french
-          ? 'Combat 3D · conséquences persistantes'
-          : '3D combat · persistent consequences'}</span
-      >
-    {/if}
-  </a>
+  />
 {/if}
 
 {#if simulation && !diningRouteActive}
@@ -1341,65 +1243,3 @@
 {#if castView.secret}
   <TourSecretCard secret={castView.secret} {french} onClose={() => (castView.secret = null)} />
 {/if}
-
-<style>
-  .arena-sector-entry {
-    position: fixed;
-    z-index: 34;
-    bottom: calc(7.5rem + env(safe-area-inset-bottom));
-    left: 50%;
-    display: flex;
-    width: min(22rem, calc(100vw - 2rem));
-    padding: 0.75rem 0.9rem;
-    border: 1px solid rgb(255 215 0 / 42%);
-    border-left: 3px solid #ffd700;
-    background: rgb(4 9 12 / 90%);
-    color: #fffff0;
-    flex-direction: column;
-    gap: 0.15rem;
-    font-family: 'IBM Plex Mono', monospace;
-    text-decoration: none;
-    transform: translateX(-50%);
-    backdrop-filter: blur(10px);
-  }
-
-  .arena-sector-entry small,
-  .arena-sector-entry span {
-    color: #a8b3b7;
-    font-size: 0.58rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .arena-sector-entry strong {
-    font-size: 0.78rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .arena-sector-entry[data-phase='watched'] {
-    border-left-color: #ff9e43;
-  }
-
-  .arena-sector-entry[data-phase='lockdown'] {
-    border-color: rgb(255 77 94 / 55%);
-    border-left-color: #ff4d5e;
-  }
-
-  .arena-sector-entry .arena-sector-state {
-    color: #fffff0;
-  }
-
-  .arena-sector-entry:hover,
-  .arena-sector-entry:focus-visible {
-    border-color: #ffd700;
-    background: rgb(10 18 22 / 96%);
-    outline: none;
-  }
-
-  @media (max-width: 760px) {
-    .arena-sector-entry {
-      bottom: calc(5.8rem + env(safe-area-inset-bottom));
-    }
-  }
-</style>

@@ -1,3 +1,4 @@
+import { retainSpeedFigure } from './fightSpeedVisibility'
 import { motionOf } from './fighterMovement'
 import { feitanSpeedActive, feitanSpeedBodyVisible } from './feitanIdentity'
 import type { FightComfort } from './fightComfort'
@@ -101,24 +102,32 @@ export function createFeitanSpeedScene(options: {
     }
   }
 
+  function showSpeedLines(
+    state: FightState,
+    side: FightSide,
+    { enabled, figure }: { enabled: boolean; figure: ReturnType<typeof options.figureOf> },
+  ) {
+    const fighter = state[side]
+    const active = enabled && state.phase === 'fighting' && feitanSpeedActive(fighter)
+    lines.get(side)!.visible = active
+    if (active) {
+      const group = lines.get(side)!
+      group.position.set(options.worldX(fighter.x), options.worldY(fighter.y) + 0.18, 0.1)
+      group.scale.x = fighter.facing
+    }
+    if (figure) figure.visible = !enabled || feitanSpeedBodyVisible(fighter)
+    return active
+  }
+
   return {
     sync(state: FightState, now: number) {
       const enabled = options.comfort().flashes
       for (const side of ['player', 'opponent'] as const) {
         const fighter = state[side]
         const figure = options.figureOf(side)
-        const oldFigure = previousFigure.get(side)
-        if (oldFigure && oldFigure !== figure) oldFigure.visible = true
-        if (figure) previousFigure.set(side, figure)
+        retainSpeedFigure(previousFigure, side, figure)
         const dash = motionOf(fighter).dash
-        const active = enabled && state.phase === 'fighting' && feitanSpeedActive(fighter)
-        lines.get(side)!.visible = active
-        if (active) {
-          const group = lines.get(side)!
-          group.position.set(options.worldX(fighter.x), options.worldY(fighter.y) + 0.18, 0.1)
-          group.scale.x = fighter.facing
-        }
-        if (figure) figure.visible = !enabled || feitanSpeedBodyVisible(fighter)
+        const active = showSpeedLines(state, side, { enabled, figure })
         if (!active || !dash || !figure) {
           previousFrame.delete(side)
           continue

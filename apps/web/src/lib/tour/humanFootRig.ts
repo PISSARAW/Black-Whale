@@ -2,11 +2,7 @@ import type { Bone, BufferGeometry, Group, Material, Mesh, Object3D, SkinnedMesh
 import type { HumanFigureBuild } from './humanFigure'
 import type { HumanProfile } from './humanProfiles'
 import type { HumanSide } from './humanExtremityAnchors'
-import {
-  footFamilyScale,
-  humanExtremityFamily,
-  usesSkinnedFeet,
-} from './humanExtremityFamily'
+import { footFamilyScale, humanExtremityFamily, usesSkinnedFeet } from './humanExtremityFamily'
 
 type Three = HumanFigureBuild['THREE']
 export type HumanFootPose = 'flat' | 'pivot' | 'kick' | 'crouch' | 'land'

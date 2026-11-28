@@ -13,9 +13,7 @@ import { animateMelodyFlute, restoreMelodyFlute } from './melodyFigurePose'
 import { expressiveFightMotion } from './fightExpressionMotion'
 import { rightHandedPose } from './fightHandedPose'
 import { usesRightHandPose } from './fightHandConvention'
-import { fighterKeyedMove } from './fighterKeyedMove'
 import { chrolloBodyStance } from './chrolloBodyStance'
-import { fightPhysicalProfile } from './fightPhysicalProfile'
 import { keepFightPosture } from './fightPostureBudget'
 import { rosterSustainedMotion } from './rosterSustainedMotion'
 import { animateBlinky } from './blinkyFigure'
@@ -32,16 +30,10 @@ import type { HumanMotion } from '$lib/tour/humanAnimation'
 import { animateFranklinHands } from './franklinHands'
 import { animateChrolloBook } from './chrolloFigure'
 import { pursuitRecoveryPose } from './pursuitRecoveryPose'
-import { pursuitGesture, pursuitLoadWeight, pursuitSupport } from './pursuitMotion'
-import { attackMotionAccent } from './fightAttackMotion'
-import { strikePresentationFrame } from './fightStrikeRhythm'
-import { strikeSupportPose } from './fightStrikeSupport'
-import { strikeSilhouette } from './fightStrikeSilhouette'
-import { postureSupportLeg } from './fightSupportCycle'
+import { pursuitLoadWeight, pursuitSupport } from './pursuitMotion'
 import { closeBodyPlan } from './fightClosePosture'
-import { bridgeTarget, flowThroughBridge } from './duelAttackBridges'
+import { flowThroughBridge } from './duelAttackBridges'
 import { beginPoseTransition, type PoseMemory } from './fightPoseMemory'
-import { attackTransfer, recoveryTransfer } from './fightAttackWeight'
 import { COMBO_LINK_SECONDS, flowIntoAttack, type AttackFlowFrame } from './fightAttackFlow'
 import { transferAttackWeight } from './fightWeightTransfer'
 import { READY_ARMS } from './fightGestures'
@@ -51,7 +43,6 @@ import {
   NEUTRAL_POSE,
   pickJoints,
   UPPER_JOINTS,
-  STANCE_FRAME_JOINTS,
   type BodyPlan,
   type FightPose,
 } from './fightPose'
@@ -65,8 +56,7 @@ import {
   resetFightRig,
   type FightRig,
 } from './fightRig'
-import { AIR_POSE, fightStance, stanceAt, type FightStance } from './fightStance'
-import { attackData } from './frameData'
+import { fightStance, stanceAt, type FightStance } from './fightStance'
 import {
   crouchPose,
   dashPose,
@@ -78,20 +68,11 @@ import {
 import { withLocomotionInertia } from './fightLocomotionInertia'
 import { withSecondaryMotion } from './fightSecondaryMotion'
 import { movementTechPose } from './movementTechPoses'
-import { hanzoAstralRestPlan, hanzoAstralStrikePlan } from './hanzoAstralMotion'
-import { sampleTimeline } from './keyPoseTimeline'
-import { moveById } from './movesets'
-import { strikingStance } from './strikingLegs'
-import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } from './types'
-import { kurapikaGoldenHeavySupport } from './kurapikaGoldenHeavySupport'
-import { kurapikaGoldenHeavyOutcomePose } from './kurapikaGoldenHeavyOutcome'
-import { physicalAttackOutcomePose } from './fightAttackOutcome'
+import { hanzoAstralRestPlan } from './hanzoAstralMotion'
+import type { ArcadeFighter, FighterPose } from './types'
 import { animateKurapikaGoldenHeavyIdentity } from './kurapikaGoldenHeavyIdentity'
-import { rosterWaveOneSupport } from './rosterWaveOneSupport'
-import { standingStrikeSupport } from './standingStrikeMotion'
-import { rosterWaveTwoSupport } from './rosterWaveTwoSupport'
-import { rosterWaveThreeSupport } from './rosterWaveThreeSupport'
 import { animateFightMaterialResponse } from './fightMaterialResponse'
+import { attackPlan } from './fightAttackBodyPlan'
 
 /**
  * Where the fighting rig draws a fighter, frame by frame.
@@ -281,14 +262,19 @@ function fallingBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan
   return reactionPlan(fighter, context, standing)
 }
 
-function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
-  const easterEgg = easterEggBodyPlan(fighter)
-  if (easterEgg) return easterEgg
-  const special =
+function specialBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  return (
     pluggingWoundsPlan(fighter) ??
     biohazardBodyPlan(fighter) ??
     techniqueBodyPlan(fighter, context) ??
     hanzoAstralRestPlan(fighter, context.seconds)
+  )
+}
+
+function unmirroredBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  const easterEgg = easterEggBodyPlan(fighter)
+  if (easterEgg) return easterEgg
+  const special = specialBodyPlan(fighter, context)
   if (special) return special
   // A released physical card is keyed to the simulation frame. Do not let the
   // idle breathing clock alter the wrist silhouette between identical replays.
@@ -347,131 +333,6 @@ function techniqueBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPl
     }
 
   return null
-}
-
-function basePose(fighter: ArcadeFighter, standing: FightPose, authored: boolean): FightPose {
-  const variant = fighter.attack?.variant
-  // Hand-keyed moves strike from the fighter's own guard; family gestures from a ready one.
-  const upper = authored ? pickJoints(standing, UPPER_JOINTS) : READY_ARMS
-  if (variant === 'low') return addPoses(upper, crouchPose(fighter))
-  if (variant === 'air') return addPoses(upper, AIR_POSE)
-  if (authored) return standing
-  return addPoses(pickJoints(standing, STANCE_FRAME_JOINTS), READY_ARMS)
-}
-
-const KIND_SLOTS: Record<AttackKind, Record<AttackVariant, MoveSlot>> = {
-  light: {
-    standing: 'standingLight',
-    low: 'lowLight',
-    air: 'airLight',
-    throw: 'throw',
-  },
-  heavy: {
-    standing: 'standingHeavy',
-    low: 'lowHeavy',
-    air: 'airHeavy',
-    throw: 'throw',
-  },
-  special: {
-    standing: 'neutralSpecial',
-    low: 'downSpecial',
-    air: 'airHeavy',
-    throw: 'throw',
-  },
-  ranged: {
-    standing: 'neutralSpecial',
-    low: 'neutralSpecial',
-    air: 'airLight',
-    throw: 'throw',
-  },
-}
-
-function attackPlan(fighter: ArcadeFighter, standing: FightPose, fraction = 0): BodyPlan | null {
-  const attack = fighter.attack
-  // A teched throw is drawn by the scene, both fighters breaking the grab together.
-  if (!attack || hasTechedThrow(fighter)) return null
-  const variant = attack.variant ?? 'standing'
-  const slot = moveById(attack.moveId)?.slot ?? KIND_SLOTS[attack.kind][variant]
-  const astral = hanzoAstralStrikePlan(fighter, slot, fraction)
-  if (astral) return astral
-  const { timeline, authored } = fighterKeyedMove(fighter, slot)
-  const frames = attackData(attack.kind, fighter)
-  const frame = attack.frame + fraction
-  const pursuit = pursuitGesture(fighter, slot)
-  const base = basePose(fighter, strikingStance(fighter.id, standing), authored)
-  const transfer = attackTransfer(fighter, slot)
-  const recovery = recoveryTransfer(fighter, { transfer, frame, frames })
-  const goldenSupport = kurapikaGoldenHeavySupport(fighter, frames)
-  const support =
-    standingStrikeSupport(fighter, slot, frames) ?? rosterWaveOneSupport(fighter, frames)
-  const waveTwoSupport = rosterWaveTwoSupport(fighter, frames)
-  const waveThreeSupport = rosterWaveThreeSupport(fighter, frames)
-  const poseAt = (at: number) =>
-    addPoses(
-      base,
-      sampleTimeline(timeline, {
-        frame: strikePresentationFrame(fighter, frames, at),
-        frames,
-        continuous: true,
-      }),
-      attackMotionAccent({ fighter, frames, authored, frame: at }),
-      strikeSupportPose(fighter, { transfer, frame: at, frames }),
-      strikeSilhouette(fighter, { frames, frame: strikePresentationFrame(fighter, frames, at) }),
-      physicalAttackOutcomePose(fighter, { slot, frame: at, frames }),
-      kurapikaGoldenHeavyOutcomePose(fighter, { frame: at, frames }),
-    )
-  return {
-    pose: recovery ? addPoses(poseAt(frame), recovery) : poseAt(frame),
-    plant: attackOnGround(fighter, { variant, pursuit, frame, startup: frames.startup }),
-    key: `attack:${attack.moveId ?? attack.kind}`,
-    blend: 0,
-    ...(goldenSupport ?? support ?? waveTwoSupport ?? waveThreeSupport),
-    attackFlow: {
-      frame,
-      pursuit,
-      startup: frames.startup,
-      active: frames.active,
-      recovery: frames.recovery,
-      supportLeg: postureSupportLeg(fighter),
-      loadAt: fightPhysicalProfile(fighter).loadAt,
-      facing: fighter.facing,
-      transfer,
-      contact: bridgeContact(attack.moveId, { frame, startup: frames.startup, poseAt, pursuit }),
-    },
-  }
-}
-
-function attackOnGround(
-  fighter: ArcadeFighter,
-  timing: {
-    variant: AttackVariant
-    pursuit?: ReturnType<typeof pursuitGesture>
-    frame: number
-    startup: number
-  },
-): boolean {
-  const { variant, pursuit, frame, startup } = timing
-  if (fighter.hanzoProjection) return false
-  if (pursuit && !pursuit.support) return false
-  if (pursuit && fighter.y <= 0.15 && frame < startup) return true
-  return fighter.y <= 0 && variant !== 'air'
-}
-
-function bridgeContact(
-  moveId: string | undefined,
-  timing: {
-    frame: number
-    startup: number
-    poseAt: (frame: number) => FightPose
-    pursuit?: ReturnType<typeof pursuitGesture>
-  },
-): FightPose | undefined {
-  if (timing.frame < timing.startup && (bridgeTarget(moveId) || timing.pursuit))
-    return timing.poseAt(timing.startup)
-}
-
-function hasTechedThrow(fighter: ArcadeFighter): boolean {
-  return fighter.attack?.variant === 'throw' && Boolean(fighter.throwTechFrames)
 }
 
 function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {

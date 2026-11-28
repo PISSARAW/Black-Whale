@@ -147,6 +147,16 @@ export function offerMoonlightContract(options: {
 }
 
 /** Only the recipient's explicit response can supply the second signature. */
+function canSignMoonlightOffer(
+  state: FightState,
+  offer: NonNullable<NonNullable<FightState['moonlight']>['offer']>,
+): boolean {
+  return (
+    moonlightSigningAvailable(state) &&
+    hasMoonlightAuthority(state[offer.issuer], offer.sourceMoveId)
+  )
+}
+
 export function respondMoonlightContract(options: {
   state: FightState
   side: FightSide
@@ -161,11 +171,7 @@ export function respondMoonlightContract(options: {
       side,
       state[offer.issuer].id,
     )
-  if (
-    !moonlightSigningAvailable(state) ||
-    !hasMoonlightAuthority(state[offer.issuer], offer.sourceMoveId)
-  )
-    return state
+  if (!canSignMoonlightOffer(state, offer)) return state
   const issuer = state[offer.issuer]
   const recipient = state[offer.recipient]
   const loan = issuer.moonlightLoan ?? 0
@@ -210,6 +216,16 @@ export function breachMoonlightContract(state: FightState, side: FightSide): Fig
   }
 }
 
+function moonlightKenBreach(
+  state: FightState,
+  pact: NonNullable<NonNullable<FightState['moonlight']>['active']>,
+): FightSide | undefined {
+  if (pact.terms !== 'no-ken') return
+  return (['player', 'opponent'] as const).find(
+    (side) => state[side].nen.ken && moonlightBinds(state, side, pact),
+  )
+}
+
 export function advanceMoonlightContract(state: FightState): FightState {
   if (state.phase !== 'fighting') return state
   state = advanceMoonlightPenalty(state)
@@ -217,13 +233,8 @@ export function advanceMoonlightContract(state: FightState): FightState {
   if (offer) return tickOffer(state, offer)
   const pact = state.moonlight?.active
   if (!pact) return tickCooldown(state)
-  if (pact.terms === 'no-ken') {
-    for (const side of ['player', 'opponent'] as const) {
-      if (state[side].nen.ken && moonlightBinds(state, side, pact)) {
-        return breachMoonlightContract(state, side)
-      }
-    }
-  }
+  const breach = moonlightKenBreach(state, pact)
+  if (breach) return breachMoonlightContract(state, breach)
   const remainingFrames = pact.remainingFrames - 1
   if (remainingFrames > 0) return { ...state, moonlight: { active: { ...pact, remainingFrames } } }
   return {

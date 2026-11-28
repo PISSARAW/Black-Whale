@@ -84,6 +84,24 @@ export function advanceOpponentIntel(state: FightState): FightState {
   }
 }
 
+function visibleIntelFields({
+  auraObserved,
+  burstUsedSeen,
+  kameoRevealed,
+  revealedConditions,
+}: OpponentIntel) {
+  return { auraObserved, burstUsedSeen, kameoRevealed, revealedConditions }
+}
+
+function observeVisibleIntel(state: FightState, targetSide: FightSide, prev: OpponentIntel) {
+  return {
+    auraObserved: prev.auraObserved || hasVisibleActiveNen(state[targetSide]),
+    burstUsedSeen: prev.burstUsedSeen || state.burst?.side === targetSide,
+    kameoRevealed: prev.kameoRevealed || isKameoVisible(state, targetSide),
+    revealedConditions: mergeObservedConditions(prev.revealedConditions, state, targetSide),
+  }
+}
+
 function updateSideIntel(
   state: FightState,
   observerSide: FightSide,
@@ -91,19 +109,13 @@ function updateSideIntel(
 ): OpponentIntel {
   const observer = state[observerSide]
   const targetSide: FightSide = observerSide === 'player' ? 'opponent' : 'player'
-  const target = state[targetSide]
-  const blinded = senseDeprived(observer, 'sight')
-
   const impactHit = detectCleanHit(state, observerSide, prev.lastImpactSequence)
   const next: OpponentIntel = {
     cleanHitsLanded: impactHit ? prev.cleanHitsLanded + 1 : prev.cleanHitsLanded,
     lastImpactSequence: impactHit ? state.impact!.sequence : prev.lastImpactSequence,
-    auraObserved: prev.auraObserved || (!blinded && hasVisibleActiveNen(target)),
-    burstUsedSeen: prev.burstUsedSeen || (!blinded && state.burst?.side === targetSide),
-    kameoRevealed: prev.kameoRevealed || (!blinded && isKameoVisible(state, targetSide)),
-    revealedConditions: blinded
-      ? prev.revealedConditions
-      : mergeObservedConditions(prev.revealedConditions, state, targetSide),
+    ...(senseDeprived(observer, 'sight')
+      ? visibleIntelFields(prev)
+      : observeVisibleIntel(state, targetSide, prev)),
   }
   return intelUnchanged(prev, next) ? prev : next
 }

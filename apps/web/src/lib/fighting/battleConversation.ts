@@ -39,14 +39,13 @@ export function speakBattleWords(state: FightState, side: FightSide, text?: stri
   const other = side === 'player' ? 'opponent' : 'player'
   const reply = autoReplyAvailable(state, side)
   if (reply) state = speakPaperWords(state, 'opponent', 'Je t’écoute.')
-  return battleUtteranceState(state, side, other, reply)
+  return battleUtteranceState(state, side, { other, reply })
 }
 
 function battleUtteranceState(
   state: FightState,
   side: FightSide,
-  other: FightSide,
-  reply: boolean,
+  { other, reply }: { other: FightSide; reply: boolean },
 ): FightState {
   const speakerBody =
     state[side].id === 'bonolenov' ? recordVocalExchange(state[side]) : state[side]

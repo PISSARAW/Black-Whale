@@ -145,34 +145,39 @@ export function createPhinksDisintegration() {
     origin: { value: new Vector3() },
   }
 
+  function updateFracture(context: VictoryContext, charged: boolean) {
+    const { age, victim, comfort } = context
+    const breakup = ease((age - PHINKS_FRACTURE) / (PHINKS_DISINTEGRATED - PHINKS_FRACTURE))
+    if (age >= PHINKS_DISINTEGRATED) {
+      context.save(victim.root)
+      victim.root.visible = false
+    } else {
+      uniforms.fracture.value = breakup
+      uniforms.origin.value.copy(victim.root.position)
+      uniforms.edgeLight.value = (comfort.flashes && charged ? 0.93 : 0.23) * (1 - 0.54 * breakup)
+      victim.root.traverseVisible((node) => {
+        if (!(node instanceof Mesh)) return
+        const convert = (source: Material) => {
+          if (source instanceof ShaderMaterial) return source
+          const held = materials.get(source)
+          if (held) return held
+          const fractured = fractureMaterial(source, uniforms)
+          materials.set(source, fractured)
+          return fractured
+        }
+        context.material(
+          node,
+          Array.isArray(node.material) ? node.material.map(convert) : convert(node.material),
+        )
+      })
+    }
+  }
+
   return {
     apply(context: VictoryContext, origin: Vector3, charged: boolean) {
       const { age, victim, comfort, camera } = context
       if (age < PHINKS_FRACTURE) return
-      const breakup = ease((age - PHINKS_FRACTURE) / (PHINKS_DISINTEGRATED - PHINKS_FRACTURE))
-      if (age >= PHINKS_DISINTEGRATED) {
-        context.save(victim.root)
-        victim.root.visible = false
-      } else {
-        uniforms.fracture.value = breakup
-        uniforms.origin.value.copy(victim.root.position)
-        uniforms.edgeLight.value = (comfort.flashes && charged ? 0.93 : 0.23) * (1 - 0.54 * breakup)
-        victim.root.traverseVisible((node) => {
-          if (!(node instanceof Mesh)) return
-          const convert = (source: Material) => {
-            if (source instanceof ShaderMaterial) return source
-            const held = materials.get(source)
-            if (held) return held
-            const fractured = fractureMaterial(source, uniforms)
-            materials.set(source, fractured)
-            return fractured
-          }
-          context.material(
-            node,
-            Array.isArray(node.material) ? node.material.map(convert) : convert(node.material),
-          )
-        })
-      }
+      updateFracture(context, charged)
 
       const elapsed = (age - PHINKS_FRAGMENT_BURST) / FIGHT_FPS
       if (elapsed < 0 || age >= PHINKS_DEBRIS_SETTLE + 24) return

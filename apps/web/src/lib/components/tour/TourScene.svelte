@@ -1,5 +1,7 @@
 <script lang="ts">
-  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
+  import TourTouchActions from './TourTouchActions.svelte'
+  import { createTourOwlFilm } from './tourOwlFilm'
+  import { approachTourFocus } from './tourFocus'
   /**
    * The first-person walk through the reconstruction.
    *
@@ -32,7 +34,6 @@
   } from '$lib/tour/blueprint'
   import {
     EMPTY_WORLD,
-    OWL_FILM_SECONDS,
     aimedSolid,
     aimedSpace,
     centroid,
@@ -90,7 +91,11 @@
     walkInput,
     wayOutOfInterior,
   } from '$lib/tour/navigation'
-  import { StairNavigator, stairInteractionArrival, type JumpArrival } from '$lib/tour/StairNavigator'
+  import {
+    StairNavigator,
+    stairInteractionArrival,
+    type JumpArrival,
+  } from '$lib/tour/StairNavigator'
   import { SurfaceWalker } from '$lib/tour/SurfaceWalker'
   import {
     beginTierTransition,
@@ -1098,23 +1103,6 @@
       const insets = new SceneInsets(THREE)
 
       /**
-       * Secret Window's film: where the bird was, and the playback of it.
-       *
-       * The owl is materialized for twenty seconds and hands back the last
-       * ten, so what the walk has to keep is the bird's own path — sampled on
-       * the same tenth of a second the visitor's is, and for the same reason:
-       * everything else in the scene is a function of the clock and can simply
-       * be run again, and this is not. The playback is a third camera walking
-       * that path, inset in the corner exactly as the eye's feed is.
-       */
-      let filmCamera: import('three').PerspectiveCamera | null = null
-      let filmDeck: Built | null = null
-      const filmTrack: { at: number; where: Vec2; y: number; tierId: string }[] = []
-      let showing: { through: number; frames: typeof filmTrack } | null = null
-      /** Whether there was a bird last frame, which is how its going is noticed. */
-      let owlWasUp = false
-
-      /**
        * The decks the far ends of Fugetsu's tunnel are looking at.
        *
        * The same arrangement as the eye's deck and for the same reason: a mouth
@@ -1130,8 +1118,25 @@
        * it — unless the eye is watching it, or a tunnel is looking through it,
        * in which case it stays.
        */
+      const film = createTourOwlFilm<Built>({
+        scene,
+        camera: () => new THREE.PerspectiveCamera(64, 1, NEAR_PLANE, VIEW_DISTANCE),
+        deck: (id) => buildDeck(id).built,
+        active: () => visible,
+        retained: (deck) => portalDecks.includes(deck) || deck === eyeDeck,
+        owl: () => {
+          const bird = apparitions[`owl:${world.owl}`]
+          const space = world.owl ? ship.spaces.get(world.owl) : null
+          return bird && space ? { position: bird.root.position, tierId: space.tierId } : null
+        },
+      })
+
       const heldElsewhere = (built: Built | null) =>
-        Boolean(built) && (built === eyeDeck || built === filmDeck || built === spiralDeck || portalDecks.includes(built!))
+        Boolean(built) &&
+        (built === eyeDeck ||
+          built === film.deck ||
+          built === spiralDeck ||
+          portalDecks.includes(built!))
 
       /** The plan as Nen leaves it: what is drawn, and what still stops you. */
       let activePlan: TierPlan | null = null
@@ -1177,7 +1182,12 @@
        * and in the bounding sphere `buildTierMesh` measured for it.
        */
       const deckOptions = (id: string) => ({
-        ship, world, tierId: id, reveal, detailMode: roomDetailMode, dustScale: quality.dustScale,
+        ship,
+        world,
+        tierId: id,
+        reveal,
+        detailMode: roomDetailMode,
+        dustScale: quality.dustScale,
       })
       const extrude = (id: string) => tierView.build(deckOptions(id))
 
@@ -1228,7 +1238,9 @@
       }
 
       const prepareLandings = prepareStairLandings({
-        THREE, runtime, ship,
+        THREE,
+        runtime,
+        ship,
         readPlan: (id) => walkedPlan(ship, world, id),
         readDeck: (id) => decks[id],
         prepareActors: prepareLandingActors,
@@ -1598,7 +1610,8 @@
         if (spiralDeck !== farDeck) {
           const previous = spiralDeck
           spiralDeck = farDeck
-          if (previous && previous !== visible && !heldElsewhere(previous)) scene.remove(previous.root)
+          if (previous && previous !== visible && !heldElsewhere(previous))
+            scene.remove(previous.root)
           if (farDeck && farDeck !== visible) scene.add(farDeck.root)
         }
 
@@ -2167,7 +2180,9 @@
         return landingActorSteps({
           actors: landingActors?.(space.tierId, space.id) ?? [],
           prepare: (seen) =>
-            apparitionView.prepare(seen.id, apparitionKey(seen, sight), () => buildApparition(seen)),
+            apparitionView.prepare(seen.id, apparitionKey(seen, sight), () =>
+              buildApparition(seen),
+            ),
         })
       }
 
@@ -3796,7 +3811,8 @@
           beginGangway(found.link)
           return
         }
-        if (found) crossStair(found.to, stairInteractionArrival(found, { facing: yaw, looking: pitch }))
+        if (found)
+          crossStair(found.to, stairInteractionArrival(found, { facing: yaw, looking: pitch }))
       }
 
       function beginGangway(link: Link) {
@@ -4112,96 +4128,7 @@
       let takenCoin: string | null = null
       /** How much of the current second of the bird's twenty has gone by. */
       let sinceOwlSecond = 0
-      /** How long since the bird's own path was last sampled, in seconds. */
-      let sinceFilmSample = 0
       let sincePolarity = 0
-
-      /**
-       * Where the bird is this tenth of a second, kept for the last ten.
-       *
-       * Read off the apparition rather than off the world, because the world
-       * only knows which room it is in: what the film is worth is the flight,
-       * and the flight is the drift the scene gives it inside that room.
-       */
-      function recordTheOwl(clock: number, delta: number) {
-        sinceFilmSample += delta
-        if (sinceFilmSample < 0.1) return
-        sinceFilmSample = 0
-        const bird = apparitions[`owl:${world.owl}`]
-        const space = world.owl ? ship.spaces.get(world.owl) : null
-        if (!bird || !space) return
-        filmTrack.push({
-          at: clock,
-          where: [bird.root.position.x, bird.root.position.z],
-          y: bird.root.position.y,
-          tierId: space.tierId,
-        })
-        while (filmTrack.length && filmTrack[0].at < clock - OWL_FILM_SECONDS) filmTrack.shift()
-      }
-
-      /** Takes the film off the bird that has just gone, and starts it running. */
-      function startFilm() {
-        endFilm()
-        if (!filmTrack.length) return
-        const frames = [...filmTrack]
-        filmTrack.length = 0
-
-        filmCamera = new THREE.PerspectiveCamera(64, 1, NEAR_PLANE, VIEW_DISTANCE)
-        // The deck it was flying over has to be in the scene to be filmed on,
-        // however far from the visitor's own it is — the same arrangement the
-        // eye's feed uses, and it is taken away again when the film ends.
-        const built = buildDeck(frames[frames.length - 1].tierId).built
-        if (built !== visible) {
-          scene.add(built.root)
-          filmDeck = built
-        }
-        showing = { through: 0, frames }
-      }
-
-      /** Puts the film away: the camera, and the deck it was shown against. */
-      function endFilm() {
-        if (filmDeck) {
-          if (filmDeck !== visible && !portalDecks.includes(filmDeck) && filmDeck !== eyeDeck) {
-            scene.remove(filmDeck.root)
-          }
-          filmDeck = null
-        }
-        filmCamera = null
-        showing = null
-      }
-
-      /**
-       * The playback, walked at the speed it was recorded.
-       *
-       * Ten seconds, and then the corner goes back to being the corner. The
-       * camera looks the way the bird was going, which is the nearest the walk
-       * can get to what a bird was looking at.
-       */
-      function runFilm(delta: number) {
-        if (!showing || !filmCamera) return
-        showing.through += delta
-        if (showing.through >= OWL_FILM_SECONDS) {
-          endFilm()
-          return
-        }
-        const frames = showing.frames
-        const wanted = frames[0].at + showing.through
-        let index = frames.findIndex((frame) => frame.at >= wanted)
-        if (index < 0) index = frames.length - 1
-        const later = frames[index]
-        const earlier = frames[Math.max(0, index - 1)]
-        const span = later.at - earlier.at || 1
-        const along = Math.min(1, Math.max(0, (wanted - earlier.at) / span))
-        const x = earlier.where[0] + (later.where[0] - earlier.where[0]) * along
-        const z = earlier.where[1] + (later.where[1] - earlier.where[1]) * along
-        filmCamera.position.set(x, earlier.y + (later.y - earlier.y) * along, z)
-        // Facing the way it was flying, and facing the room when it was still.
-        const ahead = frames[Math.min(frames.length - 1, index + 4)]
-        const dx = ahead.where[0] - x
-        const dz = ahead.where[1] - z
-        filmCamera.rotation.set(0, 0, 0)
-        filmCamera.rotateY(Math.hypot(dx, dz) > 0.15 ? Math.atan2(dx, dz) : showing.through * 0.6)
-      }
 
       let aimedId: string | null = null
       let aimedSolidId: string | null = null
@@ -4397,16 +4324,8 @@
             sinceOwlSecond -= 1
             onOwlSecond?.()
           }
-          recordTheOwl(clock, delta)
         } else sinceOwlSecond = 0
-
-        // And when it is not there any more, what it recorded is played back.
-        // Any disappearance: called in early or run out, the bird hands over
-        // the same ten seconds, so the walk shows them the same way.
-        const owlUp = Boolean(world.owl)
-        if (owlWasUp && !owlUp) startFilm()
-        owlWasUp = owlUp
-        runFilm(delta)
+        film.tick(clock, delta, Boolean(world.owl))
 
         const walked = activePlan ?? plan
         // What the aura is holding is out of the deck's own wall list, so it
@@ -4480,7 +4399,11 @@
          * leaned towards, not the position — and so does the visitor's own dial.
          */
         const walking =
-          !inputDisabled && !movementDisabled && !arc && !$comfort.jumpOnly && !gangwayView?.showingLockdown
+          !inputDisabled &&
+          !movementDisabled &&
+          !arc &&
+          !$comfort.jumpOnly &&
+          !gangwayView?.showingLockdown
         const pace =
           (running ? SPRINT_SPEED : WALK_SPEED) *
           paceOf(world.body) *
@@ -4521,7 +4444,12 @@
           const from = pointer
           const movement: Vec2 = [velocity[0] * delta, velocity[1] * delta]
           const stepSpace = spaceAt(plan, pointer)
-          if (!casinoSpiral.origin && !gangwayWalk && !seated && linkIsOpen(world, stepSpace?.id ?? null)) {
+          if (
+            !casinoSpiral.origin &&
+            !gangwayWalk &&
+            !seated &&
+            linkIsOpen(world, stepSpace?.id ?? null)
+          ) {
             casinoSpiral.enter(stepSpace?.id ?? null, pointer, target)
           }
           const spiralStep = casinoSpiral.advance(movement)
@@ -4545,7 +4473,10 @@
             yaw += spiralStep.turn
             if (spiralStep.landing) {
               goTo(spiralStep.landing.spaceId, {
-                at: pointer, facing: yaw, looking: pitch, surfaceHeight: spiralStep.landing.floor,
+                at: pointer,
+                facing: yaw,
+                looking: pitch,
+                surfaceHeight: spiralStep.landing.floor,
               })
               return
             }
@@ -4575,14 +4506,16 @@
           // pushing into a bulkhead has stopped walking, and their gait and their
           // footsteps both have to know it.
           travelledOnFoot += Math.hypot(pointer[0] - from[0], pointer[1] - from[1])
-          const stair = spiralStep ? null : stairs.cross({
-            spaceId: spaceAt(plan, pointer)?.id ?? null,
-            from,
-            at: pointer,
-            height: surfaces.floor(walked, pointer),
-            enabled:
-              !gangwayWalk && !seated && linkIsOpen(world, spaceAt(plan, pointer)?.id ?? null),
-          })
+          const stair = spiralStep
+            ? null
+            : stairs.cross({
+                spaceId: spaceAt(plan, pointer)?.id ?? null,
+                from,
+                at: pointer,
+                height: surfaces.floor(walked, pointer),
+                enabled:
+                  !gangwayWalk && !seated && linkIsOpen(world, spaceAt(plan, pointer)?.id ?? null),
+              })
           if (stair) {
             crossStair(stair.spaceId, { ...stair.arrival, facing: yaw, looking: pitch })
             return
@@ -4597,10 +4530,10 @@
         const standing = casinoSpiral.origin
           ? (ship.spaces.get(casinoSpiral.origin.spaceId) ?? null)
           : gangwayWalk
-          ? (ship.spaces.get(
-              gangwayWalk.reverse ? gangwayWalk.path.link.to : gangwayWalk.path.link.from,
-            ) ?? null)
-          : spaceAt(plan, pointer)
+            ? (ship.spaces.get(
+                gangwayWalk.reverse ? gangwayWalk.path.link.to : gangwayWalk.path.link.from,
+              ) ?? null)
+            : spaceAt(plan, pointer)
         applyVisibility(standing?.id ?? null)
 
         const { gait, bob, breath } = walkingHeadMotion({
@@ -4681,15 +4614,15 @@
         })
 
         if (depthOfField) {
-          picker.setFromCamera(RETICLE, camera)
-          const intersectables: import('three').Object3D[] = []
-          if (visible) intersectables.push(visible.root)
-          for (const s of Object.values(solids)) {
-            if (s) intersectables.push(s.mesh)
-          }
-          const hits = picker.intersectObjects(intersectables, true)
-          const targetDistance = hits.length > 0 ? hits[0].distance : 100.0
-          focusDistance += (targetDistance - focusDistance) * Math.min(1, delta * 5)
+          focusDistance = approachTourFocus({
+            picker,
+            reticle: RETICLE,
+            camera,
+            visible: visible?.root,
+            solids,
+            focusDistance,
+            delta,
+          })
           depthOfField.uniforms.focus.value = focusDistance
         }
 
@@ -4992,7 +4925,10 @@
         if (!gangwayView?.renderLockdown(renderer, scene)) composer.render()
         if (canvas?.hasAttribute(TOUR_CAMERA_TRACE_ATTRIBUTE)) {
           traceTourCamera(canvas, frame, {
-            tierId: currentTierId, spaceId: standing?.id ?? null, ground, onSpiral: casinoSpiral.origin !== null,
+            tierId: currentTierId,
+            spaceId: standing?.id ?? null,
+            ground,
+            onSpiral: casinoSpiral.origin !== null,
           })
         }
 
@@ -5003,8 +4939,8 @@
           eye: eyeCamera,
           spin: now / 6000,
           feed,
-          film: filmCamera,
-          showing: Boolean(showing),
+          film: film.camera,
+          showing: film.showing,
           record,
         })
         prepareLandings.frame(currentTierId, frameStarted, standing?.id ?? null)
@@ -5310,82 +5246,16 @@
       </div>
     {/if}
 
-    <!-- Clear of the page's own read-out, which sits in the bottom corner. -->
-    <div class="absolute bottom-14 right-4 flex flex-col items-end gap-2">
-      {#if touchUseLabel}
-        <button
-          type="button"
-          onclick={() => take?.()}
-          class="max-w-[13rem] touch-none rounded border border-[#FFD700]/60 bg-[#050505]/90 px-3 py-2 text-left text-xs leading-snug text-[#FFD700]"
-        >
-          {touchUseLabel}
-        </button>
-      {/if}
-      {#if aiming && hands}
-        <!-- Two techniques, so two buttons: a phone has no Hatsu wheel, and
-             which of the two pages is being cast is the whole of the ability. -->
-        {#each [{ hand: 'first' as const, name: hands.first }, { hand: 'second' as const, name: hands.second }] as page (page.hand)}
-          <button
-            type="button"
-            onclick={() => castNow?.(page.hand)}
-            aria-label={`${touchLabels.cast} · ${page.name}`}
-            class="max-w-[13rem] touch-none truncate rounded border bg-[#050505]/90 px-3 py-2 text-xs"
-            style:border-color={auraColour
-              ? `color-mix(in srgb, ${auraColour} 70%, transparent)`
-              : ''}
-            style:color={auraColour ?? '#FFFFF0'}
-          >
-            {page.name}
-          </button>
-        {/each}
-      {:else if aiming && tunes}
-        <!-- And three, for the instrument: a phone has no Hatsu wheel, so
-             the three airs are three buttons in the order the keys play them. -->
-        {#each [{ hand: 'first' as const, name: tunes.first }, { hand: 'second' as const, name: tunes.second }, { hand: 'third' as const, name: tunes.third }] as air (air.hand)}
-          <button
-            type="button"
-            onclick={() => castNow?.(air.hand)}
-            aria-label={`${touchLabels.cast} · ${air.name}`}
-            class="max-w-[13rem] touch-none truncate rounded border bg-[#050505]/90 px-3 py-2 text-xs"
-            style:border-color={auraColour
-              ? `color-mix(in srgb, ${auraColour} 70%, transparent)`
-              : ''}
-            style:color={auraColour ?? '#FFFFF0'}
-          >
-            {air.name}
-          </button>
-        {/each}
-      {:else if aiming && twoHanded}
-        <!-- And two for the two hands, which need no names: the marks are what
-             the technique puts on, and a phone draws them as the walk draws them
-             over the things themselves. -->
-        {#each [{ hand: 'first' as const, glyph: '☀' }, { hand: 'second' as const, glyph: '☾' }] as mark (mark.hand)}
-          <button
-            type="button"
-            onclick={() => castNow?.(mark.hand)}
-            aria-label={`${touchLabels.cast} · ${mark.glyph}`}
-            class="touch-none rounded border bg-[#050505]/90 px-4 py-2 text-sm"
-            style:border-color={auraColour
-              ? `color-mix(in srgb, ${auraColour} 70%, transparent)`
-              : ''}
-            style:color={auraColour ?? '#FFFFF0'}
-          >
-            <MangaIcon glyph={mark.glyph} />
-          </button>
-        {/each}
-      {:else if aiming}
-        <button
-          type="button"
-          onclick={() => castNow?.()}
-          class="touch-none rounded border bg-[#050505]/90 px-4 py-2 text-xs uppercase tracking-widest"
-          style:border-color={auraColour
-            ? `color-mix(in srgb, ${auraColour} 70%, transparent)`
-            : ''}
-          style:color={auraColour ?? '#FFFFF0'}
-        >
-          {touchLabels.cast}
-        </button>
-      {/if}
-    </div>
+    <TourTouchActions
+      {touchUseLabel}
+      castLabel={touchLabels.cast}
+      {take}
+      {castNow}
+      {aiming}
+      {hands}
+      {tunes}
+      {twoHanded}
+      {auraColour}
+    />
   {/if}
 </div>

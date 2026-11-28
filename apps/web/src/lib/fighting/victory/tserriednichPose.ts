@@ -60,8 +60,7 @@ function walk(actor: VictoryActor, progress: number, cycles: number) {
 function collapse(
   context: VictoryContext,
   actor: VictoryActor,
-  progress: number,
-  direction: number,
+  { progress, direction }: { progress: number; direction: number },
 ) {
   if (!progress) return
   const roll = progress ** 1.58
@@ -83,15 +82,92 @@ function collapse(
   actor.root.position.y -= visibleVictoryBounds(actor.root).min.y - 0.012
 }
 
-export function tserriednichVictoryPose(context: VictoryContext) {
-  const { hero, victim, futurePerspective } = context
-  const time = context.frame.elapsed
+function futureMotion(time: number, futurePerspective: VictoryContext['futurePerspective']) {
   const visionary = time >= FUTURE_VISION_START && time < FUTURE_EYES_OPEN
   const perceived = visionary || futurePerspective === 'perceived'
   const shared = time >= FUTURE_ZETSU_END
   const past = time < FUTURE_EYES_OPEN
   const replay = visionary ? (time - FUTURE_VISION_START) * 1.38 : time - FUTURE_EYES_OPEN
   const motion = past && !visionary ? 0 : Math.max(0, replay)
+  return { visionary, perceived, shared, past, motion }
+}
+
+function futureOutcome(context: VictoryContext) {
+  const shot =
+    context.state.finishReason === 'knockout' && context.state.finishingShot !== undefined
+  const knockedDown =
+    context.state.finishReason === 'knockout' || context.state.finishReason === 'technical-knockout'
+  return { shot, knockedDown }
+}
+
+function futurePhase(
+  time: number,
+  {
+    visionary,
+    past,
+    shared,
+  }: Pick<ReturnType<typeof futureMotion>, 'visionary' | 'past' | 'shared'>,
+) {
+  if (visionary) return 'vision'
+  if (past) return 'zetsu'
+  if (!shared) return 'divergence'
+  return time < FUTURE_VERDICT ? 'reality' : 'verdict'
+}
+
+function poseFutureResolution(
+  context: VictoryContext,
+  {
+    aim,
+    origin,
+    raise,
+    stagger,
+    shot,
+    knockedDown,
+    perceived,
+  }: {
+    aim: Vector3
+    origin: Vector3
+    raise: number
+    stagger: number
+    shot: boolean
+    knockedDown: boolean
+    perceived: boolean
+  },
+) {
+  const { hero, victim } = context
+  const time = context.frame.elapsed
+  if (shot) {
+    const shoulder = joint(hero, 'shoulder-right').getWorldPosition(new Vector3())
+    const reach = aim
+      .clone()
+      .sub(shoulder)
+      .normalize()
+      .multiplyScalar(hero.height * 0.34)
+    const recoil = 0.13 * stagger
+    reach.multiplyScalar(1 - recoil).add(new Vector3(0, recoil * 0.63, 0))
+    guideFutureHand(hero, 'right', { target: shoulder.add(reach), amount: raise })
+  }
+  if (knockedDown) {
+    collapse(context, victim, {
+      progress: Math.min(1, Math.max(0, (time - FUTURE_FALL) / (FUTURE_LANDING - FUTURE_FALL))),
+      direction: -1,
+    })
+  }
+  const release = ease((time - FUTURE_VERDICT) / 0.52)
+  if (release > 0) turnVictoryChest(context, hero, [release * 0.09, -release * 0.06, 0])
+  const witness = ease((time - 4.05) / 0.75) * 0.42
+  if (!perceived && witness > 0) {
+    const look = victim.head.getWorldPosition(new Vector3())
+    const checkMark = ease((time - FUTURE_VERDICT) / 0.31) * (1 - ease((time - 10.02) / 0.47))
+    look.lerp(origin.clone().setY(0.06), checkMark)
+    face(hero, look, witness + (1 - witness) * ease((time - FUTURE_ZETSU_END) / 0.34))
+  }
+}
+
+function poseFutureApproach(context: VictoryContext) {
+  const { hero, victim, futurePerspective } = context
+  const time = context.frame.elapsed
+  const { visionary, perceived, shared, past, motion } = futureMotion(time, futurePerspective)
   const origin = new Vector3(hero.root.position.x - 0.14, 0, AXIS)
   const realStep = past ? 0 : ease((motion - 0.25) / 0.95)
   const step = perceived ? 0 : realStep
@@ -99,10 +175,6 @@ export function tserriednichVictoryPose(context: VictoryContext) {
   const opening = ease(time / FUTURE_VISION_START)
   const gap = Math.max(0.62, (hero.width + victim.width) * 0.43)
   const turn = shared ? ease((time - TURN_START) / 0.66) : 0
-  const shot =
-    context.state.finishReason === 'knockout' && context.state.finishingShot !== undefined
-  const knockedDown =
-    context.state.finishReason === 'knockout' || context.state.finishReason === 'technical-knockout'
 
   const realPosition = origin.clone().add(new Vector3(-realStep * 0.83, 0, realStep * 1.43))
   hero.root.position.copy(perceived ? origin : realPosition)
@@ -118,6 +190,15 @@ export function tserriednichVictoryPose(context: VictoryContext) {
   groundVictoryActor(hero)
   groundVictoryActor(victim)
 
+  return { visionary, perceived, shared, past, motion, origin, realPosition, turn }
+}
+
+export function tserriednichVictoryPose(context: VictoryContext) {
+  const { hero, victim } = context
+  const time = context.frame.elapsed
+  const { visionary, perceived, shared, past, motion, origin, realPosition, turn } =
+    poseFutureApproach(context)
+  const { shot, knockedDown } = futureOutcome(context)
   const attack = ease((motion - 1.25) / 0.33) * (1 - ease((motion - 1.62) / 0.34))
   const inspect = ease((motion - 1.62) / 0.55)
   const lean = 0.22 * inspect * (1 - turn)
@@ -130,53 +211,30 @@ export function tserriednichVictoryPose(context: VictoryContext) {
   victimLook.lerp(origin.clone().add(new Vector3(-1.26, 0.12, 0.12)), inspect)
   victimLook.lerp(hero.head.getWorldPosition(new Vector3()), turn)
   face(victim, victimLook, 0.85)
-  if (perceived) collapse(context, hero, Math.min(1, Math.max(0, (motion - 1.57) / 0.43)), 1)
+  if (perceived)
+    collapse(context, hero, {
+      progress: Math.min(1, Math.max(0, (motion - 1.57) / 0.43)),
+      direction: 1,
+    })
 
   const aim = victim.root.position.clone().add(new Vector3(0, victim.height * 0.72, 0))
   const wrist = joint(hero, 'hand-right')
   const raise = ease((time - 7.47) / 0.58) * (1 - ease((time - 8.83) / 0.48))
-  if (shared && shot) {
-    const shoulder = joint(hero, 'shoulder-right').getWorldPosition(new Vector3())
-    const reach = aim
-      .clone()
-      .sub(shoulder)
-      .normalize()
-      .multiplyScalar(hero.height * 0.34)
-    const recoil = 0.13 * stagger
-    reach.multiplyScalar(1 - recoil).add(new Vector3(0, recoil * 0.63, 0))
-    guideFutureHand(hero, 'right', { target: shoulder.add(reach), amount: raise })
-  }
-  if (shared && knockedDown) {
-    collapse(
-      context,
-      victim,
-      Math.min(1, Math.max(0, (time - FUTURE_FALL) / (FUTURE_LANDING - FUTURE_FALL))),
-      -1,
-    )
-  }
-  const release = ease((time - FUTURE_VERDICT) / 0.52)
-  if (release > 0) turnVictoryChest(context, hero, [release * 0.09, -release * 0.06, 0])
-  const witness = ease((time - 4.05) / 0.75) * 0.42
-  if (!perceived && witness > 0) {
-    const look = victim.head.getWorldPosition(new Vector3())
-    const checkMark = ease((time - FUTURE_VERDICT) / 0.31) * (1 - ease((time - 10.02) / 0.47))
-    look.lerp(origin.clone().setY(0.06), checkMark)
-    face(hero, look, witness + (1 - witness) * ease((time - FUTURE_ZETSU_END) / 0.34))
-  }
+  poseFutureResolution(context, {
+    aim,
+    origin,
+    raise,
+    stagger,
+    shot: shared && shot,
+    knockedDown: shared && knockedDown,
+    perceived,
+  })
 
   return {
     origin,
     realPosition,
     perceived,
-    phase: visionary
-      ? 'vision'
-      : past
-        ? 'zetsu'
-        : !shared
-          ? 'divergence'
-          : time < FUTURE_VERDICT
-            ? 'reality'
-            : 'verdict',
+    phase: futurePhase(time, { visionary, past, shared }),
     aim,
     wrist,
     raise,
@@ -186,88 +244,87 @@ export function tserriednichVictoryPose(context: VictoryContext) {
   }
 }
 
-export function tserriednichVictoryCamera(
+function futurePortraitShot(
   context: VictoryContext,
-  { origin, realPosition, shot, knockedDown }: ReturnType<typeof tserriednichVictoryPose>,
-) {
-  const height = Math.max(context.hero.height, context.victim.height)
-  const time = context.frame.elapsed
-  const split = context.futurePerspective !== undefined
-  const motion = context.comfort.camera ?? 1
-  const resolution = shot ? FUTURE_SHOT : knockedDown ? FUTURE_FALL : FUTURE_VERDICT
-  const target = new Vector3(origin.x + (split ? 0.22 : 0.43), height * 0.45, 0.3)
-  const offset = new Vector3(1.7, 1.4, 4.25)
-  const closeUp = motion > 0 && !split && tserriednichPortrait(time)
-  if (closeUp) {
-    const actor = context[closeUp]
-    const orientation = actor.head.getWorldQuaternion(new Quaternion())
-    const start = closeUp === 'hero' ? FUTURE_CLOSING_EYES : FUTURE_RECOGNITION
-    const end = closeUp === 'hero' ? FUTURE_VISION_START : FUTURE_RECOGNITION_END
-    const drift = ease((time - start) / (end - start))
-    const head = actor.head.getWorldPosition(new Vector3())
-    head.add(new Vector3(0.02, -0.025, 0.1).applyQuaternion(orientation))
-    victoryShot(context, {
-      target: head,
-      offset: new Vector3(0.3 - drift * 0.22, 0.07, 1.29 - drift * 0.22).applyQuaternion(
-        orientation,
-      ),
-      width: 0.48,
-      height: 0.62,
-    })
-    return
-  }
-  if (split) {
-    const slide = ease((time - FUTURE_EYES_OPEN) / (FUTURE_ZETSU_END - FUTURE_EYES_OPEN)) * motion
-    offset.x += slide * 0.52
-    offset.y -= slide * 0.3
-    target.x -= slide * 0.1
-  }
-  let width = split ? 3.92 : 4.5
-  if (!split && motion > 0) {
-    if (time < FUTURE_VISION_START) {
-      // Low approach, with the seam and both sets of feet already in frame.
-      const advance = ease(time / FUTURE_VISION_START)
-      target.lerp(new Vector3(origin.x + 1.05 - advance * 0.14, height * 0.49, -0.08), motion)
-      offset.lerp(new Vector3(-1.65, 0.56, 4.1 - advance * 0.25), motion)
-      width -= 0.7 * motion
-    } else if (time < FUTURE_VISION_HIT) {
-      // The forecast explains the line of attack from above before cutting on contact.
-      const approach = ease(
-        (time - FUTURE_VISION_START) / (FUTURE_VISION_HIT - FUTURE_VISION_START),
-      )
-      target.lerp(new Vector3(origin.x + 0.83 - approach * 0.47, height * 0.43, -0.08), motion)
-      offset.lerp(new Vector3(2.45 - approach * 1.28, 2.4 - approach * 0.68, 3.84), motion)
-      width -= 0.65 * motion
-    } else if (time < FUTURE_EYES_OPEN) {
-      target.lerp(new Vector3(origin.x - 0.15, height * 0.39, 0.03), motion)
-      offset.lerp(new Vector3(0.25, 0.86, 4.15), motion)
-      width -= 0.55 * motion
-    } else if (time < resolution) {
-      // Foreground prince. The rival's turn is visible before any resolution.
-      const turn = ease((time - FUTURE_ZETSU_END) / (resolution - FUTURE_ZETSU_END))
-      target.lerp(new Vector3(origin.x + 0.16, height * 0.46, 0.46), motion)
-      offset.lerp(new Vector3(-1.29 + turn * 1.04, 0.35 + turn * 0.22, 4.35 - turn * 0.57), motion)
-      width -= 0.65 * motion
-    } else if (time < FUTURE_VERDICT) {
-      target.lerp(new Vector3(origin.x + 0.61, height * 0.42, 0.39), motion)
-      offset.lerp(new Vector3(1.55, 0.66, 4.15), motion)
-      width -= 0.3 * motion
-    } else {
-      // Hold the two endpoints of the floor joint for the final glance.
-      const settle = ease((time - FUTURE_VERDICT) / 1.5)
-      target.lerp(new Vector3(origin.x + 0.52 + settle * 0.12, height * 0.39, 0.36), motion)
-      offset.lerp(
-        new Vector3(1.4 + settle * 1.12, 1.92 - settle * 0.96, 4.65 - settle * 0.56),
-        motion,
-      )
-    }
-  }
+  closeUp: 'hero' | 'victim',
+  time: number,
+): void {
+  const actor = context[closeUp]
+  const orientation = actor.head.getWorldQuaternion(new Quaternion())
+  const start = closeUp === 'hero' ? FUTURE_CLOSING_EYES : FUTURE_RECOGNITION
+  const end = closeUp === 'hero' ? FUTURE_VISION_START : FUTURE_RECOGNITION_END
+  const drift = ease((time - start) / (end - start))
+  const head = actor.head.getWorldPosition(new Vector3())
+  head.add(new Vector3(0.02, -0.025, 0.1).applyQuaternion(orientation))
   victoryShot(context, {
-    target,
-    offset,
-    width: width + context.victim.width * 0.55,
-    height: height + 0.28,
+    target: head,
+    offset: new Vector3(0.3 - drift * 0.22, 0.07, 1.29 - drift * 0.22).applyQuaternion(orientation),
+    width: 0.48,
+    height: 0.62,
   })
+}
+
+function futureWideTrack({
+  time,
+  motion,
+  resolution,
+  origin,
+  height,
+  target,
+  offset,
+}: {
+  time: number
+  motion: number
+  resolution: number
+  origin: Vector3
+  height: number
+  target: Vector3
+  offset: Vector3
+}): number {
+  if (motion <= 0) return 4.5
+  let width = 4.5
+  if (time < FUTURE_VISION_START) {
+    // Low approach, with the seam and both sets of feet already in frame.
+    const advance = ease(time / FUTURE_VISION_START)
+    target.lerp(new Vector3(origin.x + 1.05 - advance * 0.14, height * 0.49, -0.08), motion)
+    offset.lerp(new Vector3(-1.65, 0.56, 4.1 - advance * 0.25), motion)
+    width -= 0.7 * motion
+  } else if (time < FUTURE_VISION_HIT) {
+    // The forecast explains the line of attack from above before cutting on contact.
+    const approach = ease((time - FUTURE_VISION_START) / (FUTURE_VISION_HIT - FUTURE_VISION_START))
+    target.lerp(new Vector3(origin.x + 0.83 - approach * 0.47, height * 0.43, -0.08), motion)
+    offset.lerp(new Vector3(2.45 - approach * 1.28, 2.4 - approach * 0.68, 3.84), motion)
+    width -= 0.65 * motion
+  } else if (time < FUTURE_EYES_OPEN) {
+    target.lerp(new Vector3(origin.x - 0.15, height * 0.39, 0.03), motion)
+    offset.lerp(new Vector3(0.25, 0.86, 4.15), motion)
+    width -= 0.55 * motion
+  } else if (time < resolution) {
+    // Foreground prince. The rival's turn is visible before any resolution.
+    const turn = ease((time - FUTURE_ZETSU_END) / (resolution - FUTURE_ZETSU_END))
+    target.lerp(new Vector3(origin.x + 0.16, height * 0.46, 0.46), motion)
+    offset.lerp(new Vector3(-1.29 + turn * 1.04, 0.35 + turn * 0.22, 4.35 - turn * 0.57), motion)
+    width -= 0.65 * motion
+  } else if (time < FUTURE_VERDICT) {
+    target.lerp(new Vector3(origin.x + 0.61, height * 0.42, 0.39), motion)
+    offset.lerp(new Vector3(1.55, 0.66, 4.15), motion)
+    width -= 0.3 * motion
+  } else {
+    // Hold the two endpoints of the floor joint for the final glance.
+    const settle = ease((time - FUTURE_VERDICT) / 1.5)
+    target.lerp(new Vector3(origin.x + 0.52 + settle * 0.12, height * 0.39, 0.36), motion)
+    offset.lerp(
+      new Vector3(1.4 + settle * 1.12, 1.92 - settle * 0.96, 4.65 - settle * 0.56),
+      motion,
+    )
+  }
+  return width
+}
+
+function futureBodyBounds(
+  context: VictoryContext,
+  { origin, realPosition, split }: { origin: Vector3; realPosition: Vector3; split: boolean },
+) {
   const bounds = [visibleVictoryBounds(context.victim.root)]
   if (split) {
     // Fit both possible bodies in both panels so the ground joint occupies the same pixels.
@@ -289,14 +346,49 @@ export function tserriednichVictoryCamera(
   } else {
     bounds.push(visibleVictoryBounds(context.hero.root))
   }
-  fitFutureBodies(context, target, bounds, split ? 0.69 : 0.79)
+  return bounds
+}
+
+function futureResolutionTime(shot: boolean, knockedDown: boolean): number {
+  if (shot) return FUTURE_SHOT
+  return knockedDown ? FUTURE_FALL : FUTURE_VERDICT
+}
+
+export function tserriednichVictoryCamera(
+  context: VictoryContext,
+  { origin, realPosition, shot, knockedDown }: ReturnType<typeof tserriednichVictoryPose>,
+) {
+  const height = Math.max(context.hero.height, context.victim.height)
+  const time = context.frame.elapsed
+  const split = context.futurePerspective !== undefined
+  const motion = context.comfort.camera ?? 1
+  const resolution = futureResolutionTime(shot, knockedDown)
+  const target = new Vector3(origin.x + (split ? 0.22 : 0.43), height * 0.45, 0.3)
+  const offset = new Vector3(1.7, 1.4, 4.25)
+  const closeUp = motion > 0 && !split && tserriednichPortrait(time)
+  if (closeUp) return futurePortraitShot(context, closeUp, time)
+  if (split) {
+    const slide = ease((time - FUTURE_EYES_OPEN) / (FUTURE_ZETSU_END - FUTURE_EYES_OPEN)) * motion
+    offset.x += slide * 0.52
+    offset.y -= slide * 0.3
+    target.x -= slide * 0.1
+  }
+  const width = split
+    ? 3.92
+    : futureWideTrack({ time, motion, resolution, origin, height, target, offset })
+  victoryShot(context, {
+    target,
+    offset,
+    width: width + context.victim.width * 0.55,
+    height: height + 0.28,
+  })
+  const bounds = futureBodyBounds(context, { origin, realPosition, split })
+  fitFutureBodies(context, { target, bounds, verticalMargin: split ? 0.69 : 0.79 })
 }
 
 function fitFutureBodies(
   { camera }: VictoryContext,
-  target: Vector3,
-  bounds: Box3[],
-  verticalMargin: number,
+  { target, bounds, verticalMargin }: { target: Vector3; bounds: Box3[]; verticalMargin: number },
 ) {
   const view = camera.quaternion.clone().invert()
   const tanY = Math.tan((camera.fov * Math.PI) / 360)

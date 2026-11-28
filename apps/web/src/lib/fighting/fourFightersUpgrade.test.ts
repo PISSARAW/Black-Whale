@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, tickFight } from './engine'
-import {
-  LEORIO_SONAR_COST,
-  castLeorioSonar,
-  leorioBreaksTenGuard,
-  leorioSurgicalStack,
-} from './leorioMedical'
+import { castLeorioSonar, leorioBreaksTenGuard, leorioSurgicalStack } from './leorioMedical'
 import {
   MUSSE_OWL_UPKEEP,
   advanceMusseOwl,

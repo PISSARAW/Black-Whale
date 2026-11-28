@@ -152,8 +152,8 @@ function moveRecipe(event: FightSoundEvent): (() => void) | null {
   if (source === 'feitan') return FEITAN_MOVES[event.moveId ?? ''] ?? null
   if (source === 'biscuit' && event.moveId === 'biscuit:neutralSpecial') return null
   if (source === 'phinks') return event.value ? () => windTheArm(event.value) : null
-  if (source === 'franklin') return null // The actual projectiles own each gunshot.
-  if (source === 'saiyu') return null // A gong seals a sense on contact, not on a miss.
+  // Franklin's shots and Saiyu's seals have their own contact sounds.
+  if (['franklin', 'saiyu'].includes(source)) return null
   return characterRecipe(event)
 }
 

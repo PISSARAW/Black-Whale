@@ -1,4 +1,4 @@
-import type { VictoryContext, VictoryDriver } from './types'
+import type { VictoryDriver } from './types'
 import { bonolenovVictoryPose } from './bonolenovPose'
 import { createBonolenovCostume } from './bonolenovCostume'
 import { createVictoryJupiter } from './bonolenovJupiter'

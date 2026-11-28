@@ -2,6 +2,10 @@ import { motionOf } from './fighterMovement'
 import type { ArcadeFighter } from './types'
 
 /** Feitan's reference guard: calm, blade presented, free index raised. */
+function freeIdleGuard(fighter: ArcadeFighter): boolean {
+  return fighter.hitStun === 0 && fighter.blockStun === 0 && !fighter.blocking
+}
+
 export function feitanIconicIdle(fighter: ArcadeFighter): boolean {
   return Boolean(
     fighter.id === 'feitan' &&
@@ -9,9 +13,7 @@ export function feitanIconicIdle(fighter: ArcadeFighter): boolean {
     !fighter.attack &&
     !motionOf(fighter).dash &&
     fighter.y === 0 &&
-    fighter.hitStun === 0 &&
-    fighter.blockStun === 0 &&
-    !fighter.blocking &&
+    freeIdleGuard(fighter) &&
     !fighter.umbrellaFeintFrames &&
     !fighter.hatsuEffects.painPacker?.armour,
   )

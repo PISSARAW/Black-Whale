@@ -35,7 +35,8 @@ describe('5-fighter upgrades: Machi, Phinks, Franklin, Illumi, Biscuit', () => {
   it('Machi sutures wounds without erasing strain; In-tripwire cuts runners; tracking thread pulls', () => {
     let state = beginFight(createFight('machi', 'hisoka', { mode: 'versus-local' }))
     let machi: ArcadeFighter = { ...state.player, aura: 40, openWounds: 2 }
-    for (let i = 0; i < 3; i++) machi = rememberBodyHit(machi, 'hands', 10, false)
+    for (let i = 0; i < 3; i++)
+      machi = rememberBodyHit(machi, { zone: 'hands', damage: 10, blocked: false })
     expect(bodyMemoryWeak(machi, 'hands')).toBe(true)
 
     const sutured = applyMachiCombatSuture(machi)
@@ -170,7 +171,10 @@ describe('5-fighter upgrades: Machi, Phinks, Franklin, Illumi, Biscuit', () => {
     const targetShare = focused.nenTransfer?.to.hands ?? focused.nen.ryu.hands
     expect(targetShare).toBeCloseTo(BISCUIT_TRUE_FORM_RYU_SHARE, 3)
 
-    const tired = rememberBodyHit({ ...adult, nenMentalFatigue: 4000 }, 'hands', 10, false)
+    const tired = rememberBodyHit(
+      { ...adult, nenMentalFatigue: 4000 },
+      { zone: 'hands', damage: 10, blocked: false },
+    )
     const rested = applyBiscuitInterRoundCare(tired)
     expect(rested.nenMentalFatigue).toBeLessThan(4000)
     expect(rested.bodyMemory?.hits.hands).toBe(0)

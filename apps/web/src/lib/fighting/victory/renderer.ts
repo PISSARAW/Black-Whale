@@ -192,6 +192,11 @@ export function createVictoryRenderer(options: {
     futureLighting = victoryLighting(0.57),
     phinksLighting = victoryLighting(0.12)
   let disposed = false
+  function lightingForFrame(frame: VictoryFrame) {
+    if (frame.fighter === 'phinks') return phinksLighting
+    if (frame.fighter === 'tserriednich' && !isBeyondCurse(frame.variant)) return futureLighting
+    return lighting
+  }
   return {
     apply(input: {
       state: FightState
@@ -236,13 +241,7 @@ export function createVictoryRenderer(options: {
           visible: [hero.root, victim.root, options.scenery],
           save: transaction.save,
         })
-        const sceneLighting =
-          frame.fighter === 'phinks'
-            ? phinksLighting
-            : frame.fighter === 'tserriednich' && !isBeyondCurse(frame.variant)
-              ? futureLighting
-              : lighting
-        sceneLighting.apply(options.scenery, transaction)
+        lightingForFrame(frame).apply(options.scenery, transaction)
         const context: VictoryContext = {
           ...options,
           state,

@@ -39,6 +39,13 @@ export function registerFightWitness(state: FightState, witness: FightWitness): 
 }
 
 /** Converts a real, visible aggression into witness memory and one shared security alert. */
+function alertIncrease(witnesses: readonly FightWitness[], informed: readonly string[]): number {
+  const credibility = witnesses
+    .filter(({ id }) => informed.includes(id))
+    .reduce((sum, witness) => sum + witness.credibility, 0)
+  return credibility >= 1.5 ? 2 : 1
+}
+
 export function advanceFightWitnesses(state: FightState): FightState {
   const witnesses = state.fightWitnesses
   if (!witnesses?.length || state.phase !== 'fighting') return state
@@ -47,7 +54,7 @@ export function advanceFightWitnesses(state: FightState): FightState {
 
   const informed: string[] = []
   const nextWitnesses = witnesses.map((witness) => {
-    if (!canObserve(state, witness, event.actor, event.kind)) return witness
+    if (!canObserve(state, witness, { actor: event.actor, kind: event.kind })) return witness
     informed.push(witness.id)
     const confidence = Math.min(1, witness.credibility * (event.kind === 'concealed-nen' ? 0.8 : 1))
     return {
@@ -57,10 +64,7 @@ export function advanceFightWitnesses(state: FightState): FightState {
     }
   })
   if (informed.length === 0) return state
-  const credibility = nextWitnesses
-    .filter(({ id }) => informed.includes(id))
-    .reduce((sum, witness) => sum + witness.credibility, 0)
-  const increase = credibility >= 1.5 ? 2 : 1
+  const increase = alertIncrease(nextWitnesses, informed)
   return {
     ...state,
     fightWitnesses: nextWitnesses,
@@ -92,8 +96,7 @@ function witnessedEvent(
 function canObserve(
   state: FightState,
   witness: FightWitness,
-  actor: FightSide,
-  kind: WitnessEventKind,
+  { actor, kind }: { actor: FightSide; kind: WitnessEventKind },
 ): boolean {
   const observerSide = witness.allegiance === 'neutral' ? otherSide(actor) : witness.allegiance
   const observer = state[observerSide]

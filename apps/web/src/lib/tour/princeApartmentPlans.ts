@@ -1,10 +1,5 @@
 import type { Blueprint, Polygon, Space, Vec2 } from './types'
-import {
-  pointInPolygon,
-  polygonContains,
-  polygonsOverlap,
-  structureFootprint,
-} from './geometry'
+import { pointInPolygon, polygonContains, polygonsOverlap, structureFootprint } from './geometry'
 
 /**
  * Unmeasured transcription of the fourteen apartment cutaways in chapter 363.

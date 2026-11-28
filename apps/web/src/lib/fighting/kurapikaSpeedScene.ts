@@ -1,3 +1,4 @@
+import { retainSpeedFigure } from './fightSpeedVisibility'
 import { motionOf } from './fighterMovement'
 import type { FightComfort } from './fightComfort'
 import { kurapikaSpeedActive, kurapikaSpeedBodyVisible } from './kurapikaIdentity'
@@ -24,8 +25,7 @@ export function createKurapikaSpeedScene(options: {
   function spawnEcho(
     side: FightSide,
     source: import('three').Object3D,
-    now: number,
-    scarlet: boolean,
+    { now, scarlet }: { now: number; scarlet: boolean },
   ) {
     source.updateWorldMatrix(true, true)
     const root = source.clone(true)
@@ -49,18 +49,24 @@ export function createKurapikaSpeedScene(options: {
     echoes.push({ root, born: now, material })
   }
 
+  function showKuraBody(
+    fighter: FightState['player'],
+    figure: ReturnType<typeof options.figureOf>,
+    enabled: boolean,
+  ) {
+    // Other presentation scenes own other fighters' visibility (notably Feitan's shutter cut).
+    if (figure && fighter.id === 'kurapika')
+      figure.visible = !enabled || kurapikaSpeedBodyVisible(fighter)
+  }
+
   return {
     sync(state: FightState, now: number) {
       const enabled = options.comfort().flashes
       for (const side of ['player', 'opponent'] as const) {
         const fighter = state[side]
         const figure = options.figureOf(side)
-        const oldFigure = previousFigure.get(side)
-        if (oldFigure && oldFigure !== figure) oldFigure.visible = true
-        if (figure) previousFigure.set(side, figure)
-        // Other presentation scenes own other fighters' visibility (notably Feitan's shutter cut).
-        if (figure && fighter.id === 'kurapika')
-          figure.visible = !enabled || kurapikaSpeedBodyVisible(fighter)
+        retainSpeedFigure(previousFigure, side, figure)
+        showKuraBody(fighter, figure, enabled)
         const dash = motionOf(fighter).dash
         if (
           !enabled ||
@@ -75,7 +81,7 @@ export function createKurapikaSpeedScene(options: {
         if (previousFrame.get(side) === dash.frame) continue
         previousFrame.set(side, dash.frame)
         if ([1, 4, 8].includes(dash.frame))
-          spawnEcho(side, figure, now, Boolean(fighter.kurapika?.emperorTime))
+          spawnEcho(side, figure, { now, scarlet: Boolean(fighter.kurapika?.emperorTime) })
       }
     },
     animate(now: number) {

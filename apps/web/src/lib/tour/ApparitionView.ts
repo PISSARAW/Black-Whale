@@ -76,6 +76,13 @@ export class ApparitionView<T extends RenderedApparition> {
       }
       operations.update(held, seen)
     }
+    this.sweepAbsent(standing, operations)
+  }
+
+  private sweepAbsent<TSeen>(
+    standing: ReadonlySet<string>,
+    operations: ApparitionSync<TSeen, T>,
+  ): void {
     for (const id of Object.keys(this.items)) {
       if (standing.has(id)) continue
       const held = this.items[id]

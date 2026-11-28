@@ -37,7 +37,9 @@
     camillaAge >= 0 && camillaAge < CAMILLA_CONTACT && state.catsNameFatality?.zetsu
       ? 'Zetsu'
       : camillaAge >= CAMILLA_PAW_LANDS && camillaAge < CAMILLA_RETURN
-        ? fr ? 'Cat’s Name · Nen post-mortem' : 'Cat’s Name · Post-mortem Nen'
+        ? fr
+          ? 'Cat’s Name · Nen post-mortem'
+          : 'Cat’s Name · Post-mortem Nen'
         : null
 </script>
 
@@ -77,10 +79,7 @@
         {language}
       />{/if}
     {#if frame.fighter === 'sayird'}<FightSayirdVictory elapsed={frame.elapsed} />{/if}
-    {#if twoTruths}<FightFutureVictory
-        elapsed={frame.elapsed}
-        {language}
-      />{/if}
+    {#if twoTruths}<FightFutureVictory elapsed={frame.elapsed} {language} />{/if}
     {#if frame.fighter === 'hinrigh'}<FightHinrighVictory elapsed={frame.elapsed} />{/if}
     {#if frame.fighter === 'saiyu'}<FightSaiyuVictory elapsed={frame.elapsed} {language} />{/if}
     {#if frame.fighter !== 'camilla' && (!twoTruths || frame.elapsed >= FUTURE_VERDICT)}

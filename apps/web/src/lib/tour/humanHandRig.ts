@@ -3,11 +3,7 @@ import type { Bone, BufferGeometry, Material, Mesh, Object3D, SkinnedMesh } from
 import type { HumanFigureBuild } from './humanFigure'
 import type { HumanProfile } from './humanProfiles'
 import type { HumanSide } from './humanExtremityAnchors'
-import {
-  handFamilyScale,
-  humanExtremityFamily,
-  usesSkinnedHands,
-} from './humanExtremityFamily'
+import { handFamilyScale, humanExtremityFamily, usesSkinnedHands } from './humanExtremityFamily'
 
 type Three = HumanFigureBuild['THREE']
 export type HumanHandPose = 'relaxed' | 'guard' | 'fist' | 'book' | 'pistol' | 'point'

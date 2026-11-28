@@ -247,8 +247,10 @@ const armedBeside = (hisoka: Vec3, triggerDistance: number) => (spectator: Spect
 export function triggerBombs(
   crowd: CrowdState,
   hisoka: Vec3,
-  quorum = 1,
-  triggerDistance = BOMB_TRIGGER_DISTANCE,
+  {
+    quorum = 1,
+    triggerDistance = BOMB_TRIGGER_DISTANCE,
+  }: { quorum?: number; triggerDistance?: number } = {},
 ): { crowd: CrowdState; blasts: Blast[] } {
   const beside = armedBeside(hisoka, triggerDistance)
   if (crowd.spectators.filter(beside).length < quorum) return { crowd, blasts: [] }

@@ -26,7 +26,8 @@ describe('Texture Surprise POV mask and mindgame mechanics', () => {
     expect(textureSurpriseDrain(cleanMasked)).toBe(0)
 
     let weakened = state.player
-    for (let i = 0; i < 3; i++) weakened = rememberBodyHit(weakened, 'hands', 10, false)
+    for (let i = 0; i < 3; i++)
+      weakened = rememberBodyHit(weakened, { zone: 'hands', damage: 10, blocked: false })
     const maskedWeak = {
       ...weakened,
       textureSurprise: createTextureSurprise(weakened),
@@ -97,7 +98,8 @@ describe('Texture Surprise POV mask and mindgame mechanics', () => {
   it('triggers the hidden Bungee Gum prosthesis trap when the weakened limb is struck', () => {
     const state = createFightState('hisoka', 'kurapika')
     let weakened = state.player
-    for (let i = 0; i < 3; i++) weakened = rememberBodyHit(weakened, 'feet', 10, false)
+    for (let i = 0; i < 3; i++)
+      weakened = rememberBodyHit(weakened, { zone: 'feet', damage: 10, blocked: false })
     const masked = {
       ...weakened,
       textureSurprise: createTextureSurprise(weakened),

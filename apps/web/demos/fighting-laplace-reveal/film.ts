@@ -3,7 +3,9 @@ import { futureVisibleState } from '../../src/lib/fighting/parallelFuturePresent
 import { EMPTY_INPUT, type FightInput, type FightState } from '../../src/lib/fighting/types'
 
 /** A late-round setup. After setup every movement, shot and verdict uses native commands. */
-export function createLaplaceRevealFilm(options: { counter?: boolean; projectedShot?: boolean } = {}) {
+export function createLaplaceRevealFilm(
+  options: { counter?: boolean; projectedShot?: boolean } = {},
+) {
   const initial = beginFight(
     createFight('theta', 'tserriednich', { mode: 'versus-ai', formatId: 'arcade' }),
   )

@@ -86,6 +86,8 @@
   <div
     class="relative h-52 border-b border-[#d6b35a]/25 bg-[#181716] sm:h-64"
     class:pending={!ready}
+    role="img"
+    aria-label={label}
   >
     <canvas
       bind:this={canvas}

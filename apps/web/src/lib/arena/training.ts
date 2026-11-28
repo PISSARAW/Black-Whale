@@ -41,17 +41,29 @@ export function arenaFrameReadout(move: FighterMove, language: 'fr' | 'en'): Are
   }
 }
 
+const OPENING_ACTIONS: Partial<Record<number, LessonInput['action']['type']>> = {
+  0: 'RYU',
+  1: 'GUARD',
+  2: 'FEINT',
+}
+
 /** Advances only on an accepted action or a newly resolved exchange. */
 export function advanceArenaLesson(input: LessonInput): number {
   const { lesson, action, before, after } = input
-  if (lesson === 0 && action.type === 'RYU') return 1
-  if (lesson === 1 && action.type === 'GUARD') return 2
-  if (lesson === 2 && action.type === 'FEINT') return 3
+  if (OPENING_ACTIONS[lesson] === action.type) return lesson + 1
   const event = after.lastEvent !== before.lastEvent ? after.lastEvent : null
   if (lesson === 3 && playerLandedAuthoredMove(event)) return 4
-  if (lesson === 4 && (after.player.chain?.history.length ?? 0) >= 2) return 5
-  if (lesson === 5 && event?.attacker === 'opponent' && event.impact === 'blocked') return 6
+  if (lesson === 4 && completedChain(after)) return 5
+  if (lesson === 5 && blockedRivalAction(event)) return 6
   return lesson
+}
+
+function completedChain(state: LessonInput['after']): boolean {
+  return (state.player.chain?.history.length ?? 0) >= 2
+}
+
+function blockedRivalAction(event: LessonInput['after']['lastEvent']): boolean {
+  return event?.attacker === 'opponent' && event.impact === 'blocked'
 }
 
 export function arenaTrainingFeedback(

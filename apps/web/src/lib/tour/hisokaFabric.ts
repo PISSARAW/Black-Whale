@@ -58,9 +58,11 @@ export function shadeHisokaFabric(THREE: Three, geometry: BufferGeometry) {
 
 export function hisokaClothGeometry(
   THREE: Three,
-  length: number,
-  taper: readonly number[],
-  style: 'shirt' | 'trousers',
+  {
+    length,
+    taper,
+    style,
+  }: { length: number; taper: readonly number[]; style: 'shirt' | 'trousers' },
 ) {
   const steps = 24
   const points = [new THREE.Vector2(0, -length * 0.5 - 0.022)]

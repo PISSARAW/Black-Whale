@@ -14,12 +14,10 @@ export const ROSTER_WAVE_TWO_FINISH_POSES = Object.fromEntries(
   ROSTER_WAVE_TWO_FIGHTERS.map((id) => [
     id,
     {
-      lowHeavy: rosterWaveOneGroundedTimeline(
-        id,
-        'lowHeavy',
-        ROSTER_WAVE_TWO_SIGNATURES[id],
-        ROSTER_LOW_HEAVY_ACCENT,
-      ),
+      lowHeavy: rosterWaveOneGroundedTimeline(id, 'lowHeavy', {
+        signature: ROSTER_WAVE_TWO_SIGNATURES[id],
+        accent: ROSTER_LOW_HEAVY_ACCENT,
+      }),
       airLight: rosterAuthoredAirTimeline(id, 'airLight', ROSTER_WAVE_TWO_SIGNATURES[id]),
       airHeavy: rosterAuthoredAirTimeline(id, 'airHeavy', ROSTER_WAVE_TWO_SIGNATURES[id]),
     },

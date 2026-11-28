@@ -27,17 +27,45 @@ import {
 const joint = (actor: VictoryActor, name: string) => actor.root.getObjectByName(name)!
 const sides = ['left', 'right'] as const
 
-export function camillaVictoryPose(context: VictoryContext) {
-  const { hero, victim, age, centre, state } = context
-  const fatality = state.catsNameFatality!
-  const contact = ease(age / CAMILLA_CONTACT) * (1 - ease((age - CAMILLA_CONTACT) / 35))
-  const closeStrike = fatality.cause === 'strike'
-  const musseShot = fatality.cause === 'projectile' && state[context.frame.loser].id === 'musse'
-  if (fatality.ten && age <= CAMILLA_CONTACT) {
+function showFinalTen({ hero, age }: VictoryContext, ten: boolean) {
+  if (ten && age <= CAMILLA_CONTACT) {
     hero.root.traverse((node) => {
       if (node.name === 'nen-skin-ten') node.visible = true
     })
   }
+}
+
+function camillaFacePose(
+  context: VictoryContext,
+  { fall, rise, impact, breath }: { fall: number; rise: number; impact: number; breath: number },
+) {
+  const { hero, age } = context
+  const resolve = ease(age / CAMILLA_CONTACT) * (1 - fall)
+  const lookUp = ease((age - CAMILLA_EYES_OPEN) / 17) * (1 - rise)
+  hero.head.rotation.set(
+    resolve * -0.13 + impact * 0.32 - breath * 0.12 + Math.sin(rise * Math.PI) * 0.19,
+    resolve * 0.33 + lookUp * 0.08 - rise * 0.19,
+    -lookUp * 0.045,
+  )
+  for (const side of sides) {
+    const eye = hero.head.getObjectByName(`face-eye-${side}`)
+    if (!eye) continue
+    context.save(eye)
+    const lid = ease((age - CAMILLA_EYES_OPEN - (side === 'left' ? 1.5 : 0)) / 7)
+    eye.scale.y *= (1 - fall * (1 - lid) * 0.955) * (1 - resolve * 0.16 - lookUp * 0.08)
+  }
+  const mouth = hero.head.getObjectByName('face-mouth')
+  if (mouth) {
+    context.save(mouth)
+    mouth.scale.y *= 1 + breath * 4.5
+  }
+  return mouth
+}
+
+function camillaBodyPose(context: VictoryContext) {
+  const { hero, age, centre, state } = context
+  const fatality = state.catsNameFatality!
+  showFinalTen(context, Boolean(fatality.ten))
   const hitAge = Math.max(0, age - CAMILLA_CONTACT)
   const buckle = ease(hitAge / 13) * (1 - ease((hitAge - 13) / 22))
   const descent = ease((age - CAMILLA_CONTACT - 8) / (CAMILLA_BODY_LANDS - CAMILLA_CONTACT - 8))
@@ -69,25 +97,7 @@ export function camillaVictoryPose(context: VictoryContext) {
   joint(hero, 'knee-right').rotation.x = buckle * 1.27 + Math.sin(rise * Math.PI) * 0.64
   const chestLift = -impact * 0.19 + buckle * 0.27 + breath * 0.29 + Math.sin(rise * Math.PI) * 0.34
   if (chestLift) turnVictoryChest(context, hero, [chestLift, 0, 0])
-  const resolve = ease(age / CAMILLA_CONTACT) * (1 - fall)
-  const lookUp = ease((age - CAMILLA_EYES_OPEN) / 17) * (1 - rise)
-  hero.head.rotation.set(
-    resolve * -0.13 + impact * 0.32 - breath * 0.12 + Math.sin(rise * Math.PI) * 0.19,
-    resolve * 0.33 + lookUp * 0.08 - rise * 0.19,
-    -lookUp * 0.045,
-  )
-  for (const side of sides) {
-    const eye = hero.head.getObjectByName(`face-eye-${side}`)
-    if (!eye) continue
-    context.save(eye)
-    const lid = ease((age - CAMILLA_EYES_OPEN - (side === 'left' ? 1.5 : 0)) / 7)
-    eye.scale.y *= (1 - fall * (1 - lid) * 0.955) * (1 - resolve * 0.16 - lookUp * 0.08)
-  }
-  const mouth = hero.head.getObjectByName('face-mouth')
-  if (mouth) {
-    context.save(mouth)
-    mouth.scale.y *= 1 + breath * 4.5
-  }
+  const mouth = camillaFacePose(context, { fall, rise, impact, breath })
   const rig = humanAnimationRig(hero.root.children[0])
   const floor = rig ? lowestBodyHeight(rig) : visibleVictoryBounds(hero.root).min.y
   hero.root.position.y += 0.025 - floor
@@ -96,6 +106,66 @@ export function camillaVictoryPose(context: VictoryContext) {
   const handPosition = joint(hero, 'hand-left').getWorldPosition(new Vector3())
   const bodyContact = (rig?.pelvis ?? hero.root).getWorldPosition(new Vector3()).lerp(lips, 0.32)
 
+  return { fall, hand, breath, eyes, rise, lips, handPosition, bodyContact }
+}
+
+function aimMusseFatalShot(context: VictoryContext, target: Vector3, weight: number) {
+  const { victim, age } = context
+  const gun = victim.root.getObjectByName('musse-handgun')
+  const holster = victim.root.getObjectByName('musse-holstered-handgun')
+  if (gun && holster) {
+    context.save(gun)
+    context.save(holster)
+    gun.visible = true
+    holster.visible = false
+    gun.updateWorldMatrix(true, false)
+    const aim = target.clone().sub(gun.getWorldPosition(new Vector3()))
+    aim.lerp(new Vector3(0, -1, 0.3), 1 - weight)
+    gun.lookAt(gun.getWorldPosition(new Vector3()).add(aim))
+    const flash = gun.getObjectByName('musse-muzzle-flash')
+    if (flash) {
+      context.save(flash)
+      flash.visible = context.comfort.flashes && age >= CAMILLA_CONTACT && age < CAMILLA_CONTACT + 3
+    }
+  }
+}
+
+function choreographCamillaKiller(
+  context: VictoryContext,
+  {
+    contact,
+    closeStrike,
+    musseShot,
+  }: { contact: number; closeStrike: boolean; musseShot: boolean },
+) {
+  const { hero, victim, age } = context
+  const target = (hero.root.getObjectByName('torso') ?? hero.head).getWorldPosition(new Vector3())
+  target.z += 0.12
+  if (age < 55 && (closeStrike || musseShot)) {
+    victim.root.updateWorldMatrix(true, true)
+    const wristTarget = joint(victim, 'hand-right').getWorldPosition(new Vector3())
+    const weight = musseShot ? 1 - ease((age - CAMILLA_CONTACT) / 38) : contact
+    const axis = target.clone().sub(victim.root.position)
+    const reach = musseShot
+      ? joint(victim, 'shoulder-right')
+          .getWorldPosition(new Vector3())
+          .addScaledVector(axis.setY(0).normalize(), 0.62)
+      : target
+    reachCinematicHand(victim.root, {
+      side: 'right',
+      target: wristTarget.lerp(reach, weight),
+      pole: new Vector3(victim.root.position.x + 0.4, target.y - 0.5, 0.55),
+    })
+    if (musseShot) aimMusseFatalShot(context, target, weight)
+  }
+}
+
+function camillaOpponentPose(context: VictoryContext) {
+  const { state, victim, age, centre } = context
+  const cause = state.catsNameFatality!.cause
+  const contact = ease(age / CAMILLA_CONTACT) * (1 - ease((age - CAMILLA_CONTACT) / 35))
+  const closeStrike = cause === 'strike'
+  const musseShot = cause === 'projectile' && state[context.frame.loser].id === 'musse'
   const ratio = Math.max(1, (victim.height * 1.45) / 2.8)
   const grip = ease((age - CAMILLA_REVEAL) / (CAMILLA_GRIP - CAMILLA_REVEAL))
   const lift = ease((age - CAMILLA_GRIP) / (CAMILLA_LIFT - CAMILLA_GRIP))
@@ -138,44 +208,7 @@ export function camillaVictoryPose(context: VictoryContext) {
   victim.root.scale
     .multiply(new Vector3(1 - compression * 0.22, 1 - compression * 0.08, 1 - compression * 0.15))
     .multiplyScalar(1 - absorption * 0.97)
-  const target = (hero.root.getObjectByName('torso') ?? hero.head).getWorldPosition(new Vector3())
-  target.z += 0.12
-  if (age < 55 && (closeStrike || musseShot)) {
-    victim.root.updateWorldMatrix(true, true)
-    const wristTarget = joint(victim, 'hand-right').getWorldPosition(new Vector3())
-    const weight = musseShot ? 1 - ease((age - CAMILLA_CONTACT) / 38) : contact
-    const axis = target.clone().sub(victim.root.position)
-    const reach = musseShot
-      ? joint(victim, 'shoulder-right')
-          .getWorldPosition(new Vector3())
-          .addScaledVector(axis.setY(0).normalize(), 0.62)
-      : target
-    reachCinematicHand(victim.root, {
-      side: 'right',
-      target: wristTarget.lerp(reach, weight),
-      pole: new Vector3(victim.root.position.x + 0.4, target.y - 0.5, 0.55),
-    })
-    if (musseShot) {
-      const gun = victim.root.getObjectByName('musse-handgun')
-      const holster = victim.root.getObjectByName('musse-holstered-handgun')
-      if (gun && holster) {
-        context.save(gun)
-        context.save(holster)
-        gun.visible = true
-        holster.visible = false
-        gun.updateWorldMatrix(true, false)
-        const aim = target.clone().sub(gun.getWorldPosition(new Vector3()))
-        aim.lerp(new Vector3(0, -1, 0.3), 1 - weight)
-        gun.lookAt(gun.getWorldPosition(new Vector3()).add(aim))
-        const flash = gun.getObjectByName('musse-muzzle-flash')
-        if (flash) {
-          context.save(flash)
-          flash.visible =
-            context.comfort.flashes && age >= CAMILLA_CONTACT && age < CAMILLA_CONTACT + 3
-        }
-      }
-    }
-  }
+  choreographCamillaKiller(context, { contact, closeStrike, musseShot })
   const torso = victim.root.getObjectByName('torso') ?? victim.head
   const body = visibleVictoryBounds(torso)
   const bodyCentre = body.getCenter(new Vector3())
@@ -186,21 +219,10 @@ export function camillaVictoryPose(context: VictoryContext) {
   victim.root.updateWorldMatrix(true, true)
   const heldBody = visibleVictoryBounds(torso)
   victim.root.visible = absorption < 1
-  return {
-    ratio,
-    catX,
-    grip,
-    struggle,
-    compression,
-    absorption,
-    fall,
-    hand,
-    breath,
-    eyes,
-    rise,
-    lips,
-    handPosition,
-    bodyContact,
-    body: heldBody,
-  }
+  return { ratio, catX, grip, struggle, compression, absorption, body: heldBody }
+}
+
+export function camillaVictoryPose(context: VictoryContext) {
+  const body = camillaBodyPose(context)
+  return { ...body, ...camillaOpponentPose(context) }
 }

@@ -83,8 +83,19 @@ export function physicalAttackOutcomePose(
   const power = attack.kind === 'heavy' ? 1 : 0.66
   const air = attack.variant === 'air'
   const low = attack.variant === 'low'
-  const directional = input.slot === 'forwardHeavy' || input.slot === 'backHeavy' ? 1.12 : 1
-  const semantic: FightPose = air
+  const directional = ['forwardHeavy', 'backHeavy'].includes(input.slot) ? 1.12 : 1
+  const semantic = outcomeLimbPose(outcome, air, low)
+  const pose = addPoses(OUTCOME_POSES[outcome], semantic)
+  if (air) delete pose.root
+  return scalePose(pose, power * directional * appears * release)
+}
+
+function outcomeLimbPose(
+  outcome: Exclude<PhysicalAttackOutcome, 'pending'>,
+  air: boolean,
+  low: boolean,
+): FightPose {
+  return air
     ? {
         root: [0, outcome === 'block' ? -0.018 : 0.012, 0],
         leadHip: [outcome === 'whiff' ? -0.12 : 0.08, 0, 0],
@@ -97,9 +108,6 @@ export function physicalAttackOutcomePose(
           rearFoot: [outcome === 'block' ? 0.08 : -0.03, 0, 0],
         }
       : {}
-  const pose = addPoses(OUTCOME_POSES[outcome], semantic)
-  if (air) delete pose.root
-  return scalePose(pose, power * directional * appears * release)
 }
 
 function clamp(value: number): number {

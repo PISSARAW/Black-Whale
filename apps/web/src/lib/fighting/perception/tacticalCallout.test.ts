@@ -63,7 +63,11 @@ describe('resolveImpactCallout', () => {
   it('adds weakened-limb confirmation at Level 2 perception', () => {
     const state = createFightState('kurapika', 'hisoka')
     for (let i = 0; i < 3; i++) {
-      state.opponent = rememberBodyHit(state.opponent, 'hands', 10, false)
+      state.opponent = rememberBodyHit(state.opponent, {
+        zone: 'hands',
+        damage: 10,
+        blocked: false,
+      })
     }
     state.impact = makeImpact({ damage: 12 })
 
@@ -80,7 +84,7 @@ describe('resolveImpactCallout', () => {
   it('lets P2 confirm a weakened limb in local versus, but never the AI', () => {
     const state = createFightState('kurapika', 'hisoka')
     for (let i = 0; i < 3; i++) {
-      state.player = rememberBodyHit(state.player, 'feet', 10, false)
+      state.player = rememberBodyHit(state.player, { zone: 'feet', damage: 10, blocked: false })
     }
     state.opponent.nen.gyo = true
     state.impact = makeImpact({ attacker: 'opponent', damage: 12 })

@@ -43,8 +43,6 @@ describe('near extremity quality budget', () => {
   )
 
   it('reserves distinct near and mid ranges', () => {
-    expect(EXTREMITY_QUALITY_TARGET.nearDistance).toBeLessThan(
-      EXTREMITY_QUALITY_TARGET.midDistance,
-    )
+    expect(EXTREMITY_QUALITY_TARGET.nearDistance).toBeLessThan(EXTREMITY_QUALITY_TARGET.midDistance)
   })
 })

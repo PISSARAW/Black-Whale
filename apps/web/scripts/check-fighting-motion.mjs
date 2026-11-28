@@ -63,7 +63,11 @@ try {
       for (const frame of fixture.goldenReviewFrames) {
         const result = await page.evaluate(
           ({ frame, facing, outcome }) =>
-            window.fightMotionFixture.inspect('kurapika', 'standingHeavy', frame, facing, outcome),
+            window.fightMotionFixture.inspect('kurapika', 'standingHeavy', {
+              frame,
+              facing,
+              outcome,
+            }),
           { frame, facing, outcome },
         )
         const diagnostic = result.diagnostics

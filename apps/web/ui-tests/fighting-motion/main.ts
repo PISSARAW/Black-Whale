@@ -98,12 +98,20 @@ let inspected: {
   facing: 1 | -1
   outcome: GoldenOutcome
 } | null = null
+interface MotionInspection {
+  frame: number
+  facing: 1 | -1
+  outcome: GoldenOutcome
+}
+
 function poseFighter(
   entry: MotionEntry,
-  frame: number,
-  facing: 1 | -1,
-  outcome: GoldenOutcome = 'whiff',
-  passes = 2,
+  {
+    frame,
+    facing,
+    outcome = 'whiff',
+    passes = 2,
+  }: Omit<MotionInspection, 'outcome'> & { outcome?: GoldenOutcome; passes?: number },
 ): void {
   const { id, slot, model, fighter } = entry
   const move = moveForSlot(id, slot)!
@@ -152,7 +160,7 @@ function show(
     const entry = modelFor(id, slot)
     const { model } = entry
     const move = moveForSlot(id, slot)!
-    poseFighter(entry, representativeFrame(phase, move.tuning), facing)
+    poseFighter(entry, { frame: representativeFrame(phase, move.tuning), facing })
     const col = i % 3
     const row = Math.floor(i / 3)
     renderer.setViewport(col * 360, (2 - row) * 180, 360, 180)
@@ -170,9 +178,7 @@ function show(
 function inspect(
   id: FighterId,
   slot: MoveSlot,
-  frame = 0,
-  facing: 1 | -1 = 1,
-  outcome: GoldenOutcome = 'whiff',
+  { frame = 0, facing = 1, outcome = 'whiff' }: Partial<MotionInspection> = {},
 ) {
   const entry = modelFor(id, slot)
   const move = moveForSlot(id, slot)!
@@ -182,7 +188,7 @@ function inspect(
   title.textContent = `${id} · ${slot} · frame ${currentFrame} · ${phaseAtFrame(currentFrame, move.tuning)}`
   renderer.setSize(720, 720)
   models.forEach(({ model }) => (model.root.visible = false))
-  const diagnostics = goldenDiagnostics(entry, currentFrame, facing, outcome)
+  const diagnostics = goldenDiagnostics(entry, { frame: currentFrame, facing, outcome })
   renderer.setViewport(0, 0, 720, 720)
   renderer.setScissor(0, 0, 720, 720)
   camera.left = -1.5
@@ -202,12 +208,10 @@ function inspect(
 
 function goldenDiagnostics(
   entry: MotionEntry,
-  frame: number,
-  facing: 1 | -1,
-  outcome: GoldenOutcome,
+  { frame, facing, outcome }: MotionInspection,
 ): GoldenHeavyDiagnostics | null {
   if (entry.id !== 'kurapika' || entry.slot !== KURAPIKA_GOLDEN_HEAVY.slot) {
-    poseFighter(entry, frame, facing, outcome)
+    poseFighter(entry, { frame, facing, outcome })
     return null
   }
   const model = buildFightFigure({ THREE, glow, fighter: entry.fighter })
@@ -216,15 +220,15 @@ function goldenDiagnostics(
   const human = humanAnimationRig(model.turns)
   if (!human) throw new Error('Kurapika motion lab figure has no animation rig')
   const rig = fightRigOf(human)
-  poseFighter(isolated, 0, facing, outcome, 1)
+  poseFighter(isolated, { frame: 0, facing, outcome, passes: 1 })
   const stance = captureFightMotionSnapshot(rig, facing)
-  poseFighter(isolated, frame, facing, outcome, 1)
+  poseFighter(isolated, { frame, facing, outcome, passes: 1 })
   const current = captureFightMotionSnapshot(rig, facing)
-  poseFighter(isolated, KURAPIKA_GOLDEN_HEAVY.frames.startup, facing, outcome, 1)
+  poseFighter(isolated, { frame: KURAPIKA_GOLDEN_HEAVY.frames.startup, facing, outcome, passes: 1 })
   const contact = captureFightMotionSnapshot(rig, facing)
   scene.remove(model.root)
-  poseFighter(entry, frame, facing, outcome)
-  return goldenHeavyDiagnostics(current, stance, contact, facing)
+  poseFighter(entry, { frame, facing, outcome })
+  return goldenHeavyDiagnostics({ current, stance, contact, facing })
 }
 
 const fields = controls.elements as typeof controls.elements & {
@@ -251,7 +255,10 @@ function syncScrubber(useRepresentative = false): void {
   if (useRepresentative)
     frameInput.value = String(representativeFrame(phaseSelect.value as MotionPhase, move.tuning))
   frameInput.max = String(totalMoveFrames(move.tuning) - 1)
-  const result = inspect(id, slot, Number(frameInput.value), Number(facingSelect.value) as 1 | -1)
+  const result = inspect(id, slot, {
+    frame: Number(frameInput.value),
+    facing: Number(facingSelect.value) as 1 | -1,
+  })
   frameInput.value = String(result.frame)
   frameOutput.value = `${result.frame} / ${totalMoveFrames(move.tuning) - 1}`
   readout.value = `${result.phase} · ${move.tuning.startup}f startup · ${move.tuning.active}f active · ${move.tuning.recovery}f recovery`

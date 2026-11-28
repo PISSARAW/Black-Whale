@@ -114,7 +114,7 @@
           {match.practice.player.healthLost.toFixed(1)} · {match.stage}</small
         >
         {#if match.winner === 'opponent'}<div class="vows">
-            {#each rematchVows as kind}<button
+            {#each rematchVows as kind (kind)}<button
                 type="button"
                 onclick={() => career.pledgeRematch(match.id, kind)}
                 >{rematchVowLabel(kind, language)}</button

@@ -91,6 +91,10 @@ export function sampleTimeline(timeline: MoveTimeline, sample: TimelineSample): 
 
 const ZERO: Turn = [0, 0, 0]
 
+function jointEase(key: KeyPose, joint: (typeof FIGHT_JOINTS)[number]) {
+  return EASES[key.jointEase?.[joint] ?? key.ease ?? 'smooth']
+}
+
 function interpolateKeyPose(from: FightPose, key: KeyPose, travel: number): FightPose {
   if (travel <= 0) return from
   if (travel >= 1) return key.pose
@@ -105,8 +109,7 @@ function interpolateKeyPose(from: FightPose, key: KeyPose, travel: number): Figh
       pose[joint] = b
       continue
     }
-    const ease = key.jointEase?.[joint] ?? key.ease ?? 'smooth'
-    pose[joint] = interpolateJointTurn(joint, { from: a, to: b }, EASES[ease](travel))
+    pose[joint] = interpolateJointTurn(joint, { from: a, to: b }, jointEase(key, joint)(travel))
   }
   return pose
 }

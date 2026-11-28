@@ -13,6 +13,31 @@ export function spearContactPoint(rig: FightRig, offset: number): Vector3 | unde
 }
 
 /** The carried weapon keeps the right-hand grip through thrust, sweep and butt strike. */
+function restSpear(rotation: FightRig['human']['figure']['rotation'], fighter: ArcadeFighter) {
+  const pitch = fighter.y > 0 ? -0.2 : 0
+  const guard = fighter.blocking ? -0.75 * fighter.facing : 0
+  rotation.set(Math.PI + pitch, 0, guard)
+}
+
+function turnSpear(
+  fighter: ArcadeFighter,
+  rotation: FightRig['human']['figure']['rotation'],
+  { normal, amount }: { normal: ReturnType<typeof spearNormal>; amount: number },
+) {
+  if (normal) {
+    const reverse = normal.contact < 0 ? Math.PI : 0
+    rotation.set(
+      Math.PI + normal.pitch * amount,
+      0,
+      (normal.sweep + reverse) * amount * fighter.facing,
+    )
+  } else if (fighter.attack?.moveId === 'bonolenov:forwardSpecial') {
+    rotation.set(Math.PI + 0.08 * (1 - amount), 0, 0)
+  } else {
+    restSpear(rotation, fighter)
+  }
+}
+
 export function animateBonolenovSpear(rig: FightRig, fighter: ArcadeFighter): void {
   if (fighter.id !== 'bonolenov' || !fighter.battleCantabile?.prologue) return
   const spear = rig.human.figure.getObjectByName(SPEAR_NAME)
@@ -21,20 +46,7 @@ export function animateBonolenovSpear(rig: FightRig, fighter: ArcadeFighter): vo
   const attack = fighter.attack
   const normal = spearNormal(fighter, moveById(attack?.moveId)?.slot)
   const amount = attack ? strikeAmount(fighter) : 0
-  if (normal) {
-    const reverse = normal.contact < 0 ? Math.PI : 0
-    spear.rotation.set(
-      Math.PI + normal.pitch * amount,
-      0,
-      (normal.sweep + reverse) * amount * fighter.facing,
-    )
-  } else if (attack?.moveId === 'bonolenov:forwardSpecial') {
-    spear.rotation.set(Math.PI + 0.08 * (1 - amount), 0, 0)
-  } else {
-    const pitch = fighter.y > 0 ? -0.2 : 0
-    const guard = fighter.blocking ? -0.75 * fighter.facing : 0
-    spear.rotation.set(Math.PI + pitch, 0, guard)
-  }
+  turnSpear(fighter, spear.rotation, { normal, amount })
 }
 
 function strikeAmount(fighter: ArcadeFighter): number {

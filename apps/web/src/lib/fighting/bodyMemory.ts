@@ -14,9 +14,7 @@ export const BODY_MEMORY_ATTACK_FACTOR = 0.82
 
 export function rememberBodyHit(
   fighter: ArcadeFighter,
-  zone: FightNenZone | undefined,
-  damage: number,
-  blocked: boolean,
+  { zone, damage, blocked }: { zone: FightNenZone | undefined; damage: number; blocked: boolean },
 ): ArcadeFighter {
   if ((zone !== 'hands' && zone !== 'feet') || blocked || damage <= 0) return fighter
   const hits = Math.min(BODY_MEMORY_HIT_THRESHOLD, (fighter.bodyMemory?.hits[zone] ?? 0) + 1)

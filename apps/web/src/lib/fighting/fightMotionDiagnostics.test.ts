@@ -26,7 +26,7 @@ describe('golden heavy motion diagnostics', () => {
       ],
       pelvis: [0.08, 0.96, 0.04],
     }
-    const value = goldenHeavyDiagnostics(current, stance, contact, 1)
+    const value = goldenHeavyDiagnostics({ current, stance, contact, facing: 1 })
     expect(value.plantedFootDrift).toBeCloseTo(Math.hypot(0.002, 0.001))
     expect(value.pivotFootDrift).toBeCloseTo(Math.hypot(0.02, 0.03))
     expect(value.pelvisTravel).toBeCloseTo(Math.hypot(0.08, 0.04, 0.04))
@@ -44,7 +44,9 @@ describe('golden heavy motion diagnostics', () => {
       ] as const,
     }
     expect(
-      goldenHeavyDiagnosticFailures(goldenHeavyDiagnostics(current, stance, contact, 1)),
+      goldenHeavyDiagnosticFailures(
+        goldenHeavyDiagnostics({ current, stance, contact, facing: 1 }),
+      ),
     ).toEqual(['planted-foot-drift', 'pivot-foot-translation', 'fist-off-contact'])
   })
 })

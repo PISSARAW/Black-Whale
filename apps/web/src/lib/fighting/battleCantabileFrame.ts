@@ -25,21 +25,24 @@ export function reconcileBattleCantabile(state: FightState): FightState {
   }, state)
 }
 
+function canDance(fighter: ArcadeFighter): boolean {
+  return freeCombatBody(fighter) && !fighter.blocking && fighter.y === 0
+}
+
+function prologueStillAvailable(fighter: ArcadeFighter): boolean {
+  return (
+    fighter.health > 0 && battleTechniqueAvailable(fighter) && battleMindAvailable(fighter, true)
+  )
+}
+
 function battleValid(fighter: ArcadeFighter): boolean {
   if (fighter.battleCantabile?.form)
     return battleTechniqueAvailable(fighter, BATTLE_MOVES.metamorphosen)
   const dance = fighter.battleCantabile?.preparation
   const move = dance ? BATTLE_MOVES[dance.piece] : undefined
-  if (!dance && fighter.battleCantabile?.prologue)
-    return (
-      fighter.health > 0 && battleTechniqueAvailable(fighter) && battleMindAvailable(fighter, true)
-    )
+  if (!dance && fighter.battleCantabile?.prologue) return prologueStillAvailable(fighter)
   return (
-    freeCombatBody(fighter) &&
-    battleTechniqueAvailable(fighter, move) &&
-    battleMindAvailable(fighter) &&
-    !fighter.blocking &&
-    fighter.y === 0
+    canDance(fighter) && battleTechniqueAvailable(fighter, move) && battleMindAvailable(fighter)
   )
 }
 

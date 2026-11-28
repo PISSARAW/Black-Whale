@@ -109,7 +109,7 @@ export function stepDeathMatchWorld(world: DeathMatchWorld, input: WorldInput = 
   // Once the ten-body net has closed, the mass detonation covers the whole three-metre
   // pocket around Hisoka; it does not wait for every body centre to overlap his model.
   const triggerDistance = next.scenario.done.includes('net-closes') ? 3 : undefined
-  const bombs = triggerBombs(next.crowd, next.hisoka.at, BOMB_QUORUM, triggerDistance)
+  const bombs = triggerBombs(next.crowd, next.hisoka.at, { quorum: BOMB_QUORUM, triggerDistance })
   const blasts = [...outcome.blasts, ...bombs.blasts]
   const damage = advanceDamage(bombs.blasts.reduce(damageFromBlast, next.damage))
   next = { ...next, crowd: bombs.crowd, damage }

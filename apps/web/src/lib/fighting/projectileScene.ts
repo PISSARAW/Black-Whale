@@ -108,11 +108,7 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
       mesh.position.set(options.worldX(projectile.x), options.worldY(projectile.y), 0.32)
       mesh.rotation.x = ['orb', 'stone'].includes(projectile.shape) ? seconds * 4 : 0
       mesh.rotation.z = projectileZRotation(projectile, seconds)
-      const burst = mesh.userData.feitanBurst as import('three').Group | undefined
-      if (burst) {
-        burst.visible = projectile.age < 8 && (options.comfort?.().flashes ?? true)
-        burst.scale.setScalar(0.55 + projectile.age * 0.12)
-      }
+      syncFeitanBurst(mesh, projectile, options)
     }
     for (const [id, mesh] of meshes) {
       if (active.has(id)) continue
@@ -137,6 +133,18 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
   }
 }
 
+function syncFeitanBurst(
+  mesh: import('three').Mesh,
+  projectile: FightProjectile,
+  options: ProjectileSceneOptions,
+) {
+  const burst = mesh.userData.feitanBurst as import('three').Group | undefined
+  if (burst) {
+    burst.visible = projectile.age < 8 && (options.comfort?.().flashes ?? true)
+    burst.scale.setScalar(0.55 + projectile.age * 0.12)
+  }
+}
+
 function shuVisible(
   projectile: FightProjectile,
   c: { observer?: ArcadeFighter; viewer: FightSide },
@@ -155,16 +163,24 @@ function syncShuAura(
   if (aura) aura.visible = Boolean(projectile.shuCharged) && shuVisible(projectile, c)
 }
 
+function simpleProjectileShape(
+  THREE: ProjectileSceneOptions['THREE'],
+  shape: FightProjectile['shape'],
+): import('three').BufferGeometry | undefined {
+  if (shape === 'card') return new THREE.BoxGeometry(0.28, 0.42, 0.025)
+  if (shape === 'chain') return new THREE.CapsuleGeometry(0.07, 0.62, 3, 7)
+  if (shape === 'page') return new THREE.PlaneGeometry(0.4, 0.5)
+  if (shape === 'seed') return new THREE.OctahedronGeometry(0.22, 0)
+  if (shape === 'eye') return new THREE.TorusGeometry(0.2, 0.065, 5, 12)
+}
+
 function projectileGeometry(
   options: ProjectileSceneOptions,
   projectile: FightProjectile,
 ): import('three').BufferGeometry {
   const { THREE, geometry } = options
-  if (projectile.shape === 'card') return geometry(new THREE.BoxGeometry(0.28, 0.42, 0.025))
-  if (projectile.shape === 'chain') return geometry(new THREE.CapsuleGeometry(0.07, 0.62, 3, 7))
-  if (projectile.shape === 'page') return geometry(new THREE.PlaneGeometry(0.4, 0.5))
-  if (projectile.shape === 'seed') return geometry(new THREE.OctahedronGeometry(0.22, 0))
-  if (projectile.shape === 'eye') return geometry(new THREE.TorusGeometry(0.2, 0.065, 5, 12))
+  const basic = simpleProjectileShape(THREE, projectile.shape)
+  if (basic) return geometry(basic)
   if (handgunBullet(projectile)) return geometry(new THREE.CapsuleGeometry(0.016, 0.08, 3, 7))
   if (franklinBullet(projectile)) return geometry(new THREE.CapsuleGeometry(0.019, 0.18, 3, 7))
   if (feitanSpike(projectile)) {

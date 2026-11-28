@@ -163,7 +163,7 @@ function impactPressure() {
   })
   return {
     root,
-    sync(age: number, fist: Vector3, force: number, flashes: boolean) {
+    sync(age: number, fist: Vector3, { force, flashes }: { force: number; flashes: boolean }) {
       const elapsed = age - PHINKS_CONTACT - 3
       root.visible = flashes && elapsed >= 0 && elapsed < 26
       if (!root.visible) return
@@ -241,6 +241,26 @@ export function createPhinksEffects() {
   root.add(stageLight, supportShadow, rivalShadow, armAura, fistAura, defence, renAura, crack)
   root.add(trails.root, pressure.root, supportBurst.root)
   const vertical = new Vector3(0, 1, 0)
+  function syncDefence(
+    age: number,
+    victim: VictoryActor,
+    { ken, ten, intact }: { ken: boolean; ten: boolean; intact: number },
+  ) {
+    const resisted = ease((age - PHINKS_CONTACT) / 20)
+    const defended = 1 - ease((age - PHINKS_CONTACT - (ken ? 18 : 0)) / (ken ? 36 : 17))
+    defence.visible = (ken || ten) && defended > 0 && intact > 0
+    defence.position.copy(victim.root.localToWorld(new Vector3(0, victim.height * 0.47, 0)))
+    defence.quaternion.copy(victim.root.getWorldQuaternion(new Quaternion()))
+    defence.scale.set(
+      victim.width * ((ken ? 0.66 : 0.52) - 0.11 * resisted),
+      victim.height * (ken ? 0.55 : 0.51),
+      victim.width * (ken ? 0.64 : 0.51),
+    )
+    defence.material.uniforms.power.value =
+      defended * intact * (ken ? 0.57 + 0.23 * resisted : 0.31)
+    defence.material.uniforms.time.value = age * 0.12
+  }
+
   return {
     root,
     sync(options: {
@@ -307,19 +327,7 @@ export function createPhinksEffects() {
       armAura.material.uniforms.power.value = 0.18 + focus * 0.45
       armAura.material.uniforms.time.value = age * 0.21
 
-      const resisted = ease((age - PHINKS_CONTACT) / 20)
-      const defended = 1 - ease((age - PHINKS_CONTACT - (ken ? 18 : 0)) / (ken ? 36 : 17))
-      defence.visible = (ken || ten) && defended > 0 && intact > 0
-      defence.position.copy(victim.root.localToWorld(new Vector3(0, victim.height * 0.47, 0)))
-      defence.quaternion.copy(victim.root.getWorldQuaternion(new Quaternion()))
-      defence.scale.set(
-        victim.width * ((ken ? 0.66 : 0.52) - 0.11 * resisted),
-        victim.height * (ken ? 0.55 : 0.51),
-        victim.width * (ken ? 0.64 : 0.51),
-      )
-      defence.material.uniforms.power.value =
-        defended * intact * (ken ? 0.57 + 0.23 * resisted : 0.31)
-      defence.material.uniforms.time.value = age * 0.12
+      syncDefence(age, victim, { ken, ten, intact })
 
       const rise = ease((age - PHINKS_WINDUP_END) / 46)
       const renPower = rise * (1 - ease((age - PHINKS_CONTACT) / 21))
@@ -334,7 +342,7 @@ export function createPhinksEffects() {
       crack.position.set(rearFoot.x, 0.031, rearFoot.z)
       crack.scale.setScalar(0.43 + 1.55 * ease((age - PHINKS_FLOOR_CRACK) / 13))
       trails.sync(trail, age, focus)
-      pressure.sync(age, fist, 0.48 + 0.52 * Math.max(focus, koFocus), flashes)
+      pressure.sync(age, fist, { force: 0.48 + 0.52 * Math.max(focus, koFocus), flashes })
       supportBurst.sync(age, rearFoot)
     },
   }

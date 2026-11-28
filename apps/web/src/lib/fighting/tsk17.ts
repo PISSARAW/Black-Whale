@@ -72,21 +72,28 @@ function findSide(state: FightState, predicate: (f: ArcadeFighter) => boolean): 
  * - Camilla reaches 0 HP first while Benjamin is alive: Cat's Name executes Benjamin and revives Camilla,
  *   keeping `tskPoisoned: true` on Camilla for the next round.
  */
+function poisonCasualty(fighter: FightState['player']): boolean {
+  return fighter.health <= 0 && Boolean(fighter.tskPoisoned)
+}
+
+function finishSinglePoisonDeath(state: FightState, deadSide: FightSide): FightState {
+  const otherSide: FightSide = deadSide === 'player' ? 'opponent' : 'player'
+  if (isCamilla(state[deadSide])) return beginPoisonCatsName(state, deadSide, otherSide)
+  return finishFight(state, otherSide, 'knockout')
+}
+
 function resolveTsk17Outcome(state: FightState): FightState {
   const benjaminSide = findSide(state, isBenjamin)
   const camillaSide = findSide(state, isCamilla)
   if (benjaminSide && camillaSide) {
     return resolveBenjaminVsCamilla(state, benjaminSide, camillaSide)
   }
-  const deadPlayer = state.player.health <= 0 && Boolean(state.player.tskPoisoned)
-  const deadOpponent = state.opponent.health <= 0 && Boolean(state.opponent.tskPoisoned)
+  const deadPlayer = poisonCasualty(state.player)
+  const deadOpponent = poisonCasualty(state.opponent)
   if (!deadPlayer && !deadOpponent) return state
   if (deadPlayer && deadOpponent)
     return finishFight(state, state.tsk17?.releasedBy ?? 'player', 'knockout')
-  const deadSide: FightSide = deadPlayer ? 'player' : 'opponent'
-  const otherSide: FightSide = deadSide === 'player' ? 'opponent' : 'player'
-  if (isCamilla(state[deadSide])) return beginPoisonCatsName(state, deadSide, otherSide)
-  return finishFight(state, otherSide, 'knockout')
+  return finishSinglePoisonDeath(state, deadPlayer ? 'player' : 'opponent')
 }
 
 function resolveBenjaminVsCamilla(
@@ -108,7 +115,11 @@ function resolveBenjaminVsCamilla(
 
 function beginPoisonCatsName(state: FightState, victim: FightSide, killer: FightSide) {
   const source = state[victim].tskPoisonSource ?? state.tsk17?.releasedBy
-  return beginCatsName(state, victim, killer, source === killer ? 'toxin' : undefined)
+  return beginCatsName(state, {
+    victimSide: victim,
+    killerSide: killer,
+    cause: source === killer ? 'toxin' : undefined,
+  })
 }
 
 /** Advances TSK-17 poison damage once per frame and resolves fatal ticks deterministically. */

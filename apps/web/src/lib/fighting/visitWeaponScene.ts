@@ -20,24 +20,30 @@ export function createVisitWeaponScene(options: EffectSceneOptions): FighterEffe
   const hiddenHands = new Map<Object3D, boolean>()
   const up = new options.THREE.Vector3(0, 1, 0)
   const direction = new options.THREE.Vector3()
+  function syncStaff(
+    state: Parameters<FighterEffectScene['sync']>[0],
+    side: 'player' | 'opponent',
+  ) {
+    const fighter = state[side]
+    if (ownsVisitHatsu(fighter, 'saiyu')) {
+      const staff = pool.get(`priest-staff:${side}`, {
+        model: 'priest-staff',
+        fit: { height: 1.8 },
+      })
+      const hand = fighter.id === 'saiyu' && fighter.facing === -1 ? 'left' : freeVisitHand(fighter)
+      placeVisitHand(options, { state, side, root: staff.root, hand })
+      staff.root.rotateZ(fighter.facing * staffSwing(fighter))
+      if (fighter.id === 'saiyu') supportSaiyuStaff(fighter, options.figureOf?.(side), staff.root)
+    }
+  }
+
   return {
     sync(state) {
       restoreSnakeHands(hiddenHands)
       pool.hide()
       for (const side of ['player', 'opponent'] as const) {
         const fighter = state[side]
-        if (ownsVisitHatsu(fighter, 'saiyu')) {
-          const staff = pool.get(`priest-staff:${side}`, {
-            model: 'priest-staff',
-            fit: { height: 1.8 },
-          })
-          const hand =
-            fighter.id === 'saiyu' && fighter.facing === -1 ? 'left' : freeVisitHand(fighter)
-          placeVisitHand(options, { state, side, root: staff.root, hand })
-          staff.root.rotateZ(fighter.facing * staffSwing(fighter))
-          if (fighter.id === 'saiyu')
-            supportSaiyuStaff(fighter, options.figureOf?.(side), staff.root)
-        }
+        syncStaff(state, side)
         const attack = fighter.attack
         const normal = gelSnakeNormalReach(fighter) > 0
         if (

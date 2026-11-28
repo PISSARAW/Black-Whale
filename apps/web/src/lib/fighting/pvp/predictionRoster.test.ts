@@ -172,7 +172,7 @@ describe('prediction across the complete playable roster', () => {
     const c = fixture('camilla')
     const state = c.server.snapshot()
     state.player.health = 0
-    const cat = beginCatsName(state, 'player', 'opponent')
+    const cat = beginCatsName(state, { victimSide: 'player', killerSide: 'opponent' })
     c.server.replaceRound(cat)
     c.accept()
     c.queue(light)

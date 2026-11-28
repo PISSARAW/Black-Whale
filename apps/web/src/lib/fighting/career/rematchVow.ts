@@ -37,7 +37,7 @@ export function advanceRematchVow(state: FightState): FightState {
   const lastDistance = distance(state)
   const retreatFrames = lastDistance > vow.lastDistance + 0.05 ? vow.retreatFrames + 1 : 0
   const lockedHatsu = vow.lockedHatsu ?? attackHatsu
-  const breached = breach(vow.kind, state, retreatFrames, lockedHatsu, attackHatsu)
+  const breached = breach(vow.kind, state, { retreatFrames, lockedHatsu, attackHatsu })
   return {
     ...state,
     rematchVow: { ...vow, retreatFrames, lastDistance, lockedHatsu, breached },
@@ -50,9 +50,11 @@ export function advanceRematchVow(state: FightState): FightState {
 function breach(
   kind: RematchVowKind,
   state: FightState,
-  retreatFrames: number,
-  lockedHatsu?: string,
-  attackHatsu?: string,
+  {
+    retreatFrames,
+    lockedHatsu,
+    attackHatsu,
+  }: { retreatFrames: number; lockedHatsu?: string; attackHatsu?: string },
 ): boolean {
   if (kind === 'no-retreat') return retreatFrames > 10
   if (kind === 'open-hatsu') return state.player.nen.in

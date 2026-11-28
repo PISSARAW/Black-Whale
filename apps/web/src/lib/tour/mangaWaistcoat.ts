@@ -76,8 +76,7 @@ export function addMangaWaistcoat(build: HumanClothesBuild) {
   function panel(
     name: string,
     points: readonly (readonly [number, number])[],
-    material: Material,
-    surface: typeof depth,
+    { material, surface }: { material: Material; surface: typeof depth },
   ) {
     const g = geometry(THREE, `hisoka:${key}:${name}`, () => {
       const mesh = kurapikaSurfacePanel(THREE, {
@@ -122,8 +121,10 @@ export function addMangaWaistcoat(build: HumanClothesBuild) {
       [0.1, 1.4],
       [0.08, 1.469],
     ],
-    shirt,
-    (x, y) => Math.max(0.076, depth(x, y)) + 0.012 + 0.004 * Math.cos(x * 70 + y * 39),
+    {
+      material: shirt,
+      surface: (x, y) => Math.max(0.076, depth(x, y)) + 0.012 + 0.004 * Math.cos(x * 70 + y * 39),
+    },
   )
   if (materials.skin && profile.shirt !== profile.skin)
     panel(
@@ -135,8 +136,10 @@ export function addMangaWaistcoat(build: HumanClothesBuild) {
         [0, 1.376],
         [-0.03, 1.46],
       ],
-      hisokaFabricMaterial(THREE, materials.skin, false),
-      (x, y) => Math.max(0.074, depth(x, y) + 0.005) + Math.max(0, 1.51 - y) * 0.12,
+      {
+        material: hisokaFabricMaterial(THREE, materials.skin, false),
+        surface: (x, y) => Math.max(0.074, depth(x, y) + 0.005) + Math.max(0, 1.51 - y) * 0.12,
+      },
     )
 
   const seamPaths: Point3[][] = []
@@ -144,8 +147,11 @@ export function addMangaWaistcoat(build: HumanClothesBuild) {
     const suffix = side < 0 ? 'left' : 'right'
     const mirror = (points: readonly (readonly [number, number])[]) =>
       points.map(([x, y]) => [side * x, y] as const)
-    panel(`hisoka-waistcoat-${suffix}`, mirror(VEST), vest, vestSurface)
-    panel(`hisoka-waistcoat-yoke-${side}`, mirror(YOKE), dark, (x, y) => vestSurface(x, y) + 0.006)
+    panel(`hisoka-waistcoat-${suffix}`, mirror(VEST), { material: vest, surface: vestSurface })
+    panel(`hisoka-waistcoat-yoke-${side}`, mirror(YOKE), {
+      material: dark,
+      surface: (x, y) => vestSurface(x, y) + 0.006,
+    })
     const collar = geometry(THREE, `hisoka:${key}:collar:${suffix}`, () =>
       shadeHisokaFabric(
         THREE,

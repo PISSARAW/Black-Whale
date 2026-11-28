@@ -35,7 +35,10 @@ export const UNREVEALED_NEN_APPEARANCES = {
 
 export const NEN_MODEL_REFERENCES = {
   double: { chapters: [383, 400], design: 'Kacho’s human likeness in the banquet dress.' },
-  portal: { chapters: [374, 383], design: 'Arched door with carved heart and two scrollwork panels.' },
+  portal: {
+    chapters: [374, 383],
+    design: 'Arched door with carved heart and two scrollwork panels.',
+  },
   fish: { chapters: [97], design: 'Open ribs, spine, skull and fins.' },
   hoover: { chapters: [71, 227], design: 'Blinky: eye stalks, toothed nozzle and tongue.' },
   cat: { chapters: [373], design: 'Black cat with long arms and prehensile hands.' },

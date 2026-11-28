@@ -3043,12 +3043,7 @@
       {
         "event": "Balsamilco is found unconscious in room 1009",
         "storyDate": "Day 12 · Thursday · after 14:15",
-        "charactersInvolved": [
-          "balsamilco-might",
-          "prince-halkenburg",
-          "yushohi",
-          "chiyamasi"
-        ],
+        "charactersInvolved": ["balsamilco-might", "prince-halkenburg", "yushohi", "chiyamasi"],
         "location": "Black Whale 1 - Tier 1 - Room 1009"
       },
       {

@@ -15,12 +15,10 @@ export const ROSTER_WAVE_THREE_DIRECTIONAL_POSES = Object.fromEntries(
     Object.fromEntries(
       ROSTER_WAVE_THREE_DIRECTIONAL_SLOTS.map((slot) => [
         slot,
-        rosterWaveOneGroundedTimeline(
-          id,
-          slot,
-          ROSTER_WAVE_THREE_SIGNATURES[id],
-          ROSTER_DIRECTIONAL_ACCENTS[slot],
-        ),
+        rosterWaveOneGroundedTimeline(id, slot, {
+          signature: ROSTER_WAVE_THREE_SIGNATURES[id],
+          accent: ROSTER_DIRECTIONAL_ACCENTS[slot],
+        }),
       ]),
     ),
   ]),

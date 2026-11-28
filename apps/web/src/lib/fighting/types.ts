@@ -361,14 +361,7 @@ export interface FightImpact {
   projectileId: number | null
   position: { x: number; y: number; z?: number }
   /** Phinks's melee contact, before the defender's Nen and the attack's charge are spent. */
-  phinksStrike?: {
-    frame: number
-    turns: number
-    ken: boolean
-    ten?: boolean
-    ren?: boolean
-    ko?: boolean
-  }
+  phinksStrike?: import('./phinksCyclotron').PhinksStrikeEvidence
   /** Sweet Home moves the wound once; it never creates an invulnerable/avoided hit. */
   /** `ally`: the wound came from the owner's own kameo, held by the right hand. */
   objectTransfer?: { objectId: string; owner: FightSide; damage: number; ally?: true }

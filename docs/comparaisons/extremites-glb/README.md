@@ -9,11 +9,11 @@ son poids brut pour chaque personnage. Le corps procédural reste la base ; seul
 extrémités proches gagnent un sous-rig, tandis que les distances moyenne et lointaine
 conservent leurs représentations actuelles.
 
-| Niveau | Distance | Représentation |
-| --- | ---: | --- |
-| Proche | 0–8 m | main et pied skinnés |
-| Moyen | 8–24 m | extrémités procédurales fusionnées |
-| Lointain | au-delà de 24 m | trois masses du LOD humain |
+| Niveau   |        Distance | Représentation                     |
+| -------- | --------------: | ---------------------------------- |
+| Proche   |           0–8 m | main et pied skinnés               |
+| Moyen    |          8–24 m | extrémités procédurales fusionnées |
+| Lointain | au-delà de 24 m | trois masses du LOD humain         |
 
 Le budget de production est déclaré dans
 `apps/web/src/lib/tour/humanExtremityBudget.ts`. Il limite une main à 1 500 triangles
@@ -31,10 +31,10 @@ noms anatomiques reste utilisable comme référence visuelle, mais pas comme con
 
 Mesure du 25 novembre 2026 :
 
-| Référence | Poids | Sommets | Triangles | Os du skin |
-| --- | ---: | ---: | ---: | ---: |
-| `Hisoka.glb` | 28 317 540 octets | 35 751 | 55 416 | 28 |
-| `Feitan.optimized.glb` | 5 670 484 octets | 43 641 | 59 494 | 28 |
+| Référence              |             Poids | Sommets | Triangles | Os du skin |
+| ---------------------- | ----------------: | ------: | --------: | ---------: |
+| `Hisoka.glb`           | 28 317 540 octets |  35 751 |    55 416 |         28 |
+| `Feitan.optimized.glb` |  5 670 484 octets |  43 641 |    59 494 |         28 |
 
 Les deux fichiers portent le corps entier dans une primitive unique. Le rapport ne prétend
 donc pas attribuer leurs triangles aux seules mains et chaussures ; il fixe le plafond de

@@ -121,6 +121,14 @@ const INVOCATION_FAMILIES: Record<
   blinky: performBlinkyEvidence,
 }
 
+function canUseNativeArsenal(state: FightState, side: FightSide): boolean {
+  return (
+    arsenalMindAvailable(state[side]) &&
+    futureAcceptsMove(state, side) &&
+    !state[side].parallelEyesClosed
+  )
+}
+
 export function performArsenalCommand(
   state: FightState,
   side: FightSide,
@@ -131,8 +139,7 @@ export function performArsenalCommand(
   if (command.action.startsWith('halkenburg-'))
     return performHalkenburgMaterialSoulCommand({ state, side, command })
   if (command.action.startsWith('person-')) return performPersonDolphinCommand(state, side, command)
-  if (!arsenalMindAvailable(state[side])) return state
-  if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
+  if (!canUseNativeArsenal(state, side)) return state
   if (command.loan) return performLoanCommand({ state, side, command }, performArsenalCommand)
   if (selfDolphinCommand(state, side, command))
     return withDolphinSupply(state, side, (supplied) =>

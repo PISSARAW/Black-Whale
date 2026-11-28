@@ -68,6 +68,12 @@ export function addServiceHandgun(options: {
   PISTOLS.set(model.turns, { held, stowed, flash })
 }
 
+function handgunFlashFrame(fighter: ArcadeFighter): boolean {
+  const frame = fighter.attack?.frame ?? 0
+  const startup = attackData('ranged', fighter).startup
+  return frame >= startup && frame < startup + 2
+}
+
 export function animateServiceHandgun(figure: Object3D, fighter: ArcadeFighter): void {
   if (fighter.id === 'theta') return animateThetaHandgun(figure, fighter)
   const pistol = PISTOLS.get(figure)
@@ -81,7 +87,5 @@ export function animateServiceHandgun(figure: Object3D, fighter: ArcadeFighter):
   pistol.held.visible = firing || striking
   pistol.stowed.visible = !pistol.held.visible && !fighter.hanzoProjection
   pistol.held.rotation.z = striking ? Math.PI / 2 : 0
-  const frame = fighter.attack?.frame ?? 0
-  const startup = firing ? attackData('ranged', fighter).startup : 0
-  pistol.flash.visible = firing && frame >= startup && frame < startup + 2
+  pistol.flash.visible = firing && handgunFlashFrame(fighter)
 }

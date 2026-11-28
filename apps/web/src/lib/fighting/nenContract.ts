@@ -89,14 +89,21 @@ export function validateNenContract(contract: NenContractDefinition): readonly s
 }
 
 /** Shared admission rule used by contracts that restrict an action after it is prepared. */
+function permitsAuraState(
+  restrictions: NenContractDefinition['restrictions'],
+  fighter: ArcadeFighter,
+): boolean {
+  if (restrictions.includes('no-ken') && fighter.nen.ken) return false
+  if (restrictions.includes('no-gyo') && fighter.nen.gyo) return false
+  return !restrictions.includes('forced-zetsu') || fighter.nen.mode === 'zetsu'
+}
+
 export function nenContractPermitsAction(
   contract: NenContractDefinition,
   fighter: ArcadeFighter,
 ): boolean {
   const restrictions = contract.restrictions
-  if (restrictions.includes('no-ken') && fighter.nen.ken) return false
-  if (restrictions.includes('no-gyo') && fighter.nen.gyo) return false
-  if (restrictions.includes('forced-zetsu') && fighter.nen.mode !== 'zetsu') return false
+  if (!permitsAuraState(restrictions, fighter)) return false
   // This evaluator is called only after a signatory has initiated an action.
   // A no-attack clause therefore rejects the attempt even if the engine has not
   // materialised an AttackState yet (for instance during input admission).

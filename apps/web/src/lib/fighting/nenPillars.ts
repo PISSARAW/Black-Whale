@@ -51,6 +51,15 @@ export function advanceNenPillars(state: FightState): FightState {
   return applyRenMalice(next, 'opponent', 'player')
 }
 
+function vulnerableToMalice(target: FightState['player']): boolean {
+  if ((target.fearCooldownFrames ?? 0) > 0 || target.health <= 0) return false
+  return (
+    target.nen.mode === 'zetsu' ||
+    target.auraExhausted ||
+    (target.nenPsychology?.apprehension ?? 0) >= 2000
+  )
+}
+
 function applyRenMalice(
   state: FightState,
   attackerSide: 'player' | 'opponent',
@@ -61,12 +70,7 @@ function applyRenMalice(
   if (attacker.nen.mode !== 'ren' || attacker.nen.en || attacker.nen.ko) return state
   const maliceRange = isBeyond(attacker) ? REN_MALICE_RANGE * 2 : REN_MALICE_RANGE
   if (Math.abs(attacker.x - target.x) > maliceRange) return state
-  if ((target.fearCooldownFrames ?? 0) > 0 || target.health <= 0) return state
-  const vulnerable =
-    target.nen.mode === 'zetsu' ||
-    target.auraExhausted ||
-    (target.nenPsychology?.apprehension ?? 0) >= 2000
-  if (!vulnerable) return state
+  if (!vulnerableToMalice(target)) return state
   return {
     ...state,
     [targetSide]: {

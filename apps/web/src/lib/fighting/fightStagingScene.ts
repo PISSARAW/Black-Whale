@@ -52,7 +52,7 @@ export function createFightStagingScene(options: {
   const root = new THREE.Group()
   root.name = 'fight-staging'
 
-  const floorMaterial = radialMaterial(THREE, 0xd7e8ee, 0.055, 1.65)
+  const floorMaterial = radialMaterial(THREE, { colour: 0xd7e8ee, opacity: 0.055, falloff: 1.65 })
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), floorMaterial)
   floor.name = 'fight-stage-floor-pool'
   floor.rotation.x = -Math.PI / 2
@@ -63,7 +63,7 @@ export function createFightStagingScene(options: {
 
   const halos = Object.fromEntries(
     SIDES.map((side) => {
-      const material = radialMaterial(THREE, 0xffffff, 0.07, 2.15)
+      const material = radialMaterial(THREE, { colour: 0xffffff, opacity: 0.07, falloff: 2.15 })
       const halo = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material)
       halo.name = `fight-stage-halo-${side}`
       halo.position.z = -1.35
@@ -131,9 +131,7 @@ export function createFightStagingScene(options: {
 
 function radialMaterial(
   THREE: Three,
-  colour: number,
-  opacity: number,
-  falloff: number,
+  { colour, opacity, falloff }: { colour: number; opacity: number; falloff: number },
 ): ShaderMaterial {
   return new THREE.ShaderMaterial({
     uniforms: {

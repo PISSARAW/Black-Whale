@@ -45,12 +45,17 @@ export function captureFightMotionSnapshot(rig: FightRig, facing: 1 | -1): Fight
 }
 
 /** Compare the current draw with the stance anchor and authored contact draw. */
-export function goldenHeavyDiagnostics(
-  current: FightMotionSnapshot,
-  stance: FightMotionSnapshot,
-  contact: FightMotionSnapshot,
-  facing: 1 | -1,
-): GoldenHeavyDiagnostics {
+export function goldenHeavyDiagnostics({
+  current,
+  stance,
+  contact,
+  facing,
+}: {
+  current: FightMotionSnapshot
+  stance: FightMotionSnapshot
+  contact: FightMotionSnapshot
+  facing: 1 | -1
+}): GoldenHeavyDiagnostics {
   const lead = facing === 1 ? 1 : 0
   const rear = facing === 1 ? 0 : 1
   return {

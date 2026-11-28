@@ -102,13 +102,8 @@ function applyManualFocus(
     : focusNenZone(fighter, zone)
 }
 
-function applySightInputs(
-  fighter: ArcadeFighter,
-  input: FightInput,
-  available: boolean,
-): ArcadeFighter {
-  let next = applyOcularInput(fighter, input, available)
-  const directionalIn = Boolean(
+function directionalInCommand(fighter: ArcadeFighter, input: FightInput): boolean {
+  return Boolean(
     !input.directControls &&
     input.aura &&
     !input.guard &&
@@ -116,6 +111,15 @@ function applySightInputs(
     !input.jump &&
     holdingBack(fighter, input),
   )
+}
+
+function applySightInputs(
+  fighter: ArcadeFighter,
+  input: FightInput,
+  available: boolean,
+): ArcadeFighter {
+  let next = applyOcularInput(fighter, input, available)
+  const directionalIn = directionalInCommand(fighter, input)
   const wantIn = Boolean(input.conceal || directionalIn || fighter.attack?.concealed)
   if (wantIn || fighter.nen.in)
     next = action(next, {

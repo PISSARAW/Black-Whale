@@ -189,6 +189,27 @@ function baseAttackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameDa
   )
 }
 
+function movesetAttackBox(
+  fighter: ArcadeFighter,
+  move: NonNullable<ReturnType<typeof moveById>>,
+  { spearReach, snakeReach }: { spearReach: number; snakeReach: number },
+): AttackFrameData['box'] {
+  const data = move.tuning
+  const antiAir = move.kind === 'heavy' && move.variant === 'standing'
+  return {
+    left: 1.4,
+    right:
+      biscuitReach(fighter, data.reach + spearReach + snakeReach) * zakuroBloodReachFactor(fighter),
+    bottom: attackBoxBottom(fighter, data.bottom, antiAir),
+    top: antiAir ? Math.max(15, data.top) : data.top,
+  }
+}
+
+function movesetCancelEnd(move: NonNullable<ReturnType<typeof moveById>>, startup: number): number {
+  const { cancelWindow, tuning } = move
+  return cancelWindow ? startup + cancelWindow.end : tuning.startup + tuning.active + 6
+}
+
 function movesetAttackData(
   fighter: ArcadeFighter,
   move: NonNullable<ReturnType<typeof moveById>>,
@@ -197,7 +218,6 @@ function movesetAttackData(
   const startup = data.startup + (fighter.attack?.concealed ? 10 : 0)
   const spear = spearNormal(fighter, move.slot)
   const snakeReach = gelSnakeNormalReach(fighter)
-  const antiAir = move.kind === 'heavy' && move.variant === 'standing'
   return openingFrameData(
     {
       ...data,
@@ -207,17 +227,8 @@ function movesetAttackData(
       knockback: throwKnockback(move, fighter, data.knockback),
       reversalInvulnerableFrames: move.reversalInvulnerableFrames,
       startup,
-      cancelEnd: move.cancelWindow
-        ? startup + move.cancelWindow.end
-        : data.startup + data.active + 6,
-      box: {
-        left: 1.4,
-        right:
-          biscuitReach(fighter, data.reach + (spear?.reach ?? 0) + snakeReach) *
-          zakuroBloodReachFactor(fighter),
-        bottom: attackBoxBottom(fighter, data.bottom, antiAir),
-        top: antiAir ? Math.max(15, data.top) : data.top,
-      },
+      cancelEnd: movesetCancelEnd(move, startup),
+      box: movesetAttackBox(fighter, move, { spearReach: spear?.reach ?? 0, snakeReach }),
     },
     fighter.attack?.comboFollowup,
   )

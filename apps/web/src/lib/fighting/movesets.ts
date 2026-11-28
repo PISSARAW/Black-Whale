@@ -268,10 +268,13 @@ function ordinaryMoveResources(fighter: ArcadeFighter, move: FighterMove): boole
   return remainingMoveResources(fighter, move)
 }
 
+function allowsCharacterMove(fighter: ArcadeFighter, move: FighterMove): boolean {
+  return furykovMoveAvailable(fighter, move) && characterMoveAvailable(fighter, move)
+}
+
 function remainingMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
   if (move.kind === 'special' && !padailleMoveAvailable(fighter, move.id)) return false
-  if (!furykovMoveAvailable(fighter, move)) return false
-  if (!characterMoveAvailable(fighter, move)) return false
+  if (!allowsCharacterMove(fighter, move)) return false
   if (isHeldChainMove(fighter, move)) return true
   if (thetaShotMove(fighter, move.id))
     return !fighter.weaponsConfiscated && firearmCanShoot(fighter)

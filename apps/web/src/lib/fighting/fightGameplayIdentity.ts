@@ -1,4 +1,4 @@
-import type { BufferGeometry, Group, Material, Mesh, Object3D } from 'three'
+import type { BufferGeometry, Material, Object3D } from 'three'
 import type { HumanFigure, HumanFigureBuild } from '$lib/tour/humanFigure'
 import type { HumanProfile } from '$lib/tour/humanProfiles'
 
@@ -42,9 +42,9 @@ export function addFightGameplayIdentity(options: {
   const hairShadow = material(THREE, darken(profile.hair, 0.62))
   const jacketEdge = material(THREE, lighten(profile.jacket, 0.38))
   const chainMetal = material(THREE, 0xc6cbd2)
-  addHairLocks(THREE, model.root, geometry.hairLock, hairShadow)
-  addLapelEdges(THREE, model.root, geometry.lapelEdge, jacketEdge)
-  addChainBand(THREE, model.root, geometry.chainBand, chainMetal)
+  addHairLocks(THREE, model.root, { geometry: geometry.hairLock, material: hairShadow })
+  addLapelEdges(THREE, model.root, { geometry: geometry.lapelEdge, material: jacketEdge })
+  addChainBand(THREE, model.root, { geometry: geometry.chainBand, material: chainMetal })
   mountTailoringOnTorso(model.root)
   strengthenFrontRead(model.root)
 }
@@ -57,8 +57,7 @@ function identityAnchors(root: Object3D): string[] {
 function addHairLocks(
   THREE: Three,
   root: Object3D,
-  geometry: BufferGeometry,
-  material: Material,
+  { geometry, material }: { geometry: BufferGeometry; material: Material },
 ): void {
   const head = root.getObjectByName('kurapika-head')
   if (!head) return
@@ -75,8 +74,7 @@ function addHairLocks(
 function addLapelEdges(
   THREE: Three,
   root: Object3D,
-  geometry: BufferGeometry,
-  material: Material,
+  { geometry, material }: { geometry: BufferGeometry; material: Material },
 ): void {
   const torso = root.getObjectByName('torso')
   if (!torso) return
@@ -92,8 +90,7 @@ function addLapelEdges(
 function addChainBand(
   THREE: Three,
   root: Object3D,
-  geometry: BufferGeometry,
-  material: Material,
+  { geometry, material }: { geometry: BufferGeometry; material: Material },
 ): void {
   const hand = root.getObjectByName('hand-right')
   if (!hand) return

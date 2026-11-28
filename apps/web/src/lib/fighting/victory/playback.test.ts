@@ -12,7 +12,10 @@ function result(
   target: FighterId = 'chrollo',
   side: FightSide = 'player',
 ): FightState {
-  const state = createFight(side === 'player' ? winner : target, side === 'player' ? target : winner)
+  const state = createFight(
+    side === 'player' ? winner : target,
+    side === 'player' ? target : winner,
+  )
   if (winner === 'camilla') {
     const loser = side === 'player' ? 'opponent' : 'player'
     state[loser].health = 0
@@ -61,7 +64,11 @@ describe('victory selection', () => {
     expect(selectVictory({ ...state, catsNameFatality: undefined })).toBeNull()
     expect(selectVictory({ ...state, catsNameConsumed: undefined })).toBeNull()
     expect(selectVictory({ ...state, opponent: { ...state.opponent, health: 0 } })).toBeNull()
-    const win = { ...createFight('camilla', 'benjamin'), phase: 'finished', winner: 'player' } as const
+    const win = {
+      ...createFight('camilla', 'benjamin'),
+      phase: 'finished',
+      winner: 'player',
+    } as const
     expect(selectVictory(win)).toBeNull()
   })
 

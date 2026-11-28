@@ -248,6 +248,12 @@ function drawnAs(post: Post, look: CastLook): NonNullable<Apparition['human']> {
     ...(post.unmasked ? { unmasked: true } : {}),
     ...(post.bonolenovDisguise ? { bonolenovDisguise: post.bonolenovDisguise } : {}),
     ...(post.plainSuit ? { plainSuit: true } : {}),
+    ...drawnPresence(post, look),
+  }
+}
+
+function drawnPresence(post: Post, look: CastLook): Partial<NonNullable<Apparition['human']>> {
+  return {
     ...(look.aura ? { aura: look.aura } : {}),
     ...(look.nen && post.pose !== 'zetsu' ? { nen: look.nen } : {}),
     ...(look.alert ? { alert: look.alert } : {}),

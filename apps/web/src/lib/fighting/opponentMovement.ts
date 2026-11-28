@@ -22,22 +22,23 @@ import { shouldStyleGuard } from './fightStyles'
 import { nenSpacingDirection } from './nenCombatDoctrine'
 import type { ArcadeFighter } from './types'
 
+const CHARACTER_MOVEMENT = [
+  moveKurapikaOpponent,
+  moveHisokaOpponent,
+  moveShizukuOpponent,
+  moveFeitanOpponent,
+  moveBonolenovOpponent,
+  moveHanzoOpponent,
+] as const
+
 function moveFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
   if (opponentCannotGuard(fighter)) return { ...fighter, blocking: false }
   if (crossGameBusy(fighter) || projectionPreparing(fighter) || bashoWriting(fighter))
     return fighter
-  const kurapika = moveKurapikaOpponent(fighter, player)
-  if (kurapika) return kurapika
-  const hisoka = moveHisokaOpponent(fighter, player)
-  if (hisoka) return hisoka
-  const shizuku = moveShizukuOpponent(fighter, player)
-  if (shizuku) return shizuku
-  const feitan = moveFeitanOpponent(fighter, player)
-  if (feitan) return feitan
-  const bonolenov = moveBonolenovOpponent(fighter, player)
-  if (bonolenov) return bonolenov
-  const hanzo = moveHanzoOpponent(fighter, player)
-  if (hanzo) return hanzo
+  for (const move of CHARACTER_MOVEMENT) {
+    const result = move(fighter, player)
+    if (result) return result
+  }
   return walkFreeOpponent(fighter, player)
 }
 

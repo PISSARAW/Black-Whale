@@ -76,7 +76,7 @@ function crossLegged(rig: RestingHuman): void {
 }
 
 function kneeling({ figure, legs, knees, arms, elbows }: RestingHuman): void {
-  figure.position.y = -0.50
+  figure.position.y = -0.5
   legs[0].rotation.x = -0.85
   legs[1].rotation.x = -0.65
   knees[0].rotation.x = 1.9

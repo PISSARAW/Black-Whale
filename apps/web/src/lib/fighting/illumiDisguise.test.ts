@@ -100,7 +100,7 @@ describe('Illumi’s attested face alteration with and without physical needles'
       frame: state.player.illumi!.disguiseExpiresAt! - 1,
       opponent: { ...state.opponent, id: 'camilla', health: 0 },
     }
-    state = beginCatsName(state, 'opponent', 'player')
+    state = beginCatsName(state, { victimSide: 'opponent', killerSide: 'player' })
     expect(state.catsName).toBeTruthy()
     state = frames(state, 1)
     expect(state.catsName?.frame).toBe(1)

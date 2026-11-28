@@ -147,10 +147,14 @@ export function keyedMove(id: FighterId, slot: MoveSlot): KeyedMove {
 }
 
 /** The personal timeline of a move, or null for a legacy family gesture. */
-export function keyPoseTimeline(id: FighterId, slot: MoveSlot): MoveTimeline | null {
-  const native =
+function nativeStrikeTimeline(id: FighterId, slot: MoveSlot): MoveTimeline | null {
+  return (
     authoredStrikeTimeline(id, slot) ?? KEY_POSES[id]?.[slot] ?? rosterKeyPoses(id)[slot] ?? null
-  const base = standingStrikeTimeline(id, slot, native)
+  )
+}
+
+export function keyPoseTimeline(id: FighterId, slot: MoveSlot): MoveTimeline | null {
+  const base = standingStrikeTimeline(id, slot, nativeStrikeTimeline(id, slot))
   if (usesFullPhysicalPoses(id) && authoredStrikeDirection(id, slot)) return base
   // Cantabile's grounded and aerial phrases carry their own beat and support.
   if (base && id === 'bonolenov' && authoredStrikeDirection(id, slot))

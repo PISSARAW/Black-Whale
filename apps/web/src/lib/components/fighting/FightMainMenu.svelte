@@ -1,14 +1,15 @@
 <script lang="ts">
+  import type { FightSelectionMode } from '$lib/fighting/fightSetupDraft'
   import { link } from '$lib/i18n'
   import { FIGHTING_ROSTER } from '$lib/fighting/roster'
   import { FIGHT_STAGES } from '$lib/fighting/stages'
-  import type { FightMode, FighterId } from '$lib/fighting/types'
+  import type { FighterId } from '$lib/fighting/types'
   import FightJukebox from './FightJukebox.svelte'
   import FightPortrait from './FightPortrait.svelte'
   export let language: 'fr' | 'en'
   export let player: FighterId
   export let opponent: FighterId
-  export let onMode: (mode: FightMode) => void
+  export let onMode: (mode: FightSelectionMode) => void
   export let onHistorical: () => void = () => {}
   $: fr = language === 'fr'
   $: modes = [
@@ -31,8 +32,17 @@
         : 'One screen. Two fighters. Settle the score.',
     },
     {
-      id: 'training' as const,
+      id: 'versus-rayxie' as const,
       number: '03',
+      name: fr ? 'Affronter Rayxie' : 'Challenge Rayxie',
+      tag: 'IA / AI',
+      description: fr
+        ? 'Tu joues. Le réseau Rayxie guide ton adversaire. Repli local si indisponible.'
+        : 'You play. The Rayxie network guides your rival. Local fallback when unavailable.',
+    },
+    {
+      id: 'training' as const,
+      number: '04',
       name: fr ? 'Entraînement' : 'Training',
       tag: fr ? 'LIBRE' : 'FREE PLAY',
       description: fr
@@ -69,7 +79,7 @@
 
   <div class="mode-heading">
     <h2>{fr ? 'CHOISIS TON MODE' : 'CHOOSE YOUR MODE'}</h2>
-    <span>SELECT / 01—03</span>
+    <span>SELECT / 01—04</span>
   </div>
   <div class="clash-mode-cards">
     {#each modes as mode, index (mode.id)}
@@ -88,7 +98,7 @@
   </div>
   <button type="button" class="clash-historical" onclick={onHistorical}>
     <span class="mode-meta"
-      ><span>04 /</span><span>{fr ? 'CHAPITRES 351–357' : 'CHAPTERS 351–357'}</span></span
+      ><span>05 /</span><span>{fr ? 'CHAPITRES 351–357' : 'CHAPTERS 351–357'}</span></span
     >
     <strong>{fr ? 'Combat historique' : 'Historical fight'}</strong>
     <span class="mode-description"
@@ -286,7 +296,7 @@
   }
   .clash-mode-cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
   .clash-mode-card {

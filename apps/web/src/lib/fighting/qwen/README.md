@@ -1,9 +1,10 @@
 # Qwen · stratégie distante et exécution locale
 
 Les **40 personnages sélectionnables** sont pris en charge dans les deux sièges, en mode
-Versus local. Le bouton « Activer Qwen · IA contre IA » du combat confie les deux
-combattants au même contrôleur rapide. L’IA native adversaire est désactivée par
-ce mode. Aucun moteur, dégât, coût, combo ou pouvoir de Nen n’est modifié.
+Versus local. Le menu « Affronter Rayxie » confie uniquement P2 au contrôleur
+distant et conserve P1 au joueur. Le contrôleur propose aussi une option
+IA contre IA utilisée par les tests de duel autonome. L’IA native adversaire
+est désactivée dans ces modes. Aucun moteur, dégât, coût, combo ou pouvoir de Nen n’est modifié.
 
 ## Couverture du roster
 
@@ -117,3 +118,24 @@ si les deux sièges n’ont pas reçu de vraies réponses. Le replay natif et le
 mesures sont écrits dans `output/hisoka-machi-qwen/`. Tous les checkpoints et le
 hash final sont rejoués ; la lecture du replay ne contacte plus le modèle.
 Ce test mesure un duel autonome du moteur, pas une capture vidéo du navigateur.
+
+## Joueur contre Rayxie
+
+Le menu « Affronter Rayxie » conserve le contrôle de P1 et confie uniquement P2
+au contrôleur tactique distant. La sélection est conservée lors des changements
+de page et après un rafraîchissement. Les replays utilisent le mode moteur
+`versus-local` et enregistrent les entrées réellement exécutées ; ils ne
+recontactent pas le modèle.
+
+Configurer `CLASH_OLLAMA_URL_P2` et `CLASH_OLLAMA_MODEL_P2` côté serveur web avec
+un point d’inférence personnel accessible sur le réseau privé. P1 n’a pas besoin
+de modèle. Les variables communes restent utilisables comme valeurs de repli.
+Ne pas reprendre le serveur Ellan de l’ancien exemple de tunnel pour un projet
+personnel : utiliser un hôte personnel autorisé. Aucun serveur n’est découvert
+ou ajouté automatiquement par ce mode ; le choix selon la RAM relève du routeur
+Rayxie placé derrière le point d’accès configuré.
+
+P2 continue à jouer localement pendant une requête et en cas d’indisponibilité.
+Le bandeau indique la source active, le modèle ayant réellement répondu, le
+nombre de plans reçus et les échecs. Un repli n’est pas présenté comme une
+réponse de Rayxie. Le mode historique et les autres modes restent indépendants.

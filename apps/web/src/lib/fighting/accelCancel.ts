@@ -1,4 +1,5 @@
 import { cancelGrammarFor } from './duelComboProfiles'
+import { accelTargets } from './duelComboGrammar'
 import { moveById } from './movesets'
 import type { FighterMove } from './movesetTypes'
 import type { CancelGrammar } from './duelComboTypes'
@@ -18,13 +19,6 @@ export const ACCEL_HEAT_DRAIN = 0.25
 export interface AccelHeat {
   heat: number
   overheated: boolean
-}
-
-/** Specials listed after `slot`: the order keeps the cancel graph acyclic. */
-export function accelTargets(grammar: CancelGrammar, slot: MoveSlot): MoveSlot[] {
-  if (!grammar.accel) return []
-  const index = grammar.specials.indexOf(slot)
-  return index < 0 ? [] : grammar.specials.slice(index + 1)
 }
 
 export function isAccelCancel(fighter: ArcadeFighter, moveId?: string): boolean {

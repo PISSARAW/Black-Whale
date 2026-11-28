@@ -156,7 +156,7 @@ function nativeArsenalCommand(
   if (command.action.startsWith('machi-corpse'))
     return traceArsenal({ state, side, command }, performMachiCorpse({ state, side, command }))
   const handler = COMMAND_HANDLERS.find(([prefix]) => command.action.startsWith(prefix))
-  if (handler) return handler[1](state, side, command)
+  if (handler) return handler[1]()(state, side, command)
   const legacy = INVOCATION_FAMILIES[command.action.split('-')[0]]
   return legacy ? traceArsenal({ state, side, command }, legacy({ state, side, command })) : state
 }
@@ -171,45 +171,46 @@ function selfDolphinCommand(state: FightState, side: FightSide, command: Arsenal
   )
 }
 
+// Resolve imported handlers at dispatch, after their shared chunks have initialized.
 const COMMAND_HANDLERS: readonly [
   string,
-  (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
+  () => (state: FightState, side: FightSide, command: ArsenalCommand) => FightState,
 ][] = [
   // Shares the `gum` prefix: listed here so the gum network family never swallows it.
-  ['gum-heart', (state, side, command) => performGumHeart({ state, side, command })],
-  ['needle-face-remove', performNeedleFaceRemoval],
-  ['illumi-needle-mode', performNeedleModeCommand],
-  ['illumi-face-', performIllumiFaceCommand],
-  ['gum-anchor-', performGumObjectAnchorCommand],
-  ['paper-release-confetti', performPaperScatterCommand],
-  ['paper-kit-', performPaperKitCommand],
-  ['paper-stop-listening', performPaperReceiverCommand],
-  ['judgment-ask', performJudgmentInquiry],
-  ['judgment-answer', performJudgmentInquiry],
-  ['window-archive', performMusseArchiveCommand],
-  ['window-recorded', performRecordedWindowCommand],
-  ['window-', performSecretWindowCommand],
-  ['dolphin-lend', performDolphinLoan],
-  ['voice-', performBlackVoiceCommand],
-  ['little-eye-', performLittleEyeCommand],
-  ['basho-ask', performBashoQuestion],
-  ['basho-answer', performBashoQuestion],
-  ['basho-', performBashoWard],
-  ['writing-', performWritingKitCommand],
-  ['statement-', performRecordedStatement],
-  ['device-', performDeviceCommand],
-  ['biohazard-', performDeviceCommand],
-  ['dowsing-', performDowsingCommand],
-  ['judgment-', performJudgmentCommand],
-  ['gum-', performGumCommand],
-  ['texture-paper', performPaperTextureCommand],
-  ['texture-', performTextureCommand],
-  ['document-', performPaperDocumentCommand],
-  ['cookie-', performCookie],
-  ['hunter-', performHunterInterview],
-  ['arena-turn-object', performArenaObjectTurn],
-  ['sun-moon-', performSunMoonCharge],
-  ['history-', performHistoricalCommand],
+  ['gum-heart', () => (state, side, command) => performGumHeart({ state, side, command })],
+  ['needle-face-remove', () => performNeedleFaceRemoval],
+  ['illumi-needle-mode', () => performNeedleModeCommand],
+  ['illumi-face-', () => performIllumiFaceCommand],
+  ['gum-anchor-', () => performGumObjectAnchorCommand],
+  ['paper-release-confetti', () => performPaperScatterCommand],
+  ['paper-kit-', () => performPaperKitCommand],
+  ['paper-stop-listening', () => performPaperReceiverCommand],
+  ['judgment-ask', () => performJudgmentInquiry],
+  ['judgment-answer', () => performJudgmentInquiry],
+  ['window-archive', () => performMusseArchiveCommand],
+  ['window-recorded', () => performRecordedWindowCommand],
+  ['window-', () => performSecretWindowCommand],
+  ['dolphin-lend', () => performDolphinLoan],
+  ['voice-', () => performBlackVoiceCommand],
+  ['little-eye-', () => performLittleEyeCommand],
+  ['basho-ask', () => performBashoQuestion],
+  ['basho-answer', () => performBashoQuestion],
+  ['basho-', () => performBashoWard],
+  ['writing-', () => performWritingKitCommand],
+  ['statement-', () => performRecordedStatement],
+  ['device-', () => performDeviceCommand],
+  ['biohazard-', () => performDeviceCommand],
+  ['dowsing-', () => performDowsingCommand],
+  ['judgment-', () => performJudgmentCommand],
+  ['gum-', () => performGumCommand],
+  ['texture-paper', () => performPaperTextureCommand],
+  ['texture-', () => performTextureCommand],
+  ['document-', () => performPaperDocumentCommand],
+  ['cookie-', () => performCookie],
+  ['hunter-', () => performHunterInterview],
+  ['arena-turn-object', () => performArenaObjectTurn],
+  ['sun-moon-', () => performSunMoonCharge],
+  ['history-', () => performHistoricalCommand],
 ]
 
 function toggleConsent(state: FightState, side: FightSide): FightState {

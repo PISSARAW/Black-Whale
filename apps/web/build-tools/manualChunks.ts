@@ -15,6 +15,8 @@ export function manualChunks(id: string, graph?: ChunkGraph): string | undefined
   if (id.endsWith('/data/characters/appearance.json')) return 'data-character-appearances'
   if (/\/i18n\/messages\/(en|fr)\.ts$/.test(id))
     return `interface-${id.endsWith('/fr.ts') ? 'fr' : 'en'}`
+  if (/\/(?:packages\/nen-engine|node_modules\/@black-whale\/nen-engine)\//.test(id))
+    return 'nen-engine'
   if (graph) {
     if (graphOwner !== graph.getModuleInfo) {
       graphOwner = graph.getModuleInfo

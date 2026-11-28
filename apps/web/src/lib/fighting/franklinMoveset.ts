@@ -1,4 +1,4 @@
-import { franklinActiveFrames, franklinSalvo } from './franklinAttack'
+import { franklinActiveFrames, franklinSalvo } from './franklinSalvo'
 import type { FighterMove, FighterMoveset } from './movesetTypes'
 
 export function tuneFranklinMoveset(moveset: FighterMoveset): FighterMoveset {

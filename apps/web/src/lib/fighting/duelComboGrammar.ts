@@ -1,7 +1,6 @@
 import type { FighterMove } from './movesetTypes'
 import type { CancelGrammar, ComboMove } from './duelComboTypes'
 import type { MoveSlot } from './types'
-import { accelTargets } from './accelCancel'
 
 export interface GrammarCancels {
   cancelInto: readonly string[]
@@ -12,6 +11,13 @@ const GROUND_NORMALS: ReadonlySet<FighterMove['category']> = new Set(['normal', 
 
 function ids(fighter: string, slots: readonly MoveSlot[]): string[] {
   return [...new Set(slots)].map((slot) => `${fighter}:${slot}`)
+}
+
+/** Specials listed after `slot`: the order keeps the cancel graph acyclic. */
+export function accelTargets(grammar: CancelGrammar, slot: MoveSlot): MoveSlot[] {
+  if (!grammar.accel) return []
+  const index = grammar.specials.indexOf(slot)
+  return index < 0 ? [] : grammar.specials.slice(index + 1)
 }
 
 /** Cancels of one move under the tiered grammar; see CancelGrammar. */

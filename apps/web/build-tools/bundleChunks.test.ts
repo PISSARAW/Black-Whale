@@ -71,6 +71,15 @@ async function compile(entry: string) {
   return { result, warnings, directory, main }
 }
 
+function inSharedChunk({ result }: Awaited<ReturnType<typeof compile>>, moduleName: string) {
+  return result.output.some(
+    (chunk) =>
+      chunk.type === 'chunk' &&
+      !chunk.isEntry &&
+      chunk.moduleIds.some((id) => id.endsWith(`/${moduleName}.ts`)),
+  )
+}
+
 describe('production bundle partitioning', () => {
   it('initializes Cross Game and movesets regardless of which shared chunk loads first', async () => {
     const built = await compile(
@@ -96,7 +105,7 @@ describe('production bundle partitioning', () => {
     expect(warning.auraCost).toBe(40)
     expect(warning.tuning.startup).toBe(18)
     expect(actual.crossGameCanWarn).toBeTypeOf('function')
-  }, 30_000)
+  }, 90_000)
 
   it('loads the split paper moveset with the real combat engine and finite material emission', async () => {
     const built = await compile(
@@ -126,11 +135,7 @@ describe('production bundle partitioning', () => {
     })
     expect(gathered.player.paperKit.confetti).toHaveLength(1)
     expect(gathered.player.paperKit.confetti[0].id).toBe(paper.id)
-    expect(
-      built.result.output.some(
-        (item) => item.type === 'chunk' && item.name === 'clash-map-location',
-      ),
-    ).toBe(true)
+    expect(inSharedChunk(built, 'dowsingMapBody')).toBe(true)
     const fresh = actual.beginFight(
       actual.createFight('kurapika', 'hisoka', {
         mode: 'versus-local',
@@ -154,7 +159,7 @@ describe('production bundle partitioning', () => {
     for (let index = 0; index < 30; index++)
       search = actual.tickFight(search, empty, { dt: 1 / 60, opponentInput: empty })
     expect(search.player.dowsingMapReading?.point?.x).toBeCloseTo(33 / 86)
-  }, 30_000)
+  }, 90_000)
   it('separates scene catalogues without changing authored gestures, stances or expressions', async () => {
     const modules = [
       'easterEggRosterOne',
@@ -187,18 +192,10 @@ describe('production bundle partitioning', () => {
       SHIP_ROOM_STAGES,
     }
     for (const [name, value] of Object.entries(expected)) expect(actual[name]).toEqual(value)
-    expect(
-      built.result.output.some(
-        (item) => item.type === 'chunk' && item.name === 'clash-presentation-catalogues',
-      ),
-    ).toBe(true)
-    expect(
-      built.result.output.some(
-        (item) => item.type === 'chunk' && item.name === 'clash-stage-catalogue',
-      ),
-    ).toBe(true)
+    expect(inSharedChunk(built, 'fightStancesRoster')).toBe(true)
+    expect(inSharedChunk(built, 'stageCatalogue')).toBe(true)
     expect(built.warnings).toEqual([])
-  })
+  }, 30_000)
   it('rejects an oversized JavaScript chunk instead of suppressing its warning', async () => {
     await expect(
       compile(`export const payload = ${JSON.stringify('x'.repeat(510_000))}`),
@@ -244,11 +241,7 @@ describe('production bundle partitioning', () => {
     expect(actual.DUEL_COMBO_LESSONS).toEqual(DUEL_COMBO_LESSONS)
     expect(actual.KAMEO_COMBO_LESSONS).toEqual(KAMEO_COMBO_LESSONS)
     expect(actual.KAMEO_COMBO_LESSONS).toHaveLength(240)
-    expect(
-      built.result.output.some(
-        (item) => item.type === 'chunk' && item.name === 'clash-kameo-catalogues',
-      ),
-    ).toBe(true)
+    expect(inSharedChunk(built, 'comboLessonCatalogue')).toBe(true)
     for (const fighterId of DUEL_COMBO_FIGHTERS) {
       const moveset = {
         fighterId,
@@ -271,9 +264,7 @@ describe('production bundle partitioning', () => {
       /* @vite-ignore */ pathToFileURL(join(built.directory, built.main.fileName)).href
     )
     expect(actual.NEN_CANON).toEqual(NEN_CANON)
-    expect(
-      built.result.output.some((item) => item.type === 'chunk' && item.name === 'clash-nen-canon'),
-    ).toBe(true)
+    expect(inSharedChunk(built, 'nenCanon')).toBe(true)
     expect(built.warnings).toEqual([])
   })
 

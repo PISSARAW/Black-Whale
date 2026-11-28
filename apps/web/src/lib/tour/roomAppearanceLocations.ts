@@ -18,6 +18,7 @@ const TIER_1_FINISH = new Map<string, Finish>([
       ] as const,
   ),
   ['tier-1-royal-residential-sector', 'royal-passage'],
+  ['tier-1-royal-residential-sector-corridor-outside-room-1009', 'royal-passage'],
   ...Array.from(
     { length: 14 },
     (_, index) =>

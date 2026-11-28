@@ -501,7 +501,7 @@ describe('manga cast shared by the visit and Fighting', () => {
       height: 0.88,
       shoulders: 0.9,
       face: 'round',
-      hairStyle: 'ponytail',
+      hairStyle: 'bun',
       clothing: 'gown',
       expression: 'neutral',
       signatures: ['tiara'],

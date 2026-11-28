@@ -28,11 +28,18 @@ const build = (overrides = {}) =>
     ...overrides,
   })!
 
+function meshes(root: THREE.Group): THREE.Mesh[] {
+  const result: THREE.Mesh[] = []
+  root.traverse((object) => {
+    if (object instanceof THREE.Mesh) result.push(object)
+  })
+  return result
+}
+
 const triangles = (root: THREE.Group) =>
-  (root.children as THREE.Mesh[]).reduce(
-    (sum, mesh) => sum + mesh.geometry.getAttribute('position').count / 3,
-    0,
-  )
+  meshes(root).reduce((sum, { geometry }) => {
+    return sum + (geometry.index?.count ?? geometry.getAttribute('position').count) / 3
+  }, 0)
 
 describe('the central dining hall reconstructed from chapters 371, 377 and 379-380', () => {
   it('satisfies the shared blueprint invariants for the dining hall', () => {
@@ -77,12 +84,13 @@ describe('the central dining hall reconstructed from chapters 371, 377 and 379-3
 
   it('batches finite geometry within the envelope and the detail budget', () => {
     const root = build()
-    expect(root.children.length).toBeGreaterThan(0)
-    expect(root.children.length).toBeLessThanOrEqual(3)
+    const batches = root.children.filter((child) => child instanceof THREE.Mesh)
+    expect(batches.length).toBeGreaterThan(0)
+    expect(batches.length).toBeLessThanOrEqual(3)
     expect(triangles(root)).toBeLessThan(150_000)
-    expect(root.children.some((child) => child instanceof THREE.Light)).toBe(false)
+    root.traverse((child) => expect(child instanceof THREE.Light).toBe(false))
 
-    for (const mesh of root.children as THREE.Mesh[]) {
+    for (const mesh of meshes(root)) {
       expect(Array.from(mesh.geometry.getAttribute('position').array).every(Number.isFinite)).toBe(
         true,
       )
@@ -102,12 +110,14 @@ describe('the central dining hall reconstructed from chapters 371, 377 and 379-3
 
   it('physically anchors overhead elements to ceiling and walls without mid-air gaps', () => {
     const root = build()
-    const meshes = root.children as THREE.Mesh[]
     const positions: [number, number, number][] = []
-    for (const mesh of meshes) {
+    root.updateMatrixWorld(true)
+    const position = new THREE.Vector3()
+    for (const mesh of meshes(root)) {
       const posAttr = mesh.geometry.getAttribute('position')
       for (let i = 0; i < posAttr.count; i++) {
-        positions.push([posAttr.getX(i), posAttr.getY(i), posAttr.getZ(i)])
+        position.fromBufferAttribute(posAttr, i).applyMatrix4(mesh.matrixWorld)
+        positions.push([position.x, position.y, position.z])
       }
     }
 
@@ -257,7 +267,7 @@ describe('the central dining hall reconstructed from chapters 371, 377 and 379-3
     const root = build()
     const parent = new THREE.Group()
     parent.add(root)
-    const resources = (root.children as THREE.Mesh[]).flatMap((mesh) => [
+    const resources = meshes(root).flatMap((mesh) => [
       mesh.geometry,
       mesh.material as THREE.Material,
     ])

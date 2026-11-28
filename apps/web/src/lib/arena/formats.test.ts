@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { initialCombatState } from '../combat/reducer'
 import { ARENA_FORMATS, formatOutcome } from './formats'
-import { ARENA_TERRAINS, buildCombatTerrain } from './terrain'
+import { ARENA_TERRAINS, WAREHOUSE_SECTOR_ID, buildCombatTerrain } from './terrain'
 
 describe('Arena V3 terrains and formats', () => {
-  it('derives four tactically identified arenas from attested spaces', () => {
+  it('derives tactically identified arenas from the ship plans and panels', () => {
     expect(ARENA_TERRAINS.map(({ tacticalRole }) => tacticalRole)).toContain('open')
     for (const entry of ARENA_TERRAINS)
-      expect(buildCombatTerrain(entry.id).space.provenance).toBe('panel')
+      expect(buildCombatTerrain(entry.id).space.provenance).toBe(
+        entry.id === WAREHOUSE_SECTOR_ID ? 'plan' : 'panel',
+      )
   })
 
   it('supports score, timed and mastery-gated formats', () => {

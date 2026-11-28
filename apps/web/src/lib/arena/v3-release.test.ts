@@ -21,6 +21,6 @@ describe('Arena V3 release acceptance', () => {
     expect(ARENA_CAMPAIGN).toHaveLength(5)
     expect(V3_OPPONENTS.length).toBeGreaterThanOrEqual(5)
     expect(ARENA_FORMATS).toHaveLength(4)
-    expect(ARENA_TERRAINS).toHaveLength(4)
+    expect(ARENA_TERRAINS).toHaveLength(5)
   })
 })

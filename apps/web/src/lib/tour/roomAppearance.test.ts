@@ -6,7 +6,7 @@ const ship = buildShip()
 
 describe('room appearance', () => {
   it.each([
-    ['tier-1', 36],
+    ['tier-1', 37],
     ['tier-2', 5],
     ['tier-3', 10],
     ['tier-4', 5],
@@ -22,14 +22,14 @@ describe('room appearance', () => {
     expect([...locations].filter((id) => !hasAuthoredAppearance(id))).toEqual([])
   })
 
-  it('covers the complete 63-location appearance audit', () => {
+  it('covers the complete 64-location appearance audit', () => {
     const locations = new Set(
       ship.blueprint.spaces
         .map((space) => space.locationId)
         .filter((id): id is string => id !== null),
     )
 
-    expect(locations.size).toBe(63)
+    expect(locations.size).toBe(64)
     expect([...locations].every(hasAuthoredAppearance)).toBe(true)
   })
 

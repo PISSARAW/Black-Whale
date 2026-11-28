@@ -50,8 +50,8 @@
   </a>
   <a href={routeHref}>
     {$locale === 'fr'
-      ? 'Refaire le parcours de Tserriednich (chap. 419–420)'
-      : 'Replay Tserriednich’s route (ch. 419–420)'}
+      ? 'Refaire le parcours de Tserriednich (chap. 418–420)'
+      : 'Replay Tserriednich’s route (ch. 418–420)'}
   </a>
 </div>
 

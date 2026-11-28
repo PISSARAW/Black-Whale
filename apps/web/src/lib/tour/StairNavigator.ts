@@ -1,5 +1,7 @@
 import { floorOf, type Ship } from './blueprint'
 import { DINING_VISIT_SPACES } from './diningVisit'
+import { CASINO_APPROACH } from './casinoLayout'
+import { isCasinoSpiralLink } from './casinoSpiralLayout'
 import type { Link, Structure, Vec2 } from './types'
 
 export interface JumpArrival {
@@ -85,7 +87,7 @@ export class StairNavigator {
 
   constructor(ship: Ship) {
     this.ends = ship.links
-      .filter(({ kind, retractable }) => kind === 'stair' && !retractable)
+      .filter((link) => link.kind === 'stair' && !link.retractable && !isCasinoSpiralLink(link))
       .flatMap((link) => endsOf(ship, link))
   }
 
@@ -130,11 +132,11 @@ export function stairInteractionArrival(
   view: Pick<JumpArrival, 'facing' | 'looking'>,
 ): JumpArrival | undefined {
   const { link, to } = crossing
-  if (
-    link.kind !== 'stair' ||
-    link.from !== DINING_VISIT_SPACES.passage ||
-    link.to !== DINING_VISIT_SPACES.landing
-  )
-    return undefined
+  if (link.kind === 'door' && link.from === CASINO_APPROACH) {
+    return { at: to === link.to ? link.atTo : link.at, facing: Math.PI / 2, looking: 0 }
+  }
+  const dining =
+    link.from === DINING_VISIT_SPACES.passage && link.to === DINING_VISIT_SPACES.landing
+  if (link.kind !== 'stair' || !dining) return undefined
   return { at: to === link.to ? (link.atTo ?? link.at) : link.at, ...view }
 }

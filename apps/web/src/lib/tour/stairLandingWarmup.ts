@@ -1,6 +1,13 @@
 import type * as Three from 'three'
 import type { Ship, TierPlan } from './blueprint'
 import { DINING_VISIT_SPACES } from './diningVisit'
+import {
+  CASINO_LOWER_HALL,
+  CASINO_SPACE,
+  CASINO_STAIR_LANDING,
+  CASINO_STAIR_ROOM,
+} from './casinoLayout'
+import { isCasinoSpiralLink } from './casinoSpiralLayout'
 import { EYE_HEIGHT } from './sceneOptics'
 import { standingSurface } from './standingSurface'
 import type { BuiltTierView, TierRoomView } from './TierView'
@@ -37,6 +44,23 @@ function pairedLandings(ship: Ship): readonly Landing[] {
   return [
     { space: upper, at: link.at },
     { space: lower, at: link.atTo ?? link.at },
+  ]
+}
+
+const CASINO_APPROACH = new Set([
+  'tier-1-c-port-corridor',
+  CASINO_SPACE,
+  CASINO_STAIR_ROOM,
+  CASINO_STAIR_LANDING,
+  CASINO_LOWER_HALL,
+])
+
+function casinoLandings(ship: Ship): Landing[] {
+  const link = ship.links.find(isCasinoSpiralLink)
+  if (!link?.atTo) return []
+  return [
+    { space: ship.spaces.get(link.from)!, at: [link.at[0] - 0.55, link.at[1]] },
+    { space: ship.spaces.get(link.to)!, at: [link.atTo[0] - 0.55, link.atTo[1]] },
   ]
 }
 
@@ -162,8 +186,7 @@ function* warmLanding(options: Warmup, { space, at }: Landing): LandingSteps {
     type: options.runtime.composer.readBuffer.texture.type,
   })
   try {
-    for (const room of built.rooms) {
-      if (!visible.has(room.spaceId)) continue
+    for (const room of built.rooms.filter(({ spaceId }) => visible.has(spaceId))) {
       yield
       warmObjects({ options, scene, camera, target, objects: roomObjects(room) })
     }
@@ -205,6 +228,7 @@ const FRAME_WORK_LIMIT_MS = 11
 /** Prepare connected landings in bounded slices after the first visible frames. */
 export function prepareStairLandings(options: Warmup) {
   const landings = pairedLandings(options.ship)
+  const spiral = casinoLandings(options.ship)
   const complete = new Set<string>()
   const jobs = new Map<string, LandingSteps>()
   let enteredAt = 0
@@ -222,8 +246,11 @@ export function prepareStairLandings(options: Warmup) {
     jobs.delete(tierId)
   }
 
-  function nextLanding(tierId: string): Landing | undefined {
+  function nextLanding(tierId: string, spaceId?: string | null): Landing | undefined {
     if (pending) return landings.find(({ space }) => space.id === pending?.to)
+    if (spaceId && CASINO_APPROACH.has(spaceId)) {
+      return spiral.find((landing) => landing.space.tierId !== tierId && eligible(landing))
+    }
     if (!landings.some(({ space }) => space.tierId === tierId)) return
     return (
       landings.find((landing) => landing.space.tierId !== tierId && eligible(landing)) ??
@@ -241,7 +268,8 @@ export function prepareStairLandings(options: Warmup) {
     }
     const deadline = Math.min(frameStarted + FRAME_WORK_LIMIT_MS, performance.now() + SLICE_MS)
     try {
-      let mustProgress = Boolean(pending && frameStarted - lastProgress >= 64)
+      const nearSpiral = spiral.includes(landing)
+      let mustProgress = Boolean((pending || nearSpiral) && frameStarted - lastProgress >= 64)
       while (mustProgress || performance.now() < deadline) {
         mustProgress = false
         lastProgress = frameStarted
@@ -259,13 +287,13 @@ export function prepareStairLandings(options: Warmup) {
   }
 
   return {
-    frame(tierId: string, frameStarted: number) {
+    frame(tierId: string, frameStarted: number, spaceId?: string | null) {
       if (tierId !== lastTier) {
         lastTier = tierId
         enteredAt = frameStarted
       }
       if (pending && !pending.valid()) pending = null
-      const landing = nextLanding(tierId)
+      const landing = nextLanding(tierId, spaceId)
       // Commit a deferred crossing on the following frame, after the last upload.
       if (pending && landing && !eligible(landing)) {
         const { arrive } = pending

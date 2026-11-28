@@ -1,4 +1,5 @@
 import type * as Three from 'three'
+import { CASINO_STAIR_LANDING, CASINO_STAIR_ROOM } from './casinoLayout'
 import { finishDeckSteps } from './deckBuildSteps'
 import { floorOf, ceilingOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
@@ -37,6 +38,7 @@ const CORRIDOR_KEYWORDS = [
 
 /** Identifies whether a space is a circulation corridor or passage requiring wall dressing. */
 export function isCorridorSpace(spaceId: string, category?: string): boolean {
+  if (spaceId === CASINO_STAIR_ROOM || spaceId === CASINO_STAIR_LANDING) return false
   // Exclude princes quarters gate and individual approaches (handled by bespoke entrance builder)
   if (spaceId === 'tier-1-princes-quarters-gate') return false
   if (/^tier-1-royal-residential-approach-10(0[1-9]|1[0-4])$/.test(spaceId)) return false

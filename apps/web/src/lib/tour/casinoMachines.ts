@@ -8,6 +8,40 @@ const DARK = 0x282a28
 const RED = 0x773c42
 const GLASS = 0x6d8b85
 
+/** An octagonal hub presents controls and screens toward the surrounding aisles. */
+export function dressCasinoIsland(THREE: typeof Three, model: CasinoFixture): void {
+  const octagon = (top: number, bottom: number, height: number) =>
+    new THREE.CylinderGeometry(top, bottom, height, 8)
+  model.add(octagon(0.32, 0.47, 0.5), { at: [0, 0.31, 0], colour: RED })
+  model.add(octagon(0.47, 0.47, 0.08), { at: [0, 0.04, 0], colour: DARK })
+  model.add(octagon(0.42, 0.3, 0.34), { at: [0, 0.69, 0], colour: IVORY })
+  model.add(
+    new THREE.SphereGeometry(0.32, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2).scale(1, 0.42, 1),
+    { at: [0, 0.86, 0], colour: GOLD },
+  )
+  for (let face = 0; face < 8; face++) {
+    const angle = ((face + 0.5) * Math.PI) / 4
+    const point = (radius: number, y: number) =>
+      [Math.sin(angle) * radius, y, Math.cos(angle) * radius] as const
+    const rotation = [0, angle, 0] as const
+    model.add(new THREE.BoxGeometry(0.21, 0.21, 0.035), {
+      at: point(0.35, 0.72),
+      colour: DARK,
+      rotation,
+    })
+    model.add(new THREE.BoxGeometry(0.16, 0.15, 0.02), {
+      at: point(0.374, 0.72),
+      colour: GLASS,
+      rotation,
+    })
+    model.add(new THREE.BoxGeometry(0.2, 0.04, 0.085), {
+      at: point(0.371, 0.42),
+      colour: GOLD,
+      rotation,
+    })
+  }
+}
+
 /** Tall cabinets with rounded crowns, inset game faces and projecting controls, ch. 420. */
 export function dressCasinoMachine(THREE: typeof Three, model: CasinoFixture): void {
   model.box([0.92, 0.07, 0.94], [0, 0.035, 0], DARK)

@@ -7,6 +7,8 @@ import { addRoyalArchitecture, addRoyalQuay, type RoyalDrawing } from './royalLi
 import { gangwayPaths, GANGWAY_WIDTH } from './gangwayNavigation'
 import { gangwayHullMaterial } from './gangwayGates'
 import { TSERRIEDNICH_EXTERIOR } from './tserriednichRoute'
+import { addRoyalDeckPatrol } from './royalDeckPatrol'
+import { gangwayLockdownView, type GangwayPresentation } from './gangwayLockdownView'
 
 export const PRINCE_VIEW_SPACE = 'tier-2-port-promenade'
 
@@ -16,6 +18,11 @@ export interface GangwayView {
   isOutside: (spaceId: string | null, panorama: boolean) => boolean
   setLocation: (spaceId: string | null, panorama: boolean) => void
   setExtended: (extended: boolean) => void
+  advance: ReturnType<typeof gangwayLockdownView>['advance']
+  renderLockdown: ReturnType<typeof gangwayLockdownView>['render']
+  readonly passable: boolean
+  readonly showingLockdown: boolean
+  readonly presentation: GangwayPresentation
   dispose: () => void
 }
 
@@ -314,12 +321,11 @@ export function buildGangwayView(THREE: typeof Three, ship: Ship): GangwayView |
   addRoyalArchitecture(drawing, ship, royalHull)
   addRoyalQuay(drawing, { outline: royalHull, floor: tier.elevation, water: waterY })
   const exteriorDeck = ship.spaces.get(TSERRIEDNICH_EXTERIOR)
+  const deckPatrol = exteriorDeck ? addRoyalDeckPatrol(drawing, tier.elevation) : null
   if (exteriorDeck) {
     const walkingSurface = plate(exteriorDeck.footprint, royal.elevation + 0.01, 0x34464c)
     walkingSurface.name = 'tserriednich-exterior-walking-surface'
   }
-  const floodlightBeams = root.getObjectByName('royal-quay-light-beams')
-  const floodlights = root.getObjectByName('royal-quay-floodlights')
 
   function addAccessPier(route: Link, y: number) {
     const end: Vec2 = route.from.endsWith('route-b')
@@ -398,8 +404,10 @@ export function buildGangwayView(THREE: typeof Three, ship: Ship): GangwayView |
   // A railing has many posts, but it must not cost a draw call per post.
   // Merge only siblings that share a material and visibility/animation state;
   // bridge spans stay separate so retraction never rebuilds their buffers.
-  function batch(parent: Three.Object3D) {
-    const meshes = parent.children.filter(
+  function batch(parent: Three.Object3D, descendants = false) {
+    const candidates = [...parent.children]
+    if (descendants) for (const child of candidates) candidates.push(...child.children)
+    const meshes = candidates.filter(
       (child): child is Three.Mesh =>
         child instanceof THREE.Mesh &&
         !(child instanceof THREE.InstancedMesh) &&
@@ -411,16 +419,18 @@ export function buildGangwayView(THREE: typeof Three, ship: Ship): GangwayView |
     const positions: number[] = []
     const colours: number[] = []
     const position = new THREE.Vector3()
+    parent.updateWorldMatrix(true, true)
+    const inverse = parent.matrixWorld.clone().invert()
     for (const mesh of meshes) {
-      mesh.updateMatrix()
+      const local = new THREE.Matrix4().multiplyMatrices(inverse, mesh.matrixWorld)
       const vertices = mesh.geometry.getAttribute('position')
       const shades = mesh.geometry.getAttribute('color')
       for (let index = 0; index < vertices.count; index++) {
-        position.fromBufferAttribute(vertices, index).applyMatrix4(mesh.matrix)
+        position.fromBufferAttribute(vertices, index).applyMatrix4(local)
         positions.push(position.x, position.y, position.z)
         colours.push(shades.getX(index), shades.getY(index), shades.getZ(index))
       }
-      parent.remove(mesh)
+      mesh.removeFromParent()
       mesh.geometry.dispose()
       geometries.delete(mesh.geometry)
     }
@@ -431,9 +441,11 @@ export function buildGangwayView(THREE: typeof Three, ship: Ship): GangwayView |
     parent.add(new THREE.Mesh(geometry, surface))
   }
   for (const span of spans) batch(span)
+  if (deckPatrol) batch(deckPatrol, true)
   batch(lookout)
   batch(root)
 
+  const motion = gangwayLockdownView(THREE, root, spans)
   const isOutside = (spaceId: string | null, panorama: boolean) =>
     spaceId !== null && (spaceIds.has(spaceId) || (panorama && spaceId === PRINCE_VIEW_SPACE))
   return {
@@ -442,15 +454,23 @@ export function buildGangwayView(THREE: typeof Three, ship: Ship): GangwayView |
     isOutside,
     setLocation(spaceId, panorama) {
       root.visible = isOutside(spaceId, panorama) || (spaceId !== null && visibleFrom.has(spaceId))
+      if (deckPatrol) deckPatrol.visible = spaceId === TSERRIEDNICH_EXTERIOR
       lookout.visible = panorama && spaceId === PRINCE_VIEW_SPACE
-      if (floodlightBeams) floodlightBeams.visible = spaceId !== TSERRIEDNICH_EXTERIOR
-      if (floodlights) floodlights.visible = spaceId !== TSERRIEDNICH_EXTERIOR
     },
-    setExtended(extended) {
-      // Scale a child, anchored at the quay: no height or heading jump.
-      for (const span of spans) span.scale.z = extended ? 1 : 0.08
+    setExtended: motion.setExtended,
+    advance: motion.advance,
+    renderLockdown: motion.render,
+    get passable() {
+      return motion.passable
+    },
+    get showingLockdown() {
+      return motion.showingLockdown
+    },
+    get presentation() {
+      return motion.presentation
     },
     dispose() {
+      motion.dispose()
       root.traverse((object) => {
         if (object instanceof THREE.InstancedMesh) object.dispose()
       })

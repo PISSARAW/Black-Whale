@@ -40,6 +40,17 @@
       inferred: true,
     },
     {
+      id: 'tier-1-vip-casino-emergency-room',
+      region: 'casino',
+      points: '352.86,445.71 361.66,445.71 361.66,460.0 352.86,460.0',
+      label: '',
+      size: 0,
+      at: [357.3, 452.9],
+      turned: false,
+      through: true,
+      inferred: false,
+    },
+    {
       id: 'tier-1-c-port-corridor',
       region: null,
       points: '385.0,310.0 390.0,310.0 390.0,460.0 385.0,460.0',
@@ -76,10 +87,11 @@
     {
       id: 'tier-1-vip-casino',
       region: 'casino',
-      points: '335.0,310.0 385.0,310.0 385.0,460.0 335.0,460.0',
+      points:
+        '335.0,310.0 385.0,310.0 385.0,460.0 371.86,460.0 371.86,445.71 352.57,445.71 352.57,460.0 335.0,460.0',
       label: 'VIP Casino',
       size: 12,
-      at: [360.0, 389.0],
+      at: [359.9, 386.4],
       turned: true,
       through: false,
       inferred: false,

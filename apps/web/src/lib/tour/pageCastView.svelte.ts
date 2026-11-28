@@ -215,7 +215,11 @@ export class TourCastView {
     const cast = this.options.readCast()
     if (concert?.ensemble === 'clash') return castApparitions(this.options.ship, this.posts)
     return [
-      ...castApparitions(this.options.ship, this.posts, auraReader(this.situation)),
+      ...castApparitions(
+        this.options.ship,
+        this.posts,
+        mangaView?.hideCastAura ? undefined : auraReader(this.situation),
+      ),
       // Aura left where a technique forced a seam: hidden, so only Gyo draws it.
       ...residueApparitions({
         ship: this.options.ship,
@@ -241,9 +245,9 @@ export class TourCastView {
   })
 
   landingActors = (tierId: string, spaceId: string): Apparition[] => {
-    const { concert } = this.options.read()
+    const { mangaView, concert } = this.options.read()
     const look =
-      concert?.ensemble === 'clash'
+      mangaView?.hideCastAura || concert?.ensemble === 'clash'
         ? undefined
         : auraReader({ ...this.situation, visitorIn: spaceId, sensedBy: {}, sweptBy: [] })
     return castApparitions(this.options.ship, this.postsOn(tierId), look)

@@ -42,13 +42,25 @@
     {
       id: 'tier-1-vip-casino-emergency-stair',
       region: 'casino',
-      points: '357.14,450.0 368.57,450.0 368.57,460.0 357.14,460.0',
+      points: '340.0,442.86 361.66,442.86 361.66,451.43 340.0,451.43',
       label: '',
       size: 0,
-      at: [362.9, 455.0],
+      at: [350.8, 447.1],
       turned: false,
       through: true,
       inferred: true,
+    },
+    {
+      id: 'tier-1-vip-casino-lower-hall',
+      region: 'casino',
+      points:
+        '337.14,451.43 361.66,451.43 361.66,457.0 371.86,457.0 371.86,451.43 385.71,451.43 385.71,480.0 337.14,480.0',
+      label: '',
+      size: 0,
+      at: [361.2, 466.2],
+      turned: false,
+      through: true,
+      inferred: false,
     },
     {
       id: 'tier-1-queens-corridor',
@@ -736,10 +748,11 @@
     {
       id: 'tier-1-exterior-main-deck',
       region: 'tier-1-exterior-main-deck',
-      points: '300.0,460.0 414.29,460.0 414.29,494.29 300.0,494.29',
+      points:
+        '300.0,460.0 337.14,460.0 337.14,480.0 385.71,480.0 385.71,460.0 414.29,460.0 414.29,494.29 300.0,494.29',
       label: '',
       size: 0,
-      at: [357.1, 477.1],
+      at: [355.7, 479.5],
       turned: false,
       through: false,
       inferred: false,

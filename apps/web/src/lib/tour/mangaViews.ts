@@ -23,6 +23,7 @@ import { MANGA_LUZURUS_VIEWS } from './mangaLuzurusViews'
 import { MANGA_TYSON_VIEWS } from './mangaTysonViews'
 import { MANGA_TUBEPPA_VIEWS } from './mangaTubeppaViews'
 import { MANGA_TSERRIEDNICH_VIEWS } from './mangaTserriednichViews'
+import { MANGA_TSERRIEDNICH_ROUTE_VIEWS } from './mangaTserriednichRouteViews'
 import { MANGA_VVIP_RECREATION_VIEWS } from './mangaVvipRecreationViews'
 import { MANGA_JUSTICE_BUREAU_VIEWS } from './mangaJusticeBureauViews'
 import { MANGA_CINEPLEX_VIEWS } from './mangaCineplexViews'
@@ -165,6 +166,7 @@ export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_CAMILLA_VIEWS,
   ...MANGA_ZHANG_LEI_VIEWS,
   ...MANGA_TSERRIEDNICH_VIEWS,
+  ...MANGA_TSERRIEDNICH_ROUTE_VIEWS,
   ...MANGA_TUBEPPA_VIEWS,
   ...MANGA_TYSON_VIEWS,
   ...MANGA_LUZURUS_VIEWS,

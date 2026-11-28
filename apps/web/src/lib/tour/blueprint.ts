@@ -13,6 +13,7 @@ import { cineplexHallDoorOverrides } from './cineplexHallLayout'
 import { cineplexWalkStructures } from './cineplexWalkStructures'
 import { spawnFacing, spawnPoint } from './spawn'
 import { columnsForRooms, roomColumnPositions } from './roomColumns'
+import { doorwaySurfaceRise } from './standingSurface'
 import {
   EPSILON,
   deriveDoorways,
@@ -622,9 +623,7 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
   // dressed as a door.
   for (const plan of ship.plans.values()) {
     for (const doorway of plan.doorways) {
-      const a = ship.spaces.get(doorway.a)!
-      const b = ship.spaces.get(doorway.b)!
-      const rise = Math.abs((a.floor ?? 0) - (b.floor ?? 0))
+      const rise = doorwaySurfaceRise(plan, doorway)
       if (rise > STEP_UP + EPSILON) {
         issues.push(`doorway ${doorway.a} | ${doorway.b}: ${rise} m is a climb, not a step`)
       }

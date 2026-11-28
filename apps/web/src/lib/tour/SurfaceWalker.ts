@@ -30,13 +30,25 @@ function deckFloor(plan: TierPlan, at: Vec2): number {
   return floorOf(spaceAt(plan, at) ?? plan.spaces[0], plan.tier)
 }
 
+function reachableDeck(
+  plan: TierPlan,
+  at: Vec2,
+  { height, onDeck }: { height: number; onDeck: boolean },
+): number | null {
+  const floor = deckFloor(plan, at)
+  return onDeck || Math.abs(floor - height) <= STEP ? floor : null
+}
+
 function walkModel(plan: TierPlan): WalkModel {
   const floors = new Map(plan.spaces.map((space) => [space.id, floorOf(space, plan.tier)]))
   const structures = plan.structures
   const ids = new Set(structures.map(({ id }) => id))
   const platforms = structures.filter(({ kind }) => kind === 'platform')
   return {
-    rooms: new Set(platforms.map(({ spaceId }) => spaceId)),
+    rooms: new Set([
+      ...platforms.map(({ spaceId }) => spaceId),
+      ...plan.spaces.filter(({ floor }) => floor).map(({ id }) => id),
+    ]),
     surfaces: platforms.map((structure) => ({
       structure,
       polygon: structureFootprint(structure),
@@ -150,16 +162,17 @@ export class SurfaceWalker {
     for (let index = 0; index < count; index++) {
       const target: Vec2 = [at[0] + step[0], at[1] + step[1]]
       const onDeck = this.height <= deckFloor(plan, at) + STEP
+      const stepFrom = { height: this.height, onDeck }
       const support = supportAt(model, target, {
         height: this.height,
-        deck: onDeck ? deckFloor(plan, target) : null,
+        deck: reachableDeck(plan, target, stepFrom),
       })
       if (support === null) continue
       const walls = wallsNear([...obstaclesAt(model, support), ...extras], at, 6)
       const resolved = resolveMovement(at, target, walls)
       const floor = supportAt(model, resolved, {
         height: this.height,
-        deck: onDeck ? deckFloor(plan, resolved) : null,
+        deck: reachableDeck(plan, resolved, stepFrom),
       })
       if (floor === null) continue
       at = resolved

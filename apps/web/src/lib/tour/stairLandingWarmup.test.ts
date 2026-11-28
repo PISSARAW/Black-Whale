@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { describe, expect, it, vi } from 'vitest'
 import { theShip } from './blueprint'
+import { CASINO_SPACE, CASINO_STAIR_LANDING, CASINO_STAIR_ROOM } from './casinoLayout'
 import { DINING_VISIT_SPACES } from './diningVisit'
 import { prepareStairLandings } from './stairLandingWarmup'
 import type { BuiltTierView, TierRoomView } from './TierView'
@@ -134,4 +135,30 @@ describe('deck 4–5 stair warmup', () => {
     for (let i = 0; i < 4; i++) f.warmup.frame('tier-5', performance.now() + 400 * i)
     expect(arrive).not.toHaveBeenCalled()
   })
+})
+
+it('warms the lower casino deck on approach without queueing a crossing', () => {
+  const f = fixture()
+  f.buildSteps.mockImplementation(function* () {
+    yield
+    return deck(CASINO_STAIR_LANDING, 'other')
+  })
+  f.warmup.frame('tier-1-c', performance.now(), 'tier-1-c-aft-passage')
+  f.warmup.frame('tier-1-c', performance.now() + 400, 'tier-1-c-aft-passage')
+  expect(f.buildSteps).not.toHaveBeenCalled()
+
+  for (let i = 0; i < 5; i++) f.warmup.frame('tier-1-c', performance.now() + 400, CASINO_SPACE)
+  expect(f.buildSteps.mock.calls).toEqual([['tier-1']])
+  expect(f.render).toHaveBeenCalled()
+
+  const arrive = vi.fn()
+  expect(
+    f.warmup.cross({
+      from: CASINO_STAIR_ROOM,
+      to: CASINO_STAIR_LANDING,
+      valid: () => true,
+      arrive,
+    }),
+  ).toBe(false)
+  expect(arrive).not.toHaveBeenCalled()
 })

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { theShip } from './blueprint'
+import { floorOf, theShip } from './blueprint'
 import { pointInPolygon, structureFootprint } from './geometry'
+import { standingSurface } from './standingSurface'
 import { MANGA_VIEWS, mangaViewById, viewsForSpace } from './mangaViews'
 import characterCatalog from '../../../../../data/characters/characters.json'
 
@@ -13,8 +14,9 @@ describe('manga photo viewpoints', () => {
     for (const view of MANGA_VIEWS) {
       expect(view.label.trim(), view.id).not.toBe('')
       expect(view.labelFr.trim(), view.id).not.toBe('')
-      expect(view.chapter, view.id).toBeGreaterThanOrEqual(350)
-      if (view.volume !== undefined) expect(view.volume, view.id).toBeGreaterThanOrEqual(34)
+      // The published Black Whale deck plan first appears in chapter 349, volume 33.
+      expect(view.chapter, view.id).toBeGreaterThanOrEqual(349)
+      if (view.volume !== undefined) expect(view.volume, view.id).toBeGreaterThanOrEqual(33)
     }
   })
 
@@ -107,9 +109,13 @@ describe('manga photo viewpoints', () => {
 
       const plan = ship.plans.get(space!.tierId)!
       if (view.eyeHeight === undefined) {
+        const support = standingSurface(plan, view.at, space!)
+        const floor = floorOf(space!, plan.tier)
         const obstruction = plan.structures.find(
           (structure) =>
             structure.spaceId === space!.id &&
+            floor + structure.base <= support + 1.6 &&
+            floor + structure.base + structure.height > support + 0.001 &&
             pointInPolygon(view.at, structureFootprint(structure)),
         )
         expect(obstruction?.id, `${view.id} starts inside the scenery`).toBeUndefined()

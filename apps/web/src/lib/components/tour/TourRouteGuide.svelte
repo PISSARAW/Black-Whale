@@ -1,7 +1,13 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
+  import { comfort } from '$lib/tour/comfort'
+  import type { GangwayPresentation } from '$lib/tour/gangwayLockdownView'
   import {
+    completesRouteStep,
     reachesRouteStep,
+    TSERRIEDNICH_HALL,
     TSERRIEDNICH_ROUTE,
+    TSERRIEDNICH_ROUTE_SOURCES,
     type TserriednichRouteStep,
   } from '$lib/tour/tserriednichRoute'
   import type { Vec2 } from '$lib/tour/types'
@@ -9,21 +15,57 @@
   interface Props {
     currentSpaceId: string | null
     position: Vec2
+    heading: number
+    pitch: number
+    gangways: GangwayPresentation
     french: boolean
     onRestart: () => void
     onClose: () => void
+    onVisitStep: (step: TserriednichRouteStep) => void
+    onLockdownChange: (active: boolean) => void
   }
 
-  let { currentSpaceId, position, french, onRestart, onClose }: Props = $props()
+  let {
+    currentSpaceId,
+    position,
+    heading,
+    pitch,
+    gangways,
+    french,
+    onRestart,
+    onClose,
+    onVisitStep,
+    onLockdownChange,
+  }: Props = $props()
   let stepIndex = $state(0)
+  let lockdown = $state(false)
+  const evidenceLabels = {
+    panel: { en: 'Shown in manga', fr: 'Vu en planche' },
+    mixed: { en: 'Manga and reconstruction', fr: 'Planche et reconstitution' },
+    reconstructed: { en: 'Reconstructed connection', fr: 'Raccord reconstitué' },
+  }
   const finished = $derived(stepIndex >= TSERRIEDNICH_ROUTE.length)
   const step = $derived<TserriednichRouteStep | null>(
     finished ? null : TSERRIEDNICH_ROUTE[stepIndex],
   )
+  const view = $derived({ spaceId: currentSpaceId, position, heading, pitch, gangways })
+  const atLockdownInJumpMode = $derived(
+    $comfort.jumpOnly && step?.id === 'recreation-hall' && completesRouteStep(step, view),
+  )
+  const atTerraceViewpoint = $derived(
+    step?.id === 'outside' && reachesRouteStep(step, currentSpaceId, position),
+  )
 
   $effect(() => {
-    if (step && reachesRouteStep(step, currentSpaceId, position)) stepIndex += 1
+    const observation = view
+    const jumpOnly = $comfort.jumpOnly
+    untrack(() => {
+      if (observation.spaceId === TSERRIEDNICH_HALL) lockdown = true
+      if (jumpOnly && step?.id === 'recreation-hall') return
+      if (step && completesRouteStep(step, observation)) next()
+    })
   })
+  $effect(() => onLockdownChange(lockdown))
 
   function previous() {
     stepIndex = Math.max(0, stepIndex - 1)
@@ -34,12 +76,18 @@
   }
 
   function restart() {
+    lockdown = false
     stepIndex = 0
     onRestart()
   }
 </script>
 
-<aside class="guide" aria-live="polite" aria-label={french ? 'Parcours guidé' : 'Guided route'}>
+<aside
+  class="guide"
+  hidden={gangways === 'cutaway'}
+  aria-live="polite"
+  aria-label={french ? 'Parcours guidé' : 'Guided route'}
+>
   <div class="eyebrow">
     <span>{french ? 'Parcours Tserriednich' : 'Tserriednich route'}</span>
     <button class="close" type="button" onclick={onClose} aria-label={french ? 'Fermer' : 'Close'}>
@@ -49,27 +97,39 @@
 
   {#if step}
     <div class="meta">
-      <span>{french ? 'Chap.' : 'Ch.'} {step.chapter}</span>
+      <a href={TSERRIEDNICH_ROUTE_SOURCES[step.chapter]} target="_blank" rel="noreferrer">
+        {french ? 'Chap.' : 'Ch.'}
+        {step.chapter}, p. {step.pages}
+      </a>
       <span>{stepIndex + 1} / {TSERRIEDNICH_ROUTE.length}</span>
-      <span class:reconstructed={step.evidence === 'reconstructed'}>
-        {step.evidence === 'panel'
-          ? french
-            ? 'attesté'
-            : 'attested'
-          : french
-            ? 'reconstitué'
-            : 'reconstructed'}
-      </span>
     </div>
     <h2>{french ? step.titleFr : step.title}</h2>
-    <p>{french ? step.instructionFr : step.instruction}</p>
+    <p class="evidence" class:reconstructed={step.evidence !== 'panel'}>
+      {evidenceLabels[step.evidence][french ? 'fr' : 'en']}
+    </p>
+    {#if atLockdownInJumpMode}
+      <p>
+        {french
+          ? 'Les trois passerelles sont rétractées. La route A est fermée.'
+          : 'The three gangways have retracted. Route A is closed.'}
+      </p>
+    {:else}
+      <p>{french ? step.instructionFr : step.instruction}</p>
+      {#if $comfort.jumpOnly}
+        <p>
+          {french
+            ? 'Suivez le parcours par étapes, sans déplacement continu.'
+            : 'Follow the route by jumping between stops.'}
+        </p>
+      {/if}
+    {/if}
   {:else}
     <div class="meta"><span>{french ? 'Chap. 420' : 'Ch. 420'}</span></div>
     <h2>{french ? 'Parcours terminé' : 'Route complete'}</h2>
     <p>
       {french
-        ? 'Vous avez refait tout le trajet, de la chambre 1004 au pont extérieur.'
-        : 'You retraced the full route from Room 1004 to the exterior deck.'}
+        ? 'Le dernier repère du chapitre 420 est le bassin sous blocus. Tserriednich se trouve encore du côté du paquebot.'
+        : 'Chapter 420 ends with the basin under blockade. Tserriednich is still on the liner side.'}
     </p>
   {/if}
 
@@ -81,7 +141,19 @@
       <button class="primary" type="button" onclick={restart}>
         {french ? 'Recommencer' : 'Restart'}
       </button>
-    {:else}
+    {:else if atLockdownInJumpMode}
+      <button class="primary" type="button" onclick={next}>
+        {french ? 'Continuer' : 'Continue'}
+      </button>
+    {:else if step && $comfort.jumpOnly}
+      <button class="primary" type="button" onclick={() => onVisitStep(step!)}>
+        {french ? 'Aller à l’étape' : 'Go to stop'}
+      </button>
+    {:else if step && atTerraceViewpoint}
+      <button class="primary" type="button" onclick={() => onVisitStep(step!)}>
+        {french ? 'Regarder le quai' : 'Look at the quay'}
+      </button>
+    {:else if step?.id !== 'outside'}
       <button type="button" onclick={next}>{french ? 'Passer' : 'Skip'}</button>
     {/if}
   </div>
@@ -124,11 +196,18 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
-  .meta span + span::before {
-    margin-right: 0.55rem;
-    content: '·';
+  .meta {
+    justify-content: space-between;
   }
-  .meta .reconstructed {
+  .meta a {
+    color: inherit;
+    text-underline-offset: 0.15em;
+  }
+  .evidence {
+    font-size: 0.67rem;
+    font-weight: 700;
+  }
+  .evidence.reconstructed {
     color: #e8b96d;
   }
   h2 {
@@ -180,9 +259,12 @@
   }
   @media (max-width: 640px) {
     .guide {
-      top: 0.5rem;
+      top: 3.75rem;
       right: 0.5rem;
       width: calc(100% - 4.5rem);
+    }
+    .actions button {
+      min-height: 2.75rem;
     }
   }
 </style>

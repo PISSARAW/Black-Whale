@@ -139,6 +139,7 @@
     TourCameraFov,
     type ThirdPersonCamera,
   } from './TourCameraPlacement'
+  import { TOUR_CAMERA_TRACE_ATTRIBUTE, traceTourCamera } from './TourCameraTrace'
   // The roar makes a noise of its own rather than reporting one: it is answered
   // to a keypress, so it does not go through the page's report-to-sound table.
   // The flock's chirp is raised by the page itself, where the arrival happens.
@@ -148,7 +149,11 @@
   import { visibleSpaces } from '$lib/tour/visibility'
   import { prepareStairLandings } from '$lib/tour/stairLandingWarmup'
   import { createShaftDecks } from '$lib/tour/shaftDecks'
+  import { CasinoSpiralWalk } from '$lib/tour/casinoSpiralWalk'
+  import { buildCasinoSpiralView } from '$lib/tour/casinoSpiralView'
   import { buildGangwayView, type GangwayView } from '$lib/tour/gangwayView'
+  import { offersRouteInteriorExit, TSERRIEDNICH_HALL } from '$lib/tour/tserriednichRoute'
+  import type { GangwayPresentation } from '$lib/tour/gangwayLockdownView'
   import {
     enterGangway,
     gangwayPaths,
@@ -216,6 +221,9 @@
     availableLink?: { link: Link; to: string } | null
     /** Whether the chapter 419 gangway is currently extended. */
     retractableGangwayOpen?: boolean
+    gangwayLockdown?: boolean
+    gangwayPresentation?: GangwayPresentation
+    guidedRoute?: boolean
     /** Set to jump the visitor somewhere; cleared once honoured. */
     jumpTo?: string | null
     /**
@@ -610,6 +618,9 @@
     currentSpace = $bindable(null),
     availableLink = $bindable(null),
     retractableGangwayOpen = $bindable(true),
+    gangwayLockdown = false,
+    gangwayPresentation = $bindable('open'),
+    guidedRoute = false,
     jumpTo = $bindable(null),
     jumpAt = $bindable(null),
     jumpHeading = $bindable(null),
@@ -1067,6 +1078,7 @@
       // apart rather than evicting the deck it was turned on from.
       const revealedDecks: Record<string, Built | undefined> = {}
       let visible: Built | null = null
+      let spiralDeck: Built | null = null
 
       /**
        * The remote eye: a second camera parked in a room, and the deck it is
@@ -1118,7 +1130,7 @@
        * in which case it stays.
        */
       const heldElsewhere = (built: Built | null) =>
-        Boolean(built) && (built === eyeDeck || built === filmDeck || portalDecks.includes(built!))
+        Boolean(built) && (built === eyeDeck || built === filmDeck || built === spiralDeck || portalDecks.includes(built!))
 
       /** The plan as Nen leaves it: what is drawn, and what still stops you. */
       let activePlan: TierPlan | null = null
@@ -1223,7 +1235,10 @@
         canPrepare: (id) => !reveal && worldKey(id) === `${id}::::::`,
         cacheDeck: (id, built) => {
           if (decks[id]) dispose(built)
-          else decks[id] = built
+          else {
+            decks[id] = built
+            shownKey = ''
+          }
         },
       })
 
@@ -1233,6 +1248,9 @@
       let ground = 0
       const surfaces = new SurfaceWalker()
       const stairs = new StairNavigator(ship)
+      const casinoSpiral = new CasinoSpiralWalk(ship)
+      const spiralView = buildCasinoSpiralView(THREE, casinoSpiral.path)
+      if (spiralView) scene.add(spiralView.root)
       let yaw = 0
       let pitch = 0
       // A manga plan can lift the camera out of the visitor's body. It remains
@@ -1324,6 +1342,7 @@
        * tunnel puts you where its far mouth stands, not where the stairs would.
        */
       function goTo(spaceId: string, arrival: JumpArrival = {}) {
+        casinoSpiral.reset()
         gangwayWalk = null
         gangwayOccupied = false
         const space = ship.spaces.get(spaceId)
@@ -1567,6 +1586,20 @@
           .join(',')}`
         if (key === shownKey) return
         shownKey = key
+        const farLanding = casinoSpiral.partner(standingId)
+        const farTier = farLanding?.tierId
+        const farDeck = !farTier
+          ? null
+          : worldKey(farTier) === `${farTier}::::::`
+            ? (decks[farTier] ?? null)
+            : buildDeck(farTier).built
+        if (spiralView) spiralView.root.visible = farLanding !== null
+        if (spiralDeck !== farDeck) {
+          const previous = spiralDeck
+          spiralDeck = farDeck
+          if (previous && previous !== visible && !heldElsewhere(previous)) scene.remove(previous.root)
+          if (farDeck && farDeck !== visible) scene.add(farDeck.root)
+        }
 
         // A list rather than a Map: there are at most two decks in the scene,
         // and the render loop owns this outright — nothing in the markup reads
@@ -1593,6 +1626,10 @@
         if (eyeDeck && eyeSpace) {
           const eyePlan = ship.plans.get(eyeSpace.tierId)
           if (eyePlan) want(eyeDeck, visibleSpaces(eyePlan, eyeSpace.id, quality.viewDepth))
+        }
+        if (spiralDeck && farLanding) {
+          const farPlan = ship.plans.get(farLanding.tierId)!
+          want(spiralDeck, visibleSpaces(farPlan, farLanding.spaceId, quality.viewDepth))
         }
         // What a mouth of the tunnel looks out on: the far room and whatever
         // can be seen from it, on whichever deck that is.
@@ -3734,8 +3771,8 @@
         if (gangwayWalk) return true
         const found = untrack(() => availableLink)
         if (!found?.link.retractable) return false
+        if (gangwayLockdown) return true
         retractableGangwayOpen = !retractableGangwayOpen
-        gangwayView?.setExtended(retractableGangwayOpen)
         return true
       }
 
@@ -3752,7 +3789,7 @@
           return
         }
         const found = untrack(() => availableLink)
-        if (found?.link.retractable && !retractableGangwayOpen) return
+        if (found?.link.retractable && (!retractableGangwayOpen || !gangwayView?.passable)) return
         if (found?.link.retractable && !$comfort.jumpOnly) {
           beginGangway(found.link)
           return
@@ -4440,7 +4477,8 @@
          * meaning exactly — Kurton and the Enhancer multiply the speed being
          * leaned towards, not the position — and so does the visitor's own dial.
          */
-        const walking = !inputDisabled && !movementDisabled && !arc && !$comfort.jumpOnly
+        const walking =
+          !inputDisabled && !movementDisabled && !arc && !$comfort.jumpOnly && !gangwayView?.showingLockdown
         const pace =
           (running ? SPRINT_SPEED : WALK_SPEED) *
           paceOf(world.body) *
@@ -4480,19 +4518,36 @@
           // is taken whole and the collision pass is simply not run.
           const from = pointer
           const movement: Vec2 = [velocity[0] * delta, velocity[1] * delta]
-          if (!gangwayWalk) {
+          const stepSpace = spaceAt(plan, pointer)
+          if (!casinoSpiral.origin && !gangwayWalk && !seated && linkIsOpen(world, stepSpace?.id ?? null)) {
+            casinoSpiral.enter(stepSpace?.id ?? null, pointer, target)
+          }
+          const spiralStep = casinoSpiral.advance(movement)
+          if (!spiralStep && !gangwayWalk) {
             gangwayWalk = enterGangway(boardingPaths, {
               tierId: currentTierId,
               at: pointer,
               movement,
-              open: retractableGangwayOpen && linkIsOpen(world, spaceAt(plan, pointer)?.id ?? null),
+              open:
+                retractableGangwayOpen &&
+                Boolean(gangwayView?.passable) &&
+                linkIsOpen(world, spaceAt(plan, pointer)?.id ?? null),
             })
             if (gangwayWalk) {
               gangwayOccupied = true
               shownKey = ''
             }
           }
-          if (gangwayWalk) {
+          if (spiralStep) {
+            pointer = spiralStep.at
+            yaw += spiralStep.turn
+            if (spiralStep.landing) {
+              goTo(spiralStep.landing.spaceId, {
+                at: pointer, facing: yaw, looking: pitch, surfaceHeight: spiralStep.landing.floor,
+              })
+              return
+            }
+          } else if (gangwayWalk) {
             const step = stepGangway(gangwayWalk, pointer, movement)
             pointer = step.at
             gangwayWalk.progress = step.progress
@@ -4518,7 +4573,7 @@
           // pushing into a bulkhead has stopped walking, and their gait and their
           // footsteps both have to know it.
           travelledOnFoot += Math.hypot(pointer[0] - from[0], pointer[1] - from[1])
-          const stair = stairs.cross({
+          const stair = spiralStep ? null : stairs.cross({
             spaceId: spaceAt(plan, pointer)?.id ?? null,
             from,
             at: pointer,
@@ -4537,7 +4592,9 @@
           world.solids[world.puppet].at = pointer
         }
 
-        const standing = gangwayWalk
+        const standing = casinoSpiral.origin
+          ? (ship.spaces.get(casinoSpiral.origin.spaceId) ?? null)
+          : gangwayWalk
           ? (ship.spaces.get(
               gangwayWalk.reverse ? gangwayWalk.path.link.to : gangwayWalk.path.link.from,
             ) ?? null)
@@ -4552,7 +4609,7 @@
         })
         const groundTarget = gangwayWalk
           ? gangwayFloor(gangwayWalk)
-          : surfaces.floor(walked, pointer)
+          : (casinoSpiral.floor ?? surfaces.floor(walked, pointer))
         ground = easeWalkingGround(ground, groundTarget, delta)
         const eye =
           ground +
@@ -4728,7 +4785,13 @@
                 : null,
             authoredVisibleSpaceIds !== null,
           )
-          gangwayView.setExtended(retractableGangwayOpen)
+          gangwayView.advance({
+            extended: retractableGangwayOpen,
+            delta,
+            cutaway: gangwayLockdown && standing?.id === TSERRIEDNICH_HALL,
+            instant: guidedRoute && $comfort.jumpOnly,
+          })
+          gangwayPresentation = gangwayView.presentation
         }
         const far = outside ? Math.max(420, cameraPullback + VIEW_DISTANCE * 2) : VIEW_DISTANCE
         if (camera.far !== far) {
@@ -4741,7 +4804,9 @@
         // the bedroom never passed the vestibule.
         const link = linkIsOpen(world, standing?.id ?? null)
           ? (linkUnderfoot(ship.links, standing?.id ?? null, pointer) ??
-            (standing ? wayOutOfInterior(ship.links, plan.tier) : null))
+            (standing && offersRouteInteriorExit(guidedRoute, standing.id)
+              ? wayOutOfInterior(ship.links, plan.tier)
+              : null))
           : null
         if (link?.to !== untrack(() => availableLink)?.to) availableLink = link
         const stepped = worth.stepped(pointer)
@@ -4922,7 +4987,12 @@
           concert: concertView.active,
         })
 
-        composer.render()
+        if (!gangwayView?.renderLockdown(renderer, scene)) composer.render()
+        if (canvas?.hasAttribute(TOUR_CAMERA_TRACE_ATTRIBUTE)) {
+          traceTourCamera(canvas, frame, {
+            tierId: currentTierId, spaceId: standing?.id ?? null, ground, onSpiral: casinoSpiral.origin !== null,
+          })
+        }
 
         // The live corner and the footage corner, over the finished frame.
         insets.render({
@@ -4935,7 +5005,7 @@
           showing: Boolean(showing),
           record,
         })
-        prepareLandings.frame(currentTierId, frameStarted)
+        prepareLandings.frame(currentTierId, frameStarted, standing?.id ?? null)
       }
 
       /**
@@ -5004,6 +5074,7 @@
         hatsuEffects.dispose()
         nenAura.dispose(scene)
         gangwayView?.dispose()
+        spiralView?.dispose()
         // The walk is over: no more footsteps, and the audio graph goes with it.
         stopSteps()
         shells?.geometry.dispose()
@@ -5151,9 +5222,9 @@
        balanced, without leaving the page. Top left, because the remote eye's
        feed is inset in the top right and the read-outs are along the bottom.
        See `TourSoundControls`. -->
-  {#if ready && !failure}
+  {#if ready && !failure && gangwayPresentation !== 'cutaway'}
     <TourSoundControls labels={soundLabels} />
-    {#if availableLink?.link.retractable}
+    {#if availableLink?.link.retractable && !gangwayLockdown}
       <button
         type="button"
         onclick={() => toggle?.()}
@@ -5211,7 +5282,7 @@
   <!-- The touchscreen's keyboard: a stick to walk with, and buttons for the
        actions a phone has no keys for. Everything here is
        what the keys already do, routed through the same functions. -->
-  {#if touch && ready && !failure}
+  {#if touch && ready && !failure && gangwayPresentation !== 'cutaway'}
     <!-- Jump-only mode has nothing for the stick to do, so it is not offered. -->
     {#if !$comfort.jumpOnly}
       <div

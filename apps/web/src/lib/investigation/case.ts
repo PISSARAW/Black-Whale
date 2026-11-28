@@ -39,6 +39,7 @@ export interface CanonicalReference {
 
 export interface InvestigationSubject {
   id: string
+  characterId?: string
   name: string
   role: string
   status: string

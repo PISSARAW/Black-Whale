@@ -91,19 +91,11 @@
       return {
         id: subject.id,
         kind: 'avatar',
-        colour: appearance.colour,
-        size: appearance.size,
-        y: appearance.y,
+        ...appearance,
         at: subject.position,
         tierId: definition.scene.tierId,
         spaceId: definition.scene.spaceId,
         stage: 0,
-        human: {
-          role: subject.isDead ? 'victim' : 'witness',
-          identity: `investigation:${subject.id}`,
-          pose: subject.isDead ? 'fallen' : 'idle',
-          aura: 'none',
-        },
         hidden: false,
         pick: true,
       } as Apparition

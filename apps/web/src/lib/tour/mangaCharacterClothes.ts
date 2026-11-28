@@ -54,6 +54,7 @@ import { addBalsamilcoPrivateSoldierUniform } from './mangaBalsamilco'
 import { addBabimynaKakinUniform } from './mangaBabimyna'
 import { addVergeiBodyguardSuit } from './mangaVergei'
 import { addVincentKakinUniform } from './mangaVincent'
+import { addNenClassMaidRobe } from './mangaNenClassDetails'
 import { addKakinAnnouncerPatternedDress } from './mangaKakinAnnouncer'
 import { addCleapatroStripedUniform } from './mangaCleapatro'
 
@@ -250,6 +251,11 @@ const SPECIAL: Record<string, (build: HumanClothesBuild) => void> = {
   'bonolenov-ndongo': addMangaBodyBandages,
   dogman: addDogmanShirt,
   shimanu: addShimanuMaidDress,
+  loberry: addNenClassMaidRobe,
+  yuri: addNenClassMaidRobe,
+  illardia: addNenClassMaidRobe,
+  ladiolus: addNenClassMaidRobe,
+  belerainte: addBodyguardReferenceSuit,
   'keni-wang': addKeniStripedSuit,
   shikaku: addShikakuUniform,
   'sanbica-norton': addSanbicaMedicalGown,

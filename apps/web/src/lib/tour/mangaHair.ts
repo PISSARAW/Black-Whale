@@ -1,4 +1,5 @@
 import { LOWER_DECK_HAIR } from './mangaLowerDeckHair'
+import { NEN_CLASS_HAIR } from './mangaNenClassHair'
 import { mangaFeitanHair } from './mangaFeitanHead'
 import { mangaTubeppaBowl } from './mangaTubeppaHead'
 import { mangaMarayamCrop } from './mangaMarayamHead'
@@ -465,9 +466,10 @@ function hairParts(build: HumanHeadBuild, face: BufferGeometry) {
     military: () => mangaShortHair(kit, 0.185),
     short: () => mangaShortHair(kit, 0.23),
   }
-  const twin = TWIN_HAIR[profile.likeness ?? '']
+  const id = profile.likeness ?? ''
+  const twin = TWIN_HAIR[id]
   const make = variants[look.hair] ?? styles[style] ?? (() => mangaHairExtras(kit, build))
-  const custom = twin ?? LOWER_DECK_HAIR[profile.likeness ?? '']
+  const custom = twin ?? LOWER_DECK_HAIR[id] ?? NEN_CLASS_HAIR[id]
   if (custom) custom(kit)
   else make()
   kit.face!.dispose()
@@ -479,7 +481,7 @@ export function addMangaHair(build: HumanHeadBuild, head: Group): void {
   if (profile.hairStyle === 'shaved') return
   const look = mangaLikeness(profile)
   const id = profile.likeness ?? ''
-  const hairVariant = TWIN_HAIR[id] || LOWER_DECK_HAIR[id] ? id : look.hair
+  const hairVariant = TWIN_HAIR[id] || LOWER_DECK_HAIR[id] || NEN_CLASS_HAIR[id] ? id : look.hair
   const face = (head.getObjectByName('manga-face')!.children[1] as import('three').Mesh).geometry
   const hair = outlined({
     THREE,

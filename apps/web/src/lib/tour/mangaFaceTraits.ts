@@ -39,6 +39,7 @@ import { addCleapatroEgyptianHeaddress } from './mangaCleapatro'
 import { addPeuckertFaceAndHair } from './mangaPeuckert'
 import { addSteinerHazelEyesAndHair } from './mangaSteiner'
 import { addWorioBaySquareFace } from './mangaWorioBay'
+import { NEN_CLASS_FACE_DETAILS } from './mangaNenClassDetails'
 
 export const MANGA_FACE_SIGNATURES = new Set([
   'lips-full',
@@ -244,6 +245,7 @@ function maorAgeLines(build: HumanHeadBuild, head: Group) {
 }
 
 const REFERENCE_FACES: Record<string, (build: HumanHeadBuild, head: Group) => void> = {
+  ...NEN_CLASS_FACE_DETAILS,
   kaiser: kaiserBrows,
   sarahell: sarahellGuardianFace,
   maor: maorAgeLines,

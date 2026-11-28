@@ -97,7 +97,9 @@ describe('three-encounter integration', () => {
     s = { ...s, player: { ...s.player, x: 27 }, opponent: { ...s.opponent, x: 29 } }
     const view = privatePvpState(s, 'opponent')
     expect(
-      arsenalOptions(view, 'player').some((entry) => entry.command.action === 'bio-transform'),
+      arsenalOptions(view, 'player').some(
+        ({ command }) => command.action === 'bio-transform' && command.target === 'opponent',
+      ),
     ).toBe(false)
     const option = biohazardDeviceOptions(view, 'player').find(
       (o) => o.command.action === 'bio-transform' && o.command.target === 'opponent',

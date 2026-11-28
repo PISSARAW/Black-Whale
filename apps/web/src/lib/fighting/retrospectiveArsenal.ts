@@ -258,7 +258,7 @@ function nativeArsenalOptions(state: FightState, side: FightSide): ArsenalOption
     ...franklinAimOptions(state, side),
     ...blinkyEvidenceOptions(state, side),
     ...conditioningOptions(state, side),
-    ...biohazardDeviceOptions(state, side),
+    ...biohazardDeviceOptions(state, side, false),
     ...blackVoiceOptions(state, side),
     ...machiMaterialOptions(state, side),
     ...corpseOptions(state, side),

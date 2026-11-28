@@ -5,7 +5,11 @@ import { hinrighCounterOptions } from './hinrighCounter'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 import type { FightSide, FightState } from './types'
 
-export function biohazardDeviceOptions(state: FightState, side: FightSide): ArsenalOption[] {
+export function biohazardDeviceOptions(
+  state: FightState,
+  side: FightSide,
+  includeLegacyGun = true,
+): ArsenalOption[] {
   if (
     !biohazardAuthority(state[side]) &&
     !state[side].biohazardDevices?.length &&
@@ -20,7 +24,7 @@ export function biohazardDeviceOptions(state: FightState, side: FightSide): Arse
       fr: 'Récepteur · Donner en main propre',
       en: 'Receiver · Hand over',
     })
-  if (touchGun(state, side))
+  if (includeLegacyGun && touchGun(state, side))
     commands.push({
       command: {
         action: 'bio-transform',

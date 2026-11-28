@@ -1,6 +1,7 @@
 import { FIGHTING_ROSTER } from '../roster'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performThrow } from '../engine'
+import { toggleChrolloBookmark } from '../chrolloBook'
 import { resolveFightImpacts } from '../combatImpact'
 import { attackData } from '../frameData'
 import { confirmedThrow } from '../throwCinematic'
@@ -64,6 +65,9 @@ function contact(options: { id: FighterId; side: FightSide; powered: boolean }) 
     player: { ...state.player, x: 46, aura: 100 },
     opponent: { ...state.opponent, x: 51, aura: 100 },
   }
+  const book = state[side].chrolloBook
+  if (book?.open)
+    state = { ...state, [side]: { ...state[side], chrolloBook: toggleChrolloBookmark(book) } }
   state = performThrow(state, side, { ...EMPTY_INPUT, aura: powered })
   const actor = state[side]
   return resolveFightImpacts(

@@ -41,7 +41,7 @@ it.each(cases)(
     if (options.cohort) expect(throwCohortReady(contact!, side)).toBe(true)
     if (options.bleed) expect(throwBloodAvailable(contact![side])).toBe(true)
     if (options.console) expect(contact![side].comboMaster).toBeTruthy()
-    if (options.owl) expect(contact![side].secretWindow?.mode).toBe('listening')
+    if (options.owl) expect(contact![side].secretWindowListening).toBeDefined()
     if (options.offer) {
       expect(contact!.moonlight?.offer?.issuer).toBe(side)
       expect(contact!.moonlight?.active).toBeUndefined()

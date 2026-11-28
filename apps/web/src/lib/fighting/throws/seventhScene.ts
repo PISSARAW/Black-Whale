@@ -7,7 +7,7 @@ import { entitiesFor } from '../preparationWorld'
 import { moonlightPartiesVisible } from '../moonlightParties'
 import type { EffectSceneOptions } from '../fighterEffectScene'
 import type { ThrowCinematicFrame } from '../throwCinematic'
-import type { FightState } from '../types'
+import type { FightSide, FightState } from '../types'
 
 /** Witness existing preparation; never summon, sign, reveal or move an ability for a throw. */
 export function createThrowSeventhScene(options: EffectSceneOptions) {
@@ -95,8 +95,19 @@ function actualAgreement(
 }
 function privateOwl(options: EffectSceneOptions, state: FightState, frame: ThrowCinematicFrame) {
   if (!frame.performance?.startsWith('musse')) return
-  if (!secretWindowVisibleTo(state, frame.attacker, options.viewer?.() ?? 'player')) return
-  return owlOnBody(options, state, frame)
+  const { attacker } = frame
+  const viewer = options.viewer?.() ?? 'player'
+  if (state[attacker].secretWindowListening)
+    return viewer === attacker ? listeningOwl(options, state, attacker) : undefined
+  if (!secretWindowVisibleTo(state, attacker, viewer)) return
+  const feed = state[attacker].secretWindow!
+  const side = feed.mode === 'listening' ? attacker : feed.target
+  return owlOnBody(options, side, `secret-window-${attacker}`)
+}
+
+function listeningOwl(options: EffectSceneOptions, state: FightState, side: FightSide) {
+  const member = state.teamMatch?.seats[side].active ?? 0
+  return owlOnBody(options, side, `secret-window-listening-${side}-${member}`)
 }
 
 function consoleAtHand(options: EffectSceneOptions, frame: ThrowCinematicFrame) {
@@ -111,12 +122,10 @@ function consoleAtHand(options: EffectSceneOptions, frame: ThrowCinematicFrame) 
   console.rotation.y += frame.facing * 0.35
   return console
 }
-function owlOnBody(options: EffectSceneOptions, state: FightState, frame: ThrowCinematicFrame) {
-  const feed = state[frame.attacker].secretWindow!
-  const side = feed.mode === 'listening' ? frame.attacker : feed.target
+function owlOnBody(options: EffectSceneOptions, side: FightSide, name: string) {
   const figure = options.figureOf?.(side)
   const human = figure && humanAnimationRig(figure)
-  const owl = options.scene.getObjectByName(`secret-window-${frame.attacker}`)
+  const owl = options.scene.getObjectByName(name)
   if (!owl || !human) return
   human.head.getWorldPosition(owl.position)
   owl.position.x -= 0.2

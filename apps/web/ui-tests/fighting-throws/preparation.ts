@@ -10,6 +10,7 @@ import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
 import { commandMary } from '$lib/fighting/bloodyMaryAction'
 import { COHORT_WILL_FRAMES } from '$lib/fighting/preparationTuning'
 import { THROW_TECH_FRAMES } from '$lib/fighting/throwRules'
+import { CHROLLO_BOOKMARK } from '$lib/fighting/chrolloBook'
 import { EMPTY_INPUT, type FighterId, type FightSide, type FightState } from '$lib/fighting/types'
 import { prepareEighth, type EighthPreparation } from './eighthPreparation'
 import { prepareSeventh } from './seventhPreparation'
@@ -100,6 +101,17 @@ function prepareResources(state: FightState, options: Setup): FightState {
 }
 function prepareAbilities(state: FightState, options: Setup): FightState {
   const { side } = options
+  if (state[side].chrolloBook?.open)
+    state = advance(
+      performAuraAttack({
+        state,
+        side,
+        kind: 'special',
+        moveId: CHROLLO_BOOKMARK,
+        auraCharged: false,
+      }),
+      24,
+    )
   if (options.bleed) state = commandMary({ state, side, command: 'bleed' }, performAuraAttack)
   if (options.prologue || options.poem) {
     state = performMove({ state, side, action: 'special' })

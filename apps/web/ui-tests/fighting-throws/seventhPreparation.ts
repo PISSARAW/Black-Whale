@@ -1,6 +1,6 @@
 import { EMPTY_INPUT, type FightState, type FightSide } from '$lib/fighting/types'
 import { performMove, performAuraAttack, tickFight } from '$lib/fighting/engine'
-import { performSecretWindowCommand } from '$lib/fighting/secretWindowArsenal'
+import { performArsenalAction } from '$lib/fighting/arsenalExecution'
 
 export interface SeventhPreparation {
   bird?: boolean
@@ -29,7 +29,7 @@ export function prepareSeventh(state: FightState, options: SeventhPreparation): 
   }
   if (options.console || options.offer) state = performMove({ state, side, action: 'special' })
   if (options.owl)
-    state = performSecretWindowCommand(
+    state = performArsenalAction(
       { state, side, command: { action: 'window-listen' } },
       performAuraAttack,
     )

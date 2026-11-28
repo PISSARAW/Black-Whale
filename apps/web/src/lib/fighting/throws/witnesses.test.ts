@@ -8,6 +8,7 @@ import {
   tickFight,
 } from '../engine'
 import { selectThrowPerformance } from './selection'
+import { createChrolloBook } from '../chrolloBook'
 import { FUTURE_PREPARATION_FRAMES } from '../parallelFutureTypes'
 import { copyHistoricalObject, stampHistoricalPuppet } from '../chrolloHistoricalObjects'
 import { performArsenalCommand } from '../retrospectiveArsenal'
@@ -63,7 +64,17 @@ describe('the throw film witnesses real conditional manifestations', () => {
     )
     state = {
       ...state,
-      player: { ...state.player, x: 18, aura: 100 },
+      player: {
+        ...state.player,
+        x: 18,
+        aura: 100,
+        chrolloBook: createChrolloBook([
+          'gallery-fake',
+          'order-stamp',
+          'sun-and-moon',
+          'black-voice',
+        ]),
+      },
       opponent: { ...state.opponent, x: 23 },
     }
     state = page(state, 'gallery-fake')
@@ -81,12 +92,34 @@ describe('the throw film witnesses real conditional manifestations', () => {
     expect(puppet).toBeDefined()
     state = page(advance(state, 19), 'order-stamp')
     state = stampHistoricalPuppet(state, 'player', puppet.id)
-    // Witness selection is isolated from the actor's recovery after the stamp command.
-    const thrower = performThrow(beginFight(createFight('chrollo', 'hisoka')), 'player', {
+    expect(state.battlefield!.entities.find((entry) => entry.id === puppet.id)?.copy?.order).toBe(
+      'attack',
+    )
+    state = page(advance(state, 19), 'gallery-fake')
+    state = advance(
+      performMove({
+        state,
+        side: 'player',
+        action: 'special',
+        input: { ...EMPTY_INPUT, down: true },
+      }),
+      24,
+    )
+    state = advance(
+      performMove({
+        state,
+        side: 'player',
+        action: 'special',
+        input: { ...EMPTY_INPUT, down: true },
+      }),
+      24,
+    )
+    state = performThrow(state, 'player', {
       ...EMPTY_INPUT,
       aura: true,
-    }).player.attack
-    state = { ...state, player: { ...state.player, attack: thrower } }
+    })
+    expect(state.player.attack?.superThrow).toBe(true)
+    expect(state.battlefield!.entities.find((entry) => entry.id === puppet.id)?.present).toBe(true)
     expect(selectThrowPerformance(state, 'player').puppetId).toBe(puppet.id)
     for (const change of [
       { present: false },

@@ -232,7 +232,7 @@ describe('seventh batch on the corrected cinematic physics', () => {
   })
   it('Musse retains the real listening owl’s privacy and feed, and never fires his handgun', () => {
     const ready = prepared('musse')
-    expect(ready.player.secretWindow?.mode).toBe('listening')
+    expect(ready.player.secretWindowListening).toBeDefined()
     const state = grab(ready, 'player', true),
       before = structuredClone(state),
       view = renderer(state)

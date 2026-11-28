@@ -33,7 +33,6 @@ import { blinkyBloodReady } from './blinky'
 import { tuneBlinkyMoveset, blinkyMoveAllowed } from './blinkyMoveset'
 import { tunePhinksMoveset } from './phinksMoveset'
 import { cyclotronMoveResources } from './phinksAction'
-import { cyclotronPunchReady } from './phinksCyclotron'
 import { crossGameCanWarn } from './crossGame'
 import { tuneGelMoveset } from './gelMoveset'
 import { sealedSenseCount } from './saiyuSenses'
@@ -212,7 +211,7 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
   return (
-    nenFollowupReadiness(state[side], move) === 'ready' &&
+    nenFollowupReadiness(comboAdmissionBody(state, side, move), move) === 'ready' &&
     meetsMovesetRequirements(state, side, move)
   )
 }
@@ -386,7 +385,7 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   feitan: (state, side) => feitanMoveAvailable(state[side], 'feitan:finisher'),
   saiyu: (state, side) => sealedSenseCount(opponentOf(state, side)) >= 2,
   biscuit: (state, side) => isBiscuitTrueForm(state[side]),
-  phinks: (state, side) => cyclotronPunchReady(state[side]),
+  phinks: (state, side) => cyclotronMoveResources(state[side], 'phinks:finisher') === true,
   franklin: () => true,
   machi: (state, side) => machiBindReady(state, side),
   kalluto: (state, side) => paperCommandReady(state, side, 'serpent'),

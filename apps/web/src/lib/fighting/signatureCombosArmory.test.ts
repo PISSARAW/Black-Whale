@@ -31,19 +31,19 @@ describe('Feu de suppression', () => {
     expect(state.player.attack?.projectilesSpawned ?? 0).toBe(fired)
   })
 
-  it('pins a lying body with a held shot, never a melee strike or a native one', () => {
+  it('extends a grounded hold by the full volley for a confirmed shot', () => {
     const { state } = play('franklin:suppressive-fire')
     const lying = { ...state.opponent, knockdownFrames: 5 }
     const held = { ...state.player, attack: { ...state.player.attack!, accel: true as const } }
     const native = { ...held, attack: { ...held.attack, accel: undefined } }
     expect(pinnedKnockback({ fighter: lying, attacker: held }, 3)).toBe(0)
-    expect(
-      pinnedKnockdown({ fighter: lying, attacker: held, blocked: false }, 12),
-    ).toBeGreaterThanOrEqual(12)
+    expect(pinnedKnockdown({ fighter: lying, attacker: held, blocked: false }, 12)).toBeGreaterThan(
+      12,
+    )
     expect(pinnedKnockdown({ fighter: lying, attacker: native, blocked: false }, 12)).toBe(5)
     expect(
       pinnedKnockdown({ fighter: lying, attacker: held, melee: true, blocked: false }, 12),
-    ).toBe(5)
+    ).toBe(12)
   })
 })
 

@@ -8,7 +8,10 @@ import {
   openingStartup,
 } from './comboOpenings'
 import { attackAuraCost } from './fightAttackCost'
-import { attackData } from './frameData'
+import { comboAdmissionBody, comboMoveCost } from './comboAuraCost'
+import { CYCLOTRON_PUNCH } from './phinksCyclotron'
+import { cyclotronComboRelease } from './phinksComboRelease'
+import { attackData, otherSide } from './frameData'
 import { canStartFighterAttack } from './fighterAttacks'
 import { meetsMovesetRequirements, moveById } from './movesets'
 import type { FighterMove } from './movesetTypes'
@@ -22,15 +25,18 @@ export function comboChoices(state: FightState, side: FightSide = 'player') {
   const current = moveById(fighter.attack?.moveId)
   if (!hasDuelComboProfile(fighter.id) || !fighter.attack || !current) return []
   const openings = [...openingDestinations(fighter), ...preparedNenDestinations(fighter)]
-  return cancelChoices(current, openings).flatMap(({ id, link }) => {
+  const cyclotron = cyclotronComboRelease(fighter) ? [CYCLOTRON_PUNCH] : []
+  return cancelChoices(current, [...openings, ...cyclotron]).flatMap(({ id, link }) => {
     const move = moveById(id)
     if (!move) return []
-    const cost = attackAuraCost({
-      fighter,
-      kind: move.kind,
-      moveId: move.id,
-      concealed: fighter.nen.in && move.kind === 'special',
-    })
+    const cost =
+      comboMoveCost(state, side, move) ??
+      attackAuraCost({
+        fighter,
+        kind: move.kind,
+        moveId: move.id,
+        concealed: fighter.nen.in && move.kind === 'special',
+      })
     const status = choiceStatus({ state, side, current, move, link })
     const opening = openings.includes(id) ? fighter.attack?.comboOpening : undefined
     return [
@@ -39,7 +45,7 @@ export function comboChoices(state: FightState, side: FightSide = 'player') {
         link,
         cost,
         status,
-        nenReadiness: nenFollowupReadiness(fighter, move),
+        nenReadiness: nenFollowupReadiness(comboAdmissionBody(state, side, move), move),
         opening,
         reward: openingReward(fighter, id),
       },
@@ -48,10 +54,11 @@ export function comboChoices(state: FightState, side: FightSide = 'player') {
 }
 
 function cancelChoices(move: FighterMove, openings: string[]) {
-  const cancels = new Set([...move.cancelInto, ...openings])
+  const links = (move.linkInto ?? []).filter((id) => !openings.includes(id))
+  const cancels = new Set([...move.cancelInto.filter((id) => !links.includes(id)), ...openings])
   return [
     ...Array.from(cancels, (id) => ({ id, link: false })),
-    ...(move.linkInto ?? []).filter((id) => !cancels.has(id)).map((id) => ({ id, link: true })),
+    ...links.map((id) => ({ id, link: true })),
   ]
 }
 
@@ -70,10 +77,12 @@ function choiceStatus(options: {
   if (!meetsMovesetRequirements(readiness, side, move)) return 'unavailable'
   if (waitingForAura(readiness[side], move)) return 'wait'
   if (attack.confirmedBlock && !current.cancelOnBlockInto.includes(move.id)) return 'blocked'
-  const target = state[side === 'player' ? 'opponent' : 'player']
+  const target = state[otherSide(side)]
   if (choiceExpired({ fighter, target, move, link })) return 'late'
   if (unconfirmed(fighter)) return 'confirm'
-  return canStartFighterAttack(fighter, move.kind, move.id) ? 'ready' : 'wait'
+  if (link) return 'wait'
+  const admitted = comboAdmissionBody(state, side, move)
+  return canStartFighterAttack(admitted, move.kind, move.id) ? 'ready' : 'wait'
 }
 
 function choiceExpired(options: {

@@ -50,7 +50,7 @@ function authoredSupers({ moveset, profile }: Derivation): MoveSlot[] {
   const named = new Set(
     Object.entries(profile.moves)
       .filter(([slot]) => !TECHNIQUE_SLOTS.has(slot as MoveSlot))
-      .flatMap(([, spec]) => [...(spec?.into ?? []), ...(spec?.links ?? [])]),
+      .flatMap(([, spec]) => spec?.into ?? []),
   )
   return moveset.moves
     .filter((move) => SUPER_CATEGORIES.has(move.category) && named.has(move.slot))
@@ -172,7 +172,7 @@ export function deriveGrammarProfile(moveset: FighterMoveset, profile: DuelCombo
     moves[move.slot] = {
       ...chainedMove(move, profile.moves[move.slot], cap),
       into: chains.get(move.slot)!,
-      links: [],
+      links: (profile.moves[move.slot]?.links ?? []).filter((slot) => TECHNIQUE_SLOTS.has(slot)),
     }
   const specials = enders.map((move) => move.slot)
   return {

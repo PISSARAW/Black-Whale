@@ -5,14 +5,20 @@ import type { ArcadeFighter } from './types'
 
 /**
  * Combo release (Dix tours, un poing, signatureCombosBiscuitPhinks.ts): with at least one full
- * turn, the right punch may cancel a confirmed ordinary blow whose written chain names it. It
- * then steps in (CYCLOTRON_COMBO_LUNGE) and reaches the body that blow put down. Only the
- * release consumes the turns; the blow before it gained nothing. Duel tuning, not canon.
+ * turn, the right punch may cancel the confirmed hook while the arm is turning, or a confirmed
+ * blow whose chain names the release. Only the release steps in and consumes those turns.
  */
 export function cyclotronComboRelease(fighter: ArcadeFighter): boolean {
   const attack = fighter.attack
   if (!attack?.confirmedHit || fighter.hatsuEffects.cyclotronTurns <= 0) return false
   if (!cyclotronNenActive(fighter) || fighter.y > 0) return false
-  const chained = moveById(attack.moveId)?.cancelInto.includes(CYCLOTRON_PUNCH)
-  return Boolean(chained) && attack.frame <= attackData(attack.kind, fighter).cancelEnd
+  return (
+    canChainRelease(fighter, attack.moveId) &&
+    attack.frame <= attackData(attack.kind, fighter).cancelEnd
+  )
+}
+
+function canChainRelease(fighter: ArcadeFighter, moveId: string | undefined): boolean {
+  if (moveId === 'phinks:standingHeavy' && fighter.cyclotronWindup) return true
+  return moveById(moveId)?.cancelInto.includes(CYCLOTRON_PUNCH) ?? false
 }

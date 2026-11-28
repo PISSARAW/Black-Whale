@@ -119,9 +119,9 @@ déplacements ont déjà complété les tours consommés par la libération.
 - **Saut croisé** : le moteur ne pousse pas deux corps dont l’un dépasse 7 de hauteur ;
   après l’esquive, le saut passe au-dessus de la cible.
 - **Libération en combo** (`phinksComboRelease.ts`) : avec au moins un tour complet, le
-  poing droit annule un coup ordinaire confirmé dont la chaîne écrite le nomme (Crochet
-  de la Brigade), avance de 4 et atteint le corps touché. Seule la libération consomme
-  les tours.
+  poing droit annule le Crochet de la Brigade confirmé pendant une rotation active, ou
+  un coup confirmé dont la chaîne prévoit la libération. Le poing avance de 4 et
+  consomme les tours.
 
 ## Dix secondes d’avance — Tserriednich (Spécialisation)
 

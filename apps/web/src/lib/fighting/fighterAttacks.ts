@@ -1,6 +1,7 @@
 import { gelSnakeNormalAvailable } from './gelSnakeNormals'
 import { interruptHanzoBlade } from './hanzoBlade'
-import { cyclotronAllowsAttack } from './phinksCyclotron'
+import { CYCLOTRON_PUNCH, cyclotronAllowsAttack } from './phinksCyclotron'
+import { cyclotronComboRelease } from './phinksComboRelease'
 import { beginAttackDrive, advanceAttackDrive } from './fightAttackAdvance'
 import { nextNenBranchCount } from './nenPreparedBranches'
 import { enDuringAttack } from './en/access'
@@ -298,6 +299,7 @@ function isChordOverride(fighter: ArcadeFighter, moveId?: string): boolean {
 function cancelReady(fighter: ArcadeFighter, kind: AttackKind, intent: DirectionalIntent): boolean {
   if (!fighter.attack) return false
   if (isChordOverride(fighter, intent.moveId)) return true
+  if (intent.moveId === CYCLOTRON_PUNCH && cyclotronComboRelease(fighter)) return true
   if (!legalCancel(fighter, kind, intent)) return false
   const data = attackData(fighter.attack.kind, fighter)
   if (isAirPursuit(intent.directionalChain)) return pursuitWindow(fighter.attack.frame, data)

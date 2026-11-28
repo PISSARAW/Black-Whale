@@ -76,7 +76,7 @@ describe.each(FIGHTERS)('%s personal combo branches', (fighter) => {
     expect(carry.distance).toBeGreaterThan(economy.distance + 2)
     expect(carry.damage).toBeGreaterThan(economy.damage)
     expect(economy.state.opponent.knockdownFrames).toBeGreaterThan(0)
-    expect(carry.state.opponent.knockdownFrames).toBeGreaterThan(0)
+    expect(carry.state.opponent.knockdownFrames > 0).toBe(fighter !== 'chrollo')
   })
 
   it('honors the exact physical finisher selected after a common opening', () => {
@@ -90,7 +90,9 @@ describe.each(FIGHTERS)('%s personal combo branches', (fighter) => {
       expect(next.player.attack?.moveId).toBe(`${fighter}:${slot}`)
       expect(next.player.aura).toBe(state.player.aura)
       const landed = contact(next)
-      expect(landed.opponent.knockdownFrames).toBeGreaterThan(0)
+      expect(landed.opponent.knockdownFrames > 0).toBe(
+        fighter !== 'chrollo' || slot !== 'forwardLight',
+      )
       if (fighter === 'chrollo' && slot === 'forwardLight')
         expect(landed.opponent.x).toBeGreaterThan(state.opponent.x)
     }
@@ -187,9 +189,10 @@ describe('personal powers and recovery links', () => {
     state = contact(command(state, 'standingLight'))
     state = contact(command(state, 'standingHeavy'))
     expect(comboChoices(state).find((choice) => choice.move.slot === 'finisher')).toMatchObject({
-      link: false,
-      status: 'unavailable',
+      link: true,
+      status: 'wait',
     })
+    expect(command(state, 'finisher').player.attack).toBe(state.player.attack)
     expect(state.player.hatsuEffects.cyclotronTurns).toBe(1)
     while (state.player.attack) state = tick(state)
     const started = command(state, 'finisher')

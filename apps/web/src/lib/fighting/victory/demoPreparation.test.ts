@@ -1,8 +1,8 @@
 import { expect, it } from 'vitest'
+import { FIGHT_FPS } from '../fightClock'
 import type { FightSide, FightState, FighterId } from '../types'
 import type { FightStageId } from '../stages'
-import { selectVictory } from './catalogue'
-import { PHINKS_VICTORY_FRAMES } from './phinksTiming'
+import { selectVictory, VICTORY_DURATION } from './catalogue'
 
 type Options = { target?: FighterId; side?: FightSide; stageId?: FightStageId; hero?: FighterId }
 interface Film {
@@ -104,7 +104,7 @@ it.each(cases)(
     expect(selection).toMatchObject({ fighter: hero, winner: side, loser })
     if (hero === 'phinks') expect(selection?.phinksStrike?.turns).toBe(6)
     expect(film.report.victory?.frameCount ?? film.report.frameCount).toBe(
-      hero === 'phinks' ? PHINKS_VICTORY_FRAMES : 600,
+      (selection?.duration ?? VICTORY_DURATION) * FIGHT_FPS,
     )
     if (film.states) {
       expect(film.states).toHaveLength(film.report.frameCount)

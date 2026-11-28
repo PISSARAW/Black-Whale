@@ -18,7 +18,7 @@ function counter(f: ContinuousDirector, side: FightSide) {
   f.move(loser, 'standingLight')
   let control = {
     ...f.state,
-    [side]: { ...f.state[side], attack: { ...f.state[side].attack!, hatsuSource: null } },
+    [side]: { ...f.state[side], attack: null },
   }
   f.advance(50)
   for (let i = 0; i < 50; i++)
@@ -55,7 +55,8 @@ export function createTerebellumFatalityFilm(
     f.close(side, 4)
     f.hit(side, f.state[loser].health > 65 ? 'standingHeavy' : 'standingLight')
   }
-  const final = counter(f, side)
+  let final = counter(f, side)
+  if (final.transferred && f.state.phase === 'fighting') final = counter(f, side)
   const reflectedKnockout = final.reflectedKnockout
   const uninjured = f.states.every((s) => s[side].health === s[side].maxHealth)
   if (!transferred || !reflectedKnockout || !uninjured || f.state.winner !== side)

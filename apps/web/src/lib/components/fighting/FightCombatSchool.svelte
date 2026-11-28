@@ -2,7 +2,7 @@
   import {
     COMBAT_FIGHTERS,
     COMBAT_ROUTES,
-    combatRoutesFor,
+    combatLessonsFor,
     combatRoute,
     type CombatFighter,
   } from '$lib/fighting/combatRoutes'
@@ -33,7 +33,7 @@
   let catalog: HTMLDetailsElement
   let wakeupSettings: WakeupSettings = { ...DEFAULT_WAKEUP }
   $: index = language === 'fr' ? 0 : 1
-  $: routes = combatRoutesFor(selected)
+  $: routes = combatLessonsFor(selected)
   $: wakeupRoutes = routes.filter((route) => route.wakeup)
   $: kameoRoutes = routes.filter((route) => route.kameo)
   $: catalogRoutes = [...wakeupRoutes, ...routes.filter((route) => !route.wakeup && !route.kameo)]

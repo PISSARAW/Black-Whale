@@ -70,10 +70,8 @@ export function tunePhinksMoveset(moveset: FighterMoveset): FighterMoveset {
         ...move,
         cancelInto: move.cancelInto.filter((id) => !/Special$|:finisher$/.test(id)),
       })),
-    combos: [
-      ['standingLight', 'standingHeavy'],
-      ['lowLight', 'forwardHeavy'],
-      ['airLight', 'airHeavy'],
-    ].map((route) => route.map((slot) => `phinks:${slot}`)),
+    combos: moveset.combos.filter((route) =>
+      route.every((id) => !/:(forward|down|back)Special$/.test(id)),
+    ),
   }
 }

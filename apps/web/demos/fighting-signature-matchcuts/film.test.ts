@@ -1,4 +1,4 @@
-import { test } from 'node:test'
+import { test } from 'vitest'
 import assert from 'node:assert/strict'
 import { COMBAT_FIGHTERS } from '../../src/lib/fighting/combatRoutes'
 import { recordClips, orderClips, simulationFrame, impactCues, LENGTH } from './film'

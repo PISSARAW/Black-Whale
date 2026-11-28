@@ -30,7 +30,7 @@ From the repository root:
 ```sh
 node apps/web/scripts/render-signature-flow.mjs --stills=41,42
 node apps/web/scripts/render-signature-flow.mjs
-TSX_TSCONFIG_PATH=apps/web/tsconfig.json node --import tsx --test apps/web/demos/fighting-signature-flow/flow.test.ts
+pnpm --filter @black-whale/web exec vitest run demos/fighting-signature-flow/flow.test.ts
 ```
 
 Output: `output/fighting-signature-flow/Black-Whale-Clash-Signature-Flow.mp4`. The

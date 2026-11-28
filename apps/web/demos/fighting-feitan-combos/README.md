@@ -17,7 +17,7 @@ counter instead, like the route tests.
 ```sh
 node apps/web/scripts/render-signature-flow.mjs --demo=feitan-combos --stills=70,740
 node apps/web/scripts/render-signature-flow.mjs --demo=feitan-combos
-TSX_TSCONFIG_PATH=apps/web/tsconfig.json node --import tsx --test apps/web/demos/fighting-feitan-combos/record.test.ts
+pnpm --filter @black-whale/web exec vitest run demos/fighting-feitan-combos/record.test.ts
 ```
 
 Output: `output/fighting-feitan-combos/Black-Whale-Clash-Feitan-Every-Combo.mp4`

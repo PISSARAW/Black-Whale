@@ -10,7 +10,10 @@ describe('roster support boundaries', () => {
     const native = combatRoutesFor(fighter)
     const combos = movesetFor(fighter)!.combos
     expect(native.every((route) => !route.kameo)).toBe(true)
-    expect(combos).toEqual(native.map((route) => route.moves.map((slot) => `${fighter}:${slot}`)))
+    const nativeSequences = new Set(
+      native.map((route) => route.moves.map((slot) => `${fighter}:${slot}`).join(',')),
+    )
+    expect(combos.map((route) => route.join(','))).toEqual([...nativeSequences])
     expect(new Set(combos.map((route) => route.join(':'))).size).toBe(combos.length)
     expect(combatLessonsFor(fighter).filter((route) => route.kameo)).toHaveLength(6)
   })

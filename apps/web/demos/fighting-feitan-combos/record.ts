@@ -1,4 +1,4 @@
-import { combatRoutesFor, type CombatRoute } from '../../src/lib/fighting/combatRoutes'
+import { combatLessonsFor, type CombatRoute } from '../../src/lib/fighting/combatRoutes'
 import { runBaselineRoute } from '../../src/lib/fighting/combatBaselineRoutes'
 import { createReplayPlayer } from '../../src/lib/fighting/fightReplayPlayer'
 import { combatRouteContacts } from '../../src/lib/fighting/combatRouteContacts'
@@ -154,6 +154,6 @@ const ORDER: Family[] = ['Basics', 'Academy', 'Whiff punish', 'Wakeup', 'Kameo',
 
 /** Every Feitan combo the game defines, played by real commands, signature last. */
 export function recordFeitanCombos(): Combo[] {
-  const combos = [...combatRoutesFor(FIGHTER).map(recordRoute), recordSignature()]
+  const combos = [...combatLessonsFor(FIGHTER).map(recordRoute), recordSignature()]
   return combos.sort((a, b) => ORDER.indexOf(a.family) - ORDER.indexOf(b.family))
 }

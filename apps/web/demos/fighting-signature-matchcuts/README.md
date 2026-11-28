@@ -32,5 +32,5 @@ peut aussi être ouverte depuis Vite à `/demos/fighting-signature-matchcuts/`.
 Validation sans serveur local :
 
 ```sh
-TSX_TSCONFIG_PATH=apps/web/tsconfig.json node --import tsx --test apps/web/demos/fighting-signature-matchcuts/film.test.ts
+pnpm --filter @black-whale/web exec vitest run demos/fighting-signature-matchcuts/film.test.ts
 ```

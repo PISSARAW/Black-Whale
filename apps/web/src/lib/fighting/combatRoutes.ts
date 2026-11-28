@@ -123,8 +123,11 @@ export const COMBAT_ROUTES: readonly CombatRoute[] = [
 ]
 /** All authored lessons already include native, wakeup, whiff and support routes. */
 export const COMBAT_SCHOOL_ROUTES: readonly CombatRoute[] = COMBAT_ROUTES
+/** Situational drills remain in the Academy catalogue. */
 export const combatRoutesFor = (fighter: FighterId) =>
-  COMBAT_ROUTES.filter((route) => route.fighter === fighter)
+  COMBAT_ROUTES.filter(
+    (route) => route.fighter === fighter && !route.kameo && !route.whiff && !route.wakeup,
+  )
 export const combatLessonsFor = (fighter: FighterId) =>
   COMBAT_SCHOOL_ROUTES.filter((route) => route.fighter === fighter)
 export function combatRoute(id: string): CombatRoute {

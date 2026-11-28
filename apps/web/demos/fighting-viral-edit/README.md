@@ -20,7 +20,7 @@ Music: `scripts/viral-edit-music.py`, built from the instruments of `combo-edit-
 ```sh
 node apps/web/scripts/render-signature-flow.mjs --demo=viral-edit --stills=36,444
 node apps/web/scripts/render-signature-flow.mjs --demo=viral-edit
-TSX_TSCONFIG_PATH=apps/web/tsconfig.json node --import tsx --test apps/web/demos/fighting-viral-edit/film.test.ts
+pnpm --filter @black-whale/web exec vitest run demos/fighting-viral-edit/film.test.ts
 ```
 
 Output: `output/fighting-viral-edit/Black-Whale-Clash-Who-Hits-Hardest.mp4`.

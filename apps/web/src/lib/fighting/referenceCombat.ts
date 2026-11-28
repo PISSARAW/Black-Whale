@@ -5,7 +5,13 @@ import { hasDuelComboProfile, tuneDuelComboProfile } from './duelComboProfiles'
 /** Authored duel timing. Utility Hatsu never become damaging combo links. */
 export function tuneReferenceCombat(moveset: FighterMoveset): FighterMoveset {
   const routes = combatRoutesFor(moveset.fighterId)
-  const combos = routes.map((route) => route.moves.map((slot) => `${route.fighter}:${slot}`))
+  const unique = new Map(
+    routes.map((route) => [
+      route.moves.join(','),
+      route.moves.map((slot) => `${route.fighter}:${slot}`),
+    ]),
+  )
+  const combos = [...unique.values()]
   if (hasDuelComboProfile(moveset.fighterId)) return { ...tuneDuelComboProfile(moveset), combos }
   if (!routes.length) return moveset
   return {

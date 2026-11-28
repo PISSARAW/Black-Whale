@@ -1,13 +1,13 @@
-import { test } from 'node:test'
+import { test } from 'vitest'
 import assert from 'node:assert/strict'
-import { combatRoutesFor } from '../../src/lib/fighting/combatRoutes'
+import { combatLessonsFor } from '../../src/lib/fighting/combatRoutes'
 import { buildFilm, filmReport } from './film'
 
 const film = buildFilm()
 const report = filmReport(film)
 
 test('every Feitan route and his signature are recorded, Kameo routes included', () => {
-  assert.equal(film.all.length, combatRoutesFor('feitan').length + 1)
+  assert.equal(film.all.length, combatLessonsFor('feitan').length + 1)
   assert.equal(film.all.filter((c) => c.family === 'Kameo').length, 6)
   assert.equal(film.all.at(-1)!.family, 'Signature')
 })

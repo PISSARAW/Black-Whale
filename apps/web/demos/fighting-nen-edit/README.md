@@ -22,7 +22,7 @@ Time, double time after it, muffled for the unknowns).
 ```sh
 node apps/web/scripts/render-signature-flow.mjs --demo=nen-edit --stills=432,438
 node apps/web/scripts/render-signature-flow.mjs --demo=nen-edit
-TSX_TSCONFIG_PATH=apps/web/tsconfig.json node --import tsx --test apps/web/demos/fighting-nen-edit/film.test.ts
+pnpm --filter @black-whale/web exec vitest run demos/fighting-nen-edit/film.test.ts
 ```
 
 Output: `output/fighting-nen-edit/Black-Whale-Clash-Six-Types-Of-Nen.mp4`.

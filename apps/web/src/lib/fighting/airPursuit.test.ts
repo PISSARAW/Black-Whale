@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { selectedGumLink } from './bungeeNetwork'
+import { addChrolloPage } from './chrolloBook'
 import { prepareCombatRoute, type CombatRouteSetup } from './combatRouteSetup'
 import { beginFight, createFight, performMove, tickFight } from './engine'
 import { canAct } from './fightActorState'
@@ -205,7 +206,7 @@ it('Chrollo convertit une frappe copiée sans transformer la page historique en 
     ...initial,
     player: {
       ...initial.player,
-      chrolloBook: { open: true, page: 0, bookmark: null, pages: ['gel:forwardSpecial'] as const },
+      chrolloBook: addChrolloPage(initial.player.chrolloBook!, 'gel:forwardSpecial'),
     },
   }
   const launch = launcher(openBook)

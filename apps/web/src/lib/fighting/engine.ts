@@ -219,6 +219,7 @@ export function performMove(options: PerformMoveOptions): FightState {
   const oath = performOnShortcut(options)
   if (oath) return oath
   const executed = resolveCrossGameCommand(options.state, executeFightMove(options), options.side)
+  if (executed === options.state) return executed
   return revealUsedChrolloSlot(executed, options.side, options.action)
 }
 

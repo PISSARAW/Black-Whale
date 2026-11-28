@@ -53,6 +53,7 @@ function canRecycleStolenPage(
     action === 'special' &&
     fighter.id === 'chrollo' &&
     fighter.chrolloBook?.stolenPage &&
+    !fighter.attack &&
     input &&
     forwardHeld(fighter, input) &&
     !input.down,

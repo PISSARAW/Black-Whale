@@ -37,7 +37,16 @@ function validateSeed(seed: unknown) {
   if (typeof seed !== 'number' || !Number.isInteger(seed) || seed < 0 || seed > 0xffffffff)
     throw Error('invalid-replay')
 }
+const BOOK_SLOTS = new Set<unknown>([undefined, null, 0, 1, 2, 3, 'stolen'])
+
+function validateBookSlot(value: unknown, path: string): boolean {
+  if (!/^(player|opponent)\.chrolloBook\.(openSlot|bookmarkSlot)$/.test(path)) return false
+  if (!BOOK_SLOTS.has(value)) throw Error('invalid-replay')
+  return true
+}
+
 function validateShape(value: unknown, template: unknown, path = ''): void {
+  if (validateBookSlot(value, path)) return
   if (template === null || template === undefined || missingPossession(value, path)) return
   if (Array.isArray(template) || !object(template)) {
     validateLeaf(value, template)

@@ -59,6 +59,7 @@ function signatureAttack(base: FighterMove, beat: Beat): FighterMove {
     nameFr: beat.name[0],
     nameEn: beat.name[1],
     signatureDirection: beat.direction,
+    ...(beat.next ? { keepsTargetStanding: true } : {}),
     input: DIRECTION_HINTS[beat.direction] + (base.kind === 'light' ? 'J' : 'K'),
     tuning: {
       ...tuning,

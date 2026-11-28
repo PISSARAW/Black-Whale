@@ -32,6 +32,7 @@ export interface FighterMove {
   nameEn: string
   input: string
   signatureDirection?: SignatureDirection
+  keepsTargetStanding?: true
   auraCost: number
   canon: TechniqueCanonContract
   tuning: MoveTuning

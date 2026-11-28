@@ -6,6 +6,7 @@ import type { FighterId } from './types'
 export const KNOCKDOWN_KNOCKBACK = 3
 
 export function moveFinishesGroundedImpact(move: FighterMove, knockback: number): boolean {
+  if (move.keepsTargetStanding) return false
   if (move.kind === 'special' || move.category === 'finisher' || move.variant === 'air')
     return knockback >= KNOCKDOWN_KNOCKBACK
   // The trip is part of the base move, independent of its drawn point of contact.

@@ -8,6 +8,7 @@ import { attackTransfer } from './fightAttackWeight'
 import { fightStrikeLimb } from './fightStrikeLimb'
 import { supportCycle } from './fightSupportCycle'
 import { strikeSupportPose } from './fightStrikeSupport'
+import { standingStrikeSupport } from './standingStrikeMotion'
 
 it.each(FIGHTING_ROSTER.map((f) => f.id))(
   '%s carries its own hip drive through contact and brakes before recovery ends',
@@ -47,12 +48,21 @@ it.each(FIGHTING_ROSTER.map((f) => f.id))(
         const limb = fightStrikeLimb(incoming, 'feet')
         if (limb !== 'both') expect(cycle.free).toBe(limb === 'left' ? 0 : 1)
       } else {
-        expect(cycle.support).toBe(facing === 1 ? 0 : 1)
+        const lead = facing === 1 ? 1 : 0
+        const authored = standingStrikeSupport(incoming, move.slot, frames)
         const driven = supportCycle({
           ...incoming,
           attack: { ...incoming.attack!, frame: frames.startup },
         })
-        expect(driven.support).toBe(1 - cycle.support)
+        if (authored) {
+          const planted = authored.supportFoot === 'lead' ? lead : 1 - lead
+          expect(cycle.support).toBe(planted)
+          expect(driven.support).toBe(planted)
+          expect(cycle.pivot).toBeCloseTo(0)
+        } else {
+          expect(cycle.support).toBe(1 - lead)
+          expect(driven.support).toBe(lead)
+        }
       }
     }
   },

@@ -16,7 +16,16 @@ export const PERSONAL_SIGNATURE_MOVES: Readonly<Record<string, PersonalSignature
     material: 'blade',
   },
   'feitan:scabbard-reversal-transition': {
-    tuning: { startup: 6, active: 4, reach: 14, bottom: 1.8, top: 7.2, lunge: 2.1, hitstop: 5 },
+    tuning: {
+      startup: 6,
+      active: 4,
+      reach: 14,
+      bottom: 1.8,
+      top: 7.2,
+      lunge: 2.1,
+      hitstun: 18,
+      hitstop: 5,
+    },
     cancelWindow: { start: 2, end: 10 },
     material: 'blade',
   },

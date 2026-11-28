@@ -15,10 +15,11 @@ import {
 
 const CORRIDOR = 'tier-1-c-port-corridor'
 
-test.use({
-  viewport: { width: 860, height: 570 },
-  launchOptions: { args: ['--ignore-gpu-blocklist'] },
-})
+test.use({ viewport: { width: 860, height: 570 } })
+test.skip(
+  ({ isMobile }) => isMobile,
+  'The first-person replay uses desktop mouse and keyboard controls.',
+)
 
 function deckChanges(frames: readonly TourCameraSample[]) {
   return frames.flatMap((after, index) => {
@@ -76,9 +77,7 @@ function expectSpiralCrossing(frames: readonly TourCameraSample[], direction: 'd
 
 test('walks from the casino entrance to the lower hall and back without camera jumps', async ({
   page,
-  isMobile,
 }, testInfo) => {
-  test.skip(isMobile, 'The first-person replay uses desktop mouse and keyboard controls.')
   test.setTimeout(420_000)
   await installTourCameraCapture(page)
   await page.goto('/fr/tour?mangaView=casino-420-gaming-floor')

@@ -61,7 +61,7 @@ test.describe('the walk', () => {
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   })
 
-  test('hands over the evidence for what is in front of you', async ({ page }) => {
+  test('hands over the evidence for what is in front of you', async ({ page, isMobile }) => {
     await page.goto('/tour')
     await ready(page)
 
@@ -72,7 +72,8 @@ test.describe('the walk', () => {
     // Centred rather than merely scrolled into view: the page's own header is
     // sticky, and Playwright's default lands the button underneath it.
     await ask.evaluate((node) => node.scrollIntoView({ block: 'center' }))
-    await ask.click()
+    if (isMobile) await ask.tap()
+    else await ask.click()
 
     const card = page.getByRole('complementary', { name: /Evidence|Pièce à conviction/ })
     await expect(card).toBeVisible()
@@ -88,8 +89,8 @@ test.describe('the walk', () => {
     ).toBeVisible()
 
     const replaceEvidence = card.getByRole('button', { name: /Put it back|Reposer/ })
-    await replaceEvidence.evaluate((node) => node.scrollIntoView({ block: 'center' }))
-    await replaceEvidence.click()
+    if (isMobile) await replaceEvidence.tap()
+    else await replaceEvidence.click()
     await expect(card).toBeHidden()
   })
 

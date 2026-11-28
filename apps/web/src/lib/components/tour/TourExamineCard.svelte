@@ -69,7 +69,7 @@
 
 {#if open}
   <aside
-    class="examine pointer-events-auto absolute left-1/2 top-1/2 z-40 w-[min(24rem,calc(100%-1.5rem))] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-[#FFD700]/30 bg-[#050505]/90 p-4 shadow-lg"
+    class="examine pointer-events-auto absolute z-40 rounded-lg border border-[#FFD700]/30 bg-[#050505]/90 p-4 shadow-lg"
     aria-live="polite"
     aria-label={$t.tour.examine.title}
     transition:fly={motion}
@@ -162,6 +162,15 @@
 {/if}
 
 <style>
+  .examine {
+    inset: 0;
+    width: min(24rem, calc(100% - 1.5rem));
+    height: fit-content;
+    max-height: calc(100% - 1.5rem);
+    margin: auto;
+    overflow-y: auto;
+  }
+
   /* See the component comment: the blur is desktop-only and this card only. */
   @media (hover: hover) and (pointer: fine) {
     .examine {

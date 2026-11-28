@@ -83,7 +83,8 @@ function withMotion(fighter: ArcadeFighter, motion: Partial<FighterMotion>): Arc
 export function advanceAirborne(
   fighter: ArcadeFighter,
 ): Pick<ArcadeFighter, 'x' | 'y' | 'velocityY' | 'motion'> {
-  if (fighter.hanzoProjection)
+  // The double steers freely until it commits to the directional air follow-up.
+  if (fighter.hanzoProjection && fighter.attack?.directionalChain !== 'pursuit')
     return { x: fighter.x, y: fighter.y, velocityY: 0, motion: undefined }
   const motion = motionOf(fighter)
   const landingFrames = Math.max(0, motion.landingFrames - 1)

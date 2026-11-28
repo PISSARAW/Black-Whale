@@ -5,20 +5,29 @@ import { focusNenZone } from './nenAdvanced'
 import { nenComboDecision } from './nenComboDecision'
 import { focusCommand } from './nenFocusCommand'
 import { FIGHTING_ROSTER } from './roster'
-import { EMPTY_INPUT } from './types'
+import { EMPTY_INPUT, type FighterId, type MoveSlot } from './types'
 import { preparedNenDestinations } from './nenPreparedBranches'
+import { moveForSlot } from './movesets'
+
+const openingSlots: Partial<Record<FighterId, MoveSlot>> = {
+  hisoka: 'standingHeavy',
+  hanzo: 'lowLight',
+  cluck: 'lowLight',
+}
 
 it.each(FIGHTING_ROSTER.map((f) => f.id))(
   '%s executes an actually earned branch after legal focus and a real contact',
   (id) => {
     let s = beginFight(createFight(id, 'beyond', { mode: 'versus-local' }))
     s = { ...s, player: { ...s.player, x: 44, aura: 100 }, opponent: { ...s.opponent, x: 49 } }
-    s = { ...s, player: focusNenZone(s.player, 'hands') }
+    const opening = moveForSlot(id, openingSlots[id] ?? 'standingLight')!
+    s = { ...s, player: focusNenZone(s.player, opening.tuning.auraZone) }
     s = performAuraAttack({
       state: s,
       side: 'player',
-      kind: 'light',
-      moveId: `${id}:standingLight`,
+      kind: opening.kind,
+      variant: opening.variant,
+      moveId: opening.id,
       auraCharged: false,
     })
     for (let i = 0; i < 50 && !s.player.nenOpening; i++)

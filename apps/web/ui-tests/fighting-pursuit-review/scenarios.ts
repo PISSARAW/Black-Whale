@@ -1,7 +1,7 @@
 import { airRecoveryAvailable } from '$lib/fighting/airRecovery'
 import { prepareCombatRoute } from '$lib/fighting/combatRouteSetup'
 import { beginFight, createFight, performMove, tickFight } from '$lib/fighting/engine'
-import { attackData } from '$lib/fighting/frameData'
+import { attackData, INPUT_BUFFER_FRAMES } from '$lib/fighting/frameData'
 import { HANZO_PROJECTION_STARTUP } from '$lib/fighting/hanzoProjection'
 import { EMPTY_INPUT, type FightState, type FightInput, type MoveAction } from '$lib/fighting/types'
 
@@ -28,7 +28,8 @@ export function pursuitReview(id: PursuitReviewId) {
   const command = launch(states)
   const launchFrame = states.length - 1
   const offset = fighter === 'hisoka' ? 10 : 0
-  const result = followPursuit(states, offset)
+  const result = followPursuit(states, offset, fighter === 'hanzo' ? 'light' : 'special')
+  if (!result) throw new Error(`Poursuite sans contact pour ${fighter}`)
   for (let f = 0; f < 18; f++) states.push(step(states.at(-1)!))
   return { states, command, launch: launchFrame, ...result }
 }
@@ -82,8 +83,9 @@ export function followPursuit(
 ) {
   const origin = states.at(-1)!
   const { startup, active } = attackData(origin.player.attack!.kind, origin.player)
-  if (offset)
-    playUntil(states, 60, (state) => (state.player.attack?.frame ?? 0) >= startup + active + offset)
+  const earliest = action === 'light' ? 2 - INPUT_BUFFER_FRAMES : 2
+  const cancelFrame = startup + active + Math.max(offset, earliest)
+  playUntil(states, 60, (state) => (state.player.attack?.frame ?? 0) >= cancelFrame)
   let current = tap(states.at(-1)!, action, { right: true })
   states[states.length - 1] = current
   let opening = -1
@@ -102,5 +104,5 @@ export function followPursuit(
     if (current.impact?.sequence !== origin.impact?.sequence)
       return { opening, contact: states.length - 1, winner: current.impact?.attacker }
   }
-  throw new Error('La poursuite ne produit aucun contact')
+  return null
 }

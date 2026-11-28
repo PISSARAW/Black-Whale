@@ -137,6 +137,7 @@ describe('hitstun tuning is limited to long grounded physical combos', () => {
       'clash-combat-81',
       'clash-combat-82',
       'clash-combat-110',
+      'clash-combat-111',
     ])
       expect(() => decodeFightReplay(JSON.stringify({ ...replay, ruleset }))).toThrow(
         'replay-version',

@@ -1,6 +1,6 @@
 import { comboChoices } from './comboChoices'
 import { preparedNenDestinations, preparedBranchReady } from './nenPreparedBranches'
-import { nenTransferFrames } from './nenTransfer'
+import { focusNenZone } from './nenAdvanced'
 import { attackData } from './frameData'
 import { canUseMovesetMove, moveForSlot } from './movesets'
 import { voluntaryNenAvailable } from './nenAccess'
@@ -60,7 +60,9 @@ function canTransfer(state: FightState, side: FightSide, move: FighterMove): boo
   )
     return false
   const remaining = attackData(f.attack.kind, f).cancelEnd - f.attack.frame
-  const delay = f.nenTransfer ? f.nenTransfer.duration - f.nenTransfer.age : nenTransferFrames(f)
+  const focused = focusNenZone(f, move.tuning.auraZone)
+  const transfer = focused.nenTransfer
+  const delay = transfer ? transfer.duration - transfer.age : 0
   return remaining >= delay && target.hitStun > move.tuning.startup + delay
 }
 /** Close-range styles can earn their first conversion before spending their personal setup. */

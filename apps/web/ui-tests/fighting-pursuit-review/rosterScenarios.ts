@@ -75,21 +75,22 @@ export function rosterPursuit(id: FighterId) {
   if (airPursuitTechnique(id) || id === 'chrollo') {
     for (const atCorner of [corner, !corner]) {
       const technique = attempt(id, { corner: atCorner, special: true })
-      if (confirmed(technique)) return technique
+      if (technique && confirmed(technique)) return technique
     }
   }
   const light = attempt(id, { corner, special: false })
-  if (!confirmed(light)) throw new Error(`${id} ne confirme pas la poursuite légère`)
+  if (!light || !confirmed(light)) throw new Error(`${id} ne confirme pas la poursuite légère`)
   return light
 }
 
 export function cornerRecovery() {
   const route = attempt('camilla', { corner: true, special: false, offset: 10 })
-  if (route.winner !== 'opponent' || route.opening < 0) throw new Error('Reprise au coin absente')
+  if (!route || route.winner !== 'opponent' || route.opening < 0)
+    throw new Error('Reprise au coin absente')
   return route
 }
 
-function confirmed(result: ReturnType<typeof attempt>) {
+function confirmed(result: NonNullable<ReturnType<typeof attempt>>) {
   return result.winner === 'player' && result.opening < 0 && result.hits >= 4
 }
 
@@ -99,6 +100,7 @@ function attempt(id: FighterId, options: RouteOptions) {
   const command = launch(states)
   const launchFrame = states.length - 1
   const result = followPursuit(states, offset, special ? 'special' : 'light')
+  if (!result) return null
   const contact = states[result.contact]
   const move = states
     .slice(launchFrame)
@@ -137,12 +139,12 @@ function start(id: FighterId, { corner, special }: RouteOptions) {
   const rival = id === 'kurapika' ? 'hisoka' : id === 'chrollo' && special ? 'gel' : 'kurapika'
   const start = beginFight(createFight(id, rival, { mode: 'versus-local' }))
   const trial = position({ ...start, player: { ...start.player, aura: 100 } }, corner)
-  if (!special) return trial
-  if (id === 'chrollo') return acquireGelPage(position(start, false))
   if (id === 'hanzo') {
     const x = corner ? 76 : 37
     return prepare({ ...trial, player: { ...trial.player, x } })
   }
+  if (!special) return trial
+  if (id === 'chrollo') return acquireGelPage(position(start, false))
   return prepareCombatRoute(trial, PREP[id])
 }
 

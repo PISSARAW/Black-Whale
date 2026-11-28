@@ -3,7 +3,7 @@ import { beginFight, createFight, performAuraAttack, tickFight } from './engine'
 import { performArsenalAction } from './arsenalExecution'
 import { createKurapika, dolphinActor } from './kurapika'
 import { captureDolphinAura } from './dolphinAura'
-import { CHROLLO_TURN, type ChrolloPage } from './chrolloBook'
+import { CHROLLO_TURN, createChrolloBook, type ChrolloPage } from './chrolloBook'
 import { interruptUnavailableNen } from './nenActionRules'
 import { privatePvpState } from './pvp/view'
 import { applyAuraContext } from './nen'
@@ -32,7 +32,7 @@ function ready(side: FightSide, spec: { book: ChrolloPage; loan: string }): Figh
       ...state[side],
       x: side === 'player' ? 44 : 49,
       aura: 100,
-      chrolloBook: { pages: [spec.book, 'sun-and-moon'], page: 0, open: true, bookmark: null },
+      chrolloBook: createChrolloBook([spec.book, 'sun-and-moon', 'black-voice', 'order-stamp']),
       dolphinLoan: {
         lender: { owner: lender, member: 0 },
         held: {

@@ -8,6 +8,7 @@ import {
   tickFight,
 } from './engine'
 import { paperCommandReady, selectPaperCommand } from './kallutoPaper'
+import { CHROLLO_TURN, createChrolloBook, toggleChrolloBookmark } from './chrolloBook'
 import { paperDolls } from './kallutoSurveillance'
 import { createPaperKit } from './kallutoMaterials'
 import { performArsenalCommand } from './retrospectiveArsenal'
@@ -169,12 +170,9 @@ describe('Kalluto uses actual paper and an actual fan rather than copied supplie
       player: {
         ...base.player,
         x: 26,
-        chrolloBook: {
-          pages: ['gallery-fake', 'kalluto'],
-          page: 1,
-          open: false,
-          bookmark: 'gallery-fake',
-        },
+        chrolloBook: toggleChrolloBookmark(
+          createChrolloBook(['gallery-fake', 'kalluto', 'sun-and-moon', 'black-voice']),
+        ),
       },
     }
     state = copyHistoricalObject(state, 'player', 'player:paper-kit')
@@ -192,11 +190,12 @@ describe('Kalluto uses actual paper and an actual fan rather than copied supplie
         state,
         side: 'player',
         kind: 'special',
-        moveId: 'chrollo:downSpecial',
+        moveId: CHROLLO_TURN,
         auraCharged: false,
       }),
       30,
     )
+    expect(state.player.chrolloBook).toMatchObject({ openSlot: 1, bookmark: 'gallery-fake' })
     state = advance({ ...state, player: { ...state.player, x: copy.x } }, 20)
     state = use(state, 'paper-kit-take', copy.id)
     expect(state.player.paperKit?.copyId).toBe(copy.id)

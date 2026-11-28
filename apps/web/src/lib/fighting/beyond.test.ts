@@ -9,7 +9,7 @@ import {
   opponentAttack,
 } from './engine'
 import { BEYOND_CURSE } from './beyondCurse'
-import { CHROLLO_BOOKMARK } from './chrolloBook'
+import { CHROLLO_BOOKMARK, createChrolloBook } from './chrolloBook'
 import { fightSpecialPresentation } from './fightSpecialPresentation'
 import { hatsuFor, hatsuSourceFor } from './hatsu'
 import { dolphinCanUse, stealableChainMove } from './kurapikaDolphin'
@@ -70,9 +70,9 @@ describe('Beyond: physical duel and a real prepared curse', () => {
     expect(moveForSlot('beyond', 'finisher')).toBeNull()
     expect(moveById('beyond:finisher')).toBeNull()
     expect(moveset.moves.every((move) => move.canon.evidence === 'gameplay-abstraction')).toBe(true)
-    const ids = new Set(moveset.moves.map((move) => move.id))
-    expect(moveset.moves.every((move) => move.cancelInto.every((id) => ids.has(id)))).toBe(true)
-    expect(moveset.combos.flat().every((id) => ids.has(id))).toBe(true)
+    const hasMove = (id: string) => id.startsWith('beyond:') && moveById(id) !== null
+    expect(moveset.moves.every((move) => move.cancelInto.every(hasMove))).toBe(true)
+    expect(moveset.combos.flat().every(hasMove)).toBe(true)
     expect(JSON.stringify(moveset)).not.toMatch(/Dernière frontière|Final Frontier|40 PV|40 HP/)
   })
   it.each([
@@ -150,7 +150,7 @@ describe('Beyond: physical duel and a real prepared curse', () => {
       ...base,
       player: {
         ...base.player,
-        chrolloBook: { pages: ['beyond'] as const, page: 0, open: true, bookmark: null },
+        chrolloBook: createChrolloBook(['beyond', 'sun-and-moon', 'black-voice', 'order-stamp']),
       },
     }
     expect(performAttack(state, 'player', 'special')).toBe(state)

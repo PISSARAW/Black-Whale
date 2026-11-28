@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import * as THREE from 'three'
 import { beginFight, createFight, performAuraAttack, tickFight } from './engine'
 import { performArsenalCommand } from './retrospectiveArsenal'
-import { gumObjectAnchors } from './gumObjectAnchors'
+import { canAttachGumObject, gumObjectAnchors } from './gumObjectAnchors'
 import { advanceGumObjectAnchors } from './gumObjectAnchorFrames'
 import { damageArenaObject } from './arenaSimulation'
 import { createGumObjectAnchorScene } from './gumObjectAnchorScene'
@@ -51,8 +51,16 @@ function twoAnchors(): FightState {
       },
     )
   expect(state.player.x).toBeGreaterThanOrEqual(59.5)
+  const secondCrate = 'arena:crate:66'
   for (let index = 0; index < 100 && state.player.y > 0; index++) state = advance(state, 1)
-  return advance(attach(state, 'arena:crate:66'))
+  for (let index = 0; index < 100 && !canAttachGumObject(state, 'player', secondCrate); index++)
+    state = tickFight(
+      state,
+      { ...EMPTY_INPUT, left: state.player.x > 66, right: state.player.x < 66 },
+      { dt: 1 / 60, opponentInput: EMPTY_INPUT },
+    )
+  expect(canAttachGumObject(state, 'player', secondCrate)).toBe(true)
+  return advance(attach(state, secondCrate))
 }
 
 describe('Hisoka’s simultaneous physical object attachments', () => {

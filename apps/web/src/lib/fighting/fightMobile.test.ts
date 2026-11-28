@@ -3,7 +3,7 @@ import { createFightTouchPad, fightTouchDirections } from './fightTouchDirection
 import { enterFightFullscreen, exitFightFullscreen, mountFightViewport } from './fightFullscreen'
 import { createHeldFightControl } from './heldFightControl'
 import { fightTouchBindings } from './fightTouchHints'
-import { moveInputHint } from './fightControlHints'
+import { moveInputHint, rangedHint } from './fightControlHints'
 import { EMPTY_INPUT } from './types'
 
 afterEach(() => vi.unstubAllGlobals())
@@ -63,7 +63,9 @@ describe('touch combat inputs', () => {
     expect(moveInputHint('→ J > K > L > H', fightTouchBindings('fr'))).toBe(
       '→ Léger > Lourd > Hatsu > Ultime',
     )
-    expect(moveInputHint('↓ U > O', fightTouchBindings('en'))).toBe('↓ Shot > Throw')
+    const english = fightTouchBindings('en')
+    expect(moveInputHint('↓ U > O', english)).toBe('↓ Hatsu > Throw')
+    expect(rangedHint(english)).toBe('Shot')
   })
 })
 

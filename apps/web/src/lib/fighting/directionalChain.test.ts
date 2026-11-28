@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performMove, tickFight } from './engine'
-import { attackData } from './frameData'
+import { attackData, INPUT_BUFFER_FRAMES } from './frameData'
 import { prepareCombatRoute } from './combatRouteSetup'
 import { selectedGumLink } from './bungeeNetwork'
 import { EMPTY_INPUT, type FightInput, type FightState } from './types'
@@ -128,7 +128,13 @@ describe.each(['kurapika', 'hisoka'] as const)('%s directional finishes', (fight
   it('buffers the direction pressed before the second hit', () => {
     const first = hit(tap(duel(fighter)), 1)
     const second = tap(first)
-    const queued = tap(second, { jump: true })
+    const { startup } = attackData(second.player.attack!.kind, second.player)
+    const window = until(
+      second,
+      (state) => (state.player.attack?.frame ?? -1) >= Math.max(0, startup - INPUT_BUFFER_FRAMES),
+    )
+    expect(window.player.attack?.confirmedHit).toBe(false)
+    const queued = tap(window, { jump: true })
     expect(queued.player.bufferedAttack?.directionalChain).toBe('air')
     const result = hit(queued, 3)
     expect(result.player.attack?.directionalChain).toBe('air')

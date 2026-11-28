@@ -121,7 +121,7 @@ describe('On (The Last Mission)', () => {
   it('loses grudge for real when the guard holds through the engine', () => {
     const state = duel()
     const armed = performAttack({ ...state, player: sworn(state.player, 80) }, 'player', 'heavy')
-    const guarded = advance(armed, 0.24)
+    const guarded = advanceControlled(armed, 14, { ...EMPTY_INPUT, guard: true })
     expect(guarded.impact?.blocked).toBe(true)
     expect(guarded.player.nen.on).toBe(true)
     expect(guarded.player.on!.grudge).toBeLessThan(80 - ON_BLOCKED_BURN)

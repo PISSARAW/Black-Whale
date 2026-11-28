@@ -158,12 +158,12 @@ describe('advanced combinations from the supplied Nen excerpt', () => {
     )
   })
   it.each([
-    ['Gyo', [5, 12], { gyo: true, focusHead: true }],
+    ['Gyo', [11, 12], { gyo: true, focusHead: true }],
     ['Ryu', [4, 12], { gyo: false, focusHead: true }],
-    ['Ko', [4, 5, 12], { aura: true, guard: true, gyo: true, focusHead: true }],
+    ['Ko', [4, 5, 11, 12], { aura: true, guard: true, gyo: true, focusHead: true }],
     [
       'Shu + Ko',
-      [8, 4, 5, 14],
+      [8, 4, 5, 11, 14],
       { aura: true, guard: true, gyo: true, focusHands: true, shu: true },
     ],
   ] as const)(

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { get } from 'svelte/store'
 import { PerspectiveCamera } from 'three'
 import { beginFight, createFight, performThrow, tickFight } from './engine'
+import { toggleChrolloBookmark } from './chrolloBook'
 import { attackData } from './frameData'
 import { resolveFightImpacts } from './combatImpact'
 import { confirmedThrow, createThrowCinematic, throwVictoryDelay } from './throwCinematic'
@@ -14,8 +15,15 @@ import { FIGHTING_ROSTER } from './roster'
 import { EMPTY_INPUT, type FighterId, type FightSide, type FightState } from './types'
 
 function grabbed(id: FighterId = 'hisoka', side: FightSide = 'player') {
-  const base = beginFight(createFight(id, 'kurapika', { mode: 'versus-local' }))
+  const base = beginFight(
+    createFight(side === 'player' ? id : 'kurapika', side === 'opponent' ? id : 'kurapika', {
+      mode: 'versus-local',
+    }),
+  )
   let state = { ...base, player: { ...base.player, x: 46 }, opponent: { ...base.opponent, x: 51 } }
+  const book = state[side].chrolloBook
+  if (book?.open)
+    state = { ...state, [side]: { ...state[side], chrolloBook: toggleChrolloBookmark(book) } }
   state = performThrow(state, side)
   const actor = state[side]
   if (!actor.attack) throw new Error(`No throw for ${id}`)

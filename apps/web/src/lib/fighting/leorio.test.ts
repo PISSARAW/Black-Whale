@@ -9,7 +9,7 @@ import {
   tickFight,
 } from './engine'
 import { activeHitbox, attackData, FIXED_STEP } from './frameData'
-import { finisherReady, moveForSlot, movesetFor } from './movesets'
+import { finisherReady, moveById, moveForSlot, movesetFor } from './movesets'
 import { canUseRangedAttack, rangedAuraCost } from './projectiles'
 import { EMPTY_INPUT, type FightInput, type FightSide, type FightState } from './types'
 
@@ -184,9 +184,7 @@ describe('Leorio’s attested techniques', () => {
     expect(moveForSlot('leorio', 'neutralSpecial')?.canon.evidence).toBe('manga-shown')
     for (const slot of ['forwardSpecial', 'downSpecial', 'backSpecial', 'finisher'] as const)
       expect(moveForSlot('leorio', slot)).toBeNull()
-    expect(moveset.combos.flat().every((id) => moveset.moves.some((move) => move.id === id))).toBe(
-      true,
-    )
+    expect(moveset.combos.flat().every((id) => id.startsWith('leorio:') && moveById(id))).toBe(true)
     const state = ready()
     expect(finisherReady({ ...state, player: { ...state.player, health: 1 } }, 'player')).toBe(
       false,

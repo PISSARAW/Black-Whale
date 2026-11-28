@@ -3,7 +3,7 @@ import { futureVisibleState } from '../../src/lib/fighting/parallelFuturePresent
 import { EMPTY_INPUT, type FightInput, type FightState } from '../../src/lib/fighting/types'
 
 /** A late-round setup. After setup every movement, shot and verdict uses native commands. */
-export function createLaplaceRevealFilm() {
+export function createLaplaceRevealFilm(options: { counter?: boolean; projectedShot?: boolean } = {}) {
   const initial = beginFight(
     createFight('theta', 'tserriednich', { mode: 'versus-ai', formatId: 'arcade' }),
   )
@@ -37,13 +37,14 @@ export function createLaplaceRevealFilm() {
     const future = state.parallelFuture
     const cursor = future?.phase === 'diverging' ? future.cursor : -1
     if (cursor >= 0) divergence++
-    if (cursor === 140) state = performAttack(state, 'player', 'ranged')
-    if (reveal >= 0 && frame === reveal + 50) state = performAttack(state, 'opponent', 'ranged')
+    if (cursor === 140) state = fireTheta(state, options.projectedShot)
+    if (options.counter !== false && reveal >= 0 && frame === reveal + 50)
+      state = performAttack(state, 'opponent', 'ranged')
     const player = { ...EMPTY_INPUT, right: frame < 20 }
     const opponent: FightInput = {
       ...EMPTY_INPUT,
       left: cursor >= 0 && cursor < 140,
-      jump: cursor === 55,
+      jump: cursor === 55 && !options.projectedShot,
     }
     const before = state
     state = tickFight(state, player, { dt: 1 / 60, opponentInput: opponent, ai: false })
@@ -86,4 +87,10 @@ export function createLaplaceRevealFilm() {
       playerHealth: state.player.health,
     },
   }
+}
+
+/** The diary's two passes stage the same shot, with the projected hit isolated in Theta's view. */
+function fireTheta(state: FightState, projectedShot?: boolean): FightState {
+  if (!projectedShot || !state.futurePerception) return performAttack(state, 'player', 'ranged')
+  return { ...state, futurePerception: performAttack(state.futurePerception, 'player', 'ranged') }
 }

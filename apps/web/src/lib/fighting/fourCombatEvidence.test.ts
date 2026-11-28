@@ -180,7 +180,8 @@ describe('four-plus encounters: evidence, guardian and group arrow', () => {
     expect(s.player.halkenburgGroupProtection).toBe(false)
   })
   it('lets the real arrow cross cover and guard, with no HP damage or score and the requested body variant', () => {
-    const base = bowDuel()
+    const duel = bowDuel()
+    const base = { ...duel, environment: { ...duel.environment, halkenburgRosterVariant: true } }
     let s = hatsuFor('halkenburg').onFrame(
       multiActive(performMove({ state: base, side: 'player', action: 'special' })),
     )

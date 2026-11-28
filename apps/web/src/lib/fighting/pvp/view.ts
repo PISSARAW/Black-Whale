@@ -2,7 +2,7 @@ import { concealFortuneWorld } from '../ghostwriterPrivacy'
 import { concealCorpseWorld } from '../illumiCorpsePrivacy'
 import { privateHalkenburgSouls } from '../halkenburgSoulPrivacy'
 import { opposingKameoBodies } from '../kameos/pvp'
-import { redactLegacyArsenal } from '../legacyArsenalPrivacy'
+import { redactLegacyArsenal, redactLegacyWorld } from '../legacyArsenalPrivacy'
 import { concealDocumentWorld } from '../paperDocumentPrivacy'
 import { privateNeedleFaces } from '../illumiNeedlePrivacy'
 import { redactPriorityWorld } from '../priorityPrivacy'
@@ -181,6 +181,7 @@ export function privatePvpState(
     ),
     side,
   )
+  redactLegacyWorld(view, side)
   view.arsenalTrace = undefined
   const other = side === 'player' ? 'opponent' : 'player'
   view.enReadings = enContactReadings(view, side)

@@ -1,10 +1,18 @@
 import { redactCorpsePreparation } from './illumiCorpsePrivacy'
 import { redactBattleModels } from './metamorphosenModels'
-import type { ArcadeFighter } from './types'
+import type { ArcadeFighter, FightSide, FightState } from './types'
+
+export function redactLegacyWorld(view: FightState, side: FightSide): void {
+  view.toxinClouds = view.toxinClouds?.filter((cloud) => cloud.owner === side)
+}
 
 export function redactLegacyArsenal(enemy: ArcadeFighter) {
   concealMachiSurgerySource(enemy)
   redactCorpsePreparation(enemy)
+  enemy.guardianWords = undefined
+  enemy.toxinExposure = undefined
+  enemy.futureStoredFrames = undefined
+  enemy.futureIllusionMode = undefined
   enemy.halkenburgChosenSoul = undefined
   enemy.halkenburgSupporter = undefined
   enemy.dowsingMapSearch = undefined

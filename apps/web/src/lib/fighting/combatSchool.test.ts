@@ -8,6 +8,7 @@ import { decodeFightReplay } from './fightReplayCodec'
 import { fightReplayHash } from './fightReplayHash'
 import { performTrainingAction } from './trainingAction'
 import { EMPTY_INPUT } from './types'
+import { INPUT_BUFFER_FRAMES } from './fightClock'
 
 for (const dt of [1 / 120, 1 / 60, 1 / 30, 0.05]) {
   describe(`combat demonstrations at ${Math.round(1 / dt)} render batches/s`, () => {
@@ -44,9 +45,9 @@ describe('defense training follows actual block and recovery events', () => {
       match.begin(state)
       let buffered = false
       for (let i = 0; i < 180 && !get(school)?.complete && !get(school)?.failed; i++) {
-        if (get(school)?.step === 1 && (state.hitstop > 0 || state.player.blockStun > 6))
-          expect(get(school)?.cue).toBe('defend-wait')
-        if (get(school)?.step === 1 && state.player.blockStun <= 6 && !buffered) {
+        const ready = state.hitstop === 0 && state.player.blockStun <= INPUT_BUFFER_FRAMES
+        if (get(school)?.step === 1 && !ready) expect(get(school)?.cue).toBe('defend-wait')
+        if (get(school)?.step === 1 && ready && !buffered) {
           match.enqueue(state, { kind: 'move', side: 'player', action: 'light', input: 0 })
           buffered = true
         }

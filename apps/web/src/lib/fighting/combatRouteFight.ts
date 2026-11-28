@@ -12,6 +12,8 @@ import {
   type FighterId,
 } from './types'
 
+export const COMBAT_ROUTE_AIR_OPENING_FRAME = 16
+
 export function createCombatRouteFight(route: CombatRoute, opponent?: FighterId): FightState {
   const preparation = combatRouteScenario(route.setup)
   let state = createFightState(route.fighter, opponent ?? routeOpponent(route), {

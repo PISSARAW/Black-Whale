@@ -1,6 +1,11 @@
 import { get, writable } from 'svelte/store'
 import { combatRoute, combatRoutesFor, type CombatFighter, type CombatRoute } from './combatRoutes'
-import { createCombatRouteFight, combatRouteAction, combatRouteInput } from './combatRouteFight'
+import {
+  COMBAT_ROUTE_AIR_OPENING_FRAME,
+  createCombatRouteFight,
+  combatRouteAction,
+  combatRouteInput,
+} from './combatRouteFight'
 import {
   initialCombatProgress,
   observeCombatRoute,
@@ -179,7 +184,12 @@ export function createCombatSchool() {
         opponent: { ...state.opponent, x },
       }
     }
-    return id.endsWith(':defense') ? setTrainingDummy(state, { behavior: 'manual' }) : state
+    return defensePartner
+      ? setTrainingDummy(
+          { ...state, player: { ...state.player, x: state.opponent.x - 4 } },
+          { behavior: 'manual' },
+        )
+      : state
   }
   function routeCommand(state: FightState): ReplayCommand | null {
     const current = get(view)
@@ -309,7 +319,7 @@ function defenseCommand(
 }
 
 function demonstrationOpeningReady(state: FightState, route: CombatRoute): boolean {
-  if (route.kind === 'air' && state.frame < 27) return false
+  if (route.kind === 'air' && state.frame < COMBAT_ROUTE_AIR_OPENING_FRAME) return false
   return !route.whiff || whiffPunishReady(state, route.whiff)
 }
 

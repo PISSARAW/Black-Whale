@@ -1,6 +1,10 @@
 import { createFightState } from './fightState'
 import { prepareCombatRoute } from './combatRouteSetup'
-import { combatRouteAction, combatRouteInput } from './combatRouteFight'
+import {
+  COMBAT_ROUTE_AIR_OPENING_FRAME,
+  combatRouteAction,
+  combatRouteInput,
+} from './combatRouteFight'
 import { canStartFighterAttack } from './fighterAttacks'
 import { moveForSlot } from './movesets'
 import { setTrainingDummy, setTrainingResources } from './trainingSession'
@@ -17,7 +21,12 @@ import {
   comboSupportLanded,
   waitingForComboSupport,
 } from './kameos/comboLessons'
-import { routeHitsBefore, routeStepHits, combatRouteContacts } from './combatRouteContacts'
+import {
+  combatRouteContactId,
+  routeHitsBefore,
+  routeStepHits,
+  combatRouteContacts,
+} from './combatRouteContacts'
 
 export interface BaselineRouteOptions {
   route: CombatRoute
@@ -82,7 +91,9 @@ export function runBaselineRoute(options: BaselineRouteOptions) {
   for (let recovery = 0; recovery < 180 && !settled(tape.state); recovery++)
     tape.step([1 / 60, 0, packReplayInput({ ...EMPTY_INPUT, guard: true }), []])
   const result = tape.finish()
-  const connected = result.measurement.contacts.map((hit) => hit.move)
+  const connected = result.measurement.contacts.map(
+    (hit) => combatRouteContactId(hit.move ?? undefined) ?? null,
+  )
   const expected = baselineRouteContacts(options.route)
   const continuous = result.measurement.contacts.every(
     (hit, index) =>
@@ -169,7 +180,7 @@ function nextCommand(options: {
 }): ReplayCommand[] {
   const { tape, route, sent, tick } = options
   if (routeHitsBefore(route, sent) !== tape.contacts.length || sent >= route.moves.length) return []
-  if (sent === 0 && route.kind === 'air' && tick < 27) return []
+  if (sent === 0 && route.kind === 'air' && tick < COMBAT_ROUTE_AIR_OPENING_FRAME) return []
   const slot = route.moves[sent]
   const move = moveForSlot(route.fighter, slot)!
   if (waitingForComboSupport(tape.state, route, { step: sent, startup: move.tuning.startup }))

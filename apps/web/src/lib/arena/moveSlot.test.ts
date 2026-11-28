@@ -89,7 +89,9 @@ describe('Arena opponent on authored Clash routes', () => {
     expect(state.opponent.chain?.connected).toBe('hit')
 
     const next = continueAiCombo(state, 'kurapika', 'master')
-    expect(next?.opponent.intent?.combo).toEqual([
+    expect(next?.opponent.buffered?.slot).toBe('standingHeavy')
+    const resumed = combatReducer(next!, { type: 'TICK', dt: state.hitstop })
+    expect(resumed.opponent.intent?.combo).toEqual([
       'kurapika:standingLight',
       'kurapika:standingHeavy',
     ])

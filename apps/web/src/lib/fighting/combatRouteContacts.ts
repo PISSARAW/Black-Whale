@@ -1,4 +1,11 @@
 import type { CombatRoute } from './combatRoutes'
+import { moveById } from './movesets'
+
+/** A contextual variation fulfills the authored slot only for its own fighter. */
+export function combatRouteContactId(moveId: string | undefined): string | undefined {
+  const move = moveById(moveId)
+  return move ? `${move.id.split(':')[0]}:${move.slot}` : moveId
+}
 
 export const routeStepHits = (route: CombatRoute, step: number): number => route.hits?.[step] ?? 1
 export const routeHitsBefore = (route: CombatRoute, step: number): number =>

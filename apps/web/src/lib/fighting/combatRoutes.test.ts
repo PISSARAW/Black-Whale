@@ -1,12 +1,17 @@
 import { describe, expect, it } from 'vitest'
 import { combatRoute, COMBAT_ROUTES } from './combatRoutes'
-import { createCombatRouteFight, combatRouteAction, combatRouteInput } from './combatRouteFight'
+import {
+  COMBAT_ROUTE_AIR_OPENING_FRAME,
+  createCombatRouteFight,
+  combatRouteAction,
+  combatRouteInput,
+} from './combatRouteFight'
 import { tickFight } from './engine'
 import { performTrainingAction } from './trainingAction'
 import { EMPTY_INPUT, type FightState } from './types'
 import { canStartFighterAttack } from './fighterAttacks'
 import { moveForSlot } from './movesets'
-import { combatRouteContacts, routeHitsBefore } from './combatRouteContacts'
+import { combatRouteContactId, combatRouteContacts, routeHitsBefore } from './combatRouteContacts'
 
 function step(state: FightState, guarding: boolean) {
   return tickFight(state, EMPTY_INPUT, {
@@ -50,7 +55,7 @@ function prepare(id: string, options: { mirrored: boolean; corner: boolean; gap:
       { ...EMPTY_INPUT, jump: true },
       { dt: 1 / 60, opponentInput: EMPTY_INPUT, ai: false },
     )
-    for (let i = 0; i < 26; i++) state = step(state, false)
+    for (let i = 1; i < COMBAT_ROUTE_AIR_OPENING_FRAME; i++) state = step(state, false)
   }
   return state
 }
@@ -75,7 +80,7 @@ function runRoute(id: string, options: { mirrored: boolean; corner: boolean; gap
         input: combatRouteInput(slot, state.player.facing),
       })
       if (
-        after.player.attack?.moveId === `${route.fighter}:${slot}` &&
+        combatRouteContactId(after.player.attack?.moveId) === `${route.fighter}:${slot}` &&
         after.player.attack !== state.player.attack
       )
         index++
@@ -93,7 +98,7 @@ function runRoute(id: string, options: { mirrored: boolean; corner: boolean; gap
         const total = state.impact.comboHits ?? 0
         expect(total - contacts.length).toBe(gained)
         for (let combo = total - gained + 1; combo <= total; combo++)
-          contacts.push({ move: state.player.attack?.moveId, combo })
+          contacts.push({ move: combatRouteContactId(state.player.attack?.moveId), combo })
       }
     }
   }

@@ -1,4 +1,5 @@
 import {
+  COMBAT_ROUTE_AIR_OPENING_FRAME,
   createCombatRouteFight,
   combatRouteAction,
   combatRouteInput,
@@ -15,6 +16,7 @@ import { createCombatSchool } from '$lib/fighting/combatSchool'
 import type { CombatFighter } from '$lib/fighting/combatRoutes'
 import type { PvpCommand } from '$lib/fighting/pvp/types'
 import { routeHitsBefore } from '$lib/fighting/combatRouteContacts'
+import { INPUT_BUFFER_FRAMES } from '$lib/fighting/fightClock'
 
 function routeCommand(options: {
   route: CombatRoute
@@ -23,7 +25,7 @@ function routeCommand(options: {
   frame: number
 }): PvpCommand | null {
   const { route, state, index, frame } = options
-  if (route.kind === 'air' && frame < 27) return null
+  if (route.kind === 'air' && frame < COMBAT_ROUTE_AIR_OPENING_FRAME) return null
   const slot = route.moves[index]
   const move = moveForSlot(route.fighter, slot)!
   if (!canStartFighterAttack(state.player, move.kind, move.id)) return null
@@ -39,7 +41,7 @@ function routeCommand(options: {
   }
 }
 function punishReady(state: FightState, blocked: boolean) {
-  return blocked && state.hitstop === 0 && state.player.blockStun <= 6
+  return blocked && state.hitstop === 0 && state.player.blockStun <= INPUT_BUFFER_FRAMES
 }
 
 /** A timed human-executable input trace. Only intentions go to the server;

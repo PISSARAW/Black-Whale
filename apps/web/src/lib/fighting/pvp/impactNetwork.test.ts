@@ -5,7 +5,7 @@ import {
   defenseImpactPlan,
 } from '../../../../ui-tests/fighting-response/impactPlans'
 import { runImpactNetwork } from '../../../../ui-tests/fighting-response/impactNetworkLab'
-import { combatRouteContacts } from '../combatRouteContacts'
+import { combatRouteContactId, combatRouteContacts } from '../combatRouteContacts'
 
 describe('actual combo impacts across the input pipeline, authority and replay', () => {
   const nativeCombos = COMBAT_ROUTES.filter(
@@ -27,10 +27,11 @@ describe('actual combo impacts across the input pipeline, authority and replay',
         if (route.hits) {
           // A frame snapshot can include two bullet hits but only describes its final impact.
           expect(hits.at(-1)?.impact?.comboHits).toBe(expected.length)
-          for (const hit of hits) expect(hit.move).toBe(expected[hit.impact!.comboHits! - 1])
+          for (const hit of hits)
+            expect(combatRouteContactId(hit.move)).toBe(expected[hit.impact!.comboHits! - 1])
         } else {
           expect(
-            hits.map((hit) => hit.move),
+            hits.map((hit) => combatRouteContactId(hit.move)),
             JSON.stringify({
               commands: result.applications,
               contacts: hits.map((hit) => ({ frame: hit.frame, move: hit.move })),

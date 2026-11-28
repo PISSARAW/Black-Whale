@@ -3,7 +3,7 @@ import { canStartFighterAttack } from './fighterAttacks'
 import { moveForSlot } from './movesets'
 import type { CombatRoute } from './combatRoutes'
 import type { FightState } from './types'
-import { routeStepHits, routeHitsBefore } from './combatRouteContacts'
+import { combatRouteContactId, routeStepHits, routeHitsBefore } from './combatRouteContacts'
 import { attackPhase } from './frameData'
 import { comboSupportLanded, waitingForComboSupport } from './kameos/comboLessons'
 
@@ -122,7 +122,8 @@ function validRouteHit(
 ) {
   const { route, hits, gained } = contact
   return (
-    state.player.attack?.moveId === `${route.fighter}:${route.moves[progress.step]}` &&
+    combatRouteContactId(state.player.attack?.moveId) ===
+      `${route.fighter}:${route.moves[progress.step]}` &&
     gained >= 1 &&
     hits <= routeStepHits(route, progress.step) &&
     state.impact!.sequence - progress.lastImpact === gained
@@ -142,7 +143,7 @@ function missedWhiffPunish(progress: CombatProgress, state: FightState, route: C
 function comboDropped(progress: CombatProgress, state: FightState, route: CombatRoute) {
   if (progress.step === 0 || state.opponent.hitStun > 0 || state.hitstop > 0) return false
   const expected = moveForSlot(route.fighter, route.moves[progress.step])
-  return state.player.attack?.moveId !== expected?.id
+  return combatRouteContactId(state.player.attack?.moveId) !== expected?.id
 }
 export function observeCombatRoute(
   progress: CombatProgress,

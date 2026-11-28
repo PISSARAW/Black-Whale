@@ -1,7 +1,7 @@
 import type { GumSource } from './bungeeSource'
 import type { FightSide } from './types'
 
-export type IllumiNeedleMode = 'needle-people' | 'face-warp'
+export type IllumiNeedleMode = 'needle-people' | 'face-warp' | 'condition'
 export interface NeedleFace {
   owner: FightSide
   member: number

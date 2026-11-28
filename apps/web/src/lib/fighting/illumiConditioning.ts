@@ -30,7 +30,10 @@ export function performIllumiSupplement(options: ArsenalInvocation): FightState 
     return state
   return {
     ...state,
-    [side]: { ...actor, illumiNeedleMode: command.target as 'people' | 'condition' },
+    [side]: {
+      ...actor,
+      illumiNeedleMode: command.target === 'condition' ? 'condition' : 'needle-people',
+    },
   }
 }
 function conditioningReady(state: FightState, side: FightSide): boolean {

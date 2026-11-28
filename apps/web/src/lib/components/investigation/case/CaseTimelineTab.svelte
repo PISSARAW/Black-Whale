@@ -2,11 +2,17 @@
   import type { ScenePhenomenon } from '$lib/investigation/geometry'
   import type { CaseSession } from '$lib/investigation/caseSession.svelte'
   import type { caseUi } from '$lib/investigation/caseLabels'
+  import CaseReplayViewport from './CaseReplayViewport.svelte'
 
   let { session, ui }: { session: CaseSession; ui: ReturnType<typeof caseUi> } = $props()
 </script>
 
 <section class="mb-5 overflow-hidden border border-[#d6b35a]/25 bg-black/35">
+  <CaseReplayViewport
+    frame={session.replayFrame}
+    playing={session.replayPlaying}
+    label={ui.timeline.reconstruction3d}
+  />
   <div class="grid min-h-44 sm:grid-cols-[0.72fr_1fr]">
     <div
       class="relative flex items-center justify-center overflow-hidden border-b border-white/10 p-6 sm:border-b-0 sm:border-r"

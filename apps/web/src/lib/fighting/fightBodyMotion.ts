@@ -73,6 +73,7 @@ import type { ArcadeFighter, FighterPose } from './types'
 import { animateKurapikaGoldenHeavyIdentity } from './kurapikaGoldenHeavyIdentity'
 import { animateFightMaterialResponse } from './fightMaterialResponse'
 import { attackPlan } from './fightAttackBodyPlan'
+import { gumResuscitationBodyPlan } from './gumResuscitationPresentation'
 
 /**
  * Where the fighting rig draws a fighter, frame by frame.
@@ -232,7 +233,10 @@ export interface PlanContext extends ReactionContext {
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
   const ordinary = withNenCommitment(
-    fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context),
+    gumResuscitationBodyPlan(
+      fighter,
+      fallingBodyPlan(fighter, context) ?? unmirroredBodyPlan(fighter, context),
+    ),
     fighter,
   )
   const awake = onAwakeningBodyPlan({ fighter, frame: context.onAwakeningFrame, ordinary })

@@ -1,5 +1,6 @@
 import { canStartFighterAttack } from './fighterAttacks'
 import { illumiAvailable, illumiMove } from './illumiAccess'
+import { illumiStayReady } from './illumiPresentation'
 import { illumiDisguiseAvailable, clearIllumiFace } from './illumiDisguise'
 import { newGumSource } from './bungeeSource'
 import { freeDeviceHand } from './deviceHands'
@@ -21,8 +22,16 @@ export function performIllumiAction(options: AuraAttackOptions): FightState | nu
   if (kind !== 'special' || !illumiMove(fighter, moveId)) return null
   const available =
     moveId === 'illumi:backSpecial' ? illumiDisguiseAvailable(fighter) : illumiAvailable(fighter)
-  if (!illumiBodyFree(fighter) || !available || !canIssueCommand(fighter, moveId)) return state
-  return performCommand(options)
+  if (!illumiBodyFree(fighter) || !available) return state
+  const stay = stayRequested(options) ? illumiStayReady(state, side) : null
+  if (stay !== null) return stay ? giveNeedleOrder(state, side, 'stay') : state
+  return canIssueCommand(fighter, moveId) ? performCommand(options) : state
+}
+
+function stayRequested({ state, side, moveId }: AuraAttackOptions): boolean {
+  return (
+    (!moveId || moveId === 'illumi:neutralSpecial') && state[side].illumiNeedleMode !== 'face-warp'
+  )
 }
 
 function performCommand({ state, side, moveId }: AuraAttackOptions): FightState | null {
@@ -30,9 +39,6 @@ function performCommand({ state, side, moveId }: AuraAttackOptions): FightState 
   if (moveId === 'illumi:forwardSpecial') return giveNeedleOrder(state, side, 'approach')
   if (moveId === 'illumi:downSpecial') return giveNeedleOrder(state, side, 'retreat')
   if (moveId === 'illumi:backSpecial') return disguise(state, side)
-  const enemy = side === 'player' ? 'opponent' : 'player'
-  if (state[side].illumiNeedleMode !== 'face-warp' && state[enemy].needlePuppet?.owner === side)
-    return giveNeedleOrder(state, side, 'stay')
   if (!needleHandReady(state, side)) return state
   return null
 }

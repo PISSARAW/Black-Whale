@@ -16,7 +16,7 @@ import { paperCommandReady, paperMoveAllowed } from './kallutoPaper'
 import { tuneKallutoMoveset } from './kallutoMoveset'
 import { illumiBodyFree } from './illumiState'
 import { tuneVoconteMoveset } from './voconteMoveset'
-import { illumiMoveReadiness } from './illumiPresentation'
+import { illumiMoveReadiness, illumiStayReady } from './illumiPresentation'
 import { tuneBonolenovMoveset } from './bonolenovMovesetTuning'
 import { tuneIllumiMoveset } from './illumiMoveset'
 import { tuneMachiMoveset } from './machiMoveset'
@@ -210,8 +210,13 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 }
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
+  const freeIllumiOrder =
+    move.id === 'illumi:neutralSpecial' &&
+    state[side].illumiNeedleMode !== 'face-warp' &&
+    illumiStayReady(state, side) === true
   return (
-    nenFollowupReadiness(comboAdmissionBody(state, side, move), move) === 'ready' &&
+    (freeIllumiOrder ||
+      nenFollowupReadiness(comboAdmissionBody(state, side, move), move) === 'ready') &&
     meetsMovesetRequirements(state, side, move)
   )
 }

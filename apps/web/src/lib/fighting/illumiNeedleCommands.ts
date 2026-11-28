@@ -1,14 +1,19 @@
 import { canAct } from './fightActorState'
 import { illumiNenActive, ownsIllumiNeedles } from './illumiAccess'
 import { equippedDolphin } from './dolphinBorrowing'
+import { performIllumiSupplement } from './illumiConditioning'
 import type { ArsenalCommand, ArsenalOption } from './retrospectiveTypes'
 import type { FightSide, FightState, ArcadeFighter } from './types'
+
+const CONDITIONING_MODES = new Set<string | undefined>(['condition', 'people'])
 
 export function performNeedleModeCommand(
   state: FightState,
   side: FightSide,
   command: ArsenalCommand,
 ): FightState {
+  if (CONDITIONING_MODES.has(command.target))
+    return performIllumiSupplement({ state, side, command })
   const actor = state[side]
   if (!canAct(actor) || actor.attack || actor.hanzoProjection) return state
   if (!needleModeAvailable(actor)) return state

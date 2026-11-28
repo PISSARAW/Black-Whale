@@ -76,6 +76,15 @@ function resolvedNeedleVictim(
   if (!captured) return target
   const attacker = state[side]
   if (attacker.attack?.illumiNeedleMode === 'face-warp') return applyNeedleFace(state, side, target)
+  if (attacker.attack?.illumiNeedleMode === 'condition')
+    return {
+      ...target,
+      conditionedNeedle: { owner: side, implantedAt: state.frame },
+      attack: null,
+      bufferedAttack: null,
+      blocking: false,
+      guardFrames: 0,
+    }
   return {
     ...target,
     needlePuppet: {
@@ -112,6 +121,7 @@ function faceTargetAvailable(attacker: ArcadeFighter, target: ArcadeFighter): bo
 function alreadyControlled(target: ArcadeFighter): boolean {
   return Boolean(
     target.needlePuppet ||
+    target.conditionedNeedle ||
     target.blackVoiceControl?.active ||
     target.hatsuEffects.manipulatedFrames > 0 ||
     target.hatsuEffects.possessedFrames > 0,

@@ -7,6 +7,7 @@ import { moveOpponent } from './opponentMovement'
 import { ARSENAL_AI, arsenalAttackSlots } from './arsenalAi'
 import { martialSlots } from './arsenalAiTypes'
 import { physicalAttackSlots } from './physicalCombatAi'
+import { feitanArsenalSlots } from './feitanAi'
 import { forceZetsu } from './nen'
 import { moveForSlot } from './movesets'
 import type { FighterId, MoveSlot } from './types'
@@ -44,7 +45,8 @@ it.each(FIGHTING_ROSTER.map(({ id }) => id))(
         ...martialSlots(context),
       ]),
     ]
-    expect([...arsenalAttackSlots(context)].sort()).toEqual(authored.sort())
+    const eligible = feitanArsenalSlots(context) ?? authored
+    expect([...arsenalAttackSlots(context)].sort()).toEqual([...eligible].sort())
   },
 )
 
@@ -60,7 +62,7 @@ it('makes emission keep distance, reinforcement close in, and preserves personal
     nenCombatDoctrine(phinks).range,
   )
   expect(nenCombatDoctrine(duel('theta').opponent).affinity).toBe('unknown')
-  expect(nenCombatDoctrine(duel('theta').opponent).range[0]).toBeGreaterThan(10)
+  expect(nenCombatDoctrine(duel('theta').opponent).range).toEqual([8, 15])
   expect(nenSpacingDirection({ ...franklin, aura: 5 }, { gap: 14, health: 100 })).toBe(1)
   expect(nenSpacingDirection(forceZetsu(franklin), { gap: 14, health: 100 })).toBe(1)
 })

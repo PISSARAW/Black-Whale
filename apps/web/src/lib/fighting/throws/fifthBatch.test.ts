@@ -12,6 +12,8 @@ import { resolveFightImpacts } from '../combatImpact'
 import { attackData } from '../frameData'
 import { confirmedThrow } from '../throwCinematic'
 import { buildFightFigure } from '../fighterFigure'
+import { humanAnimationRig } from '$lib/tour/humanAnimation'
+import { fightRigOf } from '../fightRig'
 import { fightWorldX, fightWorldY } from '../fightCoordinates'
 import { commandMary } from '../bloodyMaryAction'
 import { beginPredatorAnalysis } from '../predator'
@@ -185,6 +187,7 @@ describe('fifth batch: conditioned abilities and personality stay faithful to re
   it('Melody uses the equipped flute and restores the native prop without granting entrancement', () => {
     const state = grabbed({ id: 'melody', powered: true }),
       view = renderer(state)
+    fightRigOf(humanAnimationRig(view.figures.player.turns)!)
     const flute = view.figures.player.root.getObjectByName('signature-flute')!
     const parent = flute.parent,
       position = flute.position.clone()
@@ -193,7 +196,9 @@ describe('fifth batch: conditioned abilities and personality stay faithful to re
     expect(flute.visible).toBe(false)
     view.clear()
     expect(flute.visible).toBe(true)
-    expect(flute.parent).toBe(parent)
+    expect(flute.parent === parent, `flute parent ${parent?.name} → ${flute.parent?.name}`).toBe(
+      true,
+    )
     expect(flute.position).toEqual(position)
     const absent = { ...state, player: { ...state.player, melodyFlute: false, equipment: [] } }
     view.sync(absent, 0.1)

@@ -2,10 +2,9 @@ import { bashoWritingNavigation } from './bashoNavigation'
 import { paperKitNavigation } from './kallutoMaterialNavigation'
 import { deviceNavigation } from './deviceNavigation'
 import { approximateTarget } from './opponentAwareness'
-import { rememberOpponentHabits, habitGuardInput, repeatedHabit } from './opponentHabits'
+import { rememberOpponentHabits, habitGuardInput } from './opponentHabits'
 import { aiBackSwayInput } from './movementTechAi'
 import { readCounterplay, type CounterplayCue } from './fightCounterplay'
-import { styleMatchup } from './styleMatchups'
 import { styleReactionFrames } from './styleMobility'
 import { zetsuStealthDelay } from './advancedMovementTech'
 import { steerFighter } from './fighterMovement'
@@ -13,6 +12,7 @@ import { canMove, playerCanJump, canGuard } from './fightActorState'
 import { moveOpponent } from './opponentMovement'
 import { moveHisokaOpponent } from './hisokaFootwork'
 import { melodyInput } from './melodyChannel'
+import { projectileDefenceResponse } from './projectileDefence'
 import { EMPTY_INPUT, type ArcadeFighter, type FightInput, type FightState } from './types'
 
 export interface CounterplayRead {
@@ -38,7 +38,28 @@ export function moveCounterplayOpponent(options: {
   const view = { ...state, opponent: fighter, player: target }
   fighter = rememberOpponentHabits(view, fighter)
   const cue = readCounterplay(view, 'opponent')
+  const projectileResponse = respondToProjectiles(view, fighter, cue)
+  if (projectileResponse) return projectileResponse
+  if (fighter.projectileDefence) fighter = { ...fighter, projectileDefence: undefined }
   if (!cue) return respondToHabits({ ...view, opponent: fighter })
+  return respondToCue(view, fighter, cue)
+}
+
+function respondToProjectiles(
+  state: FightState,
+  fighter: ArcadeFighter,
+  cue: CounterplayCue | null,
+): ArcadeFighter | null {
+  if (cue && cue.kind !== 'projectile') return null
+  const response = projectileDefenceResponse(state, fighter, cue)
+  if (!response) return null
+  return response.input
+    ? applyResponse(response.fighter, response.input)
+    : moveRememberedOpponent(state, response.fighter)
+}
+
+function respondToCue(view: FightState, fighter: ArcadeFighter, cue: CounterplayCue) {
+  const target = view.player
   const frames = observedFrames(fighter, cue)
   fighter = { ...fighter, counterplayRead: { key: cue.key, frames, coveringEars: false } }
   if (
@@ -83,7 +104,7 @@ function applyResponse(fighter: ArcadeFighter, input: FightInput): ArcadeFighter
   const next = {
     ...prepared,
     blocking,
-    crouching: input.down,
+    crouching: input.down && prepared.y === 0,
     guardFrames: blocking ? (fighter.blocking ? fighter.guardFrames + 1 : 1) : 0,
   }
   return steerFighter(next, { input, mobile: canMove(next), jumpable: playerCanJump(next, input) })
@@ -102,11 +123,6 @@ function responseInput(fighter: ArcadeFighter, cue: CounterplayCue): FightInput 
   const toward = cue.position.x >= fighter.x ? 1 : -1
   if (cue.kind === 'heat') return heatResponse(fighter, cue)
   if (cue.kind === 'music') return { ...EMPTY_INPUT, coverEars: true }
-  if (cue.kind === 'projectile') {
-    if (repeatedHabit(fighter, 'projectile')) return { ...directionInput(toward), jump: true }
-    if (styleMatchup(fighter.id).role === 'mobile') return { ...EMPTY_INPUT, jump: true }
-    return { ...EMPTY_INPUT, guard: true, down: cue.guard === 'low' }
-  }
   return directionInput(toward)
 }
 

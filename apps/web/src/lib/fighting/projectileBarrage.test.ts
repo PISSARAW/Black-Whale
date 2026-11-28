@@ -101,7 +101,8 @@ describe('burst response with full AI and replay', () => {
       expect(result.state.nextProjectileId).toBe(4)
       expect(result.impacts).toHaveLength(3)
       expect(result.impacts.every((impact) => impact.blocked)).toBe(true)
-      expect(result.state.opponent.health).toBeGreaterThanOrEqual(base.opponent.health - 3)
+      expect(result.impacts.map((impact) => impact.damage)).toEqual([2, 2, 2])
+      expect(result.state.opponent.health).toBe(base.opponent.health - 6)
     },
   )
   it('physically jumps an ordinary mid-height card using the real takeoff and gravity', () => {

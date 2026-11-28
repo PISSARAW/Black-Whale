@@ -4,6 +4,7 @@ import { groundedComboStun } from './groundedComboStun'
 import { probeGroundedExchange } from './exchangeProbe'
 import { beginFight, createFight, performMove, tickFight } from './engine'
 import { strikeDefender, strikeProjectileDefender } from './combatDamage'
+import { attackData } from './frameData'
 import { EMPTY_INPUT, type FightSide } from './types'
 import { decodeFightReplay } from './fightReplayCodec'
 import { createReplayRecorder } from './fightReplayRecorder'
@@ -105,7 +106,7 @@ describe('hitstun tuning is limited to long grounded physical combos', () => {
       counterHit: false,
       comboHits: 20,
     }
-    expect(strikeDefender(options).hitStun).toBe(1)
+    expect(strikeDefender(options).hitStun).toBe(attackData('light', state.player).hitstun)
     const projectile = { knockback: 1, hitstun: 18, blockstun: 8 }
     expect(
       strikeProjectileDefender({
@@ -134,10 +135,11 @@ describe('hitstun tuning is limited to long grounded physical combos', () => {
       'clash-combat-77',
       'clash-combat-80',
       'clash-combat-81',
+      'clash-combat-82',
+      'clash-combat-110',
     ])
       expect(() => decodeFightReplay(JSON.stringify({ ...replay, ruleset }))).toThrow(
         'replay-version',
       )
-    expect(REPLAY_RULESET).toBe('clash-combat-82')
   })
 })

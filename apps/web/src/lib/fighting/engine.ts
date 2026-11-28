@@ -1,3 +1,6 @@
+import { beginPreparedAsphyxia } from './gumResuscitationScenario'
+import { finishPhysicalFrame } from './physicalFrameClocks'
+import { moveAdmitted } from './moveAdmission'
 import { retainSoundContacts } from './audio/impactHistory'
 import { nativeRecoveryCounter } from './recoveryCounterAction'
 import { historicalSequenceFinished } from './heavensDeathMatch/library'
@@ -100,7 +103,7 @@ export function createFight(...args: Parameters<typeof createFightState>): Fight
 }
 
 export function beginFight(state: FightState): FightState {
-  return state.phase === 'ready' ? { ...state, phase: 'fighting' } : state
+  return state.phase === 'ready' ? beginPreparedAsphyxia({ ...state, phase: 'fighting' }) : state
 }
 
 export interface FightTickOptions {
@@ -170,12 +173,14 @@ function advanceFightFrame(
 }
 
 function simulateFightFrame(state: FightState, controls: FutureControls): FightState {
-  return simulateClashFrame(state, controls, {
-    step: stepFight,
-    decide: opponentAttack,
-    attack: (state, action, input) =>
-      performTrainingAction({ state, side: 'opponent', action, input }),
-  })
+  return finishPhysicalFrame(
+    simulateClashFrame(state, controls, {
+      step: stepFight,
+      decide: opponentAttack,
+      attack: (state, action, input) =>
+        performTrainingAction({ state, side: 'opponent', action, input }),
+    }),
+  )
 }
 
 /** One frame: shared clocks, per-body step, then contacts between the pair (duelStep/). */
@@ -203,6 +208,7 @@ export function performAttack(state: FightState, side: FightSide, kind: AttackKi
 }
 
 export function performMove(options: PerformMoveOptions): FightState {
+  if (fightResolutionPending(options.state)) return options.state
   const perception = performFuturePerceptionAction(options.state, options.side, (state) =>
     performMove({ ...options, state }),
   )
@@ -231,11 +237,10 @@ function revealUsedChrolloSlot(state: FightState, side: FightSide, action: MoveA
 
 function executeFightMove(options: PerformMoveOptions): FightState {
   const { state, side, action, input = EMPTY_INPUT } = options
-  if (state.catsName) return state
-  if (!futureAcceptsMove(state, side)) return state
+  const selected = moveForAction(state[side], action, input)
+  if (!moveAdmitted({ state, side, input, slot: selected?.slot })) return state
   const chain = performDirectionalChain({ state, side, action, input }, performAuraAttack)
   if (chain) return chain
-  const selected = moveForAction(state[side], action, input)
   const override = characterMoveOverride(
     { state, side, action, input },
     selected,
@@ -265,6 +270,7 @@ function executeFightMove(options: PerformMoveOptions): FightState {
 }
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
+  if (options.state.gumResuscitation) return options.state
   const perception = performFuturePerceptionAction(options.state, options.side, (state) =>
     performAuraAttack({ ...options, state }),
   )

@@ -1,6 +1,7 @@
 import { canGuard, canMove } from './fightActorState'
 import { motionOf } from './fighterMovement'
 import { styleReactionFrames } from './styleMobility'
+import { zetsuStealthDelay } from './advancedMovementTech'
 import { styleMatchup } from './styleMatchups'
 import { hurtboxes } from './frameData'
 import { repeatedHabit } from './opponentHabits'
@@ -56,7 +57,8 @@ export function projectileDefenceResponse(
     projectileDefence: memory,
     counterplayRead: { key: cue.key, frames, coveringEars: false },
   }
-  if (frames <= styleReactionFrames(fighter)) return { fighter: next }
+  if (frames <= styleReactionFrames(fighter) + zetsuStealthDelay(fighter, state.player))
+    return { fighter: next }
   if (fighter.attack || (!canGuard(fighter) && !canMove(fighter))) return { fighter: next }
   const input = chooseDefence({ fighter: next, cue }, shots)
   memory.action = defenceAction(input)

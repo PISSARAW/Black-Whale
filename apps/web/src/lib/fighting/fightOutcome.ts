@@ -1,4 +1,5 @@
 import { reconcileBlackVoice } from './blackVoice'
+import { reconcileHalkenburgSouls } from './halkenburgSouls'
 import { settleTeamBodyOutcome } from './teamOutcome'
 import { finishFight } from './combatVerdict'
 import { BIOHAZARD_GRACE } from './biohazard'
@@ -29,7 +30,9 @@ export function resolveFightOutcome(state: FightState): FightState {
   state = reconcileBlackVoice(state)
   if (fightResolutionPending(state)) return state
   const durable = preservePointHealth(releaseBiohazardWounds(state, BIOHAZARD_GRACE))
-  const triggered = resolvePostMortemDeaths(durable)
+  const triggered = reconcileHalkenburgSouls(
+    resolvePostMortemDeaths(reconcileHalkenburgSouls(durable)),
+  )
   if (triggered.catsName || triggered.gumResuscitation) return triggered
   const cleared = { ...triggered, deaths: undefined }
   if (state.mode === 'training') return restoreTrainingCasualties(cleared)
@@ -71,7 +74,7 @@ function preservePointHealth(state: FightState): FightState {
   let next = state
   for (const side of SIDES) {
     const forced = state.deaths?.some((death) => death.victimSide === side && explicitDeath(death))
-    if (forced || state[side].health > 0) continue
+    if (forced || state[side].health > 0 || state[side].halkSoul) continue
     next = { ...next, [side]: { ...next[side], health: 1 } }
   }
   return next
@@ -83,7 +86,8 @@ function lossReason(
 ): Exclude<FightFinishReason, 'time' | null> | null {
   const format = fightFormat(state.formatId)
   const enemy = side === 'player' ? 'opponent' : 'player'
-  if (state[side].health <= 0) return 'knockout'
+  const body = state[side]
+  if (!(body.halkSoulAlive ?? body.health > 0)) return 'knockout'
   if (format.knockdownTarget !== null && state.knockdowns[enemy] >= format.knockdownTarget)
     return 'technical-knockout'
   return format.hitTarget !== null && state.score[enemy] >= format.hitTarget ? 'hits' : null
@@ -92,7 +96,7 @@ function lossReason(
 function restoreTrainingCasualties(state: FightState): FightState {
   let next = state
   for (const side of SIDES)
-    if (next[side].health <= 0)
+    if (next[side].health <= 0 && !next[side].halkSoul)
       next = {
         ...next,
         [side]: {

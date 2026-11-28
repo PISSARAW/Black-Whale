@@ -45,7 +45,7 @@ describe('moveFollowUpDisplay', () => {
         sourceName: 'Taille sous la garde',
         input: '↓ + → + K',
         condition: 'Sur touche',
-        tags: [],
+        tags: ['Projection aérienne'],
       },
     ])
 

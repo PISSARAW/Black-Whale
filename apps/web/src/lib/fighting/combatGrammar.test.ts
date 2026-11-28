@@ -8,7 +8,7 @@ import {
   performThrow,
   tickFight,
 } from './engine'
-import { attackData } from './frameData'
+import { attackData, INPUT_BUFFER_FRAMES } from './frameData'
 import { EMPTY_INPUT, type FightState } from './types'
 
 function close(): FightState {
@@ -48,7 +48,7 @@ describe('complete 2D combat grammar', () => {
     expect(state.opponent.knockdownFrames).toBeGreaterThan(0)
     state = performAttack(state, 'opponent', 'heavy')
     expect(state.opponent.bufferedAttack).toBeNull()
-    while (state.opponent.knockdownFrames > 6) state = step(state, 1)
+    while (state.opponent.knockdownFrames > INPUT_BUFFER_FRAMES) state = step(state, 1)
     state = performAttack(state, 'opponent', 'heavy')
     expect(state.opponent.bufferedAttack?.kind).toBe('heavy')
     while (state.opponent.knockdownFrames > 0) state = step(state, 1)

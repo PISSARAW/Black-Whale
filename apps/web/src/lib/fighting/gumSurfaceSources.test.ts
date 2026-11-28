@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { TEXTURE_SURPRISE_COST } from './textureSurpriseMask'
 import { prosthesisScenario } from '../../../ui-tests/fighting-preparation/prostheses'
 import { needleCommand, needleFrames } from './illumiNeedleFaceTestSetup'
 import { createKurapika } from './kurapika'
@@ -56,7 +57,7 @@ describe('facial reconstruction keeps the gum and its surface’s independent so
         side,
       )
       state = needleCommand(state, { action: 'dolphin-move', target: 'hisoka:downSpecial' }, side)
-      expect(equippedDolphin(state[side])?.auraSupply?.amount).toBe(20)
+      expect(equippedDolphin(state[side])?.auraSupply?.amount).toBe(40 - TEXTURE_SURPRISE_COST)
       state = needleFrames(state)
       expect(state[side].textureSurprise).toMatchObject({
         supportId: gum.id,

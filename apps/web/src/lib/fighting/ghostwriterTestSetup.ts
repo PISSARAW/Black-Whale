@@ -1,4 +1,5 @@
 import { beginFight, createFight, tickFight } from './engine'
+import { createChrolloBook, toggleChrolloBookmark } from './chrolloBook'
 import { performArsenalCommand } from './retrospectiveArsenal'
 import { EMPTY_INPUT, type FightSide, type FightState } from './types'
 
@@ -21,12 +22,9 @@ export function ghostwriterSetup(side: FightSide = 'player'): FightState {
     ...base,
     [side]: {
       ...base[side],
-      chrolloBook: {
-        pages: ['lovely-ghostwriter'],
-        page: 0,
-        open: false,
-        bookmark: 'lovely-ghostwriter',
-      },
+      chrolloBook: toggleChrolloBookmark(
+        createChrolloBook(['lovely-ghostwriter', 'order-stamp', 'sun-and-moon', 'black-voice']),
+      ),
     },
   }
   const kit = performArsenalCommand(book, side, {

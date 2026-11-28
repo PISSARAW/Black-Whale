@@ -10,6 +10,7 @@ export interface AttackFlowFrame {
   supportLeg?: 'lead' | 'rear'
   pursuit?: PursuitGesture
   loadAt?: number
+  lunge?: boolean
   facing: 1 | -1
   contact?: FightPose
   transfer?: AttackWeightTransfer

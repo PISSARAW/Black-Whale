@@ -130,7 +130,8 @@ export function attackPlan(
       active: frames.active,
       recovery: frames.recovery,
       supportLeg: postureSupportLeg(fighter),
-      loadAt: strikeLoadAt(fighter, slot),
+      loadAt: fightPhysicalProfile(fighter).loadAt,
+      lunge: heavyLunge(fighter, slot),
       facing: fighter.facing,
       transfer,
       contact: bridgeContact(attack.moveId, { frame, startup: frames.startup, poseAt, pursuit }),
@@ -138,10 +139,8 @@ export function attackPlan(
   }
 }
 
-// A long lunge compresses early so the legs have time to travel into contact.
-function strikeLoadAt(fighter: ArcadeFighter, slot: MoveSlot): number {
-  const loadAt = fightPhysicalProfile(fighter).loadAt
-  return slot === 'standingHeavy' && strikesFromLunge(fighter.id) ? Math.min(loadAt, 0.16) : loadAt
+function heavyLunge(fighter: ArcadeFighter, slot: MoveSlot): boolean {
+  return slot === 'standingHeavy' && strikesFromLunge(fighter.id)
 }
 
 function attackOnGround(

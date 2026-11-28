@@ -1,9 +1,26 @@
-import { addPoses, lerpPose, scalePose, type BodyPlan, type FightPose } from './fightPose'
+import {
+  addPoses,
+  lerpPose,
+  pickJoints,
+  scalePose,
+  type BodyPlan,
+  type FightPose,
+} from './fightPose'
 import { pursuitLoad } from './pursuitMotion'
 import { beginPoseTransition, type PoseMemory } from './fightPoseMemory'
 import { COMBO_LINK_SECONDS, type AttackFlowFrame } from './fightAttackFlow'
 import { linkedStrikePose } from './fightComboTransfer'
 import { contactPostureFrom, withContactPosture } from './fightContactPosture'
+
+const LUNGE_JOINTS = [
+  'root',
+  'leadHip',
+  'leadKnee',
+  'leadFoot',
+  'rearHip',
+  'rearKnee',
+  'rearFoot',
+] as const
 
 interface Momentum {
   pose: PoseMemory
@@ -97,7 +114,12 @@ function drawStartup(state: Momentum, attack: AttackFlowFrame & { contact: Fight
     progress: attack.frame / attack.startup,
     loadAt: attack.loadAt,
   }
-  return state.pose.chained ? linkedStrikePose(input) : physicalComboCurve(input)
+  if (state.pose.chained) return linkedStrikePose(input)
+  const pose = physicalComboCurve(input)
+  if (!attack.lunge) return pose
+  // The legs begin their drive early while the upper body keeps its own preparation beat.
+  const legs = physicalComboCurve({ ...input, loadAt: 0.16 })
+  return { ...pose, ...pickJoints(legs, LUNGE_JOINTS) }
 }
 
 interface Curve {

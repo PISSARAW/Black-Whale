@@ -47,7 +47,13 @@ describe('Halkenburg’s initiating consciousness has priority while the origina
         expect(awake[target].halkenburgSoul?.victimAwake).toBe(true)
         expect(donorBody(awake, target).halkenburgPassenger?.owner).toBe(target)
         expect(donorBody(awake, target).halkenburgSleeping).toBeUndefined()
-        if (seed === 0) expect(readyCohort(awake, side)).toHaveLength(2)
+        if (seed === 0) {
+          const donor = awake[target].halkenburgSoul!.donor
+          expect(donor?.kind).toBe('supporter')
+          const ready = readyCohort(awake, side).map(({ id }) => id)
+          expect(ready).toEqual(readyCohort(state, side).map(({ id }) => id))
+          expect(ready).not.toContain(donor?.kind === 'supporter' ? donor.id : undefined)
+        }
         const direction = side === 'player' ? 'left' : 'right'
         const walking = motion(awake, target, direction)
         const start = donorBody(walking, target).x

@@ -1,8 +1,9 @@
-import { attackPhase } from './frameData'
+import { attackPhase, otherSide } from './frameData'
 import { abandonHalkenburgShot, halkenburgShotConditionsHold } from './halkenburgCollective'
 import { readyCohort } from './preparationWorld'
 import { applyHalkenburgSoulArrow } from './halkenburgSouls'
 import { controlledSoulKey, halkenburgMode, soulBodyKey } from './halkenburgSoulTypes'
+import { halkenburgRosterVariant } from './halkenburgVariant'
 import type { ArcadeFighter, FightProjectile, FightSide, FightState } from './types'
 
 declare module './types' {
@@ -39,7 +40,7 @@ export function launchHalkenburgArrow(state: FightState, side: FightSide): Fight
     owner: side,
     fighterId: 'halkenburg',
     x: actor.x + actor.facing * 3,
-    y: actor.y + (actor.halkSoulLowShot ? 3 : 6),
+    y: actor.y + arrowHeight(state, side),
     velocityX: actor.facing * 150,
     width: 1,
     height: 0.5,
@@ -71,6 +72,14 @@ export function launchHalkenburgArrow(state: FightState, side: FightSide): Fight
     },
   }
 }
+function arrowHeight(state: FightState, side: FightSide): number {
+  const physicalProjection =
+    halkenburgMode(state, side) !== 'souls' &&
+    !halkenburgRosterVariant(state) &&
+    state[otherSide(side)].hanzoProjection
+  return state[side].halkSoulLowShot || physicalProjection ? 3 : 6
+}
+
 function committedSoulShot(state: FightState, side: FightSide): FightProjectile['halkenburgArrow'] {
   const actor = state[side]
   return {

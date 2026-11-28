@@ -20,10 +20,10 @@ export function soulDuel(side: FightSide = 'player', seed = 0): FightState {
     ...base,
     rng: seed,
     player: { ...base.player, x: 44 },
-    opponent: { ...base.opponent, x: 49 },
+    opponent: { ...base.opponent, x: 56 },
     [side]: {
       ...base[side],
-      x: side === 'player' ? 44 : 49,
+      x: side === 'player' ? 44 : 56,
       aura: 100,
       hatsuEffects: { ...base[side].hatsuEffects, cohortWillFrames: COHORT_WILL_FRAMES },
     },

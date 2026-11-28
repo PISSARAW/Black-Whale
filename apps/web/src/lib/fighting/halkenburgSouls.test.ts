@@ -5,8 +5,6 @@ import { mapFrames } from './dowsingMapTestSetup'
 import { nextRound, tickFight, performAuraAttack, createFight } from './engine'
 import { projectHanzo } from './hanzoProjection'
 import { guestProjection, mergeGuestProjection, type RosterGuest } from './rosterGuests'
-import { attackData } from './frameData'
-import { resolveFightImpacts } from './combatImpact'
 import { arsenalOptions } from './retrospectiveArsenal'
 import { performArsenalAction } from './arsenalExecution'
 import type { ArsenalCommand } from './retrospectiveTypes'
@@ -137,26 +135,7 @@ describe('Halkenburg exchanges the chosen consciousness with the real pierced bo
     const projected = projectHanzo({ ...createFight('halkenburg', 'hanzo').opponent, x: 49 })
     const state = { ...base, player: { ...base.player, x: 40 }, opponent: { ...projected, x: 80 } }
     expect(state.opponent.hanzoProjection?.bodyX).toBe(49)
-    const armed = performAuraAttack({
-      state,
-      side: 'player',
-      kind: 'special',
-      moveId: 'halkenburg:neutralSpecial',
-      auraCharged: false,
-    })
-    const struck = resolveFightImpacts(
-      {
-        ...armed,
-        player: {
-          ...armed.player,
-          attack: {
-            ...armed.player.attack!,
-            frame: attackData('special', armed.player).startup,
-          },
-        },
-      },
-      [],
-    )
+    const struck = shootSoul(state)
     expect(struck.opponent.halkenburgSoul).toBeDefined()
     expect(struck.opponent.hanzoProjection).toBeUndefined()
     expect(struck.opponent.x).toBe(49)

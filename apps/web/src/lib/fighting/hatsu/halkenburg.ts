@@ -1,4 +1,10 @@
-import { halkenburgMode } from '../halkenburgSoulTypes'
+import { halkenburgMode, halkenburgOwnBody } from '../halkenburgSoulTypes'
+import {
+  beginCanonicalHalkenburgExchange,
+  exchangeParticipant,
+  halkenburgSoulPool,
+} from '../halkenburgCanonicalExchange'
+import { halkenburgRosterVariant } from '../halkenburgVariant'
 import { retainedSoulBowReady } from '../halkenburgSoulBow'
 import { voluntaryNenAvailable } from '../nenAccess'
 import { chainAbilitySealed } from '../kurapika'
@@ -39,8 +45,7 @@ function nock({ state, side }: HatsuTriggerContext): FightState {
   const supporters = readyCohort(state, side)
   const ready = supporters.length > 0 && archer.hatsuEffects.cohortWillFrames >= COHORT_WILL_FRAMES
   const rng = (Math.imul(state.rng, 1664525) + 1013904223) >>> 0
-  const participants = supporters.map((entry) => entry.id)
-  if (participatesPersonally(archer)) participants.push(`self:${side}`)
+  const participants = arrowParticipants(state, side, supporters)
   const participant = ready ? participants[rng % participants.length] : undefined
   return {
     ...state,
@@ -60,6 +65,18 @@ function nock({ state, side }: HatsuTriggerContext): FightState {
     },
   }
 }
+function arrowParticipants(
+  state: FightState,
+  side: 'player' | 'opponent',
+  supporters: readonly PreparedEntity[],
+) {
+  if (halkenburgMode(state, side) !== 'souls' && !halkenburgRosterVariant(state))
+    return halkenburgSoulPool(state, side).map(exchangeParticipant)
+  const participants = supporters.map((entry) => entry.id)
+  if (participatesPersonally(state[side])) participants.push(`self:${side}`)
+  return participants
+}
+
 function participatesPersonally(archer: ArcadeFighter): boolean {
   return (
     archer.halkSoul?.mind?.identity === 'halkenburg' ||
@@ -75,6 +92,12 @@ function possess({ state, side, defenderSide }: HatsuImpactContext): FightState 
   )
   const self = archer.halkenburgSupporter === `self:${side}`
   if (!rosterParticipantReady(archer, supporter, self)) return state
+  if (!halkenburgRosterVariant(state))
+    return beginCanonicalHalkenburgExchange(state, {
+      side,
+      target: defenderSide,
+      participant: archer.halkenburgSupporter!,
+    })
   const target = state[defenderSide]
   const occupied = supporter ? updateEntity(state, supporter.id, { sleepingFrames: 999999 }) : state
   const struck = {
@@ -105,16 +128,12 @@ function rosterParticipantReady(
 function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
   const fighter = state[side]
   const effects = fighter.hatsuEffects
-  const gathers =
-    ownsBow(fighter) &&
-    hasBowReserve(fighter) &&
-    !chainAbilitySealed(fighter, 'halkenburg:neutralSpecial') &&
-    readyCohort(state, side).length > 0
+  const gathers = cohortGathers(state, side)
   const will =
     gathers && !cohortConcentrationBroken(fighter)
       ? Math.min(COHORT_WILL_FRAMES, effects.cohortWillFrames + 1)
       : 0
-  const possessed = effects.possessedFrames
+  const possessed = fighter.halkenburgSoul ? 0 : effects.possessedFrames
   const protection = groupProtection(fighter, gathers)
   if (tickUnchanged(fighter, { will, possessed, protection })) return fighter
   return {
@@ -124,10 +143,22 @@ function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
     hatsuEffects: {
       ...effects,
       cohortWillFrames: will,
-      possessedFrames: Math.max(0, possessed - 1),
+      possessedFrames: fighter.halkenburgSoul ? 1 : Math.max(0, possessed - 1),
     },
   }
 }
+
+function cohortGathers(state: FightState, side: 'player' | 'opponent'): boolean {
+  const fighter = state[side]
+  return (
+    ownsBow(fighter) &&
+    halkenburgOwnBody(fighter) &&
+    hasBowReserve(fighter) &&
+    !chainAbilitySealed(fighter, 'halkenburg:neutralSpecial') &&
+    readyCohort(state, side).length > 0
+  )
+}
+
 function hasBowReserve(fighter: ArcadeFighter): boolean {
   return (
     fighter.aura > 0 &&

@@ -1,29 +1,15 @@
+import { reconcileCanonicalHalkenburgExchange } from './halkenburgCanonicalExchange'
 import { collectSoulBodies, promoteCohortBody, routeSoulBodies } from './halkenburgSoulBodies'
 import { controlledSoulKey, soulBodyKey } from './halkenburgSoulTypes'
 import { exchangeSoulMinds, settleSoulGraph } from './halkenburgSoulGraph'
 import { interruptSoulTeamRelays, syncSoulTeamSeats } from './halkenburgSoulTeams'
 import { readyCohort, updateEntity } from './preparationWorld'
-import { halkenburgOwnBody, type HalkenburgSoulBody } from './halkenburgSoulTypes'
-import { paperBodyRef } from './paperDocuments'
 import type { SoulBodyRecord } from './halkenburgSoulBodies'
 import type { HalkenburgSoulLink } from './halkenburgSoulTypes'
 import type { ProjectileHit } from './projectiles'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
-/** Compatibility pool for authored roster-mode scenarios; soul mode uses physical body records. */
-export function halkenburgSoulPool(state: FightState, side: FightSide): HalkenburgSoulBody[] {
-  const supporters: HalkenburgSoulBody[] = readyCohort(state, side).map((entry) => ({
-    kind: 'supporter',
-    id: entry.id,
-  }))
-  if (
-    state[side].id !== 'halkenburg' ||
-    !halkenburgOwnBody(state[side]) ||
-    state.rosterGuestContext?.owner === side
-  )
-    return supporters
-  return [{ kind: 'fighter', ...paperBodyRef(state, side) }, ...supporters]
-}
+export { halkenburgSoulPool } from './halkenburgCanonicalExchange'
 
 /** Real bodies and two distinct minds. No random roster draw, HP refill or Hatsu acquisition. */
 export function applyHalkenburgSoulArrow(state: FightState, hit: ProjectileHit): FightState {
@@ -138,12 +124,13 @@ function projectedSoulWorld(state: FightState): boolean {
 
 /** The full-world referee calls this before judging an actual fatal impact. */
 export function reconcileHalkenburgSouls(state: FightState): FightState {
+  state = reconcileCanonicalHalkenburgExchange(state)
   if (!state.halkSoulLinks?.length || projectedSoulWorld(state)) return state
   return settleLinks(state, collectSoulBodies(state))
 }
 export function advanceHalkenburgSouls(state: FightState): FightState {
   if (state.phase !== 'fighting' || !state.halkSoulLinks?.length || projectedSoulWorld(state))
-    return state
+    return reconcileCanonicalHalkenburgExchange(state)
   const links = state.halkSoulLinks.map((link) => ({
     ...link,
     sourceSleep: Math.max(0, link.sourceSleep - 1),

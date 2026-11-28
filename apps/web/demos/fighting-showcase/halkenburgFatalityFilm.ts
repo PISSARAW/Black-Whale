@@ -1,5 +1,9 @@
 import { ContinuousDirector } from './continuousDirector'
-import { createBattlefield, readyCohort } from '../../src/lib/fighting/preparationWorld'
+import {
+  createBattlefield,
+  entitiesFor,
+  readyCohort,
+} from '../../src/lib/fighting/preparationWorld'
 import { COHORT_WILL_FRAMES } from '../../src/lib/fighting/preparationTuning'
 import type { FighterId, FightSide } from '../../src/lib/fighting/types'
 import type { FightStageId } from '../../src/lib/fighting/stages'
@@ -29,7 +33,7 @@ export function createHalkenburgFatalityFilm(
   }
   f.state.battlefield = createBattlefield(f.state.environment)
   f.state.rng = 0
-  const cohort = readyCohort(f.state, side).length
+  const cohort = entitiesFor(f.state, side, 'supporter').filter((entry) => entry.consenting).length
   f.advance()
   for (let i = 0; f.state[loser].health > 18 && i < 65; i++) {
     f.until(() => f.free(side) && f.free(loser))
@@ -37,14 +41,17 @@ export function createHalkenburgFatalityFilm(
     f.hit(side, 'standingHeavy')
   }
   f.until(() => f.free(side) && f.free(loser))
+  f.held[side] = f.direction(side, true)
+  f.until(() => readyCohort(f.state, side).length === cohort)
+  f.held[side] = {}
   f.until(
     () => f.state[side].hatsuEffects.cohortWillFrames >= COHORT_WILL_FRAMES,
     COHORT_WILL_FRAMES,
   )
-  f.close(side, 4)
   f.hit(side, 'neutralSpecial')
   f.until(() => f.state.phase === 'finished', f.state.remainingFrames + 60)
-  if (f.state.winner !== side || f.state[loser].health <= 0 || !f.state[side].halkenburgSupporter)
+  const exchange = f.state[loser].halkenburgSoul
+  if (f.state.winner !== side || f.state[loser].health <= 0 || !exchange)
     throw new Error(
       `Halkenburg requires a charged native Grimmel verdict: ${JSON.stringify({ winner: f.state.winner, health: f.state[loser].health, effects: f.state[side].hatsuEffects, supporter: f.state[side].halkenburgSupporter })}`,
     )
@@ -59,7 +66,7 @@ export function createHalkenburgFatalityFilm(
       stageId,
       winner: side,
       consentingSupporters: cohort,
-      chosenSupporter: f.state[side].halkenburgSupporter,
+      chosenSupporter: exchange.donor.kind === 'supporter' ? exchange.donor.id : `self:${side}`,
       possessionFrames: f.state[loser].hatsuEffects.possessedFrames,
       source:
         'Native shared-will scenario with three consenting feather bearers. Grimmel swaps consciousness without damage; the ordinary round timer adjudicates the competitive verdict. The following ten seconds portray the transfer without extra damage or ability acquisition.',

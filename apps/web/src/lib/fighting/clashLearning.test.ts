@@ -33,6 +33,9 @@ function lesson(id: LessonId) {
     get progress() {
       return progress
     },
+    get gap() {
+      return Math.abs(state.player.x - state.opponent.x)
+    },
     frames(count: number, input: Partial<FightInput> = {}) {
       for (let i = 0; i < count; i++) {
         state = tickFight(state, { ...EMPTY_INPUT, ...input }, { dt: 1 / 60, ai: false })
@@ -99,7 +102,8 @@ describe('foundation lessons complement the ten Nen lessons', () => {
     const run = lesson('spacing')
     run.frames(60)
     expect(run.progress.complete).toBe(false)
-    run.frames(10, { left: true })
+    for (let frame = 0; frame < 40 && run.gap < 10; frame++) run.frames(1, { left: true })
+    expect(run.gap).toBeGreaterThanOrEqual(10)
     run.frames(30)
     expect(run.progress.complete).toBe(true)
   })
@@ -114,7 +118,8 @@ describe('foundation lessons complement the ten Nen lessons', () => {
     run.attack('throw')
     run.frames(45)
     expect(run.progress.complete).toBe(false)
-    run.frames(5, { right: true })
+    for (let frame = 0; frame < 40 && run.gap > 5; frame++) run.frames(1, { right: true })
+    expect(run.gap).toBeLessThanOrEqual(5)
     run.attack('throw')
     run.frames(40)
     expect(run.progress.complete).toBe(true)

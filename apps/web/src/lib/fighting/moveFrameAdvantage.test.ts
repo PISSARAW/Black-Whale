@@ -112,9 +112,18 @@ describe('static frame advantage of ground normals', () => {
     }
   })
 
-  it.each([1, 0])('links a light into itself only with a window above zero (%i)', (window) => {
-    const trial = lightAtWindow(window)
-    expect(selfLinkCombo(trial)).toBe(window > 0 ? 2 : 1)
+  it('reports positive recovery links while capping every light self-link', () => {
+    const boundary = lightAtWindow(0)
+    const frames = moveFrameAdvantage(boundary.move)!
+    expect(linkWindow(frames, { startup: frames.startup - 1 })).toBe(1)
+    for (const { id } of FIGHTING_ROSTER)
+      for (const [slot] of LIGHTS) {
+        const move = moveForSlot(id, slot)
+        if (!move) continue
+        const own = moveFrameAdvantage(move)
+        if (own) expect(linkWindow(own, own), move.id).toBeLessThanOrEqual(0)
+      }
+    expect(selfLinkCombo(boundary)).toBe(1)
   })
 
   it('formats advantages with a typographic minus', () => {

@@ -120,11 +120,10 @@ describe('AI Nen reads', () => {
       },
     }
     expect(reflexInput(charging, 'opponent', plan).aura).toBe(false)
-    const ryu = reflexInput(windUp(duel(8), 'light', 12), 'opponent', {
+    const ryu = reflexInput(windUp(duel(8), 'heavy', 10), 'opponent', {
       ...(plan as object),
       nen: 'ryu',
     } as never)
-    expect(ryu.focusHead).toBe(true)
-    expect(ryu.focusTorso).toBe(false)
+    expect(ryu).toMatchObject({ guard: true, focusTorso: true, focusHands: false })
   })
 })

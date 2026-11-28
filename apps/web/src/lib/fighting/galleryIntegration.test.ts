@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, tickFight } from './engine'
+import { createChrolloBook, toggleChrolloBookmark } from './chrolloBook'
 import { performArsenalCommand, arsenalOptions } from './retrospectiveArsenal'
 import { privatePvpState } from './pvp/view'
 import { applyPvpCommand } from './pvp/commands'
@@ -32,7 +33,9 @@ function active(p2 = false): FightState {
       ...base[side],
       x: 25,
       aura: 100,
-      chrolloBook: { pages: ['gallery-fake'], page: 0, open: false, bookmark: 'gallery-fake' },
+      chrolloBook: toggleChrolloBookmark(
+        createChrolloBook(['gallery-fake', 'order-stamp', 'sun-and-moon', 'black-voice']),
+      ),
     },
     [other]: { ...base[other], x: p2 ? 30 : 18 },
   }

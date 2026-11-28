@@ -84,12 +84,12 @@ describe('kameo presentation (lot 6)', () => {
     expect(get(chosenKameos)).toEqual({})
   })
 
-  it('binds the call on the keyboard without clashing, and on the gamepad guide button', () => {
+  it('binds the call on the keyboard without clashing, and on the gamepad Y button', () => {
     const bindings = defaultBindings()
-    expect(bindings.playerKameo).toBe('<')
-    expect(bindings.opponentKameo).toBe('Backspace')
+    expect(bindings.playerKameo).toBe('u')
+    expect(bindings.opponentKameo).toBe('e')
     expect(bindingError(bindings)).toBeNull()
-    const buttons = Array.from({ length: 17 }, (_, index) => ({ pressed: index === 16, value: 0 }))
+    const buttons = Array.from({ length: 17 }, (_, index) => ({ pressed: index === 3, value: 0 }))
     const pad: FightPad = {
       index: 0,
       id: 'pad',

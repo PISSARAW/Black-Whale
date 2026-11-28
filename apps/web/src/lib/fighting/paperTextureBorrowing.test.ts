@@ -8,6 +8,7 @@ import { copyHistoricalObject } from './chrolloHistoricalObjects'
 import { GALLERY_FAKE_LIFETIME } from './historicalCopyLifetime'
 import { reconcileChrolloPages } from './chrolloPageEffects'
 import { displayedDocumentText } from './paperTexture'
+import { TEXTURE_SURPRISE_COST } from './textureSurpriseMask'
 import {
   paperSetup,
   paperCommand,
@@ -74,7 +75,7 @@ describe('a paper disguise retains its actual copied or borrowed source', () => 
       theftId: 'paper-loan',
       text: 'borrowed surface',
     })
-    expect(equippedDolphin(state.player)?.auraSupply?.amount).toBe(40)
+    expect(equippedDolphin(state.player)?.auraSupply?.amount).toBe(60 - TEXTURE_SURPRISE_COST)
     expect(dolphinIsBusy(state, 'player', equippedDolphin(state.player)!)).toBe(true)
     const ended = paperCommand(state, { action: 'dolphin-use' })
     expect(note(ended).present).toBe(true)
@@ -94,7 +95,10 @@ describe('a paper disguise retains its actual copied or borrowed source', () => 
         auraExhausted: false,
         dolphinLoan: {
           ...loan,
-          held: { ...loan.held, auraSupply: { ...loan.held.auraSupply!, amount: 19 } },
+          held: {
+            ...loan.held,
+            auraSupply: { ...loan.held.auraSupply!, amount: TEXTURE_SURPRISE_COST - 1 },
+          },
         },
       },
     }

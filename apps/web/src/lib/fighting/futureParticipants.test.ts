@@ -4,6 +4,7 @@ import { startFutureField, fieldDeceives } from './futureIllusion'
 import { guestProjection } from './rosterGuests'
 import { advanceRosterGuestActors } from './rosterGuestActors'
 import { multiCombatAi } from './multiCombatAi'
+import { UMBRELLA_FEINT_FRAMES } from './feitanUmbrella'
 import { futureVisibleState } from './parallelFuturePresentation'
 import { knownOpponentTarget, approximateTarget } from './opponentAwareness'
 import { privatePvpState } from './pvp/view'
@@ -128,7 +129,7 @@ describe('the fixed illusion field captures actual bodies present at activation'
         'player',
       )
     const hidden = { ...s, player: { ...s.player, x: 62 } }
-    expect(multiCombatAi(hidden)?.opponent.umbrellaFeintFrames).toBe(32)
+    expect(multiCombatAi(hidden)?.opponent.umbrellaFeintFrames).toBe(UMBRELLA_FEINT_FRAMES)
     const near = { ...s, opponent: { ...s.opponent, x: 33 }, player: { ...s.player, x: 48 } }
     expect(multiCombatAi(near)).toBeNull()
   })

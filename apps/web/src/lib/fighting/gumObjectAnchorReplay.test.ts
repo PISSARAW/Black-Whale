@@ -9,7 +9,7 @@ import { panelReplayCommand } from './fightReplayPanels'
 import { fightReplayHash } from './fightReplayHash'
 import { packReplayInput } from './fightReplayInput'
 import { gumObjectAnchorAi } from './gumObjectAnchorAi'
-import { gumObjectAnchors } from './gumObjectAnchors'
+import { canAttachGumObject, gumObjectAnchors } from './gumObjectAnchors'
 import { EMPTY_INPUT, type FightSide, type FightState } from './types'
 import type { ArsenalCommand } from './retrospectiveTypes'
 import type { ReplayPacket } from './fightReplayTypes'
@@ -45,13 +45,22 @@ describe('object attachments through real AI and replay commands', () => {
     command('player', { action: 'gum-anchor-attach', target: 'arena:crate:34' })
     command('opponent', { action: 'gum-anchor-attach', target: 'arena:crate:66' })
     for (let index = 0; index < 20; index++) packet([1 / 60, 0, 0, []])
+    const walking = packReplayInput({ ...EMPTY_INPUT, right: true })
+    for (let index = 0; index < 40; index++) packet([1 / 60, 0, walking, []])
     const jumping = packReplayInput({ ...EMPTY_INPUT, right: true, jump: true })
     for (let index = 0; index < 240 && state.player.x < 59.5; index++)
       packet([1 / 60, jumping, 0, []])
     for (let index = 0; index < 100 && state.player.y > 0; index++) packet([1 / 60, 0, 0, []])
-    command('player', { action: 'gum-anchor-attach', target: 'arena:crate:66' })
-    const walking = packReplayInput({ ...EMPTY_INPUT, right: true })
-    for (let index = 0; index < 40; index++) packet([1 / 60, 0, walking, []])
+    const secondCrate = 'arena:crate:66'
+    for (let index = 0; index < 100 && !canAttachGumObject(state, 'player', secondCrate); index++) {
+      const towardCrate = packReplayInput({
+        ...EMPTY_INPUT,
+        left: state.player.x > 66,
+        right: state.player.x < 66,
+      })
+      packet([1 / 60, towardCrate, 0, []])
+    }
+    command('player', { action: 'gum-anchor-attach', target: secondCrate })
     command('opponent', { action: 'gum-anchor-object', target: 'arena:crate:66' })
     for (let index = 0; index < 10; index++) packet([1 / 60, 0, 0, []])
     expect(gumObjectAnchors(state.player)).toHaveLength(2)

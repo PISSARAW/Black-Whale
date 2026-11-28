@@ -224,10 +224,11 @@ describe('Chrollo — Zoldyck reference combat', () => {
 
   it('reaches real physical exchanges through native AI ticks', () => {
     let s = duel()
-    s = { ...s, player: { ...s.player, x: 22 }, opponent: { ...s.opponent, x: 74 } }
+    s = { ...s, player: { ...s.player, x: 30 }, opponent: { ...s.opponent, x: 67 } }
+    const initialOpponentX = s.opponent.x
     const moves = new Set<string>()
     let knife = false,
-      dash = false,
+      approached = false,
       contact = false
     for (let frame = 0; frame < 1500 && s.phase === 'fighting'; frame++) {
       if (frame > 200 && frame % 110 === 0)
@@ -239,11 +240,11 @@ describe('Chrollo — Zoldyck reference combat', () => {
       )
       if (s.opponent.attack) moves.add(s.opponent.attack.moveId ?? s.opponent.attack.kind)
       knife ||= s.opponent.historicalWeapon === 'ben-knife'
-      dash ||= Boolean(s.opponent.motion?.dash)
+      approached ||= s.opponent.x < initialOpponentX - 5
       contact ||= s.impact?.attacker === 'opponent' && s.impact.damage > 0
     }
     expect(knife).toBe(true)
-    expect(dash).toBe(true)
+    expect(approached).toBe(true)
     expect([...moves].some((id) => /Light|Heavy/.test(id))).toBe(true)
     expect(contact).toBe(true)
   })

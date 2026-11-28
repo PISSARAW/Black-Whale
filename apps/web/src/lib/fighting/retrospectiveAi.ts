@@ -22,6 +22,7 @@ import { perceivesProjectile } from './nenPerception'
 import { performHunterInterview, SKILL_HUNTER_WINDOW } from './skillHunterAcquisition'
 import { performArsenalCommand } from './retrospectiveArsenal'
 import { chrolloPageForMove } from './chrolloBook'
+import { chrolloEquipmentAi } from './chrolloEquipmentAi'
 import { cookieCanStart, ownsCookie } from './cookie'
 import { canAct } from './fightActorState'
 import { styleReactionFrames } from './styleMobility'
@@ -261,6 +262,7 @@ function hatsuArsenalAi(
     interviewAi(state) ??
     supportAi(state) ??
     copiedArsenalAi(state, perform) ??
+    chrolloEquipmentAi(state, perform) ??
     historicalAi(state, perform)
   )
 }

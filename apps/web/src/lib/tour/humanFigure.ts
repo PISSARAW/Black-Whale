@@ -20,6 +20,12 @@ import { animateHumanAura } from './humanAuraAnimation'
 import { auraLayersFor, type AuraSight } from './auraSight'
 import { firstPersonArms } from './humanFirstPerson'
 import { ensureHumanExtremityAnchors } from './humanExtremityAnchors'
+import {
+  addWobleSwaddle,
+  finishSwaddledWoble,
+  WOBLE_HELD_SCALE,
+  wobleSwaddleProfile,
+} from './wobleSwaddle'
 type Three = typeof import('three')
 export type HumanLook = Apparition & { kind: 'avatar' | 'combatant' }
 export interface HumanFigureBuild {
@@ -187,7 +193,10 @@ export function buildHumanFigure({
   observerSight = 'sight',
   auraStyle = 'human',
 }: HumanFigureBuild): HumanFigure {
-  const baseProfile = twinWardrobe(suppliedProfile ?? humanProfile(seen), seen.human)
+  const pose = legacyPose(seen)
+  const declared = suppliedProfile ?? humanProfile(seen)
+  const swaddled = wobleSwaddleProfile(declared, pose, seen)
+  const baseProfile = twinWardrobe(swaddled ?? declared, seen.human)
   const profile = seen.human?.expression
     ? { ...baseProfile, expression: seen.human.expression }
     : baseProfile
@@ -197,7 +206,8 @@ export function buildHumanFigure({
   // A child is not a small man and a baby is not a small child — ADR-005 §4-P2.
   const frame = profileFrameShape(profile)
   const { lift, stature } = stance(frame)
-  const unit = (seen.kind === 'avatar' ? seen.size / 0.42 : seen.size) * profile.height * stature
+  const size = seen.kind === 'avatar' ? seen.size / 0.42 : seen.size
+  const unit = size * profile.height * stature * (swaddled ? WOBLE_HELD_SCALE : 1)
   figure.scale.setScalar(unit)
   root.add(figure)
   root.add(far)
@@ -211,7 +221,6 @@ export function buildHumanFigure({
   const dark = glow(BOOTS, 1)
   const hairInk = glow(profile.hair, 1)
   const accent = glow(profile.accent, 1)
-  const pose = legacyPose(seen)
   const { pelvis, torso, width, shoulder } = buildHumanTrunk({
     THREE,
     geometry,
@@ -368,15 +377,21 @@ export function buildHumanFigure({
   far.scale.setScalar(unit)
   far.position.copy(figure.position)
   far.rotation.copy(figure.rotation)
+  const poseSwaddle = swaddled
+    ? addWobleSwaddle({ THREE, geometry, figure, far, head, limbs: [...arms, ...legs] })
+    : undefined
   const animateHuman = humanAnimation({ pose, figure, torso, pelvis, head, arms, legs, knees })
   const animateAura = animateHumanAura(aura)
   const firstPerson = seen.human?.firstPerson === true
   const animate: ReturnType<typeof humanAnimation> = (seconds, nextPose, layer) => {
     animateHuman(seconds, nextPose, layer)
+    poseSwaddle?.((nextPose ?? pose) === 'held')
     if (firstPerson) firstPersonArms({ root, arms }, nextPose ?? pose)
     animateAura(seconds)
   }
   finishHumanModel({ THREE, glow, model: { root }, profile })
   ensureHumanExtremityAnchors(root)
-  return { root, turns: figure, lod: { near: figure, far }, animate }
+  const model = { root, turns: figure, lod: { near: figure, far }, animate }
+  if (swaddled) finishSwaddledWoble(model, profile)
+  return model
 }

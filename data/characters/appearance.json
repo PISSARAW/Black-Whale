@@ -85,6 +85,74 @@
       "note": "Le modèle suit le portrait du ch. 374 plutôt que la silhouette préliminaire du ch. 349 : peau foncée, grands yeux sombres, nez long et fin, cheveux blonds courts formant une couronne de boucles souples. La robe reste une reconstruction sobre, aucune apparition physique ne montrant encore sa tenue complète."
     },
     {
+      "id": "katrono-hui-guo-rou",
+      "body": { "build": "average", "height": 0.96, "frame": "adult", "shoulders": 0.98 },
+      "head": {
+        "face": "round",
+        "hairStyle": "hime",
+        "expression": "neutral",
+        "features": {
+          "eyes": "narrow",
+          "cheek": 0.187,
+          "jaw": 0.116,
+          "chin": 0.184,
+          "brow": 1.18,
+          "nose": 0.87,
+          "mouth": 0.065
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Silhouette ch. 349 et portrait monochrome ch. 374. Palette de cour choisie.",
+        "skin": "0xe0b99f",
+        "hair": "0x251e24",
+        "attire": {
+          "jacket": "0x4b414f",
+          "shirt": "0xe5dacc",
+          "trousers": "0x423748",
+          "accent": "0x9e8667"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-349", "ch-374"], "status": "partial" },
+      "note": "Portrait au visage rond, aux petits yeux et aux cheveux foncés lisses qui encadrent le visage jusqu’aux épaules. La robe est une reconstruction à partir de la silhouette."
+    },
+    {
+      "id": "swinko-swinko-hui-guo-rou",
+      "body": { "build": "average", "height": 1.01, "frame": "adult", "shoulders": 0.96 },
+      "head": {
+        "face": "square",
+        "hairStyle": "curtain",
+        "expression": "tired",
+        "features": {
+          "eyes": "heavy",
+          "cheek": 0.163,
+          "jaw": 0.13,
+          "chin": 0.237,
+          "brow": 0.95,
+          "nose": 1.52,
+          "mouth": 0.078
+        }
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Portrait monochrome ch. 374 et apparition ch. 362. Palette de cour choisie.",
+        "skin": "0xe3bea3",
+        "hair": "0xc8b397",
+        "attire": {
+          "jacket": "0x566166",
+          "shirt": "0xe3ded5",
+          "trousers": "0x475054",
+          "accent": "0xb4a48c"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-362", "ch-374"], "status": "partial" },
+      "note": "Visage rectangulaire, nez marqué et cheveux courts clairs séparés près du milieu. Les détails du vêtement de cour sont reconstruits."
+    },
+    {
       "id": "sevanti-hui-guo-rou",
       "body": { "build": "broad", "height": 0.96, "frame": "adult" },
       "head": { "face": "round", "hairStyle": "curly", "expression": "severe" },
@@ -480,7 +548,7 @@
       "attire": "civilian",
       "signatures": [],
       "verified": { "chapterIds": ["ch-358"], "status": "confirmed" },
-      "note": "Nourrisson : dans les bras d'Oito, jamais une silhouette debout. Le gabarit `infant` est ce qui rend cette phrase vraie dans le rendu au lieu de la laisser dans une note."
+      "note": "Le nourrisson porté reprend le gabarit, le lange beige et l’inclinaison du dernier plan du film des 14 princes de Kakin. Cette présentation est aussi utilisée pour le neveu d’Oito dans les scènes où il est porté."
     },
     {
       "id": "kurapika",
@@ -4380,14 +4448,6 @@
     }
   ],
   "deferred": [
-    {
-      "id": "katrono-hui-guo-rou",
-      "reason": "Quatrième reine. Le catalogue la tient par ses fils et par l'espionne qu'elle poste ; aucune planche recensée ne la montre. Ne pas inventer un visage est le même geste que ne pas inventer un passager — à rouvrir avec un numéro de page, pas avec une intuition."
-    },
-    {
-      "id": "swinko-swinko-hui-guo-rou",
-      "reason": "Cinquième reine. Idem : nommée par ses fils et par ses agents, jamais dessinée sur une planche recensée."
-    },
     {
       "id": "pyon",
       "reason": "Statué en phase 0 : pyon et piyon ne sont pas un doublon. Le catalogue porte deux zodiaques distincts, deux premières apparitions, deux postes, deux salles. L'annexe A d'ADR-005 ne rédige de notice pour ni l'un ni l'autre — sa liste des douze Hunters à bord ne les nomme pas — donc aucun des deux n'est déclaré, et le motif est l'absence de notice plutôt que l'absence de planche."

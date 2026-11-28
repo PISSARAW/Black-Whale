@@ -275,7 +275,7 @@ describe('manga photo viewpoints', () => {
     })
     expect(
       mangaViewById('zhang-lei-dining-oito')?.staging?.map(({ characterId }) => characterId),
-    ).toEqual(expect.arrayContaining(['prince-zhanglei', 'queen-oito', 'prince-woble']))
+    ).toEqual(expect.arrayContaining(['prince-zhanglei', 'queen-oito', 'oito-nephew-fake-woble']))
   })
 
   it('offers the published Xi-Yu office plan from both Tier 4 rooms', () => {

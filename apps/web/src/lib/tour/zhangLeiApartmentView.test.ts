@@ -85,7 +85,7 @@ describe('Zhang Lei’s complete apartment', () => {
         (dx * Math.sin(heading) + dz * Math.cos(heading)) / Math.hypot(dx, dz),
       ).toBeGreaterThan(0.99)
     }
-    const baby = zhangLeiStaging.find((entry) => entry.characterId === 'prince-woble')!
+    const baby = zhangLeiStaging.find((entry) => entry.characterId === 'oito-nephew-fake-woble')!
     expect(baby.pose).toBe('held')
     expect(baby.floorOffset).toBeGreaterThan(0.5)
     const candles = plan.structures.filter((item) => item.id.includes('candelabrum'))

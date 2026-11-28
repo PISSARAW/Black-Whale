@@ -7,7 +7,7 @@ export const zhangLeiStaging: MangaCastStaging[] = [
   { characterId: 'prince-zhanglei', at: [3.2, -2.7], heading: Math.PI / 2, pose: 'seated' },
   { characterId: 'queen-oito', at: [8.8, -2.7], heading: -Math.PI / 2, pose: 'seated' },
   {
-    characterId: 'prince-woble',
+    characterId: 'oito-nephew-fake-woble',
     at: [8.55, -2.7],
     heading: -Math.PI / 2,
     pose: 'held',

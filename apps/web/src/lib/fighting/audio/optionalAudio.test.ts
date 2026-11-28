@@ -6,6 +6,7 @@ import type { FightImpact } from '../types'
 import { BEYOND_CURSE_CARRIERS } from '../victory/beyondCurseSelection'
 import { VICTORY_FIGHTERS, VICTORY_DURATION, type VictoryFighter } from '../victory/catalogue'
 import type { VictoryFrame } from '../victory/playback'
+import { PHINKS_VICTORY_DURATION } from '../victory/phinksTiming'
 import { victoryNarrationCue } from './victoryNarration'
 import scenes from './victoryDescriptions.json'
 import atlas from './descriptionAtlas.json'
@@ -53,7 +54,8 @@ function expectTrack(
   locale: 'fr' | 'en',
 ) {
   let previousEnd = 0
-  const duration = name === 'chrollo-sun-moon' ? 3 : VICTORY_DURATION
+  const duration =
+    name === 'phinks' ? PHINKS_VICTORY_DURATION : name === 'chrollo-sun-moon' ? 3 : VICTORY_DURATION
   const spans: Record<string, number[]> = atlas.locales[locale]
   for (const [index, [frameNumber]] of shots.entries()) {
     const label = `description-${name}-${index}`
@@ -68,6 +70,8 @@ function expectTrack(
       winner: 'player',
       loser: 'opponent',
     }
+    if (name === 'phinks')
+      frame.phinksStrike = { turns: 2, ko: false, ken: false, ten: false, ren: false }
     if (!VICTORY_FIGHTERS.includes(frame.fighter)) frame.variant = name as VictoryFrame['variant']
     expect(victoryNarrationCue(frame, locale)?.label).toBe(label)
     expect(start, label).toBeGreaterThanOrEqual(previousEnd)

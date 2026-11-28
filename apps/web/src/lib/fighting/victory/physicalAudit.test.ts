@@ -1,4 +1,5 @@
 import { afterAll, expect, it, vi } from 'vitest'
+import { createPhinksFatalityFilm } from '../../../../demos/fighting-showcase/phinksFatalityFilm'
 import { writeFileSync } from 'node:fs'
 import * as THREE from 'three'
 import { createFight } from '../engine'
@@ -13,6 +14,13 @@ import {
   type VictoryFighter,
 } from './catalogue'
 import { createVictoryRenderer } from './renderer'
+import {
+  PHINKS_CONTACT,
+  PHINKS_DISINTEGRATED,
+  PHINKS_FRAGMENT_BURST,
+  PHINKS_PARRY,
+  PHINKS_REACTION_SHOT,
+} from './phinksTiming'
 import type { FighterId, FightSide, FightState } from '../types'
 vi.mock('./card', () => ({ createVictoryCard: () => new THREE.Group() }))
 
@@ -43,6 +51,7 @@ const cases: Case[] = VICTORY_FIGHTERS.flatMap((id) =>
     })),
   ),
 )
+cases.push({ id: 'phinks', target: 'kurapika', side: 'player', dense: true })
 const variants: Pick<Case, 'id' | 'target' | 'variant'>[] = [
   { id: 'chrollo', target: 'hisoka', variant: 'chrollo-sun-moon' },
   { id: 'benjamin', target: 'furykov', variant: 'beyond-curse-furykov' },
@@ -62,6 +71,8 @@ it.each(cases)(
       phase: 'finished',
       winner: side,
     }
+    if (id === 'phinks' && target === 'kurapika')
+      Object.assign(state, createPhinksFatalityFilm().state)
     const source = JSON.stringify(state)
     const glow = (color: number) => new THREE.MeshBasicMaterial({ color })
     const build = (fighter: FightState['player']) => {
@@ -82,19 +93,79 @@ it.each(cases)(
     const previous = new Map<THREE.Object3D, { quaternion: THREE.Quaternion; age: number }>()
     const pops: unknown[] = []
     try {
-      const samples = dense ? Array.from({ length: 600 }, (_, i) => i) : KEYS
+      const frame = selectVictory(state)!
+      const samples = dense
+        ? Array.from({ length: (frame.duration ?? 10) * 60 }, (_, i) => i)
+        : KEYS.filter((age) => age < (frame.duration ?? 10) * 60)
       for (const age of samples) {
         const restore = renderer.apply({
           state,
           models,
           comfort: defaultFightComfort(),
           frame: {
-            ...selectVictory(state)!,
+            ...frame,
             ...(variant ? { variant } : {}),
             active: true,
             elapsed: age / 60,
           },
         })!
+        if (id === 'phinks' && target === 'kurapika' && age === PHINKS_PARRY) {
+          const world = (root: THREE.Object3D, name: string) =>
+            root.getObjectByName(name)!.getWorldPosition(new THREE.Vector3())
+          const palm = world(models.player, 'hand-left')
+          const reaching = new THREE.Line3(
+            world(models.opponent, 'elbow-right'),
+            world(models.opponent, 'hand-right'),
+          )
+          expect(
+            reaching.closestPointToPoint(palm, true, new THREE.Vector3()).distanceTo(palm),
+            'the free hand reaches the incoming forearm',
+          ).toBeLessThan(0.15)
+          const screen = palm.project(camera)
+          expect(Math.abs(screen.x)).toBeLessThan(0.72)
+          expect(Math.abs(screen.y)).toBeLessThan(0.72)
+        }
+        if (id === 'phinks' && target === 'kurapika' && age === PHINKS_CONTACT) {
+          const world = (root: THREE.Object3D, name: string) =>
+            root.getObjectByName(name)!.getWorldPosition(new THREE.Vector3())
+          const fist = world(models.player, 'hand-right')
+          const distance = Math.min(
+            ...['left', 'right'].map((side) => {
+              const guard = new THREE.Line3(
+                world(models.opponent, `elbow-${side}`),
+                world(models.opponent, `hand-${side}`),
+              )
+              return guard.closestPointToPoint(fist, true, new THREE.Vector3()).distanceTo(fist)
+            }),
+          )
+          expect(distance, 'fist reaches the braced forearm').toBeLessThan(0.17)
+          const impact = fist.project(camera)
+          expect(Math.abs(impact.x)).toBeLessThan(0.72)
+          expect(Math.abs(impact.y)).toBeLessThan(0.72)
+        }
+        if (id === 'phinks' && target === 'kurapika' && age === PHINKS_REACTION_SHOT + 58) {
+          const subject = models.player.getObjectByName('face-eye-left')!
+          const eye = subject.getWorldPosition(new THREE.Vector3()).project(camera)
+          expect(eye.x, 'leave room for the verdict to the left of Phinks').toBeGreaterThan(0.12)
+          expect(eye.x).toBeLessThan(0.72)
+          expect(Math.abs(eye.y)).toBeLessThan(0.8)
+        }
+        if (id === 'phinks' && target === 'kurapika' && age === PHINKS_FRAGMENT_BURST + 6) {
+          const torso = models.opponent.getObjectByName('torso')!
+          const programs = new Set<string>()
+          torso.traverseVisible((node) => {
+            if (!(node instanceof THREE.Mesh)) return
+            const materials = Array.isArray(node.material) ? node.material : [node.material]
+            for (const material of materials) programs.add(material.customProgramCacheKey())
+          })
+          expect(models.opponent.visible).toBe(true)
+          expect(programs.has('phinks-cell-fracture-v1')).toBe(true)
+          expect(scene.getObjectByName('phinks-body-fragments')).toBeInstanceOf(THREE.InstancedMesh)
+        }
+        if (id === 'phinks' && target === 'kurapika' && age === PHINKS_DISINTEGRATED + 1) {
+          expect(models.opponent.visible).toBe(false)
+          expect(scene.getObjectByName('phinks-body-fragments')).toBeInstanceOf(THREE.InstancedMesh)
+        }
         // Read after the complete driver, including props, alternate bodies and final constraints.
         const drawn = physicalJoints(scene)
         const errors = physicalViolations(drawn)

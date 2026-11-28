@@ -16,11 +16,11 @@ import type { VictoryContext } from './types'
 import { disposeVictoryObject } from './resources'
 
 function princeStubble(head: Object3D) {
-  const face = head.getObjectByName('manga-face')!
+  const face = head.getObjectByName('manga-face')
   const ray = new Raycaster(),
     points: Vector3[] = []
   head.updateWorldMatrix(true, true)
-  for (let i = 0; i < 180; i++) {
+  for (let i = 0; face && i < 180; i++) {
     const x = (((i * 0.61803398875) % 1) - 0.5) * 0.255
     const y = -0.074 - ((i % 19) / 19) * 0.13
     if (Math.abs(x) < 0.06 && y > -0.13 && y < -0.095) continue
@@ -80,7 +80,6 @@ export function createTserriednichLikeness() {
       const head = context.hero.head
       const look = owned.get(head) ?? buildUncoveredTserriednich(head)
       owned.set(head, look)
-      const bare = context.age < 66 || context.age >= 210
       for (const node of head.children) {
         const costume =
           node.name.startsWith('tserriednich-hood') ||
@@ -88,9 +87,8 @@ export function createTserriednichLikeness() {
           isHoodRim(node)
         if (!costume && node.name !== 'manga-hair') continue
         context.save(node)
-        node.visible = node.name === 'manga-hair' ? false : !bare
+        node.visible = false
       }
-      look.visible = bare
       head.add(look)
       context.defer(() => look.removeFromParent())
     },

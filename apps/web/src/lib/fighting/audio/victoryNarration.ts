@@ -8,6 +8,7 @@ const shots: Record<string, ReadonlyArray<readonly (number | string)[]>> = scene
 const spans: Record<VoiceLocale, Record<string, readonly number[]>> = atlas.locales
 
 export function victoryNarrationCue(frame: VictoryFrame, locale: VoiceLocale) {
+  if (frame.fighter === 'phinks' && !frame.phinksStrike?.turns) return
   const scene = frame.variant ?? frame.fighter
   return shots[scene]
     ?.flatMap(([frameNumber], index) => {

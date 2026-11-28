@@ -1,21 +1,26 @@
 <script lang="ts">
   import { tick } from 'svelte'
+  import FightPhinksVerdict from '../../src/lib/components/fighting/FightPhinksVerdict.svelte'
   import FightScene from '../../src/lib/components/fighting/FightScene.svelte'
+  import { selectVictory } from '../../src/lib/fighting/victory/catalogue'
+  import { PHINKS_VICTORY_FRAMES } from '../../src/lib/fighting/victory/phinksTiming'
   import { createPhinksFatalityFilm } from './phinksFatalityFilm'
-  import { capturePhinksFatality } from './phinksFatalityScene'
+
   const film = createPhinksFatalityFilm()
-  let index = 0
-  let state = film.states[0]
-  const capture = capturePhinksFatality(() => ({ age: index, state }))
-  export const ready = () => capture.ready()
-  export const count = () => 600
-  export const report = () => ({ ...film.report, presentation: capture.audit() })
+  const state = film.state
+  const selection = selectVictory(state)!
+  let age = 0
+  let mounted = false
+  let failed = false
+  $: victoryFrame = { ...selection, elapsed: age / 60, active: true }
+
+  export const ready = () => mounted || failed
+  export const count = () => PHINKS_VICTORY_FRAMES
+  export const report = () => ({ ...film.report, failed })
   export async function seek(frame: number) {
-    index = Math.max(0, Math.min(599, frame))
-    state = film.states[index]
+    age = Math.max(0, Math.min(PHINKS_VICTORY_FRAMES - 1, frame))
     await tick()
   }
-  $: age = index
 </script>
 
 <main>
@@ -24,34 +29,29 @@
     <p>PHINKS <i>×</i> KURAPIKA</p>
     <small>TOUR CÉLESTE</small>
   </header>
-  <section class:cinema={age >= 0}>
+  <section class="cinema">
     <FightScene
       {state}
       stageId="heavens-arena"
       keepCombatantMarkers={false}
       hideSecondaryView={true}
-      presentationSeconds={index / 60}
-      comfort={{ camera: 0, shake: 0, flashes: true, highContrast: false }}
+      {victoryFrame}
+      presentationSeconds={age / 60}
+      comfort={{ camera: 1, shake: 0.5, flashes: true, highContrast: false }}
+      onSceneReady={() => (mounted = true)}
+      onSceneFailed={() => (failed = true)}
     />
 
     <div class="shade"></div>
-    {#if age >= 270 && age < 274}<div
-        class="strike-flash"
-        style={`opacity:${0.74 * (1 - (age - 270) / 4)}`}
-      ></div>{/if}
-    {#if age >= 420}<div class="victory">
-        <strong class="fatality-word">FATALITY</strong><span class="winner-name">PHINKS</span><small
-          >UN SEUL COUP SUFFIT</small
-        >
-      </div>{/if}
+    <FightPhinksVerdict elapsed={age / 60} language="fr" />
   </section>
   <footer>
     <div>
-      <small>{age >= 0 ? 'FATALITY' : 'COMBAT CONTINU'}</small>
-      <h1>{age >= 0 ? 'Le dernier tour.' : 'Un seul coup suffit.'}</h1>
+      <small>PHINKS</small>
+      <h1>Le dernier tour</h1>
     </div>
     <p>
-      {age >= 0 ? 'RIPPER CYCLOTRON' : 'PHINKS × KURAPIKA'}<span>BLACK WHALE · CLASH</span>
+      RIPPER CYCLOTRON<span>BLACK WHALE · CLASH</span>
     </p>
   </footer>
 </main>
@@ -163,57 +163,5 @@
     color: #8d8190;
     letter-spacing: 3px;
     margin-top: 13px;
-  }
-  .strike-flash {
-    position: absolute;
-    inset: 0;
-    background: #e5eef5;
-    pointer-events: none;
-    z-index: 4;
-  }
-  .fatality-word {
-    color: #ec6527;
-    font-family: Georgia, serif !important;
-    font-weight: 900 !important;
-    font-size: 76px !important;
-    letter-spacing: 5px !important;
-    text-shadow:
-      0 3px 0 #42090f,
-      0 0 25px #9e162b70;
-  }
-  .winner-name {
-    color: #f2ded5 !important;
-    font-size: 24px !important;
-    letter-spacing: 8px !important;
-  }
-  .victory small:last-child {
-    font-size: 11px;
-    letter-spacing: 4px;
-    color: #a78984;
-  }
-  .victory {
-    position: absolute;
-    z-index: 3;
-    left: 115px;
-    top: 310px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    text-shadow: 0 3px 20px #000;
-  }
-  .victory small {
-    color: #edb5a6;
-    letter-spacing: 12px;
-    font-size: 20px;
-  }
-  .victory strong {
-    font-size: 61px;
-    letter-spacing: 7px;
-    font-weight: 500;
-  }
-  .victory span {
-    font-size: 12px;
-    letter-spacing: 7px;
-    color: #bdb1c1;
   }
 </style>

@@ -1,5 +1,5 @@
-import { Box3, CatmullRomCurve3, Mesh, MeshBasicMaterial, TubeGeometry, Vector3 } from 'three'
-import type { Group, Object3D } from 'three'
+import { Box3, CatmullRomCurve3, Mesh, TubeGeometry, Vector3 } from 'three'
+import type { Group, MeshBasicMaterial, Object3D } from 'three'
 import type { VisitHatsuModel } from '../visitHatsuModel'
 import { visibleVictoryBounds } from './bodyBounds'
 
@@ -9,8 +9,7 @@ function placeCentre(node: Object3D, target: Vector3) {
   node.position.add(parent.worldToLocal(target.clone()).sub(parent.worldToLocal(centre)))
   node.updateWorldMatrix(true, true)
 }
-export function createCamillaPawGrip(model: VisitHatsuModel, root: Group) {
-  const fur = new MeshBasicMaterial({ color: 0x302735 })
+export function createCamillaPawGrip(model: VisitHatsuModel, root: Group, fur: MeshBasicMaterial) {
   const paws = [-1, 1].map((sign) => {
     const hand = model.joints.get(`hand-${sign}`)!,
       arm = model.joints.get(`arm-${sign}`)!
@@ -38,11 +37,13 @@ export function createCamillaPawGrip(model: VisitHatsuModel, root: Group) {
         const size = visibleVictoryBounds(hand).getSize(new Vector3())
         const edge = sign < 0 ? body.min.x : body.max.x
         const offset = size.x / 2 - 0.035 * ratio + (1 - approach) * 0.5 * ratio
-        const centre = new Vector3(edge + sign * offset, 1.14 * ratio, 0.91 * ratio)
+        const centre = body.getCenter(new Vector3())
+        centre.x = edge + sign * offset
+        centre.z += size.z * 0.3
         placeCentre(hand, centre)
         const bounds = visibleVictoryBounds(hand)
-        const shoulder = new Vector3(x + sign * 0.48 * ratio, 1.86 * ratio, -0.2 * ratio)
-        const elbow = new Vector3(x + sign * 0.92 * ratio, 1.36 * ratio, 0.26 * ratio)
+        const shoulder = new Vector3(x + sign * 0.48 * ratio, 1.86 * ratio, -0.29 * ratio)
+        const elbow = new Vector3(x + sign * 0.92 * ratio, centre.y - 0.15 * ratio, 0.23 * ratio)
         const wrist = centre.clone().add(new Vector3(sign * size.x * 0.38, 0, -0.03 * ratio))
         bridge.geometry.dispose()
         bridge.geometry = new TubeGeometry(
@@ -59,7 +60,6 @@ export function createCamillaPawGrip(model: VisitHatsuModel, root: Group) {
         bridge.removeFromParent()
         bridge.geometry.dispose()
       })
-      fur.dispose()
     },
   }
 }

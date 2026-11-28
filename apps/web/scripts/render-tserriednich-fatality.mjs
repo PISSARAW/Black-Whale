@@ -58,10 +58,10 @@ try {
   ])
   await page.clock.pauseAt(new Date(Date.now() + 1000))
   const report = await page.evaluate(() => window.fightingShowcase.report())
-  assert.equal(report.frameCount, 600)
-  assert.equal(report.duration, 10)
+  assert.equal(report.frameCount, 660)
+  assert.equal(report.duration, 11)
   assert.equal(report.character, 'Tserriednich')
-  assert.equal(report.victory.openEyesFrame, 286)
+  assert.equal(report.victory.openEyesFrame, 132)
   assert.equal(report.winner, 'player')
   assert.equal(report.forecastFrames, 600)
   assert.equal(report.frozenWhileViewing, true)
@@ -82,7 +82,8 @@ try {
   )
   {
     const samples = [
-      0, 94, 154, 194, 220, 250, 292, 344, 356, 364, 392, 418, 438, 465, 500, 570,
+      0, 19, 38, 65, 101, 104, 126, 142, 199, 228, 314, 401, 422, 442, 452, 475, 494, 495, 501, 525,
+      551, 590, 644,
     ].map((age) => ({ name: `victory-${age}`, frame: age }))
     const diagnostics = []
     for (const sample of samples) {
@@ -104,7 +105,7 @@ try {
     )
   }
   if (!inspect) {
-    const destination = path.join(output, 'Tserriednich-Tu-Arrives-Trop-Tard-picture.mp4')
+    const destination = path.join(output, 'Tserriednich-Deux-Verites-picture.mp4')
     encoder = spawn(
       'ffmpeg',
       [

@@ -1,0 +1,19 @@
+{
+  "firstTurn": 55,
+  "interceptShot": 68,
+  "parry": 96,
+  "windupEnd": 114,
+  "plant": 135,
+  "strikeShot": 157,
+  "contact": 177,
+  "fracture": 183,
+  "floorCrack": 189,
+  "fragmentBurst": 193,
+  "flightShot": 204,
+  "disintegrated": 246,
+  "wideShot": 259,
+  "debrisHit": 281,
+  "debrisSettle": 355,
+  "reactionShot": 373,
+  "verdict": 399
+}

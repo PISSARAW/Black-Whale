@@ -10,6 +10,14 @@ const TRACK_GAIN: Readonly<Record<string, number>> = {
 }
 
 export function victoryTrack(frame: VictoryFrame, fallback = false) {
-  const id = fallback ? frame.fighter : (frame.variant ?? frame.fighter)
+  const id =
+    !fallback &&
+    !frame.variant &&
+    frame.fighter === 'tserriednich' &&
+    frame.finishingShot !== undefined
+      ? 'tserriednich-shot'
+      : fallback
+        ? frame.fighter
+        : (frame.variant ?? frame.fighter)
   return { url: `/clash-victories/${id}.m4a`, gain: TRACK_GAIN[id] ?? 1 }
 }

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { createServer } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { mkdir, writeFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright'
 
@@ -16,6 +17,7 @@ const server = await createServer({
   publicDir: path.join(root, 'apps/web/static'),
   plugins: [svelte({ configFile: false })],
   optimizeDeps: {
+    holdUntilCrawlEnd: false,
     entries: [
       'demos/fighting-showcase/camilla-fatality.html',
       'ui-tests/fighting-victory/index.html',
@@ -27,39 +29,58 @@ const server = await createServer({
   logLevel: 'error',
 })
 await server.listen()
-const browser = await chromium.launch({ headless: true })
+const chrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+const browser = await chromium.launch({
+  executablePath: existsSync(chrome) ? chrome : undefined,
+  headless: true,
+  args: ['--enable-unsafe-swiftshader'],
+})
 const errors = [],
   results = []
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })
+  page.setDefaultTimeout(120000)
   page.on('pageerror', (error) => errors.push(error.message))
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text())
   })
-  await page.clock.install()
   const base = `http://127.0.0.1:${server.httpServer.address().port}`
+  const seek = (age) =>
+    page.evaluate(async (age) => {
+      await window.fightingShowcase.seek(age)
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+    }, age)
   for (const options of [
+    { target: 'musse', stage: 'camilla-salon', side: 'player' },
+    { target: 'chrollo', stage: 'camilla-salon', side: 'player' },
     { target: 'franklin', stage: 'heavens-arena', side: 'opponent' },
     { target: 'biscuit', stage: 'screening-room', side: 'player' },
     { target: 'camilla', stage: 'whale-hold', side: 'opponent', reduced: '1' },
   ]) {
-    await page.clock.resume()
     await page.goto(
       `${base}/demos/fighting-showcase/camilla-fatality.html?${new URLSearchParams(options)}`,
+      { waitUntil: 'domcontentloaded' },
     )
     await page.waitForFunction(() => window.fightingShowcase?.ready())
-    await page.clock.pauseAt(new Date(await page.evaluate(() => Date.now() + 10000)))
     const report = await page.evaluate(() => window.fightingShowcase.report())
     assert.equal(report.failed, false)
     assert.equal(report.winner, options.side)
     assert.equal(report.target, options.target)
     assert.equal(report.stageId, options.stage)
     assert.ok(report.postMortemFrames > 0)
-    assert.equal(report.victory.eyeOpeningFrame, 554)
-    assert.equal(report.victory.portraitFrame, 510)
-    for (const age of [130, 170, 270, 330, 420, 510, 558]) {
-      await page.evaluate((age) => window.fightingShowcase.seek(age), age)
-      await page.clock.runFor(50)
+    assert.equal(report.victory.revealFrame, 120)
+    assert.equal(report.victory.tailChargedFrame, 378)
+    assert.ok(report.victory.inhaleFrame - report.victory.returnFrame >= 42)
+    assert.ok(report.victory.inhaleFrame < report.victory.eyeOpeningFrame)
+    assert.ok(report.victory.eyeOpeningFrame < report.victory.verdictFrame)
+    const beats = [12, 107, 144, 230, 320, 365, 400, 434, 463, 491, 515, 594]
+    if (options.target === 'musse') beats.push(28, 53, 259, 273, 468, 501, 520, 531, 552)
+    for (const age of beats) {
+      await seek(age)
+      assert.equal(
+        await page.locator('.cinematic-verdict').count(),
+        Number(age >= report.victory.verdictFrame),
+      )
       assert.equal(
         await page.evaluate(() => window.fightingShowcase.report().nativeState),
         report.nativeState,
@@ -68,15 +89,13 @@ try {
     }
     if (options.target === 'biscuit') {
       await page.setViewportSize({ width: 390, height: 844 })
-      await page.evaluate(() => window.fightingShowcase.seek(558))
-      await page.clock.runFor(50)
+      await seek(515)
       await page.screenshot({ path: path.join(output, 'mobile-short-target.png') })
       await page.setViewportSize({ width: 1280, height: 800 })
     }
     results.push(options)
     process.stdout.write(`Verified Camilla: ${options.target}, ${options.stage}, ${options.side}\n`)
   }
-  await page.clock.resume()
   await page.goto(`${base}/ui-tests/fighting-victory/`)
   await page.waitForFunction(() => window.victoryFixture)
   await page.evaluate(async () => {

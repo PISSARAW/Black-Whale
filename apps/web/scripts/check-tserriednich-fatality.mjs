@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { fileURLToPath } from 'node:url'
 import { createServer } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
+import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { chromium } from 'playwright'
@@ -27,14 +28,25 @@ const server = await createServer({
   logLevel: 'error',
 })
 await server.listen()
-const browser = await chromium.launch({ headless: true })
+const chrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+const browser = await chromium.launch({
+  executablePath: existsSync(chrome) ? chrome : undefined,
+  headless: true,
+  args: ['--enable-unsafe-swiftshader'],
+})
 const errors = [],
   results = []
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })
-  page.on('pageerror', (error) => errors.push(error.message))
+  page.setDefaultTimeout(120000)
+  page.on('pageerror', (error) => {
+    errors.push(error.message)
+    process.stderr.write(`${error.message}\n`)
+  })
   page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text())
+    const url = message.location().url
+    if (message.type() === 'error' && !url.endsWith('/favicon.ico'))
+      errors.push(`${message.text()} (${url})`)
   })
   const base = `http://127.0.0.1:${server.httpServer.address().port}`
   for (const options of [
@@ -44,6 +56,7 @@ try {
   ]) {
     await page.goto(
       `${base}/demos/fighting-showcase/tserriednich-fatality.html?${new URLSearchParams(options)}`,
+      { waitUntil: 'domcontentloaded' },
     )
     await page.waitForFunction(() => window.fightingShowcase?.ready())
     const report = await page.evaluate(() => window.fightingShowcase.report())
@@ -52,11 +65,17 @@ try {
     assert.equal(report.target, options.target)
     assert.equal(report.stageId, options.stage)
     assert.equal(report.forecastFrames, 600)
+    assert.equal(report.frameCount, 660)
+    assert.equal(report.duration, 11)
     assert.equal(report.frozenWhileViewing, true)
     assert.equal(report.diverged, true)
-    for (const age of [154, 220, 356, 418, 438, 500]) {
+    for (const age of [114, 142, 278, 418, 495, 590]) {
       await page.evaluate((age) => window.fightingShowcase.seek(age), age)
       await page.waitForTimeout(80)
+      assert.equal(
+        await page.locator('[data-future-split]').count(),
+        age >= 132 && age < 408 ? 1 : 0,
+      )
       assert.equal(
         await page.evaluate(() => window.fightingShowcase.report().nativeState),
         report.nativeState,
@@ -65,7 +84,7 @@ try {
     }
     if (options.target === 'biscuit') {
       await page.setViewportSize({ width: 390, height: 844 })
-      await page.evaluate(() => window.fightingShowcase.seek(292))
+      await page.evaluate(() => window.fightingShowcase.seek(278))
       await page.waitForTimeout(100)
       await page.screenshot({ path: path.join(output, 'mobile-short-target.png') })
       await page.setViewportSize({ width: 1280, height: 800 })
@@ -92,6 +111,10 @@ try {
   assert.equal(await overlay.getAttribute('data-target'), 'hisoka')
   assert.equal(await overlay.getAttribute('data-stage'), 'vip-casino')
   assert.equal((await page.request.get(`${base}/clash-victories/tserriednich.m4a`)).status(), 200)
+  assert.equal(
+    (await page.request.get(`${base}/clash-victories/tserriednich-shot.m4a`)).status(),
+    200,
+  )
   await page.keyboard.press('Escape')
   await overlay.waitFor({ state: 'detached' })
   assert.equal(await page.evaluate(() => window.victoryFixture.snapshot().active), false)

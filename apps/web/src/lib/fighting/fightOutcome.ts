@@ -1,10 +1,10 @@
 import { reconcileBlackVoice } from './blackVoice'
 import { settleTeamBodyOutcome } from './teamOutcome'
 import { finishFight } from './combatVerdict'
-import { historicalSequenceFinished } from './heavensDeathMatch/library'
 import { BIOHAZARD_GRACE } from './biohazard'
 import { releaseBiohazardWounds } from './biohazardWounds'
 import { explicitDeath, resolvePostMortemDeaths } from './fightDeaths'
+import { historicalSequenceFinished } from './heavensDeathMatch/library'
 import { fightFormat } from './formats'
 import type { FightFinishReason, FightSide, FightState } from './types'
 
@@ -42,8 +42,18 @@ export function resolveFightOutcome(state: FightState): FightState {
       winner: 'draw',
       finishReason: playerLost,
     })
-  if (playerLost) return finishFight(cleared, 'opponent', playerLost)
-  return opponentLost ? finishFight(cleared, 'player', opponentLost) : cleared
+  const loser = playerLost ? 'player' : 'opponent'
+  const winner = playerLost ? 'opponent' : 'player'
+  const reason = playerLost ?? opponentLost
+  if (!reason) return cleared
+  const shot = triggered.deaths?.find(
+    (death) => death.victimSide === loser && death.killerSide === winner,
+  )?.shotId
+  return finishFight(
+    reason === 'knockout' && shot !== undefined ? { ...cleared, finishingShot: shot } : cleared,
+    winner,
+    reason,
+  )
 }
 
 /** Points and death-match bouts both survive zero HP unless a death was recorded. */

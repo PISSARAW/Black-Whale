@@ -1,3 +1,13 @@
+import {
+  FUTURE_EYES_OPEN,
+  FUTURE_FALL,
+  FUTURE_FORECAST_SECONDS,
+  FUTURE_SHOT,
+  FUTURE_VERDICT,
+  FUTURE_VISION_START,
+  FUTURE_ZETSU_END,
+  TSERRIEDNICH_VICTORY_DURATION,
+} from '../../src/lib/fighting/victory/tserriednichTiming'
 import { ContinuousDirector } from './continuousDirector'
 import type { FighterId, FightSide } from '../../src/lib/fighting/types'
 import type { FightStageId } from '../../src/lib/fighting/stages'
@@ -16,8 +26,8 @@ export function createTserriednichFatalityFilm(
     opponent: side === 'player' ? target : 'tserriednich',
     stageId,
     gap: 4,
-    title: 'TSERRIEDNICH — TU ARRIVES TROP TARD',
-    subtitle: 'Dix secondes déjà vécues.',
+    title: 'TSERRIEDNICH — DEUX VÉRITÉS',
+    subtitle: 'Le même geste, deux issues.',
     tags: ['LAPLACE DEVIL', 'VISION +10 S'],
     ren: false,
   })
@@ -36,8 +46,8 @@ export function createTserriednichFatalityFilm(
   f.advance()
   f.move(side, 'neutralSpecial')
   f.until(() => f.state.parallelFuture?.phase === 'vision', 90)
-  const vision = f.state.parallelFuture
-  if (vision?.phase !== 'vision' || vision.frames.length !== 600)
+  const enteringVision = f.state.parallelFuture?.phase
+  if (enteringVision !== 'vision')
     throw new Error(
       `Native ten-second forecast must be ready: ${JSON.stringify({ phase: f.state.phase, future: f.state.parallelFuture?.phase, x: f.state[side].x, otherX: f.state[loser].x, aura: f.state[side].aura, health: f.state[side].health, nen: f.state[side].nen.mode, audit: f.audit.slice(-5) })}`,
     )
@@ -47,7 +57,10 @@ export function createTserriednichFatalityFilm(
     health: f.state[side].health,
     rng: f.state.rng,
   }
-  f.advance(12)
+  f.until(() => (f.state.parallelFuture?.frames.length ?? 0) === FUTURE_FORECAST_SECONDS * 60, 150)
+  const vision = f.state.parallelFuture
+  if (vision?.frames.length !== FUTURE_FORECAST_SECONDS * 60)
+    throw new Error('Native ten-second forecast must be fully watched before opening the eyes')
   const frozenWhileViewing =
     frozen.frame === f.state.frame &&
     frozen.time === f.state.time &&
@@ -62,6 +75,13 @@ export function createTserriednichFatalityFilm(
   f.advance(24)
   f.held[side] = {}
   const displacement = Math.abs(f.state[side].x - x) + f.state[side].y
+  f.move(side, 'finisher')
+  f.advance()
+  if (f.state.parallelFuture)
+    throw new Error('The real duel must return to a single timeline before the finishing shot')
+  f.held[loser] = f.direction(loser)
+  f.until(() => Math.abs(f.state[loser].x - 50) < 3, 180)
+  f.held[loser] = {}
   for (let attempts = 0; f.state.phase === 'fighting' && attempts < 45; attempts++) {
     f.until(() => f.free(side))
     f.ranged(side)
@@ -75,7 +95,8 @@ export function createTserriednichFatalityFilm(
     f.state.winner !== side ||
     f.state[loser].health !== 0 ||
     last?.attacker !== side ||
-    last.projectileId == null
+    last.projectileId == null ||
+    f.state.finishingShot !== last.projectileId
   )
     throw new Error(`The real branch must win by physical shot: ${JSON.stringify(f.report())}`)
   return {
@@ -83,8 +104,8 @@ export function createTserriednichFatalityFilm(
     report: {
       ...f.report(),
       nativeFrameCount: f.states.length,
-      frameCount: 600,
-      duration: 10,
+      frameCount: TSERRIEDNICH_VICTORY_DURATION * 60,
+      duration: TSERRIEDNICH_VICTORY_DURATION,
       character: 'Tserriednich',
       target,
       stageId,
@@ -98,18 +119,12 @@ export function createTserriednichFatalityFilm(
         'One production duel: native voluntary Zetsu, 600-frame forecast, frozen viewing, physical divergence and real firearm projectile knockout. The following cinematic reconstructs the two perceptions without altering combat state.',
       victory: {
         eyesClosedFrame: 0,
-        visionFrame: 66,
-        napeContactFrame: 154,
-        hoodRemovedFrame: 210,
-        cadaverFrame: 232,
-        openEyesFrame: 286,
-        divergenceFrame: 318,
-        wristGripFrame: 342,
-        missedShotFrame: 364,
-        physicalEscapeFrame: 382,
-        shotFrames: [364, 438],
-        deathFrame: 450,
-        announcementFrame: 480,
+        visionFrame: FUTURE_VISION_START * 60,
+        openEyesFrame: FUTURE_EYES_OPEN * 60,
+        reunionFrame: FUTURE_ZETSU_END * 60,
+        shotFrame: FUTURE_SHOT * 60,
+        fallFrame: Math.round(FUTURE_FALL * 60),
+        verdictFrame: FUTURE_VERDICT * 60,
       },
     },
   }

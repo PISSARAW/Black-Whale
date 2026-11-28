@@ -2,8 +2,32 @@ import { Color, Mesh, MeshBasicMaterial, Vector3 } from 'three'
 import type { Material } from 'three'
 import type { VictoryContext } from './types'
 import type { ShizukuVictoryPose } from './shizukuPose'
-import { SHIZUKU_CLEAN, SHIZUKU_CONSUMED, SHIZUKU_DEATH } from './shizukuPose'
+import {
+  SHIZUKU_PULL,
+  SHIZUKU_CONSUMED,
+  SHIZUKU_DEATH,
+  SHIZUKU_NOZZLE_CONTACT,
+  SHIZUKU_NOZZLE_RELEASE,
+} from './shizukuTiming'
 import { ease } from './resources'
+
+function drawIntoNozzle(context: VictoryContext, feet: Vector3, mouth: Vector3) {
+  const { age, victim } = context
+  const root = victim.root
+  const slide = ease((age - SHIZUKU_PULL) / (SHIZUKU_NOZZLE_CONTACT - SHIZUKU_PULL))
+  const lift = ease((age - 365) / (SHIZUKU_NOZZLE_CONTACT - 365))
+  const swallow = ease((age - SHIZUKU_NOZZLE_RELEASE) / (SHIZUKU_CONSUMED - SHIZUKU_NOZZLE_RELEASE))
+  const anchor = root.worldToLocal(feet.clone())
+  const destination = feet.clone().lerp(mouth, slide)
+  destination.y = feet.y + (mouth.y - feet.y) * lift
+
+  // The shoes reach the mouth at full size. Then the body compresses into the opening.
+  root.rotation.z -= 0.27 * lift * (1 - swallow)
+  const width = 1 - swallow ** 0.76 * 0.995
+  const length = 1 - swallow * 0.995
+  root.scale.multiply(new Vector3(width, length, width))
+  root.position.add(destination.sub(root.localToWorld(anchor)))
+}
 
 export function createShizukuAbsorption() {
   const materials = new Map<Material, MeshBasicMaterial>()
@@ -23,7 +47,7 @@ export function createShizukuAbsorption() {
           })
         materials.set(source, material)
         const colour = (source as MeshBasicMaterial).color ?? new Color(0x777777)
-        material.color.copy(colour).lerp(new Color(0xaaa3a2), pose.drain * 0.6)
+        material.color.copy(colour).lerp(new Color(0xaaa3a2), pose.drain * 0.25)
         return material
       }
       victim.root.traverse((node) => {
@@ -33,7 +57,7 @@ export function createShizukuAbsorption() {
           Array.isArray(node.material) ? node.material.map(next) : next(node.material),
         )
       })
-      const absorption = ease((age - SHIZUKU_CLEAN) / (SHIZUKU_CONSUMED - SHIZUKU_CLEAN))
+      const absorption = ease((age - SHIZUKU_PULL) / (SHIZUKU_CONSUMED - SHIZUKU_PULL))
       if (age < SHIZUKU_DEATH) return absorption
       victim.root.traverse((node) => {
         if (
@@ -44,17 +68,7 @@ export function createShizukuAbsorption() {
         context.save(node)
         node.visible = false
       })
-      if (absorption > 0) {
-        victim.root.scale.multiplyScalar(1 - absorption * 0.995)
-        victim.root.updateWorldMatrix(true, true)
-        const scaled = pose.collapse
-          .clone()
-          .sub(victim.root.position)
-          .multiplyScalar(1 - absorption * 0.995)
-          .add(victim.root.position)
-        const destination = pose.collapse.clone().lerp(mouth, absorption)
-        victim.root.position.add(destination.sub(scaled))
-      }
+      if (absorption > 0) drawIntoNozzle(context, pose.feet, mouth)
       victim.root.visible = age < SHIZUKU_CONSUMED
       return absorption
     },

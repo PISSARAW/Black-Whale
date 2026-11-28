@@ -65,8 +65,8 @@ try {
   assert.equal(report.frameCount, 600)
   assert.equal(report.duration, 10)
   assert.equal(report.character, 'Camilla')
-  assert.equal(report.victory.eyeOpeningFrame, 554)
-  assert.equal(report.victory.portraitFrame, 510)
+  assert.equal(report.victory.revealFrame, 120)
+  assert.equal(report.victory.tailChargedFrame, 378)
   assert.ok(report.postMortemFrames > 0)
   assert.equal(report.winner, 'player')
   assert.equal(report.failed, false)
@@ -77,13 +77,12 @@ try {
       duration: report.duration,
       victory: report.victory,
       finalHealth: report.finalHealth,
-      portrait: report.victory.portraitFrame,
       combos: report.confirmedCombos,
     }) + '\n',
   )
   {
     const samples = [
-      0, 72, 130, 170, 220, 270, 310, 350, 357, 420, 500, 510, 540, 553, 554, 558, 590,
+      0, 16, 62, 105, 120, 166, 211, 273, 330, 378, 419, 438, 462, 491, 509, 557, 594,
     ].map((age) => ({ name: `victory-${age}`, frame: age }))
     const diagnostics = []
     for (const sample of samples) {
@@ -105,7 +104,7 @@ try {
     )
   }
   if (!inspect) {
-    const destination = path.join(output, 'Camilla-Le-Souffle-picture.mp4')
+    const destination = path.join(output, 'Camilla-Le-Chat-Qui-Revient-picture.mp4')
     encoder = spawn(
       'ffmpeg',
       [

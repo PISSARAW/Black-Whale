@@ -579,7 +579,7 @@ Les poses, matériaux, visibilités et caméra sont restaurés après chaque ren
 La bande-son associe verrous métalliques, tension grave, grondement solaire,
 vague thermique, crépitement et annonce Fatality.
 
-### Phinks — Ripper Cyclotron
+### Phinks — Le dernier tour
 
 ```sh
 node apps/web/scripts/render-phinks-fatality.mjs --inspect
@@ -587,30 +587,15 @@ node apps/web/scripts/render-phinks-fatality.mjs
 node apps/web/scripts/compose-phinks-fatality.mjs
 ```
 
-Sortie : `output/fighting-phinks-fatality/Phinks-Fatality-10s.mp4`, 600 images,
-10 secondes, 1920 × 1080, 60 images/s, H.264 / AAC stéréo. Le mix réutilise
-l'annonce Daniel de `output/fighting-kurapika-fatality`.
-
-`phinksFatalityFilm.ts` simule un seul duel Phinks / Kurapika : les coups de
-préparation diminuent réellement les PV, puis Zetsu récupère l'aura avant la
-charge. Six tours complets sont payés par le moteur et consommés dans un seul
-Ripper Cyclotron qui donne le K.-O. L'export vérifie le vainqueur, les six tours,
-l'identité du coup et l'absence de soin ou de réinitialisation. La vidéo conserve
-seulement les dix secondes de finition ; le rapport garde aussi le combat natif.
-
-Le montage ouvre sur Phinks, montre les six moulinets entre 0,6 et 3,8 s,
-retient le poing chargé, puis frappe à 4,5 s. Les modèles, les vêtements et les
-visages sont ceux du jeu. `phinksFatalityPose.ts` fait tourner le bras droit à
-l'épaule, avec coude légèrement plié, puis place le coup avec deux segments
-articulés. `phinksFatalityEffects.ts` dessine trois rubans d'aura, la compression
-du poing et la fragmentation stylisée de Kurapika après le résultat natif.
-Les 210 fragments, les fissures de sol, les débris et la poussière sont des effets
-de présentation ; aucune règle de désintégration n'est ajoutée au combat.
-
-Le dernier plan et l'annonce Fatality commencent à 7 s. Le son accompagne chacun
-des six tours par une impulsion montante, coupe brièvement avant le choc, puis
-superpose un impact unique, le souffle et le cliquetis des fragments. Les poses,
-matériaux, visibilités et caméra sont restaurés après chaque passe de rendu.
+Le duel de démonstration accumule six tours avant un seul Cyclotron décisif.
+La démo réutilise la cinématique du jeu. Le rival attaque pendant le second
+tour. Phinks écarte son avant-bras de la main libre, avance et frappe à
+2,95 secondes. Le montage suit le craquement sous son pied d’appui, la
+désintégration en vol, puis les rebonds des fragments au ras du sol avant
+de revenir au visage de Phinks.
+La sortie `output/fighting-phinks-fatality/Phinks-Fatality-8s.mp4` contient
+480 images et utilise la bande-son du jeu. Le mode `--track-only` du script
+de composition régénère cette bande-son.
 
 ### Franklin — Double Machine Gun
 
@@ -709,19 +694,18 @@ compression d'air, explosion unique, débris et voix locale Daniel.
 Le lot compte désormais cinq fatalities (Kurapika, Feitan, Phinks, Franklin,
 Benjamin) et deux cinématiques de victoire (Hisoka et Chrollo).
 
-## Tserriednich — Tu arrives trop tard
+## Tserriednich — Deux vérités
 
-`tserriednich-fatality.html` joue dix secondes contre Hisoka au casino VIP,
-avec le renderer de victoire utilisé dans Clash. La vision désaturée précède
-la réouverture des yeux, puis deux corps opaques montrent la divergence.
-La prise du poignet, le tir dévié et le contre final emploient des bras articulés
-sans étirement. Les paramètres `target`, `stage`, `side` et `reduced` permettent
-les contrôles des autres modèles et lieux.
+`tserriednich-fatality.html` joue onze secondes contre Hisoka au casino VIP
+avec le renderer de victoire de Clash. La jointure du sol donne le même repère
+aux deux vues. Le prince dévie pendant le Zetsu. Le montage rejoue le tir
+décisif enregistré dans le duel après le retour au point de vue commun.
 
-`node apps/web/scripts/render-tserriednich-fatality.mjs` exporte 600 images.
-`node apps/web/scripts/compose-tserriednich-fatality.mjs` ajoute le son et fournit
-la bande du jeu. `node apps/web/scripts/check-tserriednich-fatality.mjs` contrôle
-les deux côtés, les tailles extrêmes, le miroir, le mobile et le déclenchement réel.
+`node apps/web/scripts/render-tserriednich-fatality.mjs` exporte 660 images.
+`node apps/web/scripts/compose-tserriednich-fatality.mjs` assemble le film et
+génère les deux bandes du jeu, dont une pour les victoires remportées par tir.
+`node apps/web/scripts/check-tserriednich-fatality.mjs` contrôle le déclenchement
+dans FightStage et les paramètres `target`, `stage`, `side` et `reduced`.
 
 ## Chrollo — Indoor Fish × Sun and Moon
 
@@ -789,7 +773,7 @@ synthétiques, la tension de corde, le départ de flèche et le transfert.
 `target`, `stage`, `side=opponent` et `reduced` permettent les contrôles des
 modèles et décors. Le lot compte dix cinématiques de victoire.
 
-## Camilla — Le Souffle, intégré à Clash
+## Camilla — Le chat qui revient
 
 ```sh
 node apps/web/scripts/render-camilla-fatality.mjs --inspect
@@ -798,18 +782,15 @@ node apps/web/scripts/compose-camilla-fatality.mjs
 node apps/web/scripts/check-camilla-fatality.mjs
 ```
 
-Sortie : `output/fighting-camilla-fatality/Camilla-Fatality-10s.mp4`,
-600 images en 1080p60 avec dix secondes de son. La démo conserve une véritable
-mort et résurrection Cat's Name contre Chrollo dans le salon de Camilla avant
-de montrer le renderer utilisé dans le jeu. `target`, `stage`, `side=opponent`
-et `reduced` permettent de vérifier les autres acteurs et décors.
+Sortie `output/fighting-camilla-fatality/Camilla-Fatality-10s.mp4`, en 1080p60.
+La démo rejoue une mort attribuée au tir de Musse et une résurrection réelle
+dans le salon de Camilla. Les paramètres `target`, `stage`, `side=opponent` et
+`reduced` permettent de vérifier les autres acteurs, décors et réglages de confort.
 
-La prise à deux pattes, l'écrasement et l'absorption précèdent 90 images de
-portrait immobile. Les yeux s'ouvrent à l'image 554 ; l'unique inspiration
-commence à l'image 558. La composition reprend la bande originale de la
-référence « Le Souffle » en conservant sa fin, sans nouvelle annonce.
-Dans Clash, cette chorégraphie accompagne toute victoire sans modifier les
-règles natives de Cat's Name. Le catalogue compte désormais onze cinématiques.
+Le chat entre dans le cadre à 2 s. La vie atteint l’extrémité de sa queue à
+6,3 s. La goutte touche les lèvres à l’image 443, puis Camilla reste immobile.
+L’inspiration commence à l’image 489, les yeux s’ouvrent à l’image 522 et la
+voix « Fatality » accompagne le verdict à l’image 551.
 
 ## Kalluto — La dernière danse du papier
 
@@ -864,13 +845,17 @@ node apps/web/scripts/compose-shizuku-fatality.mjs
 node apps/web/scripts/check-shizuku-fatality.mjs
 ```
 
-Sortie : `output/fighting-shizuku-fatality/Shizuku-Fatality-10s.mp4`,
-600 images en 1080p60 avec son. Deme-chan frappe à 1,4 s, aspire le sang
-par l'ouverture à 2,3 s ; la cible tombe à 4,7 s. Le corps inerte est nettoyé
-à partir de 5,7 s. Les traces suivent, puis le bouton entre en dernier à 7,4 s.
-Deme-chan le recrache à 7,9 s ; Shizuku le range puis remet ses lunettes.
-La voix française désigne le sang et le corps avant l'aspiration. La dernière
-réplique « À qui ? » accompagne sa recherche du propriétaire du bouton.
+`output/fighting-shizuku-fatality/Shizuku-Fatality-9s.mp4` contient 540 images
+en 1080p60 avec son. Shizuku matérialise Deme-chan, vise l’ouverture laissée
+libre et perd un bouton de manche. Deme-chan aspire le sang à 2 s. Le rival
+perd son appui, heurte le sol de l’épaule et roule avant de s’immobiliser.
+À 5,4 s, Shizuku désigne le corps. Il traîne au sol, accroche la buse par les
+chaussures, puis est absorbé. Le bouton entre en dernier à
+7,5 s, revient dans sa paume et est présenté devant sa manche. La seule voix
+de la bande-son est l’annonce « Fatality ». Le montage passe du visage à la
+main qui protège la plaie, suit le bouton dans sa chute et tourne autour du
+rival avant le plan large. La lumière basse isole les personnages et laisse
+l’arène visible en profondeur.
 
 Le film oppose Shizuku à Franklin à la Tour Céleste. Le moteur crée de vraies
 ouvertures par les coups de Deme-chan, puis résout le K.-O. par aspiration du

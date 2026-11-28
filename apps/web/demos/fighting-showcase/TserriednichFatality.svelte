@@ -21,24 +21,8 @@
     mounted = false,
     failed = false
   $: frame = { ...selected, elapsed: index / 60, active: true }
-  $: phase =
-    index < 66
-      ? 'Activation du démon de Laplace'
-      : index < 154
-        ? 'Il a disparu…'
-        : index < 232
-          ? 'Le contact à la nuque'
-          : index < 286
-            ? 'On dirait un cadavre'
-            : index < 318
-              ? 'Les yeux s’ouvrent'
-              : index < 382
-                ? 'La vision reste. Le vrai corps se déplace.'
-                : index < 438
-                  ? 'Il l’avait déjà vu'
-                  : 'Tu arrives trop tard'
   export const ready = () => mounted || failed
-  export const count = () => 600
+  export const count = () => film.report.frameCount
   export const report = () => ({
     ...film.report,
     failed,
@@ -46,7 +30,7 @@
     nativeState: JSON.stringify(state),
   })
   export async function seek(age: number) {
-    index = Math.max(0, Math.min(599, age))
+    index = Math.max(0, Math.min(film.report.frameCount - 1, age))
     await tick()
   }
 </script>
@@ -71,8 +55,7 @@
   <FightVictoryOverlay {state} {frame} language="fr" onSkip={() => {}} />
   <div class="credits">
     <b>BLACK WHALE <span>CLASH</span></b>
-    <p>{phase}</p>
-    <small>TSERRIEDNICH · TU ARRIVES TROP TARD</small>
+    <small>TSERRIEDNICH · DEUX VÉRITÉS</small>
   </div>
 </main>
 

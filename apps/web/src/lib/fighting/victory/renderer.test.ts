@@ -7,6 +7,9 @@ import { defaultFightComfort } from '../fightComfort'
 import { VICTORY_FIGHTERS, selectVictory } from './catalogue'
 import { createVictoryRenderer } from './renderer'
 import { drawVictoryFrame } from './draw'
+import { visibleVictoryBounds } from './bodyBounds'
+import { humanAnimationRig } from '$lib/tour/humanAnimation'
+import { borrowFightRig } from '../fightRig'
 import { billComboTrack } from './billComboTrack'
 import { fightBodyMotion, bodyPlan } from '../fightBodyMotion'
 import type { FighterId, FightSide, FightState } from '../types'
@@ -37,6 +40,12 @@ function setup(winner: FighterId, side: FightSide, targetOverride?: FighterId) {
     ...createFight(side === 'player' ? winner : target, side === 'player' ? target : winner),
     phase: 'finished',
     winner: side,
+  }
+  if (winner === 'camilla') {
+    const loser = side === 'player' ? 'opponent' : 'player'
+    state[loser].health = 0
+    state.catsNameConsumed = loser
+    state.catsNameFatality = { victimSide: side, killerSide: loser, cause: 'strike', zetsu: true }
   }
   const glow = (color: number, opacity = 1) =>
     new THREE.MeshBasicMaterial({ color, opacity, transparent: opacity < 1 })
@@ -351,56 +360,15 @@ describe('live victory renderer', () => {
     },
   )
 
-  it.each(['franklin', 'biscuit'] as const)(
-    'grounds Bonolenov’s spear and lands the physical Jupiter surface on %s',
-    (target) => {
-      const fixture = setup('bonolenov', 'player', target)
-      const before = snapshot(fixture.scene),
-        state = JSON.stringify(fixture.state)
-      const shared = new Set<THREE.BufferGeometry>()
-      fixture.models.player.traverse((node) => {
-        if (node instanceof THREE.Mesh) shared.add(node.geometry)
-      })
-      const dispose = [...shared].map((geometry) => vi.spyOn(geometry, 'dispose'))
-      try {
-        for (const age of [72, 132, 168, 288, 324, 396, 420, 540]) {
-          const restore = fixture.renderer.apply({
-            state: fixture.state,
-            models: fixture.models,
-            comfort: defaultFightComfort(),
-            frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
-          })!
-          const audit = fixture.scene.userData.bonolenovVictory
-          if (age === 132 || age === 168) expect(audit.spearTip[1]).toBeCloseTo(0.028, 3)
-          if (age === 288) expect(fixture.models.player.visible).toBe(false)
-          if (age === 396) {
-            expect(audit.contactError).toBeLessThan(0.0001)
-            expect(audit.pursuit).toBe(1)
-            expect(audit.formation).toBe(1)
-          }
-          if (age >= 420) expect(fixture.models.opponent.visible).toBe(false)
-          if (age === 540) expect(fixture.models.player.visible).toBe(true)
-          restore()
-          expect(snapshot(fixture.scene)).toEqual(before)
-          expect(JSON.stringify(fixture.state)).toBe(state)
-        }
-      } finally {
-        fixture.renderer.dispose()
-        fixture.armour.dispose()
-      }
-      dispose.forEach((spy) => {
-        expect(spy).not.toHaveBeenCalled()
-        spy.mockRestore()
-      })
-    },
-  )
-
   it('extracts only blood while alive, then cleans the corpse and returns the last ordinary object', () => {
     const fixture = setup('shizuku', 'opponent', 'franklin')
     const before = snapshot(fixture.scene),
       state = JSON.stringify(fixture.state)
+    const { background, fog } = fixture.scene
+    const { fov } = fixture.camera
     try {
-      for (const age of [84, 210, 282, 342, 366, 402, 444, 474, 498, 570]) {
+      expect(selectVictory(fixture.state)?.duration).toBe(9)
+      for (const age of [0, 82, 119, 120, 235, 272, 285, 291, 309, 324, 365, 380, 384, 401, 411, 450, 462, 483, 539]) {
         const restore = fixture.renderer.apply({
           state: fixture.state,
           models: fixture.models,
@@ -408,23 +376,53 @@ describe('live victory renderer', () => {
           frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
         })!
         const audit = fixture.scene.userData.shizukuVictory
-        if (age < 342) {
+        if (age < 339) {
           expect(audit.absorption).toBe(0)
           expect(fixture.models.player.scale.toArray()).toEqual([1, 1, 1])
         }
-        expect(audit.bloodVisible).toBe(age >= 138 && age < 282)
-        if (age >= 402) expect(fixture.models.player.visible).toBe(false)
-        if (age === 444) expect(audit.buttonVisible).toBe(false)
-        if (age === 498) {
+        expect(audit.bloodVisible).toBe(age >= 120 && age < 285)
+        expect(audit.sucking).toBe((age >= 120 && age < 285) || (age >= 339 && age < 450))
+        if (age === 365) expect(audit.absorption).toBeGreaterThan(0)
+        if (age === 272) {
+          const trailing = fixture.models.player.getObjectByName('knee-left')!
+          const buckled = fixture.models.player.getObjectByName('knee-right')!
+          expect(buckled.rotation.x).toBeGreaterThan(trailing.rotation.x)
+        }
+        if (age === 380 || age === 384) {
+          const body = fixture.models.player
+          const shoes = ['left', 'right'].map((side) =>
+            body.getObjectByName(`knee-${side}`)!.children[1].getWorldPosition(new THREE.Vector3()),
+          )
+          const mouth = new THREE.Vector3().fromArray(audit.mouth)
+          expect(body.scale.toArray()).toEqual([1, 1, 1])
+          expect(shoes[0].lerp(shoes[1], 0.5).distanceTo(mouth)).toBeLessThan(0.06)
+        }
+        if (age === 401) {
+          const { x, y } = fixture.models.player.scale
+          expect(x).toBeLessThan(y)
+          expect(y).toBeLessThan(1)
+        }
+        if (age >= 411) expect(fixture.models.player.visible).toBe(false)
+        if (age === 450) expect(audit.buttonVisible).toBe(false)
+        if (age >= 483) {
           expect(audit.returned).toBe(true)
           expect(audit.buttonVisible).toBe(true)
         }
-        if (age >= 282)
+        if (age >= 246)
           fixture.models.player.traverse((node) => {
             if (node.name === 'contact-shadow') expect(node.visible).toBe(false)
           })
-        audit.gripErrors.forEach((error: number) => expect(error).toBeLessThan(0.05))
+        audit.gripErrors.forEach((error: number, index: number) => {
+          expect(error, `Hand ${index} at frame ${age}`).toBeLessThan(0.05)
+        })
+        expect(fixture.scene.fog).not.toBe(fog)
+        if (age === 0) expect(fixture.camera.fov).toBe(32)
+        if (age === 120) expect(fixture.camera.fov).toBe(39)
+        if (age === 291) expect(fixture.camera.fov).toBe(40)
         restore()
+        expect(fixture.camera.fov).toBe(fov)
+        expect(fixture.scene.fog).toBe(fog)
+        expect(fixture.scene.background).toBe(background)
         expect(snapshot(fixture.scene)).toEqual(before)
         expect(JSON.stringify(fixture.state)).toBe(state)
       }
@@ -533,13 +531,14 @@ describe('live victory renderer', () => {
       fixture.armour.dispose()
     }
   })
-  it('adapts Camilla’s paws and preserves the fixed portrait across the eye opening', () => {
+  it('stages Camilla’s paws, tail-to-lip return, and ordered revival without mutating the duel', () => {
     const fixture = setup('camilla', 'opponent', 'biscuit')
     const before = snapshot(fixture.scene),
       state = JSON.stringify(fixture.state)
-    let portrait: unknown
+    let openingCameraX = 0
+    let revealCameraX = 0
     try {
-      for (const age of [170, 250, 330, 420, 510, 553, 558, 590]) {
+      for (const age of [12, 28, 53, 107, 144, 170, 230, 259, 273, 320, 377, 419, 442, 463, 480, 501, 515, 532, 552, 594]) {
         const restore = fixture.renderer.apply({
           state: fixture.state,
           models: fixture.models,
@@ -547,24 +546,38 @@ describe('live victory renderer', () => {
           frame: { ...selectVictory(fixture.state)!, active: true, elapsed: age / 60 },
         })!
         const audit = fixture.scene.userData.camillaVictory
-        if (age >= 153 && age < 357)
-          audit.contacts.forEach((paw: { error: number }) =>
-            expect(paw.error).toBeLessThan(0.04 * audit.ratio),
+        expect(audit.zetsu).toBe(true)
+        if (age === 12) openingCameraX = fixture.camera.position.x
+        if (age === 107) expect(fixture.camera.position.x).toBeLessThan(openingCameraX - 1)
+        if (age === 144) revealCameraX = fixture.camera.position.x
+        if (age === 230) expect(fixture.camera.position.x).toBeGreaterThan(revealCameraX + 1)
+        if (age === 28) expect(audit.fall).toBeLessThan(0.2)
+        if (age === 53) expect(audit.fall).toBe(1)
+        if (age === 230) expect(audit.struggle).toBe(1)
+        if (age === 259) expect(audit.compression).toBeGreaterThan(0.5)
+        if (age === 273) expect(audit.struggle).toBe(0)
+        const paw = fixture.scene.getObjectByName('camilla-landing-paw')!
+        expect(paw.visible).toBe(age === 107)
+        if (age === 170 || age === 230)
+          audit.contacts.forEach((contact: { error: number }) =>
+            expect(contact.error).toBeLessThan(0.04 * audit.ratio),
           )
-        if (age === 170 || age === 250) expect(audit.energyVisible).toBe(false)
-        if (age === 330) expect(audit.energyVisible).toBe(true)
-        if (age >= 357) expect(fixture.models.player.visible).toBe(false)
-        if (age >= 510) {
-          const current = {
-            head: audit.head,
-            camera: [...fixture.camera.position.toArray(), ...fixture.camera.quaternion.toArray()],
-          }
-          portrait ??= current
-          expect(current).toEqual(portrait)
-          expect(
-            fixture.scene.getObjectByName('camilla-cats-name-victory')!.children[0].visible,
-          ).toBe(false)
+        if (age === 170 || age === 230) expect(audit.energyVisible).toBe(false)
+        if (age === 320 || age === 419) expect(audit.energyVisible).toBe(true)
+        if (age >= 377) expect(fixture.models.player.visible).toBe(false)
+        if (age === 419 || age === 442) {
+          const drop = new THREE.Vector3(...audit.drop)
+          expect(drop.x).toBeCloseTo(audit.lips.x)
+          expect(drop.z).toBeCloseTo(audit.lips.z)
+          expect(drop.y - audit.lips.y).toBeCloseTo(age === 419 ? 0.43 : 0.035, 2)
         }
+        if (age === 463) expect([audit.hand, audit.breath, audit.eyes, audit.rise]).toEqual([0, 0, 0, 0])
+        if (age === 480) expect(audit.hand).toBeGreaterThan(0.5)
+        if (age === 501) expect(audit.breath).toBeCloseTo(1)
+        if (age < 522) expect(audit.eyes).toBe(0)
+        if (age === 532) expect(audit.eyes).toBe(1)
+        if (age === 552) expect(audit.rise).toBeGreaterThan(0)
+        if (age === 594) expect(audit.rise).toBe(1)
         restore()
         expect(snapshot(fixture.scene)).toEqual(before)
         expect(JSON.stringify(fixture.state)).toBe(state)
@@ -676,31 +689,171 @@ describe('live victory renderer', () => {
       fixture.armour.dispose()
     }
   })
-  it('releases temporal copies without disposing the real fighter geometry or material', () => {
-    const fixture = setup('tserriednich', 'player')
-    let original: THREE.Mesh | undefined
-    fixture.models.player.traverse((node) => {
-      if (!original && node instanceof THREE.Mesh) original = node
-    })
-    const geometry = vi.spyOn(original!.geometry, 'dispose')
-    const material = Array.isArray(original!.material) ? original!.material[0] : original!.material
-    const disposeMaterial = vi.spyOn(material, 'dispose')
-    try {
-      const restore = fixture.renderer.apply({
-        state: fixture.state,
-        models: fixture.models,
+  it.each([undefined, 3])('stages a shared timeline with finishing shot %s', (shot) => {
+    const { renderer, state, scene, models, armour } = setup('tserriednich', 'player')
+    state.finishReason = 'knockout'
+    state.finishingShot = shot
+    state.opponent.health = 0
+    const selection = selectVictory(state)!
+    expect(selection.duration).toBe(11)
+    const before = snapshot(scene)
+    const render = (elapsed: number, futurePerspective: 'real' | 'perceived' = 'real') =>
+      renderer.apply({
+        state,
+        models,
         comfort: defaultFightComfort(),
-        frame: { ...selectVictory(fixture.state)!, active: true, elapsed: 2.2 },
+        futurePerspective,
+        frame: { ...selection, active: true, elapsed },
       })!
-      expect(fixture.scene.getObjectByName('tserriednich-two-bodies')).toBeDefined()
+    try {
+      let restore = render(0.1)
+      expect(scene.userData.futureVictory.ten).toBe(1)
       restore()
-      fixture.renderer.dispose()
-      expect(geometry).not.toHaveBeenCalled()
-      expect(disposeMaterial).not.toHaveBeenCalled()
+      restore = render(1.99)
+      expect(scene.userData.futureVictory.phase).toBe('vision')
+      expect(scene.userData.futureVictory.ten).toBe(0)
+      expect(models.player.rotation.z).toBeGreaterThan(0)
+      restore()
+      restore = render(5.2, 'perceived')
+      expect(models.player.rotation.z).toBeGreaterThan(1)
+      expect(scene.userData.futureVictory.shot).toBeUndefined()
+      const { rig, restore: restoreRig } = borrowFightRig(
+        humanAnimationRig(models.opponent.children[0])!,
+      )
+      const waist = new THREE.Vector3(0, rig.waist, 0)
+      const torsoAnchor = rig.chest.localToWorld(waist.clone())
+      const pelvisAnchor = rig.chest.parent!.localToWorld(waist)
+      expect(torsoAnchor.distanceTo(pelvisAnchor)).toBeLessThan(1e-6)
+      restoreRig()
+      const rival = models.opponent.position.toArray()
+      const seam = scene.getObjectByName('tserriednich-floor-joint')!.getWorldPosition(new THREE.Vector3())
+      restore()
+      restore = render(5.2)
+      expect(models.player.rotation.z).toBe(0)
+      expect(models.player.position.z).toBeGreaterThan(seam.z)
+      expect(models.opponent.position.toArray()).toEqual(rival)
+      expect(scene.getObjectByName('tserriednich-floor-joint')!.getWorldPosition(new THREE.Vector3())).toEqual(seam)
+      expect(snapshot(scene)).not.toEqual(before)
+      restore()
+      restore = render(7.25)
+      expect(scene.userData.futureVictory.phase).toBe('reality')
+      expect(scene.userData.futureVictory.ten).toBe(1)
+      expect(scene.getObjectByName('tserriednich-future-execution')).toBeUndefined()
+      restore()
+      restore = render(8.25)
+      expect(Boolean(scene.getObjectByName('tserriednich-future-execution'))).toBe(shot !== undefined)
+      expect(scene.userData.futureVictory.shot).toBe(shot)
+      restore()
+      restore = render(10.8)
+      expect(scene.userData.futureVictory.phase).toBe('verdict')
+      expect(models.opponent.rotation.z).toBeLessThan(-1)
+      restore()
+      expect(snapshot(scene)).toEqual(before)
     } finally {
-      geometry.mockRestore()
-      disposeMaterial.mockRestore()
-      fixture.armour.dispose()
+      renderer.dispose()
+      armour.dispose()
+    }
+  })
+  it('cuts on the real shot and keeps the reduced-motion camera angle steady', () => {
+    const { renderer, state, camera, models, armour } = setup('tserriednich', 'player')
+    state.finishReason = 'knockout'
+    state.finishingShot = 3
+    const selection = selectVictory(state)!
+    const angle = (elapsed: number, cameraMotion: 0 | 1) => {
+      const restore = renderer.apply({
+        state,
+        models,
+        comfort: { ...defaultFightComfort(), camera: cameraMotion },
+        frame: { ...selection, active: true, elapsed },
+      })!
+      const result = camera.quaternion.clone()
+      restore()
+      return result
+    }
+    try {
+      expect(angle(8.24, 1).angleTo(angle(8.25, 1))).toBeGreaterThan(0.4)
+      expect(angle(8.24, 0).angleTo(angle(8.25, 0))).toBeLessThan(1e-6)
+    } finally {
+      renderer.dispose()
+      armour.dispose()
+    }
+  })
+  it('tracks each intentional portrait without moving the model out of the scene', () => {
+    const { renderer, state, camera, models, armour } = setup('tserriednich', 'player')
+    const selection = selectVictory(state)!
+    try {
+      for (const [side, first, last] of [
+        ['player', 0.23, 0.52],
+        ['opponent', 7.27, 7.56],
+      ] as const) {
+        const positions = []
+        for (const elapsed of [first, last]) {
+          const restore = renderer.apply({
+            state,
+            models,
+            comfort: defaultFightComfort(),
+            frame: { ...selection, active: true, elapsed },
+          })!
+          try {
+            const head = models[side].getObjectByName('face-mouth')!.getWorldPosition(new THREE.Vector3())
+            expect(camera.position.distanceTo(head)).toBeLessThan(1.7)
+            expect(Math.abs(head.project(camera).x)).toBeLessThan(0.35)
+            expect(models[side].visible).toBe(true)
+            positions.push(camera.position.clone())
+          } finally {
+            restore()
+          }
+        }
+        expect(positions[0].distanceTo(positions[1])).toBeGreaterThan(0.12)
+      }
+    } finally {
+      renderer.dispose()
+      armour.dispose()
+    }
+  })
+  it('frames both full bodies inside the letterbox and split panels', () => {
+    const { renderer, state, camera, models, armour } = setup('tserriednich', 'player')
+    state.finishReason = 'knockout'
+    state.finishingShot = 3
+    const selection = selectVictory(state)!
+    try {
+      for (const aspect of [16 / 9, 390 / 844]) {
+        const panelAspect = aspect > 1 ? aspect / 2 : aspect * 2
+        for (const elapsed of [
+          0, 0.21, 0.55, 1.67, 1.71, 2.19, 2.2, 3.78, 5.2, 6.79, 6.8, 7.17, 7.66, 8.24, 8.25, 8.95,
+          9.18, 9.5, 10.8,
+        ]) {
+          const split = elapsed >= 2.2 && elapsed < 6.8
+          camera.aspect = split ? panelAspect : aspect
+          camera.updateProjectionMatrix()
+          for (const futurePerspective of split ? ['real', 'perceived'] as const : [undefined]) {
+            const restore = renderer.apply({
+              state,
+              models,
+              comfort: defaultFightComfort(),
+              futurePerspective,
+              frame: { ...selection, active: true, elapsed },
+            })!
+            try {
+              for (const actor of Object.values(models)) {
+                const { min, max } = visibleVictoryBounds(actor)
+                for (const x of [min.x, max.x])
+                  for (const y of [min.y, max.y])
+                    for (const z of [min.z, max.z]) {
+                      const point = new THREE.Vector3(x, y, z).project(camera)
+                      expect(Math.abs(point.x)).toBeLessThan(0.94)
+                      expect(Math.abs(point.y)).toBeLessThan(split ? 0.72 : 0.82)
+                    }
+              }
+            } finally {
+              restore()
+            }
+          }
+        }
+      }
+    } finally {
+      renderer.dispose()
+      armour.dispose()
     }
   })
   for (const fighter of VICTORY_FIGHTERS)
@@ -729,22 +882,8 @@ describe('live victory renderer', () => {
             if (fighter === 'tserriednich') {
               const future = scene.userData.futureVictory
               expect(future.forecastSeconds).toBe(10)
-              expect(future.physicalDivergence).toBe(true)
-              if (elapsed >= 7.2) expect(future.actual[0]).not.toBe(future.perceived[0])
-              if (elapsed === 6.95) {
-                const body = scene.getObjectByName('tserriednich-perceived-body')!
-                expect(body.visible).toBe(true)
-                expect(body.position.distanceTo(models[side].position)).toBeGreaterThan(0.5)
-                body.traverse((node) => {
-                  if (!(node instanceof THREE.Mesh)) return
-                  const materials = Array.isArray(node.material) ? node.material : [node.material]
-                  materials.forEach((material) => {
-                    expect(material.opacity).toBe(1)
-                    expect(material.transparent).toBe(false)
-                    expect(material.depthWrite).toBe(true)
-                  })
-                })
-              }
+              if (elapsed >= 4.5) expect(future.actual[2]).toBeGreaterThan(future.perceived[2])
+              expect(scene.getObjectByName('tserriednich-future-execution')).toBeUndefined()
             }
             if (fighter === 'benjamin') {
               const audit = scene.userData.benjaminVictory

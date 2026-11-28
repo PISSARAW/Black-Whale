@@ -47,6 +47,13 @@ describe('Camilla and the common death verdict', () => {
       const state = killed(cause)
       expect(state.phase).toBe('fighting')
       expect(state.catsName).toEqual({ victimSide: 'opponent', killerSide: 'player', frame: 0 })
+      expect(state.catsNameFatality).toEqual({
+        victimSide: 'opponent',
+        killerSide: 'player',
+        cause,
+        zetsu: false,
+        ten: true,
+      })
       expect(state.opponent.health).toBe(0)
       expect(state.player.health).toBeGreaterThan(0)
       expect(state.roundsWon).toEqual({ player: 0, opponent: 0 })

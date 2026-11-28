@@ -43,14 +43,7 @@
       "Heat engulfs his opponent. Feitan remains shielded."
     ]
   ],
-  "phinks": [
-    [55, "Phinks fait tourner son bras droit.", "Phinks winds his right arm."],
-    [
-      270,
-      "Son coup projette l’adversaire au sol. Un cratère s’ouvre.",
-      "His blow drives the opponent into the floor, opening a crater."
-    ]
-  ],
+  "phinks": [[55, "Phinks fait tourner son bras droit.", "Phinks winds his right arm."]],
   "franklin": [
     [
       75,
@@ -76,15 +69,11 @@
     ]
   ],
   "tserriednich": [
+    [100, "La vision le montre à terre.", "In his vision, he falls."],
     [
-      90,
-      "Plusieurs silhouettes rejouent les mouvements de Tserriednich.",
-      "Several silhouettes replay Tserriednich’s movements."
-    ],
-    [
-      260,
-      "Une image se superpose à l’adversaire. Tserriednich l’a devancé.",
-      "An echo overlaps his opponent. Tserriednich has moved ahead of them."
+      257,
+      "Le rival le croit à terre. Le prince reste debout.",
+      "His rival sees him down. The prince is still standing."
     ]
   ],
   "leorio": [
@@ -108,9 +97,9 @@
     ]
   ],
   "camilla": [
-    [110, "Un chat de Nen apparaît auprès de Camilla.", "A Nen cat appears beside Camilla."],
+    [120, "Un chat de Nen apparaît auprès de Camilla.", "A Nen cat appears beside Camilla."],
     [
-      408,
+      414,
       "La créature se penche vers Camilla. Elle reprend son souffle.",
       "The creature bends over Camilla. She draws breath again."
     ]
@@ -137,7 +126,7 @@
   ],
   "shizuku": [
     [
-      74,
+      63,
       "Shizuku dirige l’embout de Blinky vers l’adversaire.",
       "Shizuku points Blinky’s nozzle at her opponent."
     ],

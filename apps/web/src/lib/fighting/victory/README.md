@@ -18,6 +18,16 @@ Le HUD et le panneau de résultats attendent la fin ou le passage de la scène.
 Les replays, égalités et prévisions ne déclenchent pas une nouvelle victoire.
 Les réglages de confort et de son s'appliquent également à ces séquences.
 
+Le socle cinématique premium décrit chaque impact majeur avec une anticipation,
+un contact tenu et une récupération. Il fournit une réaction corporelle en trois
+phases, un plan signature, une impulsion de caméra déterministe et une lumière
+d'événement, tous réduits ou neutralisés par les réglages de confort.
+
+« Le dernier tour » de Phinks dure huit secondes. Le contact du duel fournit
+la charge du Cyclotron, le Ko et le Ren de Phinks, ainsi que le Ten ou le Ken du
+rival. Le Ren monte pendant la préparation du coup. Le Ko concentre l’aura au
+poing et le Ten ou le Ken freinent le recul tant que l’enveloppe tient.
+
 Hisoka affiche « VICTOIRE », Melody affiche « FRIENDSHIP » et les autres
 affichent « FATALITY ». Uvogin ne fait pas partie de ce catalogue.
 L'animation se joue localement, y compris en PvP : aucun événement réseau ni
@@ -49,25 +59,19 @@ inconnu. La démo et le jeu utilisent exactement le même renderer de victoire.
 `render-benjamin-fatality.mjs` vérifie d'abord un K.-O. natif par Air Blow et exporte
 600 images ; `compose-benjamin-fatality.mjs` ajoute le mix et fournit le son du jeu.
 
-Tserriednich : « Tu arrives trop tard » reprend les planches de référence :
-activation de Laplace, contact à la nuque, agenouillement, capuche retirée,
-prise du poignet armé, tir dévié puis déplacement et contre final.
-La démo se déroule contre Hisoka dans le casino VIP. La vision possède un
-traitement désaturé avec hachures et vignette ; après réouverture des yeux,
-les deux Tserriednich sont des corps complets et opaques aux couleurs natives.
-Le corps de la vision poursuit sa pose tandis que le vrai se déplace.
-Les copies temporelles partagent les géométries natives, possèdent leurs propres
-matériaux et ne libèrent jamais les ressources des vrais modèles. Les bras
-suivent une cinématique inverse à deux segments avec coudes abaissés et
-relâchement progressif après le tir. L'apparence temporaire est restaurée.
+Tserriednich — « Deux vérités » dure onze secondes. Le Ten s’éteint au Zetsu,
+puis la prévision montre le prince frappé. À 2,2 s, le même mouvement du rival
+est joué dans deux cadres alignés sur la jointure du sol. Le corps perçu tombe
+sur l’axe, tandis que le prince quitte cet axe et reste debout. À 6,8 s, le Ten
+revient et la réalité reprend le cadre. Le montage reprend un tir uniquement
+si le moteur a attribué le K.-O. à un projectile physique de Tserriednich.
+À 9,5 s, le prince regarde le lieu de sa chute annoncée, puis son rival.
 
-La démo simule d'abord réellement 600 frames de futur, vérifie que leur lecture
-suspend le temps réel, puis rouvre les yeux et déplace le corps avant un K.-O.
-par projectile réel. La cinématique reconstruit ensuite ces deux perceptions en
-dix secondes : elle n'ajoute ni dégâts de prévision, ni esquive automatique,
-ni contrôle de bête gardienne. `tserriednichFilm.test.ts` vérifie cette continuité.
-`check-tserriednich-fatality.mjs` contrôle P2, petites/grandes cibles, miroir,
-mouvements réduits, mobile et déclenchement dans FightStage.
+La démo génère 600 frames de prévision depuis une simulation de Clash. Elle
+vérifie que cette lecture suspend le temps réel, fait diverger le prince et
+revient à un seul point de vue avant de conclure le duel par un projectile.
+Le rendu emprunte les deux modèles de manière transactionnelle et restaure
+le cadre de combat après chaque passe. La version portrait superpose les vues.
 
 Chrollo : « Le festin du Soleil et de la Lune » remplace l'ancienne fermeture
 du livre seule. Deux modèles squelettiques Indoor Fish du Nendex sortent du
@@ -114,22 +118,19 @@ partagées sans les détruire ; la silhouette de conscience ne possède que son
 matériau. `halkenburgFilm.test.ts` vérifie les préconditions et le verdict natifs ;
 `renderer.test.ts` vérifie les mains, le contact et la restauration des modèles.
 
-Camilla : « Le Souffle » adapte la référence existante : le chat saisit le
-torse réel entre ses deux pattes, écrase la cible puis ramène son énergie vers
-Camilla allongée. Les pattes et les bras suivent les dimensions du vaincu ; le
-lieu reste celui du match. Les 90 dernières images conservent exactement le
-même corps et la même caméra : seuls les yeux s'ouvrent à l'image 554, puis
-une unique inspiration commence à l'image 558. Le portrait masque le décor
-et le titre central ; aucun nouvel accent sonore n'interrompt cette fin.
+Camilla : « Le chat qui revient » dure 10 secondes. Le plan bas reprend le
+contact fatal et montre la chute avant l’arrivée d’une patte. À 2 s, un plan
+large montre la prise à deux pattes, la lutte du rival et l’absorption de sa vie
+jusqu’à la queue. À 6,3 s, le cadre se rapproche pour suivre la goutte jusqu’aux
+lèvres. Un temps d’arrêt précède la contraction de la main. L’inspiration se
+fait entendre avant l’ouverture des yeux et la voix « Fatality » accompagne
+le redressement de Camilla. Le réglage de confort conserve un plan large fixe.
 
-La scène accompagne toute victoire de Camilla, même sans mort préalable.
-Cette reconstruction après verdict ne déclenche pas Cat's Name en simulation
-et ne restaure pas de PV. Le film de validation conserve, lui, une véritable
-séquence native de mort, consommation et résurrection avant le verdict.
-`camillaFilm.test.ts` contrôle cette continuité ; `renderer.test.ts` vérifie
-la prise, le portrait fixe et la restauration des modèles. Le contrôle navigateur
-`check-camilla-fatality.mjs` couvre grandes et petites cibles, miroir, P2,
-plusieurs lieux, confort réduit, mobile et déclenchement réel dans FightStage.
+La sélection exige un meurtrier identifié et une résurrection de Camilla
+achevée par Cat’s Name. Le moteur conserve l’état de Zetsu au moment de la mort
+pour cadrer la chute à découvert. Le chat ne se manifeste qu’après la mort.
+Le film de validation utilise le tir de Musse et les tests contrôlent l’ordre
+des gestes et la restauration des modèles après le rendu.
 
 Kalluto : « La dernière danse du papier » commence par un fragment discret fixé
 sur le haut du torse. La cible rit, puis 8 192 feuilles se déploient derrière
@@ -163,16 +164,18 @@ valide au préalable une vraie marque de pistage, une ligature maintenue et
 un K.-O. par Fil tendu. Les tests contrôlent la continuité, les raccords,
 les doigts, la restauration et la propriété des ressources.
 
-Shizuku : « Rien à signaler » montre Deme-chan comme une massue, puis une
-aspiration de sang stylisée par une ouverture. Le corps garde toute son échelle
-jusqu'à la chute ; seule la phase de nettoyage postérieure à la mort permet
-son absorption. Les traces ordinaires disparaissent ensuite, puis un bouton
-entre en dernier à l'image 444. Deme-chan restitue ce même bouton à partir de
-474 ; Shizuku le range avant de remettre ses lunettes et de demander « À qui ? ».
-Les commandes de matière sont dites à voix haute avant leur aspiration.
+**Shizuku — Rien à signaler (9 s).** Shizuku matérialise Blinky, suit du regard
+la main qui couvre la première ouverture et abaisse la buse vers la seconde.
+Un bouton de sa manche tombe au changement de prise. À 2 s, un trait rouge
+relie l’ouverture libre à la buse. Le rival tente de la couvrir, perd son
+appui et tombe dans le cadre. Shizuku lâche la poignée et le moteur s’arrête.
+
+À 5,4 s, elle désigne le corps immobilisé. Il glisse au sol et entre dans la
+buse. Le bouton suit en dernier. Blinky le recrache dans sa paume et Shizuku
+le compare à sa manche. La lecture des ouvertures passe par les mains du rival.
 
 Le modèle de la visite conserve sa bouche, ses yeux, ses dents et son tuyau
-continu. La tête pivote au bout du tuyau pour rester droite ; les deux mains
+continu. La buse s’oriente vers la matière désignée et les deux mains
 rejoignent les prises physiques. Les objets de Nen portés par le vaincu se
 dissipent au décès au lieu d'être aspirés. Aucun objet de la scène réelle,
 aucune mémoire de Deme-chan et aucun PV n'est modifié par la présentation.
@@ -180,21 +183,22 @@ Le film préalable exige de vraies ouvertures et une mort par aspiration native.
 Les contrôles couvrent les prises, l'ordre mort/nettoyage/dernier objet,
 la restitution, les deux côtés, le miroir, les tailles et le mobile.
 
-Bonolenov : « Le dernier mouvement » fait entendre les trous du corps, puis
-matérialise la tenue et la lance natives de Prologue à l’image 72. Deux contacts
-physiques de la pointe avec le sol marquent 132 et 168. Jupiter naît autour du
-corps à 210 et poursuit la cible de 288 à 396 : sa surface atteint le torse réel
-sur l’accord final. Le vaincu est écrasé de façon stylisée, puis la sphère se
-dissipe et Bonolenov s’incline. Le cratère est temporaire, sans modification du
-lieu. Le plan de confort contient toute la poursuite sans déplacement de caméra.
+Bonolenov — « Le dernier mouvement » dure dix secondes. Le premier appui
+donne la pulsation. La torsion du torse et les gestes des bras déplacent la
+source de la musique corporelle pendant que Bonolenov tourne autour de la lance
+verticale de Prologue. Jupiter se forme autour de lui à l’image 204 (3,4 s).
+En plan large, l’ombre franchit la jointure et atteint le rival. Le cadre
+descend sur son dernier appui à l’image 374, puis se rapproche sur l’axe du
+contact à 389. La surface de Jupiter arrête sa course à 396 (6,6 s) et le
+rival pivote vers la caméra sous le choc. Un plan bas à 408 suit l’enfoncement
+des dalles avant la poussière. Le réglage de confort conserve un plan fixe.
 
-Le film préalable accomplit réellement Prologue, un coup de lance et les 90
-frames de préparation de Jupiter avant un K.-O. par son projectile natif.
-La présentation ne débloque aucune connaissance de Metamorphosen et ne change
-aucune condition de portée auditive. Le geste de se couvrir les oreilles est
-une réaction de la cible ; il n’interrompt pas le guidage. La tenue réutilise les
-géométries partagées sans les détruire. Les contrôles couvrent le contact au sol,
-la surface de Jupiter, la restauration, les tailles, P2, le miroir et le mobile.
+La dissipation débute à l’image 456 (7,6 s). La jointure réapparaît interrompue
+par l’empreinte et Bonolenov retrouve sa silhouette initiale pour le salut et le
+dernier souffle. Une gaine de Shu suit la lance pendant les premiers temps
+lorsque l’état du duel porte un Shu sur cette lance. Le film de démonstration
+valide un vrai coup de lance, les 90 images de préparation et le K.-O. par le
+projectile natif. Le décor de victoire est restauré à la sortie de la scène.
 
 Illumi : « Même après la mort » commence par son regard vide et une aiguille à
 tête ronde. Il rejoint la cible par derrière et l’implante au crâne à l’image 132. Le corps perd sa liberté de mouvement puis s’agenouille ; deux aiguilles

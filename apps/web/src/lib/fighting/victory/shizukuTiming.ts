@@ -1,0 +1,17 @@
+export const SHIZUKU_VICTORY_DURATION = 9
+export const SHIZUKU_MATERIALIZED = 32
+export const SHIZUKU_DROP = 82
+export const SHIZUKU_BLOOD = 120
+export const SHIZUKU_FALL = 246
+export const SHIZUKU_RELEASE = 285
+export const SHIZUKU_SHOULDER = 291
+export const SHIZUKU_DEATH = 309
+export const SHIZUKU_CLEAN = 324
+export const SHIZUKU_PULL = 339
+export const SHIZUKU_NOZZLE_CONTACT = 380
+export const SHIZUKU_NOZZLE_RELEASE = 388
+export const SHIZUKU_CONSUMED = 411
+export const SHIZUKU_BUTTON_PULL = 420
+export const SHIZUKU_BUTTON = 450
+export const SHIZUKU_RETURN = 462
+export const SHIZUKU_CAUGHT = 483

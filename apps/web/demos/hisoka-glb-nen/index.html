@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <title>Hisoka GLB · Essais de Nen</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #151422;
+        color: #ede9f5;
+        font:
+          15px system-ui,
+          sans-serif;
+      }
+      main {
+        width: min(100%, 1000px);
+        margin: auto;
+        padding: 20px;
+      }
+      h1 {
+        font-size: clamp(21px, 4vw, 32px);
+        margin: 0 0 14px;
+      }
+      #view {
+        width: 100%;
+        height: clamp(280px, 62vh, 540px);
+        background: #201c32;
+      }
+      canvas {
+        display: block;
+      }
+      #controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-block: 12px;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        background: #29263b;
+        border: 1px solid #55506a;
+        border-radius: 5px;
+        padding: 7px 11px;
+        cursor: pointer;
+      }
+      button[aria-pressed='true'] {
+        color: #161022;
+        background: #d4aaff;
+        border-color: #d4aaff;
+      }
+      p {
+        min-height: 1.3em;
+        margin: 8px 0 0;
+        color: #d5cbe5;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Hisoka GLB · Essais de Nen</h1>
+      <div id="view"></div>
+      <div id="controls" aria-label="Techniques de Nen"></div>
+      <p id="status" role="status">Chargement du modèle…</p>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

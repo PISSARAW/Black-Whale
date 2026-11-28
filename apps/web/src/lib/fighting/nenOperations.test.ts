@@ -32,7 +32,8 @@ it('separates elastic property, detached transmission, healing and imposed contr
   expect(nenOperationPower(kurapika, { ability: 'holy-chain', operation: 'healing' })).toBe(
     categoryPower(kurapika, 'enhancer'),
   )
-  expect(nenTransmissionLifetime(kurapika, { ability: 'judgment-chain', lifetime: 100 })).toBe(78)
+  expect(nenOperationCategory('judgment-chain', 'projection')).toBe('emitter')
+  expect(nenTransmissionLifetime(kurapika, { ability: 'judgment-chain', lifetime: 100 })).toBe(90)
   expect(
     nenTransmissionLifetime(kurapika, { ability: 'battle-cantabile-jupiter', lifetime: 100 }),
   ).toBe(100)

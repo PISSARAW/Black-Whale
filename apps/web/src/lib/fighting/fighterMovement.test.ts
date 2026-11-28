@@ -3,7 +3,14 @@ import { advanceAiCadence } from './aiCadence'
 import { beginFight, createFight, tickFight } from './engine'
 import { FIXED_STEP } from './frameData'
 import { interpolatedPosition } from './fightInterpolation'
-import { jumpProgress, LANDING_FRAMES, motionOf, PREJUMP_FRAMES } from './fighterMovement'
+import {
+  JUMP_SPEED,
+  jumpProgress,
+  LANDING_FRAMES,
+  motionOf,
+  PREJUMP_FRAMES,
+} from './fighterMovement'
+import { physicalCombatProfileFor } from './physicalCombatProfiles'
 import { EMPTY_INPUT, type FightInput, type FightState } from './types'
 
 const frame = (state: FightState, input: Partial<FightInput> = {}) =>
@@ -18,12 +25,15 @@ function frames(state: FightState, count: number, input: Partial<FightInput> = {
 const fight = () => beginFight(createFight('kurapika', 'hisoka', { mode: 'versus-local' }))
 
 describe('fighter movement', () => {
-  it('walks backward slower than forward', () => {
-    const start = fight()
-    const forward = frames(start, 30, { right: true }).player.x - start.player.x
-    const backward = start.player.x - frames(start, 30, { left: true }).player.x
-    expect(backward).toBeGreaterThan(0)
-    expect(backward).toBeLessThan(forward)
+  it.each([
+    ['mizaistom', 0.76],
+    ['kurapika', 1.11],
+  ] as const)('uses the authored retreat speed for %s', (id, retreatFactor) => {
+    const start = beginFight(createFight(id, 'hisoka', { mode: 'versus-local' }))
+    const forward = frames(start, 12, { right: true }).player.x - start.player.x
+    const backward = start.player.x - frames(start, 12, { left: true }).player.x
+    expect(forward).toBeGreaterThan(0)
+    expect(backward).toBeCloseTo(forward * retreatFactor)
   })
 
   it('dashes on a double tap and covers more ground than a walk', () => {
@@ -32,8 +42,8 @@ describe('fighter movement', () => {
     state = frames(state, 2)
     state = frame(state, { right: true })
     expect(motionOf(state.player).dash).not.toBeNull()
-    const dashed = frames(state, 17).player.x - start.player.x
-    const walked = frames(start, 22, { right: true }).player.x - start.player.x
+    const dashed = frames(state, 10).player.x - start.player.x
+    const walked = frames(start, 15, { right: true }).player.x - start.player.x
     expect(dashed).toBeGreaterThan(walked * 1.5)
   })
 
@@ -79,7 +89,8 @@ describe('fighter movement', () => {
 
   it('reports jump progress from take-off to landing', () => {
     const fighter = fight().player
-    expect(jumpProgress({ ...fighter, velocityY: 54 })).toBeCloseTo(0)
+    const launch = JUMP_SPEED * (physicalCombatProfileFor(fighter)?.jump ?? 1)
+    expect(jumpProgress({ ...fighter, velocityY: launch })).toBe(0)
     expect(jumpProgress({ ...fighter, velocityY: 0 })).toBeCloseTo(0.5)
     expect(jumpProgress({ ...fighter, velocityY: -200 })).toBe(1)
   })

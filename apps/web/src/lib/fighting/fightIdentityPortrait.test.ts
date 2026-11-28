@@ -45,26 +45,25 @@ vi.mock('./fighterFigure', async () => {
   }
 })
 vi.mock('./fightState', () => ({ createFightState: () => ({ player: {} }) }))
-import { fightIdentityPortrait } from './fightIdentityPortrait'
+import { fightIdentityPortrait, fightLivingPortraits } from './fightIdentityPortrait'
 afterEach(() => vi.unstubAllGlobals())
 
-it('caches one head image per identity, draws serially, and releases every temporary context', async () => {
+it('caches all living portrait moods per identity, draws serially and releases every context', async () => {
   vi.stubGlobal('document', {
     createElement: () => ({ toDataURL: () => 'data:image/webp;base64,portrait' }),
   })
-  const first = fightIdentityPortrait('kurapika')
-  expect(fightIdentityPortrait('kurapika')).toBe(first)
-  const second = fightIdentityPortrait('hisoka')
-  expect(await Promise.all([first, second])).toEqual([
-    'data:image/webp;base64,portrait',
-    'data:image/webp;base64,portrait',
-  ])
+  const first = fightLivingPortraits('kurapika')
+  expect(fightLivingPortraits('kurapika')).toBe(first)
+  const second = fightLivingPortraits('hisoka')
+  const portrait = 'data:image/webp;base64,portrait'
+  const expected = { calm: portrait, strained: portrait, critical: portrait }
+  expect(await Promise.all([first, second])).toEqual([expected, expected])
   expect(probe.peak).toBe(1)
   expect(probe.active).toBe(0)
-  expect(probe.draws).toBe(2)
+  expect(probe.draws).toBe(6)
   expect(probe.releases).toBe(2)
-  await fightIdentityPortrait('kurapika')
-  expect(probe.draws).toBe(2)
+  expect(await fightIdentityPortrait('kurapika')).toBe(portrait)
+  expect(probe.draws).toBe(6)
 })
 
 it('keeps the HUD usable if WebGL portraits are unavailable', async () => {

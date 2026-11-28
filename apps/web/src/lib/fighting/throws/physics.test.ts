@@ -32,6 +32,7 @@ describe('throw weight, pivot and support', () => {
     (id) => {
       const { model, human } = rigFor(id)
       model.root.position.set(2, 0.5, -1)
+      human.figure.rotation.set(0, 0, 0)
       const pivot = new THREE.Vector3(0, human.legs[0].position.y, 0)
       const before = human.figure.localToWorld(pivot.clone())
       human.figure.rotation.set(-1.3, 0.7, 0.15)

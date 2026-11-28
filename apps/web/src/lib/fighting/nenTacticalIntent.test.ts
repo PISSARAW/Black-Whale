@@ -27,15 +27,17 @@ it('saves enough reserve for a personal continuation, then approaches without a 
   let state = beginFight(createFight('machi', 'hisoka', { mode: 'versus-ai' }))
   state.player.x = 30
   state.opponent.x = 50
+  state.opponent.aura = 20
   state = withNenTactics(state)
+  expect(state.opponent.nenTactics?.reserve).toBe(40)
   expect(state.opponent.nenTactics?.goal).toBe('recover')
   expect(moveOpponent(state.opponent, state.player).x).toBeGreaterThan(state.opponent.x)
-  state = { ...state, frame: 6, opponent: { ...state.opponent, aura: 75 } }
+  state = { ...state, frame: 6, opponent: { ...state.opponent, aura: 30 } }
   expect(withNenTactics(state).opponent.nenTactics?.goal).toBe('recover')
-  state = { ...state, frame: 12, opponent: { ...state.opponent, aura: 90 } }
+  state = { ...state, frame: 12, opponent: { ...state.opponent, aura: 45 } }
   state = withNenTactics(state)
   expect(state.opponent.nenTactics?.goal).not.toBe('recover')
-  state = { ...state, frame: 18, opponent: { ...state.opponent, aura: 77 } }
+  state = { ...state, frame: 18, opponent: { ...state.opponent, aura: 39 } }
   expect(withNenTactics(state).opponent.nenTactics?.goal).not.toBe('recover')
 })
 it('does not recover for an absent seed, animal, surface or unknown personal Hatsu', () => {

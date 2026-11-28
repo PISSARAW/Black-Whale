@@ -90,7 +90,10 @@ test.describe('the walk', () => {
 
     const replaceEvidence = card.getByRole('button', { name: /Put it back|Reposer/ })
     if (isMobile) await replaceEvidence.tap()
-    else await replaceEvidence.click()
+    else {
+      await replaceEvidence.evaluate((node) => node.scrollIntoView({ block: 'center' }))
+      await replaceEvidence.click()
+    }
     await expect(card).toBeHidden()
   })
 

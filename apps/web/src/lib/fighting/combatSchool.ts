@@ -145,7 +145,7 @@ export function createCombatSchool() {
           ? wakeupDemoCommand(state, wakeup, wakeupSettings.followup)
           : undefined
       const opponent = !wakeupSent.opponent
-        ? wakeupDefenderCommand(state, wakeup, wakeupSettings.reaction)
+        ? wakeupDefenderCommand(state, wakeup, wakeupSettings)
         : undefined
       if (sentWakeupAttack(player)) wakeupSent.player = true
       if (opponent) wakeupSent.opponent = true

@@ -1,4 +1,5 @@
 import { createFightState } from './fightState'
+import { toggleChrolloBookmark } from './chrolloBook'
 import { setTrainingDummy, setTrainingResources } from './trainingSession'
 import type { FightState } from './types'
 
@@ -54,6 +55,9 @@ export function createBaselineSituation(options: BaselineSituationOptions): Figh
     action: 'light',
     delay: 0,
   })
+  const book = state.player.chrolloBook
+  if (options.situation === 'throws' && book?.open)
+    state = { ...state, player: { ...state.player, chrolloBook: toggleChrolloBookmark(book) } }
   const [player, opponent] = situationPositions(options.situation)
   return {
     ...state,

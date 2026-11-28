@@ -23,6 +23,8 @@ import {
 } from './kameos/comboLessons'
 import {
   combatRouteContactId,
+  recoveryFinishReady,
+  recoveryFinishStep,
   routeHitsBefore,
   routeStepHits,
   combatRouteContacts,
@@ -82,7 +84,10 @@ export function runBaselineRoute(options: BaselineRouteOptions) {
       contacts: tape.contacts.length,
       tick,
     })
-    const opponent = { ...EMPTY_INPUT, guard: tape.contacts.length > 0 }
+    const opponent = {
+      ...EMPTY_INPUT,
+      guard: tape.contacts.length > 0 && !recoveryFinishStep(options.route, sent - 1),
+    }
     tape.step([1 / 60, packReplayInput(player), packReplayInput(opponent), commands])
     if (baselineRouteFinished(options.route, tape.state, tape.contacts.length))
       completionFrame = tape.state.frame
@@ -95,10 +100,15 @@ export function runBaselineRoute(options: BaselineRouteOptions) {
     (hit) => combatRouteContactId(hit.move ?? undefined) ?? null,
   )
   const expected = baselineRouteContacts(options.route)
-  const continuous = result.measurement.contacts.every(
-    (hit, index) =>
-      !hit.blocked && !hit.avoided && !hit.invulnerable && hit.comboHits === index + 1,
-  )
+  const continuous = result.measurement.contacts.every((hit, index) => {
+    const recoveryFinish = options.route.recoveryFinish && index === expected.length - 1
+    return (
+      !hit.blocked &&
+      !hit.avoided &&
+      !hit.invulnerable &&
+      hit.comboHits === (recoveryFinish ? 1 : index + 1)
+    )
+  })
   return {
     ...result,
     route: {
@@ -181,6 +191,7 @@ function nextCommand(options: {
   const { tape, route, sent, tick } = options
   if (routeHitsBefore(route, sent) !== tape.contacts.length || sent >= route.moves.length) return []
   if (sent === 0 && route.kind === 'air' && tick < COMBAT_ROUTE_AIR_OPENING_FRAME) return []
+  if (recoveryFinishStep(route, sent) && !recoveryFinishReady(tape.state)) return []
   const slot = route.moves[sent]
   const move = moveForSlot(route.fighter, slot)!
   if (waitingForComboSupport(tape.state, route, { step: sent, startup: move.tuning.startup }))

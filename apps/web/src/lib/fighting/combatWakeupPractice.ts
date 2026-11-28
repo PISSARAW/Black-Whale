@@ -175,15 +175,19 @@ function command(state: FightState, side: FightSide, slot: MoveSlot): WakeupComm
 export function wakeupDefenderCommand(
   state: FightState,
   progress: WakeupProgress,
-  reaction: WakeupReaction,
+  { reaction, followup }: WakeupSettings,
 ): WakeupCommand | undefined {
   if (reaction === 'jab' && ready(state, 'opponent', 'standingLight'))
     return command(state, 'opponent', 'standingLight')
   if (reaction !== 'tech' || !ready(state, 'opponent', 'throw')) return
   const timely =
     state.player.attack?.variant === 'throw' && state.opponent.wakeupInvulnerableFrames <= 1
-  const delayed = progress.openAt !== undefined && state.frame >= progress.openAt + 2
-  if (timely || delayed) return command(state, 'opponent', 'throw')
+  if (timely || delayedWakeupThrow(state, progress, followup))
+    return command(state, 'opponent', 'throw')
+}
+
+function delayedWakeupThrow(state: FightState, progress: WakeupProgress, followup: WakeupFollowup) {
+  return followup !== 'throw' && progress.openAt !== undefined && state.frame >= progress.openAt + 2
 }
 
 export function wakeupDemoCommand(

@@ -145,9 +145,9 @@ export function createCombatSchool() {
       const opponent = !wakeupSent.opponent
         ? wakeupDefenderCommand(state, wakeup, wakeupSettings.reaction)
         : undefined
-      if (player) wakeupSent.player = true
+      if (sentWakeupAttack(player)) wakeupSent.player = true
       if (opponent) wakeupSent.opponent = true
-      return [player, opponent].filter((entry): entry is ReplayCommand => Boolean(entry))
+      return [player, opponent].filter((entry) => entry !== undefined)
     },
     command(state: FightState): ReplayCommand | null {
       const signature = signatureOf(get(view))
@@ -233,6 +233,10 @@ export function createCombatSchool() {
   }
 }
 export type CombatSchool = ReturnType<typeof createCombatSchool>
+
+function sentWakeupAttack(command: ReturnType<typeof wakeupDemoCommand>): boolean {
+  return command !== undefined && command.action !== 'special'
+}
 
 function demonstrationInput(
   state: FightState,

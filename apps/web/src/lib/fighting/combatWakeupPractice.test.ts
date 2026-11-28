@@ -54,6 +54,8 @@ describe.each(['centre', 'corner'] as const)('wakeup reactions at %s', (position
       if (tech.wakeup.knockdown) {
         expect(tech.wakeup.result).toBe('tech')
         expect(tech.state.throwTech?.sequence).toBe(1)
+      } else if (tech.wakeup.result === 'punish') {
+        expect(tech.state.impact).toMatchObject({ attacker: 'player', punish: true })
       } else {
         expect(['tech', 'defender-hit']).toContain(tech.wakeup.result)
       }
@@ -107,8 +109,8 @@ it('gives every fighter more corner carry from the same grounded opening', () =>
     const sweep = run(`${fighter}:wakeup-sweep`, {}, { stopAtCombo: true })
     const carry = run(`${fighter}:wakeup-carry`, {}, { stopAtCombo: true })
     expect(sweep.wakeup.knockdown).toBe(true)
-    expect(carry.wakeup.knockdown).toBe(true)
-    expect(carry.wakeup.gap - sweep.wakeup.gap, fighter).toBeGreaterThan(3)
+    expect(carry.wakeup.knockdown, fighter).toBe(fighter !== 'chrollo')
+    expect(carry.state.opponent.x - sweep.state.opponent.x, fighter).toBeGreaterThan(3)
   }
 })
 

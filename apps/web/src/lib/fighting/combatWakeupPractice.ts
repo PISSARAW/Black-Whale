@@ -1,4 +1,5 @@
 import { combatRouteAction, combatRouteInput } from './combatRouteFight'
+import { toggleChrolloBookmark } from './chrolloBook'
 import { attackPhase, hurtboxes } from './frameData'
 import { canStartFighterAttack } from './fighterAttacks'
 import { moveForSlot } from './movesets'
@@ -15,6 +16,7 @@ import {
 
 export type WakeupReaction = 'guard' | 'jab' | 'tech' | 'wait'
 export type WakeupFollowup = 'strike' | 'throw' | 'bait'
+type WakeupCommand = Extract<ReplayCommand, { kind: 'move' }>
 export interface WakeupSettings {
   position: 'centre' | 'corner'
   reaction: WakeupReaction
@@ -55,11 +57,16 @@ const EXCHANGE_FRAMES = 145
 
 export function prepareWakeupFight(state: FightState, settings: WakeupSettings): FightState {
   const x = settings.position === 'corner' ? 93 : 50
+  const book = state.opponent.chrolloBook
+  const opponent =
+    settings.reaction === 'tech' && book?.open
+      ? { ...state.opponent, chrolloBook: toggleChrolloBookmark(book) }
+      : state.opponent
   return setTrainingDummy(
     {
       ...state,
       player: { ...state.player, x: x - 6 },
-      opponent: { ...state.opponent, x },
+      opponent: { ...opponent, x },
     },
     { behavior: 'manual' },
   )
@@ -152,7 +159,7 @@ function ready(state: FightState, side: FightSide, slot: MoveSlot) {
   return !state.hitstop && !actor.attack && canStartFighterAttack(actor, move.kind, move.id)
 }
 
-function command(state: FightState, side: FightSide, slot: MoveSlot): ReplayCommand {
+function command(state: FightState, side: FightSide, slot: MoveSlot): WakeupCommand {
   return {
     kind: 'move',
     side,
@@ -165,7 +172,7 @@ export function wakeupDefenderCommand(
   state: FightState,
   progress: WakeupProgress,
   reaction: WakeupReaction,
-): ReplayCommand | undefined {
+): WakeupCommand | undefined {
   if (reaction === 'jab' && ready(state, 'opponent', 'standingLight'))
     return command(state, 'opponent', 'standingLight')
   if (reaction !== 'tech' || !ready(state, 'opponent', 'throw')) return
@@ -179,17 +186,30 @@ export function wakeupDemoCommand(
   state: FightState,
   progress: WakeupProgress,
   followup: WakeupFollowup,
-): ReplayCommand | undefined {
-  const { opponent, player } = state
+): WakeupCommand | undefined {
   if (followup === 'bait') return punishBait(state)
+  if (followup === 'throw' && state.player.chrolloBook?.open) return bookmarkForThrow(state)
   const slot = followup === 'throw' ? 'throw' : 'standingLight'
+  return wakeupOffensiveCommand(state, progress, slot)
+}
+
+function wakeupOffensiveCommand(
+  state: FightState,
+  progress: WakeupProgress,
+  slot: 'throw' | 'standingLight',
+): WakeupCommand | undefined {
+  const { opponent, player } = state
   if (!ready(state, 'player', slot) || gap(state) > CLOSE || progress.phase === 'down') return
   if (opponent.hitStun > 0) return
   const { startup } = moveForSlot(player.id, slot)!.tuning
   if (opponent.wakeupInvulnerableFrames <= startup) return command(state, 'player', slot)
 }
 
-function punishBait(state: FightState): ReplayCommand | undefined {
+function bookmarkForThrow(state: FightState): WakeupCommand | undefined {
+  if (ready(state, 'player', 'downSpecial')) return command(state, 'player', 'downSpecial')
+}
+
+function punishBait(state: FightState): WakeupCommand | undefined {
   const { opponent } = state
   if (attackPhase(opponent) !== 'recovery' || opponent.attack?.impacted) return
   if (ready(state, 'player', 'forwardLight')) return command(state, 'player', 'forwardLight')
